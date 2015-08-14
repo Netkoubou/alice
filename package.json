@@ -1,0 +1,35 @@
+{
+  "name": "alice",
+  "version": "0.0.0",
+  "description": "Supply Processing Destribution System",
+  "main": "js/index.jsx",
+  "scripts": {
+    "build": "browserify --debug js/index.jsx > js/index.js",
+    "build-dist": "NODE_ENV=production browserify js/index.jsx > | uglifyjs -m > js/index.min.js",
+    "http-server": "ss --port 8080 --host 10.108.92.70 --debug true",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "reactify",
+        {
+          "harmony": true
+        }
+      ]
+    ]
+  },
+  "keywords": [
+    "SPD"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^11.0.1",
+    "fluxxor": "^1.7.1",
+    "react": "^0.13.3",
+    "reactify": "^1.1.1",
+    "superstatic": "^1.2.3",
+    "uglify-js": "^2.4.24"
+  }
+}
