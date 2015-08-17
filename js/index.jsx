@@ -1,12 +1,20 @@
-var React = require('react');
-var Hello = React.createClass({
+var React  = require('react');
+var Header = require('./Header');
+var Nav    = require('./Nav');
+var Opes   = require('./Opes');
+var Footer = require('./Footer');
+
+var Contents = React.createClass({
     render: function() {
         return (
             <div>
-              Hello! World!
+              <Header />
+              <Nav />
+              <Opes />
+              <Footer />
             </div>
         );
     }
 });
 
-React.render(<Hello />, document.body);
+React.render(<Contents />, document.body);
