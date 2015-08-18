@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "description": "Supply Processing Destribution System",
   "main": "js/index.jsx",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Netkoubou/alice.git"
+  },
   "scripts": {
     "build": "browserify --debug js/index.jsx > js/index.js",
     "build-dist": "NODE_ENV=production browserify js/index.jsx > | uglifyjs -m > js/index.min.js",
