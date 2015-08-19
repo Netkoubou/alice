@@ -39,7 +39,9 @@ var NavItem = React.createClass({
 
 var Nav = React.createClass({
     render: function() {
-        var dummy = function() { alert("Jesus!"); };
+        var dummy = function() {
+            alert('工事中です (そっとしておいて下さい)');
+        };
 
         var urgentlyOrder = function() {
             if (this.props.user.urgency) {
@@ -78,7 +80,6 @@ var Nav = React.createClass({
             if (perm === 'privilige') {
                 items.push(<NavItem key='2' name="業者管理" onClick={dummy} />);
                 items.push(<NavItem key='3' name="物品管理" onClick={dummy} />);
-                items.push(<NavItem key='4' name="予算管理" onClick={dummy} />);
             }
 
             return items;
