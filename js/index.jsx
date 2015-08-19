@@ -8,7 +8,7 @@ var Contents = React.createClass({
     render: function() {
         return (
             <div>
-              <Header />
+              <Header username='jesus' />
               <Nav user={{
                 permission: 'privilige',
                 medical: true,

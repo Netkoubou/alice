@@ -1,0 +1,32 @@
+#header {
+  padding:       8px 8px 8px 8px;
+  margin-bottom: 8px;
+}
+
+#header-upper {
+  margin-bottom: -28px;
+}
+
+#header-petname {
+  font-family: 'Tangerine', cursive;
+  font-size:   768%;
+  color:       #2196f3;
+}
+
+#header-welcome {
+  font-family: sans-serif;
+  margin-top:  80px;
+  float:       right;
+  color:       #2196f3;
+}
+
+#header-username {
+  margin: 0 4px 0 4px;
+  color:  #ff9800;
+}
+
+#header-lower {
+  font-family: sans-serif;
+  border-top:  1px solid #2196f3;
+  color:       #2196f3;
+}

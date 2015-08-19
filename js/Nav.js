@@ -3,7 +3,7 @@ var React = require('react');
 var NavItemTitle = React.createClass({
     render: function() {
         return (
-            <div className="ItemTitle">
+            <div className="nav-item-title">
               {this.props.name}
             </div>
         );
@@ -24,10 +24,10 @@ var NavItem = React.createClass({
     },
 
     render: function() {
-        var additionalClassName = this.state.clickable? " Clickable": "";
+        var additionalClassName = this.state.clickable? " nav-clickable": "";
 
         return (
-            <div className={"Item" + additionalClassName}
+            <div className={"nav-item" + additionalClassName}
                  onMouseOver={this.onMouseOver}
                  onMouseLeave={this.onMouseLeave}
                  onClick={this.props.onClick}>
@@ -85,7 +85,7 @@ var Nav = React.createClass({
         }.bind(this);
 
         return (
-            <div id="Nav">
+            <div id="nav">
               <NavItemTitle name="発注" />
               <NavItem name="通常発注" onClick={dummy} />
               {urgentlyOrder()}
@@ -97,6 +97,7 @@ var Nav = React.createClass({
               {etcAdmin()}
               <NavItemTitle name="その他" />
               <NavItem name="パスワード変更" onClick={dummy} />
+              <NavItem name="ログアウト" onClick={dummy} />
             </div>
         );
     }
