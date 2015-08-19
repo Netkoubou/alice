@@ -9,7 +9,11 @@ var Contents = React.createClass({
         return (
             <div>
               <Header />
-              <Nav />
+              <Nav user={{
+                permission: 'privilige',
+                medical: true,
+                urgency: true
+              }} />
               <Opes />
               <Footer />
             </div>

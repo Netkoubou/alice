@@ -1,0 +1,27 @@
+#Nav {
+  float: left;
+  background: #2196f3;
+  margin: 8px 0 8px 0;
+  font-size:   110%;
+}
+
+.ItemTitle {
+  width: 128px;
+  padding: 6px 12px 6px 12px;
+  font-size: 120%;
+  color: #bbdefb;
+  font-family: sans-serif;
+}
+
+.Item {
+  width:   128px;
+  padding: 12px 0 12px 24px;
+  color: #ffffff;
+  font-family: sans-serif;
+}
+
+.Clickable {
+  color: #ffccbc;
+  background: #1976d2;
+  cursor: pointer;
+}
