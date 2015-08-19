@@ -1,9 +1,15 @@
 var React = require('react');
 
 var Footer = React.createClass({
+    getInitialState: function() {
+        return ({ message: 'お報せはありません。' });
+    },
+
     render: function() {
         return (
-            <footer id="message">メッセージ</footer>
+            <footer id="footer">
+              {this.state.message}
+            </footer>
         );
     }
 });
