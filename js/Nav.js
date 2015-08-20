@@ -78,7 +78,7 @@ var Nav = React.createClass({
             items.push(<NavItem key='1' name="ユーザ管理" onClick={dummy} />);
 
             if (perm === 'privilige') {
-                items.push(<NavItem key='2' name="業者管理" onClick={dummy} />);
+                items.push(<NavItem key='2' name="販売元管理" onClick={dummy} />);
                 items.push(<NavItem key='3' name="物品管理" onClick={dummy} />);
             }
 
