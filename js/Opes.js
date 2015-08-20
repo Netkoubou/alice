@@ -1,9 +1,16 @@
 var React = require('react');
+var Order = require('./order/Order');
 
 var Opes = React.createClass({
     render: function() {
         return (
-            <div>操作エリア</div>
+            <div>
+              <div id="opes-left">
+                <Order.SearchPane />
+                <Order.CandidatePane />
+              </div>
+              <Order.FinalPane />
+            </div>
         );
     }
 });

@@ -88,8 +88,8 @@ var Contents = React.createClass({
             <div>
               <Header username={user.name} />
               <Nav user={user} />
-              <Opes />
-              <Footer />
+              <Opes user={user} />
+              <Footer user={user} />
             </div>
         );
     }
