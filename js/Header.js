@@ -6,7 +6,7 @@ var Header = React.createClass({
             <header id="header">
               <div>
                 <div id="header-upper">
-                  <img src="img/kdulogo.png" />
+                  <img id="header-kdulogo" src="img/kdulogo.png" />
                   <span id="header-petname">Alice</span>
                   <div id="header-welcome">
                     ようこそ

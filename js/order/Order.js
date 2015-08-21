@@ -1,10 +1,24 @@
-var React = require('react');
+var React  = require('react');
+var Select = require('../Select');
 
 var SearchPane = React.createClass({
+    getInitialState: function() {
+        return {
+            cat_keyid:    '',
+            trader_keyid: ''
+        };
+    },
+
     render: function() {
+        var categories = [
+            { keyid: '0', desc: '凄いアレ' },
+            { keyid: '1', desc: '驚きのソレ' },
+            { keyid: '2', desc: 'ありえないナニ' }
+        ];
+
         return (
             <div id="opes-search-pane">
-              検索ペイン
+              <Select options={categories} />
             </div>
         );
     }

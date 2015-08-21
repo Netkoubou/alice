@@ -3,8 +3,12 @@
   margin-bottom: 8px;
 }
 
+#header-kdulogo {
+  margin-top:    -64px;
+}
+
 #header-upper {
-  margin-bottom: -28px;
+  margin-bottom: -44px;
 }
 
 #header-petname {

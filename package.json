@@ -32,6 +32,7 @@
     "browserify": "^11.0.1",
     "fluxxor": "^1.7.1",
     "react": "^0.13.3",
+    "react-bootstrap": "^0.24.5",
     "reactify": "^1.1.1",
     "superstatic": "^1.2.3",
     "uglify-js": "^2.4.24"
