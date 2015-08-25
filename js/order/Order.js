@@ -1,6 +1,7 @@
 var React  = require('react');
 var Input  = require('react-bootstrap').Input;
 var Button = require('react-bootstrap').Button;
+var XHR    = require('superagent');
 var Select = require('../Select');
 
 var SearchPane = React.createClass({
@@ -8,7 +9,9 @@ var SearchPane = React.createClass({
         return {
             category_keyid: '',
             trader_keyid:   '',
-            search_text:    ''
+            search_text:    '',
+            categories:     [],
+            traders:        []
         };
     },
 
@@ -36,31 +39,36 @@ var SearchPane = React.createClass({
         });
     },
 
+    componentDidMount: function() {
+        XHR.post("cgi/search.js").send({
+            category_keyid: this.state.category_keyid,
+            trader_keyid:   this.state.trader_keyid,
+            search_text:    this.state.search_text
+        }).end(function(err, res) {
+            if (err) {
+                alert("ERROR! cgi/search.js");
+            } else {
+                this.setState({
+                    categories: res.categories,
+                    traders:    res.traders
+                });
+            }
+        });
+    },
+
     render: function() {
-        var categories = [
-            { keyid: '0', desc: '凄いアレ' },
-            { keyid: '1', desc: '驚きのソレ' },
-            { keyid: '2', desc: 'ありえないナニ' }
-        ];
-
-        var traders = [
-            { keyid: '0', desc: '阿漕商店' },
-            { keyid: '1', desc: 'バッタモン市場' },
-            { keyid: '2', desc: '贋物マーケット' }
-        ];
-
         return (
             <fieldset id="opes-search-pane">
               <legend>検索</legend>
               <div>
                 <Select placeholder="品目"
                         onSelect={this.onCategorySelect}
-                        options={categories} />
+                        options={this.state.categories} />
               </div>
               <div>
                 <Select placeholder="販売元"
                         onSelect={this.onTraderSelect}
-                        options={traders} />
+                        options={this.state.traders} />
               </div>
               <div>
                 <Input type="text"
