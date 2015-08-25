@@ -4,29 +4,22 @@ var MenuItem    = require('react-bootstrap').MenuItem;
 
 var Select = React.createClass({
     getInitialState: function() {
-        return {
-            keyid: this.props.options[0].keyid,
-            desc:  this.props.options[0].desc
-        };
-    },
-
-    updateState: function(opt) {
-        this.setState({
-            keyid: opt.keyid,
-            desc:  opt.desc
+        return ({
+            title: this.props.placeholder
         });
     },
 
-    options: function() {
-        return this.props.options.map(function(opt) {
-            var onSelect = function() {
-                this.updateState(opt);
-            }.bind(this);
+    onSelect: function(e) {
+        this.setState({ title: e.desc });
+        this.props.onSelect(e);
+    },
 
+    options: function(list) {
+        return list.map(function(opt) {
             return (
-                <MenuItem eventKey={opt.keyid}
-                          key={opt.desc}
-                          onSelect={onSelect}>
+                <MenuItem eventKey={opt}
+                          key={opt.keyid}
+                          onSelect={this.onSelect}>
                   {opt.desc}
                 </MenuItem>
             );
@@ -35,8 +28,8 @@ var Select = React.createClass({
 
     render: function() {
         return (
-            <SplitButton bsStyle="default" title={this.state.desc}>
-              {this.options()}
+            <SplitButton bsStyle="default" title={this.state.title}>
+              {this.options(this.props.options)}
             </SplitButton>
         );
     }
