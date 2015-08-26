@@ -5,18 +5,10 @@ var Opes = React.createClass({
     render: function() {
         switch (this.props.action) {
         case 'ORDINARY_ORDER':
-            return (
-                <div>
-                  <div id="opes-left">
-                    <Order.SearchPane />
-                    <Order.CandidatePane />
-                  </div>
-                  <Order.FinalPane />
-                </div>
-            );
+            return(<Order user={this.props.user} />);
             break;
         default:
-            return(<div></div>);
+            return(<div />);
         }
     }
 });

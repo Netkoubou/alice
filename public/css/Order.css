@@ -1,3 +1,7 @@
+#order-left {
+  float: left;
+}
+
 #order-search-pane {
   margin: 8px 8px 8px 8px;
 }

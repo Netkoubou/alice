@@ -102,8 +102,18 @@ var FinalPane = React.createClass({
     }
 });
 
-module.exports = {
-    SearchPane:    SearchPane,
-    CandidatePane: CandidatePane,
-    FinalPane:     FinalPane
-};
+var Order = React.createClass({
+    render: function() {
+        return (
+            <div>
+              <div id="order-left">
+                <SearchPane />
+                <CandidatePane />
+              </div>
+              <FinalPane />
+            </div>
+        );
+    }
+});
+
+module.exports = Order;
