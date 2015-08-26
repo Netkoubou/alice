@@ -40,43 +40,43 @@ var SearchPane = React.createClass({
     },
 
     componentDidMount: function() {
-        XHR.post("cgi/search.js").send({
+        XHR.post("searchCategoriesAndTraders").send({
             category_keyid: this.state.category_keyid,
             trader_keyid:   this.state.trader_keyid,
             search_text:    this.state.search_text
         }).end(function(err, res) {
             if (err) {
-                alert("ERROR! cgi/search.js");
+                alert("ERROR! searchCategoriesAndTraders");
             } else {
                 this.setState({
-                    categories: res.categories,
-                    traders:    res.traders
+                    categories: res.body.categories,
+                    traders:    res.body.traders
                 });
             }
-        });
+        }.bind(this) );
     },
 
     render: function() {
         return (
-            <fieldset id="opes-search-pane">
+            <fieldset id="order-search-pane">
               <legend>検索</legend>
-              <div>
+              <div className="order-search-pane-input">
                 <Select placeholder="品目"
                         onSelect={this.onCategorySelect}
                         options={this.state.categories} />
               </div>
-              <div>
+              <div className="order-search-pane-input">
                 <Select placeholder="販売元"
                         onSelect={this.onTraderSelect}
                         options={this.state.traders} />
               </div>
-              <div>
+              <div className="order-search-pane-input">
                 <Input type="text"
                        placeholder="検索テキスト"
                        value={this.state.search_text}
                        onChange={this.onSearchTextChange} />
               </div>
-              <Button>検索</Button>
+              <Button id="order-search-pane-button">検索</Button>
             </fieldset>
         );
     }

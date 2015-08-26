@@ -1,6 +1,5 @@
 #header {
-  padding:       8px 8px 8px 8px;
-  margin-bottom: 8px;
+  margin-bottom: 1px;
 }
 
 #header-kdulogo {
@@ -8,7 +7,7 @@
 }
 
 #header-upper {
-  margin-bottom: -44px;
+  margin: 0 16px -44px 16px;
 }
 
 #header-petname {
@@ -18,10 +17,10 @@
 }
 
 #header-welcome {
-  font-family: sans-serif;
-  margin-top:  80px;
-  float:       right;
-  color:       #2196f3;
+  font-family:  sans-serif;
+  margin-top:   80px;
+  float:        right;
+  color:        #2196f3;
 }
 
 #header-username {
@@ -30,7 +29,9 @@
 }
 
 #header-lower {
+  padding:     0 16px 0 16px;
   font-family: sans-serif;
   border-top:  1px solid #2196f3;
-  color:       #2196f3;
+  color:       #ffffff;
+  background:  #2196f3;
 }
