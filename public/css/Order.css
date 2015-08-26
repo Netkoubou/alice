@@ -1,8 +1,12 @@
-#order-left {
+#order-left-side {
   float: left;
 }
 
-#order-search-pane {
+#order-right-side{
+  float: right;
+}
+
+.order-pane {
   margin: 8px 8px 8px 8px;
 }
 
