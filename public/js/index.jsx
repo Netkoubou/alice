@@ -1,10 +1,15 @@
 var React  = require('react');
-var Flux   = require('fluxxor');
 var Header = require('./Header');
 var Nav    = require('./Nav');
 var Opes   = require('./Opes');
 var Footer = require('./Footer');
 
+
+/*
+ * 仮のユーザ情報。
+ * 正しくは (きちんと実装が進めば) ログインページから (何らかの手段で)
+ * 情報を受け取る。
+ */
 var user = {
     name:       '磯野 まぐろ',
     permission: 'privilige',
@@ -13,82 +18,43 @@ var user = {
     approval:   true
 };
 
-var messages = {
-    ORDINARY_ORDER:  'ORDINARY_ORDER',
-    URGENTRY_ORDER:  'URGENTRY_ORDER',
-    MEDS_ORDER:      'MEDS_ORDER',
-    ORDER_LIST:      'LIST_ORDER',
-    BUDGET_ADMIN:    'BUDGET_ADMIN',
-    ETC_ADMIN:       'ETC_ADMIN',
-    USER_ADMIN:      'USER_ADMIN',
-    TRADER_ADMIN:    'TRADER_ADMIN',
-    GOODS_ADMIN:     'GOODS_ADMIN',
-    PASSWORD_CHANGE: 'PASSWORD_CHANGE',
-    LOGOUT:          'LOGOUT'
-};
-
-var actions = {
-    ordinaryOrder: function() {
-        this.dispatch(messages.ORDINARY_ORDER, {});
-    },
-
-    urgentryOrder: function() {
-        this.dispatch(messages.URGENTRY_ORDER, {});
-    },
-
-    medsOrder: function() {
-        this.dispatch(messages.MEDS_ORDER, {});
-    },
-
-    orderList: function() {
-        this.dispatch(messages.ORDER_LIST, {});
-    },
-
-    budgetAdmin: function() {
-        this.dispatch(message.BUDGET_ADMIN, {});
-    },
-
-    etcAdmin: function() {
-        this.dispatch(message.ETC_ADMIN, {});
-    },
-
-    userAdmin: function() {
-        this.dispatch(message.USER_ADMIN, {});
-    },
-
-    traderAdmin: function() {
-        this.dispatch(message.TRADER_ADMIN, {});
-    },
-
-    goodsAdmin: function() {
-        this.dispatch(message.GOODS_ADMIN, {});
-    },
-
-    passwordChange: function() {
-        this.dispatch(message.PASSWORD_CHANGE, {});
-    },
-
-    logout: function() {
-        this.dispatch(message.LOGOUT, {});
-    }
-};
-
-var Store = Flux.createStore({
-    initialize: function() {
-    },
-
-    getState: function() {
-        return {};
-    }
-});
-
 var Contents = React.createClass({
+    /*
+     * 状態として
+     *
+     *   action: これから何をしようとしているのか === 今何をしているのか
+     *
+     * を管理する。
+     * 値は以下の文字列:
+     * 
+     *   - ORDINARY_ORDER: 通常発注
+     *   - URGENTRY_ORDER: 緊急発注
+     *   - MEDS_ORDER:     薬剤発注
+     *   - ORDER_LIST:     発注一覧
+     *   - COST_COUNT:     経費 / 精算
+     *   - BUDGET_ADMIN:   予算管理
+     *   - USER_ADMIN:     ユーザ管理
+     *   - TRADER_ADMIN:   販売元管理
+     *   - GOODS_ADMIN:    物品管理
+     *   - PASSWD_CHANGE:  パスワード変更
+     *   - LOGOUT:         ログアウト
+     */
+    getInitialState: function() {
+        return ({
+            action: null
+        });
+    },
+
+    setAction: function(selected) {
+        this.setState({ action: selected });
+    },
+
     render: function() {
         return (
             <div>
               <Header username={user.name} />
-              <Nav user={user} />
-              <Opes user={user} />
+              <Nav user={user} onSelect={this.setAction} />
+              <Opes user={user} action={this.state.action} />
               <Footer user={user} />
             </div>
         );

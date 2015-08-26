@@ -38,67 +38,76 @@ var NavItem = React.createClass({
 });
 
 var Nav = React.createClass({
-    render: function() {
-        var dummy = function() {
-            alert('工事中です (そっとしておいて下さい)');
-        };
+    dummy: function() {
+        alert('工事中です (そっとしておいて下さい)');
+    },
 
-        var urgentlyOrder = function() {
-            if (this.props.user.urgency) {
-                return <NavItem name="緊急発注" onClick={dummy} />;
-            }
-        }.bind(this);
+    ordinaryOrder: function() {
+        this.props.onSelect('ORDINARY_ORDER');
+    },
 
-        var medsOrder = function() {
-            if (this.props.user.medical) {
-                return <NavItem name="薬剤発注" onClick={dummy} />;
-            }
-        }.bind(this);
+    urgentlyOrder: function() {
+        if (this.props.user.urgency) {
+            return <NavItem name="緊急発注" onClick={this.dummy} />;
+        }
+    },
 
-        var budgetAdmin = function() {
-            if (this.props.user.permission !== 'ordinary') {
-                return (
-                  <div>
-                    <NavItemTitle name="予算管理" />
-                    <NavItem name="予算管理" onClick={dummy} />
-                  </div>
-                );
-            }
-        }.bind(this);
+    medsOrder: function() {
+        if (this.props.user.medical) {
+            return <NavItem name="薬剤発注" onClick={this.dummy} />;
+        }
+    },
 
-        var etcAdmin = function() {
-            var perm  = this.props.user.permission;
-            var items = new Array;
+    budgetAdmin: function() {
+        if (this.props.user.permission !== 'ordinary') {
+            return (
+              <div>
+                <NavItemTitle name="予算管理" />
+                <NavItem name="予算管理" onClick={this.dummy} />
+              </div>
+            );
+        }
+    },
 
-            if (perm === 'orinary') {
-                return items;
-            }
+    etcAdmin: function() {
+        var items = new Array;
 
-            items.push(<NavItemTitle key='0' name="情報管理" />);
-            items.push(<NavItem key='1' name="ユーザ管理" onClick={dummy} />);
-
-            if (perm === 'privilige') {
-                items.push(<NavItem key='2' name="販売元管理" onClick={dummy} />);
-                items.push(<NavItem key='3' name="物品管理" onClick={dummy} />);
-            }
-
+        if (this.props.user.permission === 'orinary') {
             return items;
-        }.bind(this);
+        }
 
+        items.push(<NavItemTitle key='0' name="情報管理" />);
+        items.push(<NavItem key='1'
+                            name="ユーザ管理"
+                            onClick={this.dummy} />);
+
+        if (this.props.user.permission === 'privilige') {
+            items.push(<NavItem key='2'
+                                name="販売元管理"
+                                onClick={this.dummy} />);
+            items.push(<NavItem key='3'
+                                name="物品管理"
+                                onClick={this.dummy} />);
+        }
+
+        return items;
+    },
+
+    render: function() {
         return (
             <div id="nav">
               <NavItemTitle name="発注" />
-              <NavItem name="通常発注" onClick={dummy} />
-              {urgentlyOrder()}
-              {medsOrder()}
-              <NavItem name="発注一覧" onClick={dummy} />
+              <NavItem name="通常発注" onClick={this.ordinaryOrder} />
+              {this.urgentlyOrder()}
+              {this.medsOrder()}
+              <NavItem name="発注一覧" onClick={this.dummy} />
               <NavItemTitle name="経費" />
-              <NavItem name="経費・精算" onClick={dummy} />
-              {budgetAdmin()}
-              {etcAdmin()}
+              <NavItem name="経費・精算" onClick={this.dummy} />
+              {this.budgetAdmin()}
+              {this.etcAdmin()}
               <NavItemTitle name="その他" />
-              <NavItem name="パスワード変更" onClick={dummy} />
-              <NavItem name="ログアウト" onClick={dummy} />
+              <NavItem name="パスワード変更" onClick={this.dummy} />
+              <NavItem name="ログアウト" onClick={this.dummy} />
             </div>
         );
     }
