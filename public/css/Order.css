@@ -18,3 +18,27 @@
 #order-search-pane-button {
   float: right;
 }
+
+.table-frame .table-frame-body {
+  height: 40%;
+}
+
+#order-candidates col:nth-child(1) {
+  width: 200px;
+}
+
+#order-candidates col:nth-child(2) {
+  width: 80px;
+}
+
+#order-candidates col:nth-child(3) {
+  width: 80px;
+}
+
+#order-candidates col:nth-child(4) {
+  width:      50px;
+}
+
+#order-candidates td:nth-child(4) {
+  text-align: right;
+}
