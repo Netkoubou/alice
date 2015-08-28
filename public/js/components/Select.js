@@ -28,7 +28,9 @@ var Select = React.createClass({
 
     render: function() {
         return (
-            <SplitButton bsStyle="default" title={this.state.title}>
+            <SplitButton bsSize="small"
+                         bsStyle="default"
+                         title={this.state.title}>
               {this.options(this.props.options)}
             </SplitButton>
         );

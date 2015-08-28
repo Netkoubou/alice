@@ -1,21 +1,22 @@
 #nav {
-  float: left;
+  width:      144px;
+  height:     100%;
+  overflow-y: hidden;
+  float:      left;
   background: #2196f3;
   padding: 8px 0 8px 0;
-  font-size:   110%;
+  margin-bottom: 1px;
 }
 
 .nav-item-title {
-  width: 144px;
-  padding: 6px 12px 6px 12px;
-  font-size: 120%;
+  padding: 6px 0 6px 12px;
+  font-size: 110%;
   color: #bbdefb;
   font-family: sans-serif;
 }
 
 .nav-item {
-  width:   144px;
-  padding: 12px 0 12px 24px;
+  padding: 8px 0 8px 24px;
   color: #ffffff;
   font-family: sans-serif;
 }

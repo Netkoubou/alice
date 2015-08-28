@@ -35,7 +35,7 @@ var CandidatePane = React.createClass({
         ];
 
         return (
-            <fieldset className="order-pane">
+            <fieldset id="order-candidate-pane" className="order-pane">
               <legend>候補</legend>
               <TableFrame id="order-candidates"
                           title={title}
@@ -58,7 +58,7 @@ var FinalPane = React.createClass({
 var Order = React.createClass({
     render: function() {
         return (
-            <div>
+            <div id="ope">
               <div id="order-left-side">
                 <SearchPane />
                 <CandidatePane />

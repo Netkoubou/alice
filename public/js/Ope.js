@@ -1,16 +1,20 @@
 var React = require('react');
 var Order = require('./order/Order');
 
-var Opes = React.createClass({
+var Ope = React.createClass({
     render: function() {
+        var contents;
+
         switch (this.props.action) {
         case 'ORDINARY_ORDER':
-            return(<Order user={this.props.user} />);
+            contents = <Order user={this.props.user} />;
             break;
         default:
-            return(<div />);
+            contents = null;
         }
+
+        return contents;
     }
 });
 
-module.exports = Opes;
+module.exports = Ope;

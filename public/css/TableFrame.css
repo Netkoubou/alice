@@ -9,5 +9,6 @@
 }
 
 .table-frame .table-frame-body {
+  height:     calc(100% - 30px);
   overflow-y: scroll;
 }

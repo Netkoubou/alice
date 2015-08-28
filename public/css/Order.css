@@ -1,26 +1,32 @@
 #order-left-side {
+  height: 100%;
   float: left;
 }
 
 #order-right-side{
-  float: right;
+  height: 100%;
+  float:  right;
 }
 
 .order-pane {
-  margin: 8px 8px 8px 8px;
+  margin:    8px 8px 8px 8px;
+  font-size: small;
 }
 
 .order-search-pane-input {
   margin: 8px 0 8px 32px;
-  width: 256px;
+}
+
+#order-candidate-pane {
+  height: calc(100% - 280px);
 }
 
 #order-search-pane-button {
   float: right;
 }
 
-.table-frame .table-frame-body {
-  height: 40%;
+#order-candidates {
+  height: 100%;
 }
 
 #order-candidates col:nth-child(1) {
@@ -36,7 +42,7 @@
 }
 
 #order-candidates col:nth-child(4) {
-  width:      50px;
+  width: 50px;
 }
 
 #order-candidates td:nth-child(4) {

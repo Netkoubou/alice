@@ -1,7 +1,7 @@
 var React  = require('react');
 var Header = require('./Header');
 var Nav    = require('./Nav');
-var Opes   = require('./Opes');
+var Ope    = require('./Ope');
 var Footer = require('./Footer');
 
 
@@ -53,8 +53,10 @@ var Contents = React.createClass({
         return (
             <div>
               <Header username={user.name} />
-              <Nav user={user} onSelect={this.setAction} />
-              <Opes user={user} action={this.state.action} />
+              <div id="content">
+                <Nav user={user} onSelect={this.setAction} />
+                <Ope user={user} action={this.state.action} />
+              </div>
               <Footer user={user} />
             </div>
         );
