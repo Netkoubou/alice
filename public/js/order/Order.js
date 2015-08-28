@@ -1,45 +1,19 @@
 var React      = require('react');
+var Fluxxor    = require('fluxxor');
+var XHR        = require('superagent');
 var SearchPane = require('./SearchPane');
 var TableFrame = require('../components/TableFrame');
 
 var CandidatePane = React.createClass({
     render: function() {
-        var title      = [ '品名', '製造者', '販売元', '単価' ];
-        var candidates = [
-            { key:  '0', cells: ['a', 'Z', 'あ', 25] },
-            { key:  '1', cells: ['b', 'Y', 'い', 24] },
-            { key:  '2', cells: ['c', 'X', 'う', 23] },
-            { key:  '3', cells: ['d', 'W', 'え', 22] },
-            { key:  '4', cells: ['e', 'V', 'お', 21] },
-            { key:  '5', cells: ['f', 'U', 'か', 20] },
-            { key:  '6', cells: ['g', 'T', 'き', 19] },
-            { key:  '7', cells: ['h', 'S', 'く', 18] },
-            { key:  '8', cells: ['i', 'R', 'け', 17] },
-            { key:  '9', cells: ['j', 'Q', 'こ', 16] },
-            { key: '10', cells: ['k', 'P', 'さ', 15] },
-            { key: '11', cells: ['l', 'O', 'し', 14] },
-            { key: '12', cells: ['m', 'N', 'す', 13] },
-            { key: '13', cells: ['n', 'M', 'せ', 12] },
-            { key: '14', cells: ['o', 'L', 'そ', 11] },
-            { key: '15', cells: ['p', 'K', 'た', 10] },
-            { key: '16', cells: ['q', 'J', 'ち',  9] },
-            { key: '17', cells: ['r', 'I', 'つ',  8] },
-            { key: '18', cells: ['s', 'H', 'て',  7] },
-            { key: '19', cells: ['t', 'G', 'と',  6] },
-            { key: '20', cells: ['u', 'F', 'な',  5] },
-            { key: '21', cells: ['v', 'E', 'に',  4] },
-            { key: '22', cells: ['w', 'D', 'ぬ',  3] },
-            { key: '23', cells: ['x', 'C', 'ね',  2] },
-            { key: '24', cells: ['y', 'B', 'の',  1] },
-            { key: '25', cells: ['z', 'A', 'は',  0] }
-        ];
+        var title = [ '品名', '製造者', '販売元', '単価' ];
 
         return (
             <fieldset id="order-candidate-pane" className="order-pane">
               <legend>候補</legend>
               <TableFrame id="order-candidates"
                           title={title}
-                          body={candidates} />
+                          body={this.props.candidates} />
             </fieldset>
         );
     }
@@ -55,13 +29,66 @@ var FinalPane = React.createClass({
     }
 });
 
-var Order = React.createClass({
+var messages = {
+    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
+};
+
+var OrderStore = Fluxxor.createStore({
+    initialize: function() {
+        this.candidates = [];
+        this.bindActions(
+            messages.UPDATE_CANDIDATES, this.onSearch
+        );
+    },
+
+    onSearch: function(payload) {
+        XHR.post('pickCandidates').send({
+            category_keyid: payload.category_keyid,
+            trader_keyid:   payload.trader_keyid,
+            search_text:    payload.search_text
+        }).end(function(err, res) {
+            if (err) {
+                alert('ERROR! pickCandidates');
+                throw 'pickCandidates';
+            }
+
+            this.candidates = res.body.map(function(candidate, i) {
+                return { key: i, cells: candidate };
+            });
+
+            this.emit('change');
+        }.bind(this) );
+    },
+
+    getState: function() {
+        return {
+            candidates: this.candidates
+        }
+    }
+});
+
+var actions = {
+    updateCandidates: function(payload) {
+        this.dispatch(messages.UPDATE_CANDIDATES, payload);
+    }
+};
+
+var OrderManager = React.createClass({
+    mixins: [
+        Fluxxor.FluxMixin(React),
+        Fluxxor.StoreWatchMixin('OrderStore')
+    ],
+
+    getStateFromFlux: function() {
+        return this.getFlux().store('OrderStore').getState();
+    },
+
     render: function() {
         return (
             <div id="ope">
               <div id="order-left-side">
                 <SearchPane />
-                <CandidatePane />
+                <CandidatePane candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
                 <FinalPane />
@@ -69,6 +96,13 @@ var Order = React.createClass({
             </div>
         );
     }
+});
+
+var stores = { OrderStore: new OrderStore() };
+var flux   = new Fluxxor.Flux(stores, actions);
+
+var Order = React.createClass({
+    render: function() { return <OrderManager flux={flux} />; }
 });
 
 module.exports = Order;
