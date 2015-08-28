@@ -4,9 +4,7 @@ var MenuItem    = require('react-bootstrap').MenuItem;
 
 var Select = React.createClass({
     getInitialState: function() {
-        return ({
-            title: this.props.placeholder
-        });
+        return({ title: this.props.placeholder });
     },
 
     onSelect: function(e) {
@@ -27,10 +25,16 @@ var Select = React.createClass({
     },
 
     render: function() {
+        var title;
+
+        if (this.props.value !== '') {
+            title = this.state.title;
+        } else {
+            title = this.props.placeholder;
+        }
+
         return (
-            <SplitButton bsSize="small"
-                         bsStyle="default"
-                         title={this.state.title}>
+            <SplitButton bsSize="small" bsStyle="default" title={title}>
               {this.options(this.props.options)}
             </SplitButton>
         );

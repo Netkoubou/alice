@@ -21,7 +21,7 @@
   height: calc(100% - 280px);
 }
 
-#order-search-pane-button {
+.order-search-pane-button {
   float: right;
 }
 

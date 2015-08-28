@@ -27,7 +27,27 @@ var SearchPane = React.createClass({
     },
 
     onSearchTextChange: function(e) {
-        this.setState({ search_text: e.value });
+        this.setState({ search_text: e.target.value });
+    },
+
+    onClear: function() {
+        XHR.post("searchCategoriesAndTraders").send({
+            category_keyid: '',
+            trader_keyid:   ''
+        }).end(function(err, res) {
+            if (err) {
+                alert('ERROR! searchCategoriesAndTraders');
+                throw 'searchCategoriesAndTraders';
+            }
+
+            this.setState({
+                category_keyid: '',
+                trader_keyid:   '',
+                search_text:    '',
+                categories:     res.body.categories,
+                traders:        res.body.traders 
+            });
+        }.bind(this) );
     },
 
     onSearch: function() {
@@ -38,10 +58,14 @@ var SearchPane = React.createClass({
         });
     },
 
-    searchCategoriesAndTraders: function(category_keyid, trader_keyid) {
+    componentDidMount: function() {
+        this.searchCategoriesAndTraders('', '');
+    },
+
+    searchCategoriesAndTraders: function(category_id, trader_id) {
         XHR.post("searchCategoriesAndTraders").send({
-            category_keyid: category_keyid,
-            trader_keyid:   trader_keyid
+            category_keyid: category_id,
+            trader_keyid:   trader_id
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! searchCategoriesAndTraders');
@@ -49,16 +73,12 @@ var SearchPane = React.createClass({
             }
 
             this.setState({
-                category_keyid: category_keyid,
-                trader_keyid:   trader_keyid,
+                category_keyid: category_id,
+                trader_keyid:   trader_id,
                 categories:     res.body.categories,
                 traders:        res.body.traders 
             });
         }.bind(this) );
-    },
-
-    componentDidMount: function() {
-        this.searchCategoriesAndTraders('', '');
     },
 
     render: function() {
@@ -68,23 +88,31 @@ var SearchPane = React.createClass({
               <div className="order-search-pane-input">
                 <Select placeholder="品目"
                         onSelect={this.onCategorySelect}
+                        value={this.state.category_keyid}
                         options={this.state.categories} />
               </div>
               <div className="order-search-pane-input">
                 <Select placeholder="販売元"
                         onSelect={this.onTraderSelect}
+                        value={this.state.trader_keyid}
                         options={this.state.traders} />
               </div>
               <div className="order-search-pane-input">
                 <Input type="text"
                        bsSize="small"
                        placeholder="検索テキスト"
+                       value={this.state.search_text}
                        onChange={this.onSearchTextChange} />
               </div>
               <Button bsSize="small"
                       onClick={this.onSearch}
-                      id="order-search-pane-button">
+                      className="order-search-pane-button">
                 検索
+              </Button>
+              <Button bsSize="small"
+                      onClick={this.onClear}
+                      className="order-search-pane-button">
+                クリア
               </Button>
             </fieldset>
         );
