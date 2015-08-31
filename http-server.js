@@ -1,8 +1,21 @@
+/*
+ * テスト用 HTTP サーバ。
+ * 通常の HTTP リクエストに対しては正規のレスポンスを返す。
+ * Ajax のリクエストに対しては、適当な (それっぽい)  JSON を返す。
+ */
 var express = require('express');
 var app = express();
 
+
+/*
+ * 通常の HTTP リクエスト用
+ */
 app.use(express.static('public') );
 
+
+/*
+ * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
+ */
 app.post('/searchCategoriesAndTraders', function(req, res) {
     res.json({
         categories: [
@@ -20,6 +33,10 @@ app.post('/searchCategoriesAndTraders', function(req, res) {
     });
 });
 
+
+/*
+ * 発注画面の SearchPane から発行される品名候補の検索リクエスト
+ */
 app.post('/pickCandidates', function(req, res) {
     res.json([
         ['a', 'Z', 'あ', 25],

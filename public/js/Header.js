@@ -1,6 +1,10 @@
-var React = require('react');
-
+'use strict';
+var React  = require('react');
 var Header = React.createClass({
+    propTypes: {
+        username: React.PropTypes.string.isRequired
+    },
+
     render: function() {
         return (
             <header id="header">

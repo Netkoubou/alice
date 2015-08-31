@@ -1,3 +1,7 @@
+/*
+ * 検索ペイン
+ */
+'use strict';
 var React   = require('react');
 var Input   = require('react-bootstrap').Input;
 var Button  = require('react-bootstrap').Button;
@@ -6,7 +10,8 @@ var Fluxxor = require('fluxxor');
 var Select  = require('../components/Select');
 
 var SearchPane = React.createClass({
-    mixins: [ Fluxxor.FluxMixin(React) ],
+    mixins:    [ Fluxxor.FluxMixin(React) ],
+    propTypes: { user: React.PropTypes.object.isRequired },
 
     getInitialState: function() {
         return {
@@ -18,20 +23,37 @@ var SearchPane = React.createClass({
         };
     },
 
+
+    /*
+     * 品目が選択されたら
+     */
     onCategorySelect: function(e) {
         this.searchCategoriesAndTraders(e.keyid, this.state.trader_keyid);
     },
 
+
+    /*
+     * 販売元が選択されたら
+     */
     onTraderSelect: function(e) {
         this.searchCategoriesAndTraders(this.state.category_keyid, e.keyid);
     },
 
+
+    /*
+     * 検索テキストが変更されたら
+     */
     onSearchTextChange: function(e) {
         this.setState({ search_text: e.target.value });
     },
 
+
+    /*
+     * クリアボタンをクリック
+     */
     onClear: function() {
         XHR.post("searchCategoriesAndTraders").send({
+            user:           this.props.user,
             category_keyid: '',
             trader_keyid:   ''
         }).end(function(err, res) {
@@ -50,6 +72,10 @@ var SearchPane = React.createClass({
         }.bind(this) );
     },
 
+
+    /*
+     * 検索ボタンをクリック
+     */
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
             category_keyid: this.state.category_keyid,
@@ -58,12 +84,18 @@ var SearchPane = React.createClass({
         });
     },
 
-    componentDidMount: function() {
-        this.searchCategoriesAndTraders('', '');
-    },
 
+    /*
+     * 品目と販売元のプルダウンメニューに表示する項目をサーバに問い合わせる
+     * 関数。
+     * 品目を選択すればそれを扱う販売元のみが表示され、販売元を選択すればそ
+     * の販売元が扱う品目のみが表示される、という動作を実現するために、品
+     * 目 / 販売元が変更されると、本関数が呼び出され、その結果がプルダウン
+     * メニューの項目に反映される。
+     */
     searchCategoriesAndTraders: function(category_id, trader_id) {
         XHR.post("searchCategoriesAndTraders").send({
+            user:           this.props.user,
             category_keyid: category_id,
             trader_keyid:   trader_id
         }).end(function(err, res) {
@@ -79,6 +111,14 @@ var SearchPane = React.createClass({
                 traders:        res.body.traders 
             });
         }.bind(this) );
+    },
+
+
+    /*
+     * 最初に表示された時
+     */
+    componentDidMount: function() {
+        this.searchCategoriesAndTraders('', '');
     },
 
     render: function() {

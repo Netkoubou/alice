@@ -21,6 +21,12 @@
   font-family: sans-serif;
 }
 
+.nav-selected {
+  font-size:  110%;
+  color:      #1565c0;
+  background: #bbdefb;
+}
+
 .nav-clickable {
   background: #1976d2;
   cursor: pointer;

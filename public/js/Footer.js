@@ -1,5 +1,5 @@
-var React = require('react');
-
+'use strict';
+var React  = require('react');
 var Footer = React.createClass({
     getInitialState: function() {
         return ({ message: 'とんでもないことになっています。' });
