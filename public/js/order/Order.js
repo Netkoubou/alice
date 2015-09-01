@@ -17,26 +17,11 @@
  * できるだけ複雑さを排除するために、本実装では Flux (Fluxxor) を導入する。
  */
 'use strict';
-var React      = require('react');
-var Fluxxor    = require('fluxxor');
-var XHR        = require('superagent');
-var SearchPane = require('./SearchPane');
-var TableFrame = require('../components/TableFrame');
-
-var CandidatePane = React.createClass({
-    render: function() {
-        var title = [ '品名', '製造者', '販売元', '単価' ];
-
-        return (
-            <fieldset id="order-candidate-pane" className="order-pane">
-              <legend>候補</legend>
-              <TableFrame id="order-candidates"
-                          title={title}
-                          body={this.props.candidates} />
-            </fieldset>
-        );
-    }
-});
+var React         = require('react');
+var Fluxxor       = require('fluxxor');
+var XHR           = require('superagent');
+var SearchPane    = require('./SearchPane');
+var CandidatePane = require('./CandidatePane');
 
 var FinalPane = React.createClass({
     render: function() {
@@ -49,15 +34,13 @@ var FinalPane = React.createClass({
 });
 
 var messages = {
-    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
+    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES'
 };
 
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
         this.candidates = [];
-        this.bindActions(
-            messages.UPDATE_CANDIDATES, this.onSearch
-        );
+        this.bindActions(messages.UPDATE_CANDIDATES, this.onSearch);
     },
 
     onSearch: function(payload) {
@@ -89,7 +72,7 @@ var OrderStore = Fluxxor.createStore({
 var actions = {
     updateCandidates: function(payload) {
         this.dispatch(messages.UPDATE_CANDIDATES, payload);
-    }
+    },
 };
 
 var OrderManager = React.createClass({
