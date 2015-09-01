@@ -9,16 +9,34 @@
  * 具体的な指定例は css/Order.css を参照。
  */
 'use strict';
-var React  = require('react');
-var Input  = require('react-bootstrap').Input;
-var Button = require('react-bootstrap').Button;
-var Table  = require('react-bootstrap').Table;
+var React = require('react');
+var Table = require('react-bootstrap').Table;
 
 var TableFrame = React.createClass({
     propTypes: {
         id:    React.PropTypes.string.isRequired,
-        title: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-        body:  React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+        title: React.PropTypes.array.isRequired,
+        data:  React.PropTypes.array.isRequired
+    },
+
+    getInitialState: function() {
+        return {
+            is_ascending: true,
+            col_num:      null
+        };
+    },
+
+    onSort: function(col_num) {
+        var is_ascending = this.state.is_ascending;
+
+        if (col_num == this.state.col_num) {
+            is_ascending = !is_ascending;
+        }
+
+        this.setState({
+            is_ascending: is_ascending,
+            col_num:      col_num
+        });
     },
 
     render: function() {
@@ -26,20 +44,39 @@ var TableFrame = React.createClass({
             return <col key={i} />;
         });
 
-        var title = this.props.title.map(function(th, i) {
-            return <th key={i}>{th}</th>;
-        });
-
-        var body = this.props.body.map(function(row) {
-            var tr = row.cells.map(function(cell, i) {
-                return <td key={i}>{cell}</td>;
-            });
-                
+        var title = this.props.title.map(function(cell, i) {
             return (
-                <tr key={row.key}>
-                    {tr}
-                </tr>
+              <th onClick={function() { this.onSort(i) }.bind(this) }
+                  key={i}>
+                {cell.name}
+              </th>
             );
+        }.bind(this) );
+
+        var data = this.props.data.map(function(row) {
+            return row;
+        });
+        
+        if (this.state.col_num != null) {
+            data.sort(function(a, b) {
+                var obj_a = a[this.state.col_num].value;
+                var obj_b = b[this.state.col_num].value;
+                var type  = this.props.title[this.state.col_num].type;
+
+                if (this.state.is_ascending) {
+                    return (type === 'number')? obj_a - obj_b: obj_a < obj_b;
+                } else {
+                    return (type === 'number')? obj_b - obj_a: obj_b < obj_a;
+                }
+            }.bind(this) );
+        }
+        
+        var tbody = data.map(function(row, i) {
+            var tr = row.map(function(cell, j) {
+                return <td key={j}>{cell.view}</td>;
+            });
+
+            return <tr key={i}>{tr}</tr>;
         });
 
         return (
@@ -54,7 +91,7 @@ var TableFrame = React.createClass({
                 <Table>
                   <tbody>
                     {cols}
-                    {body}
+                    {tbody}
                   </tbody>
                 </Table>
               </div>

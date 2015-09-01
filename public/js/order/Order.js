@@ -54,10 +54,7 @@ var OrderStore = Fluxxor.createStore({
                 throw 'pickCandidates';
             }
 
-            this.candidates = res.body.map(function(candidate, i) {
-                return { key: i, cells: candidate };
-            });
-
+            this.candidates = res.body;
             this.emit('change');
         }.bind(this) );
     },
