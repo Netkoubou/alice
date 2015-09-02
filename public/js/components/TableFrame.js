@@ -92,8 +92,17 @@ var TFh = React.createClass({
 var TableFrame = React.createClass({
     propTypes: {
         id:    React.PropTypes.string.isRequired,
-        title: React.PropTypes.array.isRequired,
-        data:  React.PropTypes.array.isRequired
+        title: React.PropTypes.arrayOf(React.PropTypes.shape({
+            name: React.PropTypes.string.isRequired,
+            type: React.PropTypes.oneOf(['string', 'number']).isRequired
+        }) ).isRequired,
+        data: React.PropTypes.oneOfType([
+            React.PropTypes.array,
+            React.PropTypes.arrayOf(React.PropTypes.shape({
+                value: React.PropTypes.string.isRequired,
+                view:  React.PropTypes.element.isRequired
+            }) )
+        ]).isRequired
     },
 
     getInitialState: function() {
@@ -140,7 +149,7 @@ var TableFrame = React.createClass({
 
                 if (this.state.is_descending) {
                     if (type === 'number') {
-                        return obj_b - obj_a;
+                        return obj_a - obj_b;
                     }
                     
                     if (obj_a < obj_b) {
@@ -150,7 +159,7 @@ var TableFrame = React.createClass({
                     }
                 } else {
                     if (type === 'number') {
-                        return obj_a - obj_b;
+                        return obj_b - obj_a;
                     }
                     
                     if (obj_b < obj_a) {
