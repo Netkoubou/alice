@@ -15,11 +15,11 @@ var SearchPane = React.createClass({
 
     getInitialState: function() {
         return {
-            category_keyid: '',
-            trader_keyid:   '',
-            search_text:    '',
-            categories:     [],
-            traders:        []
+            category_code: '',
+            trader_code:   '',
+            search_text:   '',
+            categories:    [],
+            traders:       []
         };
     },
 
@@ -28,7 +28,7 @@ var SearchPane = React.createClass({
      * 品目が選択されたら
      */
     onCategorySelect: function(e) {
-        this.searchCategoriesAndTraders(e.keyid, this.state.trader_keyid);
+        this.searchCategoriesAndTraders(e.code, this.state.trader_code);
     },
 
 
@@ -36,7 +36,7 @@ var SearchPane = React.createClass({
      * 販売元が選択されたら
      */
     onTraderSelect: function(e) {
-        this.searchCategoriesAndTraders(this.state.category_keyid, e.keyid);
+        this.searchCategoriesAndTraders(this.state.category_code, e.code);
     },
 
 
@@ -53,9 +53,9 @@ var SearchPane = React.createClass({
      */
     onClear: function() {
         XHR.post("searchCategoriesAndTraders").send({
-            user:           this.props.user,
-            category_keyid: '',
-            trader_keyid:   ''
+            user:          this.props.user,
+            category_code: '',
+            trader_code:   ''
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! searchCategoriesAndTraders');
@@ -63,11 +63,11 @@ var SearchPane = React.createClass({
             }
 
             this.setState({
-                category_keyid: '',
-                trader_keyid:   '',
-                search_text:    '',
-                categories:     res.body.categories,
-                traders:        res.body.traders 
+                category_code: '',
+                trader_code:   '',
+                search_text:   '',
+                categories:    res.body.categories,
+                traders:       res.body.traders 
             });
         }.bind(this) );
     },
@@ -78,9 +78,9 @@ var SearchPane = React.createClass({
      */
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
-            category_keyid: this.state.category_keyid,
-            trader_keyid:   this.state.trader_keyid,
-            search_text:    this.state.search_text
+            category_code: this.state.category_code,
+            trader_code:   this.state.trader_code,
+            search_text:   this.state.search_text
         });
     },
 
@@ -93,11 +93,11 @@ var SearchPane = React.createClass({
      * 目 / 販売元が変更されると、本関数が呼び出され、その結果がプルダウン
      * メニューの項目に反映される。
      */
-    searchCategoriesAndTraders: function(category_id, trader_id) {
+    searchCategoriesAndTraders: function(category_code, trader_code) {
         XHR.post("searchCategoriesAndTraders").send({
-            user:           this.props.user,
-            category_keyid: category_id,
-            trader_keyid:   trader_id
+            user:          this.props.user,
+            category_code: category_code,
+            trader_code:   trader_code
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! searchCategoriesAndTraders');
@@ -105,10 +105,10 @@ var SearchPane = React.createClass({
             }
 
             this.setState({
-                category_keyid: category_id,
-                trader_keyid:   trader_id,
-                categories:     res.body.categories,
-                traders:        res.body.traders 
+                category_code: category_code,
+                trader_code:   trader_code,
+                categories:    res.body.categories,
+                traders:       res.body.traders 
             });
         }.bind(this) );
     },
@@ -128,13 +128,13 @@ var SearchPane = React.createClass({
               <div className="order-search-pane-input">
                 <Select placeholder="品目"
                         onSelect={this.onCategorySelect}
-                        value={this.state.category_keyid}
+                        value={this.state.category_code}
                         options={this.state.categories} />
               </div>
               <div className="order-search-pane-input">
                 <Select placeholder="販売元"
                         onSelect={this.onTraderSelect}
-                        value={this.state.trader_keyid}
+                        value={this.state.trader_code}
                         options={this.state.traders} />
               </div>
               <div className="order-search-pane-input">

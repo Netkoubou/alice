@@ -38,7 +38,7 @@ var NavItem = React.createClass({
     },
 
     getInitialState: function() {
-        return({ isClickable: false });
+        return({ is_clickable: false });
     },
 
 
@@ -48,7 +48,7 @@ var NavItem = React.createClass({
      */
     onMouseOver: function() {
         if (!this.props.isSelected) {
-            this.setState({ isClickable: true });
+            this.setState({ is_clickable: true });
         }
     },
 
@@ -57,7 +57,7 @@ var NavItem = React.createClass({
      * マウスのポインタが上空から去ると、色が元に戻る。
      */
     onMouseLeave: function() {
-        this.setState({ isClickable: false });
+        this.setState({ is_clickable: false });
     },
 
     render: function() {
@@ -66,7 +66,7 @@ var NavItem = React.createClass({
         if (this.props.isSelected) {
             // 選択済み
             additionalClassName = ' nav-selected';
-        } else if (this.state.isClickable) {
+        } else if (this.state.is_clickable) {
             // クリック可能なら
             additionalClassName = ' nav-clickable';
         } else {
