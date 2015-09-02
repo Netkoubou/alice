@@ -33,6 +33,21 @@ var TFh = React.createClass({
         });
     },
 
+
+    /*
+     * <th> 要素 (の中の <span> 要素) をクリックすると、その列の値で表を
+     * ソートできる。
+     * この時、現在どの列でソートされているのかを黒い三角で示す。
+     * また、マウスのポインタが <th> 要素の上空にさしかかると、白い三角でソー
+     * ト方向を示す。
+     * ソートされている列の <th> 要素の上空にマウスのポインタがさしかかると、
+     * 現在のソート方向 (黒い三角の向き) とは逆向きの白い三角が表示される。
+     * 一方、それ以外の列は (たいていの場合並びはバラバラであろうが) とりあ
+     * えず降順にソートすることにした (つまり、マウスのポインタが上空にさし
+     * かかると、下向きの白い三角が現われる)。
+     * このあたりのロジックは意外に複雑なので、コードを読む場合はちょっと気
+     * 合が必要かもしれない。
+     */
     upBlack:   <span className="table-frame-caret">&#x25b2;</span>,
     downBlack: <span className="table-frame-caret">&#x25bc;</span>,
     upWhite:   <span className="table-frame-caret">&#x25b3;</span>,
@@ -122,10 +137,17 @@ var TableFrame = React.createClass({
     },
 
     render: function() {
+        /*
+         * 表の列の幅を指定するための col を作成
+         */
         var cols = this.props.title.map(function(_, i) {
             return <col key={i} />;
         });
 
+
+        /*
+         * 表のタイトル
+         */
         var title = this.props.title.map(function(cell, col_num) {
             return (
                 <TFh onClick={this.onSort(col_num)}
@@ -137,10 +159,40 @@ var TableFrame = React.createClass({
             );
         }.bind(this) );
 
+
+        /*
+         * ここからが、表をソートするためのコード。
+         * 上位要素から (属性として) 渡された表の生データを、表示する度に
+         * ソートする。
+         * ソートした結果を状態として保持していないことに注意。
+         *
+         * 表の各セルに相当する生データは、
+         *
+         *   - value: データの生の値
+         *   - view:  React オブジェクト
+         *
+         * という構造を持っている (propTypes 参照)。
+         * value はソート用で、view は表示 (render) 用。
+         * つまり、上位要素で表の各セルの view を予め構成して TableFrame に
+         * 渡す必要がある。
+         */
+
+        /*
+         * ここで、ソート対象の配列をコピーしている。
+         * これは、ソートに sort 関数を用いているためで、sort 関数は対象の
+         * 配列を直接更新してしまう。
+         * ソート対象は上位要素から渡された表の生データなわけだが、属性値を
+         * 変更することは許されていない。
+         * ということで (無駄に見えるが) 一旦ここでコピーしている。
+         */
         var data = this.props.data.map(function(row) {
             return row;
         });
         
+
+        /*
+         * ここでコピーした配列をソート
+         */
         if (this.state.col_num != null) {
             data.sort(function(a, b) {
                 var obj_a = a[this.state.col_num].value;
@@ -172,7 +224,11 @@ var TableFrame = React.createClass({
                 return 0;
             }.bind(this) );
         }
-        
+
+
+        /*
+         * ソートした配列の順に表の内容を作成
+         */
         var tbody = data.map(function(row, i) {
             var tr = row.map(function(cell, j) {
                 return <td key={j}>{cell.view}</td>;
