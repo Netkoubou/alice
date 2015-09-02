@@ -13,6 +13,7 @@ var Footer = require('./Footer');
  * 情報を受け取る。
  */
 var user = {
+    code:       '0001',
     name:       '磯野 まぐろ',
     permission: 'privilige',
     medical:    true,

@@ -78,6 +78,7 @@ var SearchPane = React.createClass({
      */
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
+            user:          this.props.user,
             category_code: this.state.category_code,
             trader_code:   this.state.trader_code,
             search_text:   this.state.search_text

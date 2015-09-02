@@ -8,6 +8,7 @@ var Order = require('./order/Order');
 var Ope = React.createClass({
     propTypes: {
         user:     React.PropTypes.shape({
+            code:       React.PropTypes.string.isRequired,
             name:       React.PropTypes.string.isRequired,
             permission: React.PropTypes.oneOf([
                 'privilige',
@@ -41,7 +42,7 @@ var Ope = React.createClass({
         case 'ORDINARY_ORDER':
         case 'URGENCY_ORDER':
         case 'MEDS_ORDER':
-            contents = <Order user={this.props.user} key={Math.random()} />;
+            contents = <Order user={this.props.user} />;
             break;
         default:
             contents = null;

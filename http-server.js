@@ -19,16 +19,16 @@ app.use(express.static('public') );
 app.post('/searchCategoriesAndTraders', function(req, res) {
     res.json({
         categories: [
-            { keyid: '0', desc: '凄いアレ' },
-            { keyid: '1', desc: '驚きのナニ' },
-            { keyid: '2', desc: 'ありえないソレ' },
-            { keyid: '3', desc: '感動のコレ' }
+            { code: '0', desc: '凄いアレ' },
+            { code: '1', desc: '驚きのナニ' },
+            { code: '2', desc: 'ありえないソレ' },
+            { code: '3', desc: '感動のコレ' }
         ],
 
         traders: [
-            { keyid: '0', desc: '阿漕商店' },
-            { keyid: '1', desc: 'バッタモン市場' },
-            { keyid: '2', desc: '贋物マーケット' }
+            { code: '0', desc: '阿漕商店' },
+            { code: '1', desc: 'バッタモン市場' },
+            { code: '2', desc: '贋物マーケット' }
         ]
     });
 });
@@ -39,32 +39,32 @@ app.post('/searchCategoriesAndTraders', function(req, res) {
  */
 app.post('/pickCandidates', function(req, res) {
     res.json([
-        ['a', 'Z', 'あ', 25],
-        ['b', 'Y', 'い', 24],
-        ['c', 'X', 'う', 23],
-        ['d', 'W', 'え', 22],
-        ['e', 'V', 'お', 21],
-        ['f', 'U', 'か', 20],
-        ['g', 'T', 'き', 19],
-        ['h', 'S', 'く', 18],
-        ['i', 'R', 'け', 17],
-        ['j', 'Q', 'こ', 16],
-        ['k', 'P', 'さ', 15],
-        ['l', 'O', 'し', 14],
-        ['m', 'N', 'す', 13],
-        ['n', 'M', 'せ', 12],
-        ['o', 'L', 'そ', 11],
-        ['p', 'K', 'た', 10],
-        ['q', 'J', 'ち',  9],
-        ['r', 'I', 'つ',  8],
-        ['s', 'H', 'て',  7],
-        ['t', 'G', 'と',  6],
-        ['u', 'F', 'な',  5],
-        ['v', 'E', 'に',  4],
-        ['w', 'D', 'ぬ',  3],
-        ['x', 'C', 'ね',  2],
-        ['y', 'B', 'の',  1],
-        ['z', 'A', 'は',  0]
+        { code: '0000', name: 'a', maker: 'Z', trader: 'あ', price: 25 },
+        { code: '0001', name: 'b', maker: 'Y', trader: 'い', price: 24 },
+        { code: '0002', name: 'c', maker: 'X', trader: 'う', price: 23 },
+        { code: '0003', name: 'd', maker: 'W', trader: 'え', price: 22 },
+        { code: '0004', name: 'e', maker: 'V', trader: 'お', price: 21 },
+        { code: '0005', name: 'f', maker: 'U', trader: 'か', price: 20 },
+        { code: '0006', name: 'g', maker: 'T', trader: 'き', price: 19 },
+        { code: '0007', name: 'h', maker: 'S', trader: 'く', price: 18 },
+        { code: '0008', name: 'i', maker: 'R', trader: 'け', price: 17 },
+        { code: '0009', name: 'j', maker: 'Q', trader: 'こ', price: 16 },
+        { code: '0010', name: 'k', maker: 'P', trader: 'さ', price: 15 },
+        { code: '0011', name: 'l', maker: 'O', trader: 'し', price: 14 },
+        { code: '0012', name: 'm', maker: 'N', trader: 'す', price: 13 },
+        { code: '0013', name: 'n', maker: 'M', trader: 'せ', price: 12 },
+        { code: '0014', name: 'o', maker: 'L', trader: 'そ', price: 11 },
+        { code: '0015', name: 'p', maker: 'K', trader: 'た', price: 10 },
+        { code: '0016', name: 'q', maker: 'J', trader: 'ち', price:  9 },
+        { code: '0017', name: 'r', maker: 'I', trader: 'つ', price:  8 },
+        { code: '0018', name: 's', maker: 'H', trader: 'て', price:  7 },
+        { code: '0019', name: 't', maker: 'G', trader: 'と', price:  6 },
+        { code: '0020', name: 'u', maker: 'F', trader: 'な', price:  5 },
+        { code: '0021', name: 'v', maker: 'E', trader: 'に', price:  4 },
+        { code: '0022', name: 'w', maker: 'D', trader: 'ぬ', price:  3 },
+        { code: '0023', name: 'x', maker: 'C', trader: 'ね', price:  2 },
+        { code: '0024', name: 'y', maker: 'B', trader: 'の', price:  1 },
+        { code: '0025', name: 'z', maker: 'A', trader: 'は', price:  0 }
     ]);
 });
 

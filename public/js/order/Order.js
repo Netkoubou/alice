@@ -34,20 +34,25 @@ var FinalPane = React.createClass({
 });
 
 var messages = {
-    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES'
+    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
+    ADD_FINALIST:      'ADD_FINALIST'
 };
 
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.candidates = [];
-        this.bindActions(messages.UPDATE_CANDIDATES, this.onSearch);
+        this.candidates   = [];
+        this.finalists    = [];
+        this.final_trader = '';
+        this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
+        this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
     },
 
-    onSearch: function(payload) {
+    onSearchCandidates: function(payload) {
         XHR.post('pickCandidates').send({
-            category_keyid: payload.category_keyid,
-            trader_keyid:   payload.trader_keyid,
-            search_text:    payload.search_text
+            user:          payload.user,
+            category_code: payload.category_code,
+            trader_code:   payload.trader_code,
+            search_text:   payload.search_text
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! pickCandidates');
@@ -59,9 +64,16 @@ var OrderStore = Fluxxor.createStore({
         }.bind(this) );
     },
 
+    onSelectCandidate: function(payload) {
+        this.finalists.push(payload.finalist);
+        this.emit('change');
+    },
+
     getState: function() {
         return {
-            candidates: this.candidates
+            candidates:   this.candidates,
+            finalists:    this.finalists,
+            final_trader: this.final_trader,
         }
     }
 });
@@ -70,6 +82,10 @@ var actions = {
     updateCandidates: function(payload) {
         this.dispatch(messages.UPDATE_CANDIDATES, payload);
     },
+
+    addFinalist: function(payload) {
+        this.dispatch(messages.ADD_FINALIST, payload);
+    }
 };
 
 var OrderManager = React.createClass({

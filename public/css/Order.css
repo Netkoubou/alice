@@ -21,6 +21,11 @@
   height: calc(100% - 280px);
 }
 
+.order-candidate-pane-clickable {
+  color:  #2196f3;
+  cursor: pointer;
+}
+  
 .order-search-pane-button {
   float: right;
 }
@@ -48,3 +53,4 @@
 #order-candidates td:nth-child(4) {
   text-align: right;
 }
+

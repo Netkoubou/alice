@@ -15,8 +15,8 @@ var Select = React.createClass({
     propTypes: {
         placeholder: React.PropTypes.string.isRequired,
         options:     React.PropTypes.arrayOf(React.PropTypes.shape({
-            keyid: React.PropTypes.string.isRequired,
-            desc:  React.PropTypes.string.isRequired
+            code: React.PropTypes.string.isRequired,
+            desc: React.PropTypes.string.isRequired
         }) ).isRequired
     },
 
@@ -33,7 +33,7 @@ var Select = React.createClass({
         return list.map(function(opt) {
             return (
                 <MenuItem eventKey={opt}
-                          key={opt.keyid}
+                          key={opt.code}
                           onSelect={this.onSelect}>
                   {opt.desc}
                 </MenuItem>
