@@ -1,6 +1,4 @@
-.table-frame {
-  margin-left: 32px;
-}
+.table-frame { margin-left: 32px; }
 
 .table-frame-title {
   border-bottom:  4px #dddddd solid;
@@ -8,10 +6,7 @@
   padding-bottom: 4px;
 }
 
-.table-frame-clickable {
-  color:  #2196f3;
-  cursor: pointer;
-}
+.table-frame-clickable { cursor: pointer; }
 
 .table-frame-caret {
   font-size: 75%;

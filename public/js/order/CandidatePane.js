@@ -1,11 +1,25 @@
 /*
  * 候補ペイン
  */
-'use strict';
-var React      = require('react');
-var Fluxxor    = require('fluxxor');
-var TableFrame = require('../components/TableFrame');
 
+/*
+ * 発注する商品の候補一覧を表で表示するペイン。
+ * 商品の品名をクリックすると確定ペインに入る。
+ */
+'use strict';
+var React          = require('react');
+var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
+var Tooltip        = require('react-bootstrap').Tooltip;
+var Fluxxor        = require('fluxxor');
+var TableFrame     = require('../components/TableFrame');
+
+
+/*
+ * 候補一覧表の品名セル専用のコンポーネント。
+ * ここをクリックすることで、その商品が確定ペインに入る。
+ * 品名がアホみたいに長いと、表内で全部を表示できないので、
+ * ツールチップで完全な商品名を表示する。
+ */
 var CandidateName = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
@@ -19,17 +33,9 @@ var CandidateName = React.createClass({
         })
     },
 
-    getInitialState: function() {
-        return { is_clickable: false };
-    },
-
-    onMouseOver: function() {
-        this.setState({ is_clickable: true });
-    },
-
-    onMouseLeave: function() {
-        this.setState({ is_clickable: false });
-    },
+    getInitialState: function() { return { is_clickable: false }; },
+    onMouseOver:     function() { this.setState({ is_clickable: true }); },
+    onMouseLeave:    function() { this.setState({ is_clickable: false }); },
 
     onSelectCandidate: function() {
         var candidate = this.props.candidate;
@@ -43,13 +49,18 @@ var CandidateName = React.createClass({
             className = 'order-candidate-pane-clickable';
         }
 
+        var tooltip = <Tooltip>{this.props.children}</Tooltip>;
+
         return (
-            <div onClick={this.onSelectCandidate}
-                 onMouseOver={this.onMouseOver}
-                 onMouseLeave={this.onMouseLeave}
-                 className={className}>
-              {this.props.children}
-            </div>
+            <OverlayTrigger placement="bottom"
+                            overlay={tooltip}
+                            onClick={this.onSelectCandidate}
+                            onEnter={this.onMouseOver}
+                            onExit={this.onMouseLeave}>
+              <div className={className}>
+                {this.props.children}
+              </div>
+            </OverlayTrigger>
         );
     }
 });
@@ -65,6 +76,11 @@ var CandidatePane = React.createClass({
             { name: '単価',   type: 'number' }
         ];
 
+
+        /*
+         * ここで、上位要素から貰った候補一覧の生データを
+         * TableFrame 用に変換する。
+         */
         var data = this.props.candidates.map(function(candidate) {
             return [
                 {
