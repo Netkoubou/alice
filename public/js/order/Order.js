@@ -32,16 +32,16 @@ var messages = {
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
         this.candidates   = [];
+        this.final_trader = null;
         this.finalists    = [];
-        this.final_trader = {};
-        this.originator   = {};
         this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
         this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
     },
 
     onSearchCandidates: function(payload) {
         XHR.post('pickCandidates').send({
-            user:          payload.user,
+            user_code:     payload.user_code,
+            order_type:    payload.order_type,
             category_code: payload.category_code,
             trader_code:   payload.trader_code,
             search_text:   payload.search_text
@@ -57,22 +57,31 @@ var OrderStore = Fluxxor.createStore({
     },
 
     onSelectCandidate: function(payload) {
-        this.finalists.push(payload.finalist);
+        this.finalists.push({
+            goods:    payload.candidate.goods,
+            maker:    payload.candidate.maker,
+            price:    payload.candidate.price,
+            quantity: 0,
+            state:    'PROCESSING'
+        });
+
+        if (this.final_trader == null) {
+            this.final_trader = payload.candidate.trader;
+        }
+
         this.emit('change');
-    },
-
-    setOriginator: function(user) {
-        this.originator.code       = user.code;
-        this.originator.name       = user.name;
-        this.originator.department = user.department;
-
-        // no emit
     },
 
     setExistingOrder: function(order) {
         this.finalists    = order.finalists;
         this.final_trader = order.trader;
-        this.originator   = order.originator;
+        this.emit('change');
+    },
+
+    resetState: function() {
+        this.candidates   = [];
+        this.final_trader = null;
+        this.finalists    = [];
         this.emit('change');
     },
 
@@ -115,16 +124,29 @@ var OrderManager = React.createClass({
 
         if (this.props.order !== undefined) {
             store.setExistingOrder(this.props.order);
-        } else {
-            store.setOriginator(this.props.user);
         }
+
+    },
+
+    componentWillUnmount: function() {
+        this.getFlux().store('OrderStore').resetState();
     },
 
     render: function() {
+        var order_type;
+        
+        if (this.props.order != undefined) {
+            order_type = this.props.order.type;
+        } else {
+            order_type = this.props.action;
+        }
+
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane user={this.props.user} />
+                <SearchPane user_code={this.props.user.code}
+                            order_type={order_type}  
+                            final_trader={this.state.final_trader} />
                 <CandidatePane candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
@@ -144,9 +166,19 @@ var flux   = new Fluxxor.Flux(stores, actions);
  */
 var Order = React.createClass({
     propTypes: {
-        user:  React.PropTypes.object.isRequired,
-        order: React.PropTypes.shape({
+        user:   React.PropTypes.object.isRequired,
+        action: React.PropTypes.oneOf([
+            'ORDINARY_ORDER',
+            'URGENCY_ORDER',
+            'MEDS_ORDER'
+        ]),
+        order:  React.PropTypes.shape({
             code:        React.PropTypes.string.isRequired,
+            type:        React.PropTypes.oneOf([
+                'ORDINARY_ORDER',
+                'URGENCY_ORDER',
+                'MEDS_ORDER'
+            ]),
             date:        React.PropTypes.string.isRequired,
             originator:  React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
@@ -193,6 +225,7 @@ var Order = React.createClass({
     render: function() {
         return <OrderManager flux={flux}
                              user={this.props.user}
+                             action={this.props.action}
                              order={this.props.order} />;
     }
 });

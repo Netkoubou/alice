@@ -11,7 +11,14 @@ var Select  = require('../components/Select');
 
 var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
-    propTypes: { user: React.PropTypes.object.isRequired },
+    propTypes: {
+        user_code:    React.PropTypes.string.isRequired,
+        order_type:   React.PropTypes.string.isRequired,
+        final_trader: React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        })
+    },
 
     getInitialState: function() {
         return {
@@ -53,7 +60,8 @@ var SearchPane = React.createClass({
      */
     onClear: function() {
         XHR.post("searchCategoriesAndTraders").send({
-            user:          this.props.user,
+            user_code:     this.props.user_code,
+            order_type:    this.props.order_type,
             category_code: '',
             trader_code:   ''
         }).end(function(err, res) {
@@ -78,7 +86,7 @@ var SearchPane = React.createClass({
      */
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
-            user:          this.props.user,
+            user_code:     this.props.user_code,
             category_code: this.state.category_code,
             trader_code:   this.state.trader_code,
             search_text:   this.state.search_text
@@ -95,8 +103,13 @@ var SearchPane = React.createClass({
      * メニューの項目に反映される。
      */
     searchCategoriesAndTraders: function(category_code, trader_code) {
+        if (this.props.final_trader != null) {
+            trader_code = this.props.final_trader.code;
+        }
+
         XHR.post("searchCategoriesAndTraders").send({
-            user:          this.props.user,
+            user_code:     this.props.user_code,
+            order_type:    this.props.order_type,
             category_code: category_code,
             trader_code:   trader_code
         }).end(function(err, res) {

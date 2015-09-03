@@ -39,7 +39,7 @@ var CandidateName = React.createClass({
 
     onSelectCandidate: function() {
         var candidate = this.props.candidate;
-        return this.getFlux().actions.addFinalist({ finalist: candidate });
+        return this.getFlux().actions.addFinalist({ candidate: candidate });
     },
 
     render: function() {

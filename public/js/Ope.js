@@ -36,7 +36,9 @@ var Ope = React.createClass({
         case 'ORDINARY_ORDER':
         case 'URGENCY_ORDER':
         case 'MEDS_ORDER':
-            contents = <Order user={this.props.user} />;
+            contents = <Order user={this.props.user}
+                              key={Math.random()}
+                              action={this.props.action} />;
             break;
         default:
             contents = null;
