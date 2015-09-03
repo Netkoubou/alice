@@ -16,7 +16,7 @@ var Select = React.createClass({
         placeholder: React.PropTypes.string.isRequired,
         options:     React.PropTypes.arrayOf(React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
-            desc: React.PropTypes.string.isRequired
+            name: React.PropTypes.string.isRequired
         }) ).isRequired
     },
 
@@ -25,7 +25,7 @@ var Select = React.createClass({
     },
 
     onSelect: function(e) {
-        this.setState({ title: e.desc });
+        this.setState({ title: e.name });
         this.props.onSelect(e);
     },
 
@@ -35,7 +35,7 @@ var Select = React.createClass({
                 <MenuItem eventKey={opt}
                           key={opt.code}
                           onSelect={this.onSelect}>
-                  {opt.desc}
+                  {opt.name}
                 </MenuItem>
             );
        }.bind(this) );

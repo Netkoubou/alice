@@ -29,6 +29,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "body-parser": "^1.13.3",
     "browserify": "^11.0.1",
     "express": "^4.13.3",
     "fluxxor": "^1.7.1",
