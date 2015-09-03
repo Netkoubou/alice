@@ -84,18 +84,18 @@ var CandidatePane = React.createClass({
         var data = this.props.candidates.map(function(candidate) {
             return [
                 {
-                    value: candidate.name,
+                    value: candidate.goods.name,
                     view:  <CandidateName candidate={candidate}>
-                             {candidate.name}
+                             {candidate.goods.name}
                            </CandidateName>
                 },
                 {
-                    value: candidate.maker,
-                    view:  <span>{candidate.maker}</span>
+                    value: candidate.maker.name,
+                    view:  <span>{candidate.maker.name}</span>
                 },
                 {
-                    value: candidate.trader,
-                    view:  <span>{candidate.trader}</span>
+                    value: candidate.trader.name,
+                    view:  <span>{candidate.trader.name}</span>
                 },
                 {
                     value: candidate.price,

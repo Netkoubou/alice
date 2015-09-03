@@ -22,16 +22,7 @@ var Fluxxor       = require('fluxxor');
 var XHR           = require('superagent');
 var SearchPane    = require('./SearchPane');
 var CandidatePane = require('./CandidatePane');
-
-var FinalPane = React.createClass({
-    render: function() {
-        return (
-            <fieldset className="order-pane">
-              <legend>確定</legend>
-            </fieldset>
-        );
-    }
-});
+var FinalPane     = require('./FinalPane');
 
 var messages = {
     UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
@@ -42,7 +33,8 @@ var OrderStore = Fluxxor.createStore({
     initialize: function() {
         this.candidates   = [];
         this.finalists    = [];
-        this.final_trader = '';
+        this.final_trader = {};
+        this.originator   = {};
         this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
         this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
     },
@@ -66,6 +58,21 @@ var OrderStore = Fluxxor.createStore({
 
     onSelectCandidate: function(payload) {
         this.finalists.push(payload.finalist);
+        this.emit('change');
+    },
+
+    setOriginator: function(user) {
+        this.originator.code       = user.code;
+        this.originator.name       = user.name;
+        this.originator.department = user.department;
+
+        // no emit
+    },
+
+    setExistingOrder: function(order) {
+        this.finalists    = order.finalists;
+        this.final_trader = order.trader;
+        this.originator   = order.originator;
         this.emit('change');
     },
 
@@ -104,7 +111,13 @@ var OrderManager = React.createClass({
     },
 
     componentWillMount: function() {
-        this.state.candidates = [];
+        var store = this.getFlux().store('OrderStore');
+
+        if (this.props.order !== undefined) {
+            store.setExistingOrder(this.props.order);
+        } else {
+            store.setOriginator(this.props.user);
+        }
     },
 
     render: function() {
@@ -128,14 +141,59 @@ var flux   = new Fluxxor.Flux(stores, actions);
 
 /*
  * Fluxxor を利用する都合上設けた、ダミーの最上位コンポーネント。
- * Ope から属性として user が渡て来るが、既に Ope の PropType でその検証は
- * 済んでいるため、以降は細かい検証をスルー。
  */
 var Order = React.createClass({
-    propTypes: { user: React.PropTypes.object.isRequired },
+    propTypes: {
+        user:  React.PropTypes.object.isRequired,
+        order: React.PropTypes.shape({
+            code:        React.PropTypes.string.isRequired,
+            date:        React.PropTypes.string.isRequired,
+            originator:  React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired,
+                department: React.PropTypes.shape({
+                    code: React.PropTypes.string.isRequired,
+                    name: React.PropTypes.string.isRequired
+                })
+            }),
+            trader: React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired
+            }),
+            finalists:   React.PropTypes.arrayOf(React.PropTypes.shape({
+                goods:  React.PropTypes.shape({
+                    code: React.PropTypes.string.isRequired,
+                    name: React.PropTypes.string.isRequired
+                }),
+                maker:  React.PropTypes.shape({
+                    code: React.PropTypes.string.isRequired,
+                    name: React.PropTypes.string.isRequired
+                }),
+                price:    React.PropTypes.number.isRequired,
+                quantity: React.PropTypes.number.isRequired,
+                state:    React.PropTypes.oneOf([
+                    'PROCESSING',
+                    'ORDERED',
+                    'CANCELED',
+                    'DELIVERED'
+                ])
+            }) ).isRequired,
+            state: React.PropTypes.oneOf([
+                'REQUESTING',
+                'APPROVING',
+                'DENIED',
+                'APPROVED',
+                'NULLIFIED',
+                'COMPLETED'
+
+            ])
+        })
+    },
 
     render: function() {
-        return <OrderManager flux={flux} user={this.props.user} />;
+        return <OrderManager flux={flux}
+                             user={this.props.user}
+                             order={this.props.order} />;
     }
 });
 

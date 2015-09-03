@@ -5,20 +5,14 @@
 var React = require('react');
 var Order = require('./order/Order');
 
+
+/*
+ * 上位要素である Nav から属性として user を貰って来るが、
+ * Nav でその検証は済んでいるため、以降は細かい検証をスルー。
+ */
 var Ope = React.createClass({
     propTypes: {
-        user:     React.PropTypes.shape({
-            code:       React.PropTypes.string.isRequired,
-            name:       React.PropTypes.string.isRequired,
-            permission: React.PropTypes.oneOf([
-                'privilige',
-                'ordinary'
-            ]).isRequired,
-            medical:  React.PropTypes.bool.isRequired,
-            urgency:  React.PropTypes.bool.isRequired,
-            approval: React.PropTypes.bool.isRequired,
-        }).isRequired,
-
+        user:   React.PropTypes.object.isRequired,
         action: React.PropTypes.oneOf([
             'NONE',
             'ORDINARY_ORDER',

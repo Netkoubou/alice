@@ -13,8 +13,12 @@ var Footer = require('./Footer');
  * 情報を受け取る。
  */
 var user = {
-    code:       '0001',
-    name:       '磯野 まぐろ',
+    code: '0001',
+    name: '磯野 まぐろ',
+    department: {
+        code: '0002',
+        name: 'こん部ええじゃない課'
+    },
     permission: 'privilige',
     medical:    true,
     urgency:    true,
