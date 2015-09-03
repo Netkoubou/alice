@@ -91,10 +91,6 @@ var Nav = React.createClass({
         user: React.PropTypes.shape({
             code:       React.PropTypes.string.isRequired,
             name:       React.PropTypes.string.isRequired,
-            department: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired
-            }),
             permission: React.PropTypes.oneOf([
                 'privilige',
                 'ordinary'

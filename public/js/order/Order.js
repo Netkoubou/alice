@@ -173,21 +173,22 @@ var Order = React.createClass({
             'MEDS_ORDER'
         ]),
         order:  React.PropTypes.shape({
-            code:        React.PropTypes.string.isRequired,
-            type:        React.PropTypes.oneOf([
+            code: React.PropTypes.string.isRequired,
+            type: React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
                 'URGENCY_ORDER',
                 'MEDS_ORDER'
             ]),
-            date:        React.PropTypes.string.isRequired,
-            originator:  React.PropTypes.shape({
+            original_date:  React.PropTypes.string.isRequired,
+            last_edit_date: React.PropTypes.string.isRequired,
+            originator: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired,
-                department: React.PropTypes.shape({
-                    code: React.PropTypes.string.isRequired,
-                    name: React.PropTypes.string.isRequired
-                })
-            }),
+            }).isRequired,
+            last_editor: React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired,
+            }).isRequired,
             trader: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired
@@ -208,7 +209,8 @@ var Order = React.createClass({
                     'ORDERED',
                     'CANCELED',
                     'DELIVERED'
-                ])
+                ]),
+                last_change_date: React.PropTypes.string.isRequired
             }) ).isRequired,
             state: React.PropTypes.oneOf([
                 'REQUESTING',
@@ -218,7 +220,12 @@ var Order = React.createClass({
                 'NULLIFIED',
                 'COMPLETED'
 
-            ])
+            ]),
+            last_modified_date: React.PropTypes.string.isRequired,
+            last_modifier: React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired
+            })
         })
     },
 

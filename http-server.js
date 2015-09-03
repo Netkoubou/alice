@@ -16,21 +16,37 @@ app.use(express.static('public') );
 /*
  * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
  */
+app.use(express.urlencoded() );
+app.use(express.json() );
 app.post('/searchCategoriesAndTraders', function(req, res) {
-    res.json({
-        categories: [
-            { code: '0', desc: '凄いアレ' },
-            { code: '1', desc: '驚きのナニ' },
-            { code: '2', desc: 'ありえないソレ' },
-            { code: '3', desc: '感動のコレ' }
-        ],
+    if (req.body.trader_code.match(/\d{4}/) ) {
+        res.json({
+            categories: [
+                { code: '0000', desc: 'ごっついアレ' },
+                { code: '0001', desc: 'がっつりいくナニ' },
+                { code: '0002', desc: 'むっちゃすごいソレ' }
+            ],
 
-        traders: [
-            { code: '0', desc: '阿漕商店' },
-            { code: '1', desc: 'バッタモン市場' },
-            { code: '2', desc: '贋物マーケット' }
-        ]
-    });
+            traders: [
+                { code: req.json.trader_code, desc: 'エセショップ' }
+            ]
+        });
+    } else {
+        res.json({
+            categories: [
+                { code: '0', desc: '凄いアレ' },
+                { code: '1', desc: '驚きのナニ' },
+                { code: '2', desc: 'ありえないソレ' },
+                { code: '3', desc: '感動のコレ' }
+            ],
+
+            traders: [
+                { code: '0', desc: '阿漕商店' },
+                { code: '1', desc: 'バッタモン市場' },
+                { code: '2', desc: '贋物マーケット' }
+            ]
+        });
+    }
 });
 
 

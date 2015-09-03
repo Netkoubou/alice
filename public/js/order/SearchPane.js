@@ -59,11 +59,17 @@ var SearchPane = React.createClass({
      * クリアボタンをクリック
      */
     onClear: function() {
+        if (this.props.final_trader != null) {
+            trader_code = this.props.final_trader.code;
+        } else {
+            trader_code = '';
+        }
+
         XHR.post("searchCategoriesAndTraders").send({
             user_code:     this.props.user_code,
             order_type:    this.props.order_type,
             category_code: '',
-            trader_code:   ''
+            trader_code:   trader_code;
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! searchCategoriesAndTraders');
