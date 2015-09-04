@@ -80,7 +80,7 @@ var SearchPane = React.createClass({
 
             this.setState({
                 category_code: '',
-                trader_code:   '',
+                trader_code:   trader_code,
                 search_text:   '',
                 categories:    res.body.categories,
                 traders:       res.body.traders 
@@ -111,10 +111,6 @@ var SearchPane = React.createClass({
      * メニューの項目に反映される。
      */
     searchCategoriesAndTraders: function(category_code, trader_code) {
-        if (this.props.final_trader != null) {
-            trader_code = this.props.final_trader.code;
-        }
-
         XHR.post("searchCategoriesAndTraders").send({
             user_code:     this.props.user_code,
             order_type:    this.props.order_type,
@@ -137,13 +133,37 @@ var SearchPane = React.createClass({
 
 
     /*
-     * 最初に表示された時
+     * コンポーネントとして最初に表示された時
      */
     componentDidMount: function() {
         this.searchCategoriesAndTraders('', '');
     },
 
+
+    /*
+     * 販売元が決定していたら (つまり発注が確定した商品が一つでもあれば)
+     * 販売元コートを固定する。
+     */
+    componentWillReceiveProps: function(next_props) {
+        if (next_props.final_trader != null) {
+            var category_code = this.state.category_code
+            var trader_code   = next_props.final_trader.code;
+
+            this.searchCategoriesAndTraders(category_code, trader_code);
+        }
+    },
+
     render: function() {
+        var trader_placeholder, trader_value;
+
+        if (this.props.final_trader != null) {
+            trader_placeholder = this.props.final_trader.name;
+            trader_value       = '';
+        } else {
+            trader_placeholder = '販売元';
+            trader_value       = this.state.trader_code;
+        }
+
         return (
             <fieldset className="order-pane">
               <legend>検索</legend>
@@ -154,9 +174,9 @@ var SearchPane = React.createClass({
                         options={this.state.categories} />
               </div>
               <div className="order-search-pane-input">
-                <Select placeholder="販売元"
+                <Select placeholder={trader_placeholder}
                         onSelect={this.onTraderSelect}
-                        value={this.state.trader_code}
+                        value={trader_value}
                         options={this.state.traders} />
               </div>
               <div className="order-search-pane-input">

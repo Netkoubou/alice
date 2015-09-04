@@ -3,9 +3,9 @@
  * 通常の HTTP リクエストに対しては正規のレスポンスを返す。
  * Ajax のリクエストに対しては、適当な (それっぽい)  JSON を返す。
  */
-var express = require('express');
+var express    = require('express');
 var bodyParser = require('body-parser');
-var app = express();
+var app        = express();
 
 
 /*
@@ -24,6 +24,7 @@ var traders = [
     { code: '2', name: '贋物マーケット' },
     { code: '3', name: 'エセショップ' }
 ];
+
 
 /*
  * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
@@ -63,7 +64,7 @@ app.post('/searchCategoriesAndTraders', function(req, res) {
 /*
  * 発注画面の SearchPane から発行される品名候補の検索リクエスト
  */
-app.post('/pickCandidates', function(req, res) {
+app.post('/searchCandidates', function(req, res) {
     var candidates = [
         {
             goods:  { code: '0000', name: 'a'  },

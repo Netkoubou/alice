@@ -34,7 +34,8 @@ var NavItem = React.createClass({
     propTypes: {
         name:       React.PropTypes.string.isRequired,
         onClick:    React.PropTypes.func.isRequired,
-        isSelected: React.PropTypes.bool.isRequired
+        isSelected: React.PropTypes.bool.isRequired,
+        bottom:     React.PropTypes.bool
     },
 
     getInitialState: function() {
@@ -71,6 +72,10 @@ var NavItem = React.createClass({
             additionalClassName = ' nav-clickable';
         } else {
             additionalClassName = "";
+        }
+
+        if (this.props.bottom != undefined && this.props.bottom) {
+            additionalClassName += ' nav-item-bottom';
         }
 
         return (
@@ -221,7 +226,8 @@ var Nav = React.createClass({
                        isSelected={selected === 'PASSWD_CHANGE'} />
               <NavItem name="ログアウト"
                        onClick={this.dummy}
-                       isSelected={selected === 'LOGOUT'}/>
+                       isSelected={selected === 'LOGOUT'}
+                       bottom={true}  />
             </div>
         );
     }

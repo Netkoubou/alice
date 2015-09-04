@@ -39,7 +39,7 @@ var OrderStore = Fluxxor.createStore({
     },
 
     onSearchCandidates: function(payload) {
-        XHR.post('pickCandidates').send({
+        XHR.post('searchCandidates').send({
             user_code:     payload.user_code,
             order_type:    payload.order_type,
             category_code: payload.category_code,
@@ -47,8 +47,8 @@ var OrderStore = Fluxxor.createStore({
             search_text:   payload.search_text
         }).end(function(err, res) {
             if (err) {
-                alert('ERROR! pickCandidates');
-                throw 'pickCandidates';
+                alert('ERROR! searchCandidates');
+                throw 'searchCandidates';
             }
 
             this.candidates = res.body;
@@ -56,6 +56,10 @@ var OrderStore = Fluxxor.createStore({
         }.bind(this) );
     },
 
+
+    /*
+     * 候補の中から発注する商品を選んだら (CandidatePane の CandidateName 参照)
+     */
     onSelectCandidate: function(payload) {
         this.finalists.push({
             goods:    payload.candidate.goods,
@@ -67,6 +71,9 @@ var OrderStore = Fluxxor.createStore({
 
         if (this.final_trader == null) {
             this.final_trader = payload.candidate.trader;
+            this.candidates   = this.candidates.filter(function(candidate) {
+                return candidate.trader.code === payload.candidate.trader.code;
+            });
         }
 
         this.emit('change');
@@ -125,11 +132,11 @@ var OrderManager = React.createClass({
         if (this.props.order !== undefined) {
             store.setExistingOrder(this.props.order);
         }
-
     },
 
     componentWillUnmount: function() {
         this.getFlux().store('OrderStore').resetState();
+        console.log('OOPS!');
     },
 
     render: function() {
@@ -147,7 +154,8 @@ var OrderManager = React.createClass({
                 <SearchPane user_code={this.props.user.code}
                             order_type={order_type}  
                             final_trader={this.state.final_trader} />
-                <CandidatePane candidates={this.state.candidates} />
+                <CandidatePane key={Math.random()}
+                               candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
                 <FinalPane />
