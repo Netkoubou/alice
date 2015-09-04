@@ -1,11 +1,157 @@
 'use strict';
 var React = require('react');
+var Notice = require('../components/Notice');
+var TableFrame = require('../components/TableFrame');
 
 var FinalPane = React.createClass({
+    propTypes: {
+        user:      React.PropTypes.object,
+        finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
+            goods: React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired
+            }).isRequired,
+            
+            maker: React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired
+            }).isRequired,
+            
+            price:    React.PropTypes.number,
+            quantity: React.PropTypes.number,
+            state:    React.PropTypes.oneOf([
+                'PROCESSING',
+                'ORDERED',
+                'CANCELED',
+                'DELIVERED'
+            ]).isRequired
+        }) ).isRequired,
+
+        final_trader: React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }),
+
+        order: React.PropTypes.object
+    },
+
     render: function() {
+        var order_code, originator, drafting_date;
+
+        if (this.props.order == undefined) {
+            order_code = '未登録';
+
+            originator = {
+                code: this.props.user.code,
+                name: this.props.user.name
+            };
+
+            var now   = new Date();
+            var year  = now.getFullYear().toString();
+            var month = (now.getMonth() + 1).toString();
+            var day   = now.getDate().toString();
+
+            drafting_date = year + '-' + month + '-' + day;
+        } else {
+            order_code    = this.props.order.code;
+            originator    = this.props.order.originator;
+            drafging_date = this.props.order.drafting_date;
+        }
+
+        var trader = {};
+
+        if (this.props.final_trader == undefined) {
+            trader = { code: null, name: '未確定' };
+        } else {
+            trader = this.props.final_trader;
+        }
+
+        var title = [
+            { name: '品名',   type: 'string' },
+            { name: '製造者', type: 'string' },
+            { name: '単価',   type: 'number' },
+            { name: '数量',   type: 'number' },
+            { name: '金額',   type: 'number' },
+            { name: '状態',   type: 'string' }
+        ];
+
+        var total = 0;
+
+        var data = this.props.finalists.map(function(finalist, i) {
+            var amount = finalist.price * finalist.quantity;
+
+            total += amount;
+
+            var state;
+
+            switch (finalist.state) {
+            case 'PROCESSING':
+                state = '処理中';
+                break;
+            case 'ORDERED':
+                state = '発注済み';
+                break;
+            case 'CANCELED':
+                state = 'キャンセル';
+                break;
+            default:
+                state = '納品済み';
+            }
+
+            return [
+                {
+                    value: finalist.goods.name,
+                    view:  <span>{finalist.goods.name}</span>
+                },
+                {
+                    value: finalist.maker.name,
+                    view:  <span>{finalist.maker.name}</span>
+                },
+                {
+                    value: finalist.price,
+                    view:  <span>{finalist.price.toLocaleString()}</span>
+                },
+                {
+                    value: finalist.quantity,
+                    view:  <span>{finalist.quantity.toLocaleString()}</span>
+                },
+                {
+                    value: amount,
+                    view:  <span>{amount.toLocaleString()}</span>
+                },
+                {
+                    value: finalist.state,
+                    view: <span>{state}</span>
+                }
+            ];
+        });
+
         return (
             <fieldset className="order-pane">
               <legend>確定</legend>
+              <div id="order-final-pane-notice">
+                <div>
+                  <Notice className="order-final-pane-notice-left"
+                          title='起案番号'>
+                    {order_code}
+                  </Notice>
+                  <Notice className="order-final-pane-notice-right"
+                          title='起案日'>
+                    {drafting_date}
+                  </Notice>
+                </div>
+                <div>
+                  <Notice className="order-final-pane-notice-left"
+                          title='起案者'>
+                    {originator.name}
+                  </Notice>
+                  <Notice className="order-final-pane-notice-right"
+                          title='販売元'>
+                    {trader.name}
+                  </Notice>
+                </div>
+              </div>
+              <TableFrame id="order-finalists" title={title} data={data} />
             </fieldset>
         );
     }

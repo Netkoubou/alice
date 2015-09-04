@@ -1,0 +1,16 @@
+.notice {
+  font-size: small;
+}
+
+.notice-title {
+  color:   #ffffff;
+  padding: 4px 0 2px 16px;
+  background: #2196f3;
+  border-radius: 8px 8px 0 0;
+}
+
+.notice-child {
+  padding: 2px 0 4px 16px;
+  border-radius: 0 0 8px 8px;
+  border: solid 1px #2196f3;
+}

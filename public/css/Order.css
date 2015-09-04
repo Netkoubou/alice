@@ -1,11 +1,12 @@
 #order-left-side {
   height: 100%;
-  width:  calc(50% - 144px);
+  width:  calc(45% - 96px);
   float: left;
 }
 
 #order-right-side{
   height: 100%;
+  width:  calc(55% - 64px);
   float:  right;
 }
 
@@ -55,4 +56,25 @@
 
 #order-candidates td:nth-child(4) {
   text-align: right;
+}
+
+#order-final-pane-notice {
+  padding-left: 32px;
+  width: 100%;
+}
+
+.order-final-pane-notice-left {
+  float: left;
+  width: 49%;
+  margin-bottom: 8px;
+}
+
+.order-final-pane-notice-right {
+  float: right;
+  width: 49%;
+  margin-bottom: 8px;
+}
+
+#order-finalists {
+  clear: both;
 }

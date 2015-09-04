@@ -95,7 +95,7 @@ var CandidatePane = React.createClass({
                 },
                 {
                     value: candidate.price,
-                    view:  <span>{candidate.price}</span>
+                    view:  <span>{candidate.price.toLocaleString()}</span>
                 }
             ];
         });

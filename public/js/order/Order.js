@@ -118,8 +118,9 @@ var OrderManager = React.createClass({
     ],
 
     propTypes: {
-        flux: React.PropTypes.object.isRequired,
-        user: React.PropTypes.object.isRequired
+        flux:  React.PropTypes.object.isRequired,
+        user:  React.PropTypes.object.isRequired,
+        order: React.PropTypes.object
     },
 
     getStateFromFlux: function() {
@@ -157,7 +158,11 @@ var OrderManager = React.createClass({
                                candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
-                <FinalPane />
+                <FinalPane action={this.props.action}
+                           user={this.props.user}
+                           finalists={this.state.finalists}
+                           final_trader={this.state.final_trader}
+                           order={this.props.order} />
               </div>
             </div>
         );
@@ -173,52 +178,65 @@ var flux   = new Fluxxor.Flux(stores, actions);
  */
 var Order = React.createClass({
     propTypes: {
-        user:   React.PropTypes.object.isRequired,
+        user: React.PropTypes.object.isRequired,
+
         action: React.PropTypes.oneOf([
             'ORDINARY_ORDER',
             'URGENCY_ORDER',
             'MEDS_ORDER'
         ]),
-        order:  React.PropTypes.shape({
+
+        order: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
+
             type: React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
                 'URGENCY_ORDER',
                 'MEDS_ORDER'
             ]),
-            original_date:  React.PropTypes.string.isRequired,
+
+            drafting_date:  React.PropTypes.string.isRequired,
             last_edit_date: React.PropTypes.string.isRequired,
+
             originator: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired,
             }).isRequired,
+
             last_editor: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired,
             }).isRequired,
+
             trader: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired
             }),
-            finalists:   React.PropTypes.arrayOf(React.PropTypes.shape({
-                goods:  React.PropTypes.shape({
+
+            finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
+                goods: React.PropTypes.shape({
                     code: React.PropTypes.string.isRequired,
                     name: React.PropTypes.string.isRequired
                 }),
-                maker:  React.PropTypes.shape({
+
+                maker: React.PropTypes.shape({
                     code: React.PropTypes.string.isRequired,
                     name: React.PropTypes.string.isRequired
                 }),
+
                 price:    React.PropTypes.number.isRequired,
                 quantity: React.PropTypes.number.isRequired,
-                state:    React.PropTypes.oneOf([
+
+                state: React.PropTypes.oneOf([
                     'PROCESSING',
                     'ORDERED',
                     'CANCELED',
                     'DELIVERED'
                 ]),
+
                 last_change_date: React.PropTypes.string.isRequired
             }) ).isRequired,
+
             state: React.PropTypes.oneOf([
                 'REQUESTING',
                 'APPROVING',
@@ -227,12 +245,14 @@ var Order = React.createClass({
                 'NULLIFIED',
                 'COMPLETED'
 
-            ]),
+            ]).isRequired,
+
             last_modified_date: React.PropTypes.string.isRequired,
+
             last_modifier: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired
-            })
+            }).isRequired
         })
     },
 
