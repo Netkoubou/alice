@@ -7,11 +7,10 @@
  * 商品の品名をクリックすると確定ペインに入る。
  */
 'use strict';
-var React          = require('react');
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Tooltip        = require('react-bootstrap').Tooltip;
-var Fluxxor        = require('fluxxor');
-var TableFrame     = require('../components/TableFrame');
+var React      = require('react');
+var Tooltip    = require('react-bootstrap').Tooltip;
+var Fluxxor    = require('fluxxor');
+var TableFrame = require('../components/TableFrame');
 
 
 /*
@@ -49,18 +48,13 @@ var CandidateName = React.createClass({
             className = 'order-candidate-pane-clickable';
         }
 
-        var tooltip = <Tooltip>{this.props.children}</Tooltip>;
-
         return (
-            <OverlayTrigger placement="bottom"
-                            overlay={tooltip}
-                            onClick={this.onSelectCandidate}
-                            onEnter={this.onMouseOver}
-                            onExit={this.onMouseLeave}>
-              <div className={className}>
-                {this.props.children}
-              </div>
-            </OverlayTrigger>
+            <div className={className}
+                 onClick={this.onSelectCandidate}
+                 onMouseOver={this.onMouseOver}
+                 onMouseLeave={this.onMouseLeave}>
+              {this.props.children}
+            </div>
         );
     }
 });
@@ -91,7 +85,9 @@ var CandidatePane = React.createClass({
                 },
                 {
                     value: candidate.maker.name,
-                    view:  <span>{candidate.maker.name}</span>
+                    view:  <span>
+                             {candidate.maker.name}
+                           </span>
                 },
                 {
                     value: candidate.trader.name,

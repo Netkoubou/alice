@@ -1,5 +1,6 @@
 #order-left-side {
   height: 100%;
+  width:  calc(50% - 144px);
   float: left;
 }
 
@@ -33,25 +34,25 @@
 
 #order-candidates {
   height: 100%;
+  width:  100%;
 }
 
 #order-candidates col:nth-child(1) {
-  width: 200px;
+  width: calc(50% - 64px);
 }
 
 #order-candidates col:nth-child(2) {
-  width: 80px;
+  width: 25%;
 }
 
 #order-candidates col:nth-child(3) {
-  width: 80px;
+  width: 25%;
 }
 
 #order-candidates col:nth-child(4) {
-  width: 50px;
+  width: 64px;
 }
 
 #order-candidates td:nth-child(4) {
   text-align: right;
 }
-

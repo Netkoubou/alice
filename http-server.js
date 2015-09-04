@@ -22,7 +22,8 @@ var traders = [
     { code: '0', name: '阿漕商店' },
     { code: '1', name: 'バッタモン市場' },
     { code: '2', name: '贋物マーケット' },
-    { code: '3', name: 'エセショップ' }
+    { code: '3', name: 'エセショップ' },
+    { code: '4', name: 'Cwm fjord veg balks nth pyx quiz' }
 ];
 
 
@@ -67,9 +68,15 @@ app.post('/searchCategoriesAndTraders', function(req, res) {
 app.post('/searchCandidates', function(req, res) {
     var candidates = [
         {
-            goods:  { code: '0000', name: 'a'  },
-            maker:  { code: '0000', name: 'Z'  },
-            price:  25
+            goods:  {
+                code: '0000',
+                name: 'The quick brown fox jumps over the lazy dog'
+            },
+            maker:  {
+                code: '0000',
+                name: 'J.Q. Vandz struck my big fox whelp'
+            },
+            price:  2500000
         },
         {
             goods:  { code: '0001', name: 'b'  },
@@ -210,8 +217,8 @@ app.post('/searchCandidates', function(req, res) {
     } else {
         candidates = candidates.map(function(candidate, i) {
             candidate.trader = {
-                code: (i % 4).toString(),
-                name: traders[(i % 4)].name
+                code: (i % traders.length).toString(),
+                name: traders[(i % traders.length)].name
             }
 
             return candidate;

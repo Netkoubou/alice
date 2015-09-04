@@ -136,7 +136,6 @@ var OrderManager = React.createClass({
 
     componentWillUnmount: function() {
         this.getFlux().store('OrderStore').resetState();
-        console.log('OOPS!');
     },
 
     render: function() {
