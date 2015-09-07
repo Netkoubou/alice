@@ -1,6 +1,7 @@
 'use strict';
-var React = require('react');
-var Notice = require('../components/Notice');
+var React      = require('react');
+var Button     = require('react-bootstrap').Button;
+var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
 
 var FinalPane = React.createClass({
@@ -71,16 +72,16 @@ var FinalPane = React.createClass({
             { name: '製造者', type: 'string' },
             { name: '単価',   type: 'number' },
             { name: '数量',   type: 'number' },
-            { name: '金額',   type: 'number' },
+            { name: '小計',   type: 'number' },
             { name: '状態',   type: 'string' }
         ];
 
         var total = 0;
 
         var data = this.props.finalists.map(function(finalist, i) {
-            var amount = finalist.price * finalist.quantity;
+            var subtotal = finalist.price * finalist.quantity;
 
-            total += amount;
+            total += subtotal;
 
             var state;
 
@@ -116,8 +117,8 @@ var FinalPane = React.createClass({
                     view:  <span>{finalist.quantity.toLocaleString()}</span>
                 },
                 {
-                    value: amount,
-                    view:  <span>{amount.toLocaleString()}</span>
+                    value: subtotal,
+                    view:  <span>{subtotal.toLocaleString()}</span>
                 },
                 {
                     value: finalist.state,
@@ -127,7 +128,7 @@ var FinalPane = React.createClass({
         });
 
         return (
-            <fieldset className="order-pane">
+            <fieldset id="order-final-pane" className="order-pane">
               <legend>確定</legend>
               <div id="order-final-pane-notice">
                 <div>
@@ -152,6 +153,22 @@ var FinalPane = React.createClass({
                 </div>
               </div>
               <TableFrame id="order-finalists" title={title} data={data} />
+              <div id="order-total">
+                <Notice title="総計">
+                  {total.toLocaleString()}
+                </Notice>
+              </div>
+              <div id="order-final-pane-buttons">
+                <Button bsSize="small">
+                  印刷
+                </Button>
+                <Button bsSize="small">
+                  クリア
+                </Button>
+                <Button bsSize="small">
+                  確定
+                </Button>
+              </div>
             </fieldset>
         );
     }

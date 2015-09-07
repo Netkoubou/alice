@@ -29,13 +29,11 @@
   cursor:          pointer;
 }
 
-.order-search-pane-button {
-  float: right;
-}
+.order-search-pane-button { float: right; }
 
 #order-candidates {
   height: 100%;
-  width:  100%;
+  width:  calc(100% - 32px);
 }
 
 #order-candidates col:nth-child(1) {
@@ -58,9 +56,16 @@
   text-align: right;
 }
 
+#order-final-pane {
+  height: 100%;
+  position: relative;
+}
+
 #order-final-pane-notice {
-  padding-left: 32px;
-  width: 100%;
+  padding-left:  32px;
+  margin-bottom: 32px;
+  height:        96px;
+  width:         100%;
 }
 
 .order-final-pane-notice-left {
@@ -76,5 +81,56 @@
 }
 
 #order-finalists {
-  clear: both;
+  clear:  both;
+  height: calc(100% - 260px);
+  width:  calc(100% - 32px);
+}
+
+#order-finalists col:nth-child(1) {
+  width: calc(55% - 144px);
+}
+
+#order-finalists col:nth-child(2) {
+  width: 20%
+}
+
+#order-finalists col:nth-child(3) {
+  width:      64px;
+}
+
+#order-finalists td:nth-child(3) {
+  text-align: right;
+}
+
+#order-finalists col:nth-child(4) {
+  width:      10%;
+}
+
+#order-finalists td:nth-child(4) {
+  text-align: right;
+}
+
+#order-finalists col:nth-child(5) {
+  width:      80px;
+}
+
+#order-finalists td:nth-child(5) {
+  text-align: right;
+}
+
+#order-finalists col:nth-child(6) {
+  width: 15%;
+}
+
+#order-total {
+  width: 192px; 
+  margin: 8px 0 8px 32px;
+  position: absolute;
+  bottom:   4px;
+}
+
+#order-final-pane-buttons {
+  position: absolute;
+  bottom: 14px;
+  right:  0px;
 }

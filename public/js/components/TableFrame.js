@@ -12,7 +12,6 @@
  */
 'use strict';
 var React = require('react');
-var Table = require('react-bootstrap').Table;
 
 
 /*
@@ -234,12 +233,12 @@ var TableFrame = React.createClass({
                 </table>
               </div>
               <div className="table-frame-body">
-                <Table>
+                <table>
                   <tbody>
                     {cols}
                     {tbody}
                   </tbody>
-                </Table>
+                </table>
               </div>
             </div>
         );
