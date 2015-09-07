@@ -24,6 +24,11 @@
   transition-duration: 250ms;
 }
 
+.nav-item:hover {
+  background: #1976d2;
+  cursor:     pointer;
+}
+
 .nav-item-bottom {
   padding:  6px 0 6px 12px;
   width:    144px;
@@ -31,13 +36,12 @@
   bottom:   0;
 }
 
-.nav-selected {
+.nav-item-selected {
+  padding:     8px 0 8px 24px;
   font-size:  110%;
+  font-family: sans-serif;
   color:      #1976d2;
   background: #bbdefb;
-}
-
-.nav-clickable {
-  background: #1976d2;
-  cursor:     pointer;
+  transition-property: background, color, font-size;
+  transition-duration: 500ms;
 }

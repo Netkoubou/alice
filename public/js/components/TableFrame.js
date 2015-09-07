@@ -55,19 +55,10 @@ var TFh = React.createClass({
 
     onMouseOver: function() {
         var caret = this.state.is_descending? this.upWhite: this.downWhite; 
-
-        this.setState({
-            is_clickable: true,
-            caret:        caret
-        });
+        this.setState({ caret: caret });
     },
 
-    onMouseLeave: function() {
-        this.setState({
-            is_clickable: false,
-            caret: ''
-        });
-    },
+    onMouseLeave: function() { this.setState({ caret: '' }); },
 
     onClick: function() {
         var caret = this.state.is_descending? this.downWhite: this.upWhite; 
@@ -88,14 +79,11 @@ var TFh = React.createClass({
             caret = this.state.is_descending? this.downBlack: this.upBlack;
         }
 
-        var class_name = this.state.is_clickable? 'table-frame-clickable': '';
-
         return (
             <th key={this.props.colNum}>
               <span onClick={this.onClick}
                     onMouseOver={this.onMouseOver}
-                    onMouseLeave={this.onMouseLeave}
-                    className={class_name}>
+                    onMouseLeave={this.onMouseLeave}> 
                 {this.props.children}
               </span>
               {caret}

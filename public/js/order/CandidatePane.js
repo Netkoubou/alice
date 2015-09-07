@@ -8,7 +8,6 @@
  */
 'use strict';
 var React      = require('react');
-var Tooltip    = require('react-bootstrap').Tooltip;
 var Fluxxor    = require('fluxxor');
 var TableFrame = require('../components/TableFrame');
 
@@ -16,8 +15,6 @@ var TableFrame = require('../components/TableFrame');
 /*
  * 候補一覧表の品名セル専用のコンポーネント。
  * ここをクリックすることで、その商品が確定ペインに入る。
- * 品名がアホみたいに長いと、表内で全部を表示できないので、
- * ツールチップで完全な商品名を表示する。
  */
 var CandidateName = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
@@ -32,27 +29,15 @@ var CandidateName = React.createClass({
         })
     },
 
-    getInitialState: function() { return { is_clickable: false }; },
-    onMouseOver:     function() { this.setState({ is_clickable: true }); },
-    onMouseLeave:    function() { this.setState({ is_clickable: false }); },
-
     onSelectCandidate: function() {
         var candidate = this.props.candidate;
         return this.getFlux().actions.addFinalist({ candidate: candidate });
     },
 
     render: function() {
-        var className = '';
-        
-        if (this.state.is_clickable) {
-            className = 'order-candidate-pane-clickable';
-        }
-
         return (
-            <div className={className}
-                 onClick={this.onSelectCandidate}
-                 onMouseOver={this.onMouseOver}
-                 onMouseLeave={this.onMouseLeave}>
+            <div className='order-candidate-pane-name'
+                 onClick={this.onSelectCandidate}>
               {this.props.children}
             </div>
         );

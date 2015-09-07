@@ -14,7 +14,7 @@
   width: 100%;
 }
 
-.table-frame-clickable { cursor: pointer; }
+.table-frame th:hover { cursor: pointer; }
 
 .table-frame-caret {
   font-size: 75%;

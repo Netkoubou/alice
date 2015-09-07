@@ -23,12 +23,12 @@
   height: calc(100% - 280px);
 }
 
-.order-candidate-pane-clickable {
+.order-candidate-pane-name:hover {
   color:           #1976d2;
   text-decoration: underline;
   cursor:          pointer;
 }
-  
+
 .order-search-pane-button {
   float: right;
 }
