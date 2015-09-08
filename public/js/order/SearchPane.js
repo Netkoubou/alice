@@ -11,6 +11,7 @@ var Select  = require('../components/Select');
 
 var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
+
     propTypes: {
         user_code:    React.PropTypes.string.isRequired,
         order_type:   React.PropTypes.string.isRequired,

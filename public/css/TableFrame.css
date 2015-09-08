@@ -7,17 +7,18 @@
   border-bottom:  4px #dddddd solid;
   margin-bottom:  2px;
   padding-bottom: 4px;
-  width:          100%;
+  width:          calc(100% - 16px);
 }
 
 .table-frame-title table {
   width: 100%;
 }
 
+.table-frame th       { text-align: center; }
 .table-frame th:hover { cursor: pointer; }
 
 .table-frame-caret {
-  font-size: 75%;
+  font-size:   75%;
   margin-left: 2px;
 }
 
@@ -36,5 +37,12 @@
 }
 
 .table-frame tbody td {
-  padding-left: 8px;
+  border-right:  1px solid #cccccc;
+  padding-left:  4px;
+  padding-right: 4px;
 }
+
+.table-frame tbody td:last-child {
+  border-right: 0px;
+}
+

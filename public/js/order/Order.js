@@ -26,7 +26,8 @@ var FinalPane     = require('./FinalPane');
 
 var messages = {
     UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
-    ADD_FINALIST:      'ADD_FINALIST'
+    ADD_FINALIST:      'ADD_FINALIST',
+    CLEAR_FINALISTS:   'CLEAR_FINALISTS'
 };
 
 var OrderStore = Fluxxor.createStore({
@@ -36,6 +37,7 @@ var OrderStore = Fluxxor.createStore({
         this.finalists    = [];
         this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
         this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
+        this.bindActions(messages.CLEAR_FINALISTS,   this.onClearFinalists);
     },
 
     onSearchCandidates: function(payload) {
@@ -79,6 +81,27 @@ var OrderStore = Fluxxor.createStore({
         this.emit('change');
     },
 
+
+    /*
+     * 確定した商品をクリアする場合、状態が処理中のもの *だけ* 除去する。
+     * 以下の状態のものは除去しちゃいけない。
+     *
+     *   - 発注済み
+     *   - キャンセル
+     *   - 納品済み
+     */
+    onClearFinalists: function() {
+        this.finalists = this.finalists.filter(function(finalist) {
+            return finalist.state !== 'PROCESSING';
+        });
+
+        if (this.finalists.length == 0) {
+            this.final_trader = null;
+        }
+
+        this.emit('change');
+    },
+
     setExistingOrder: function(order) {
         this.finalists    = order.finalists;
         this.final_trader = order.trader;
@@ -108,6 +131,10 @@ var actions = {
 
     addFinalist: function(payload) {
         this.dispatch(messages.ADD_FINALIST, payload);
+    },
+
+    clearFinalists: function() {
+        this.dispatch(messages.CLEAR_FINALISTS);
     }
 };
 
@@ -158,7 +185,8 @@ var OrderManager = React.createClass({
                                candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
-                <FinalPane action={this.props.action}
+                <FinalPane key={Math.random()} 
+                           action={this.props.action}
                            user={this.props.user}
                            finalists={this.state.finalists}
                            final_trader={this.state.final_trader}

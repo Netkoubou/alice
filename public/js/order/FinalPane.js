@@ -1,10 +1,13 @@
 'use strict';
 var React      = require('react');
 var Button     = require('react-bootstrap').Button;
+var Fluxxor    = require('fluxxor');
 var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
 
 var FinalPane = React.createClass({
+    mixins: [ Fluxxor.FluxMixin(React) ],
+
     propTypes: {
         user:      React.PropTypes.object,
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
@@ -34,6 +37,10 @@ var FinalPane = React.createClass({
         }),
 
         order: React.PropTypes.object
+    },
+
+    onClear: function() {
+        return this.getFlux().actions.clearFinalists();
     },
 
     render: function() {
@@ -162,7 +169,7 @@ var FinalPane = React.createClass({
                 <Button bsSize="small">
                   印刷
                 </Button>
-                <Button bsSize="small">
+                <Button bsSize="small" onClick={this.onClear}>
                   クリア
                 </Button>
                 <Button bsSize="small">

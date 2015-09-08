@@ -36,25 +36,11 @@
   width:  calc(100% - 32px);
 }
 
-#order-candidates col:nth-child(1) {
-  width: calc(50% - 64px);
-}
-
-#order-candidates col:nth-child(2) {
-  width: 25%;
-}
-
-#order-candidates col:nth-child(3) {
-  width: 25%;
-}
-
-#order-candidates col:nth-child(4) {
-  width: 64px;
-}
-
-#order-candidates td:nth-child(4) {
-  text-align: right;
-}
+#order-candidates col:nth-child(1) { width: calc(50% - 64px); }
+#order-candidates col:nth-child(2) { width: 25%; }
+#order-candidates col:nth-child(3) { width: 25%; }
+#order-candidates col:nth-child(4) { width: 64px; }
+#order-candidates td:nth-child(4)  { text-align: right; }
 
 #order-final-pane {
   height: 100%;
@@ -63,8 +49,7 @@
 
 #order-final-pane-notice {
   padding-left:  32px;
-  margin-bottom: 32px;
-  height:        96px;
+  height:        128px;
   width:         100%;
 }
 
@@ -86,41 +71,16 @@
   width:  calc(100% - 32px);
 }
 
-#order-finalists col:nth-child(1) {
-  width: calc(55% - 144px);
-}
-
-#order-finalists col:nth-child(2) {
-  width: 20%
-}
-
-#order-finalists col:nth-child(3) {
-  width:      64px;
-}
-
-#order-finalists td:nth-child(3) {
-  text-align: right;
-}
-
-#order-finalists col:nth-child(4) {
-  width:      10%;
-}
-
-#order-finalists td:nth-child(4) {
-  text-align: right;
-}
-
-#order-finalists col:nth-child(5) {
-  width:      80px;
-}
-
-#order-finalists td:nth-child(5) {
-  text-align: right;
-}
-
-#order-finalists col:nth-child(6) {
-  width: 15%;
-}
+#order-finalists col:nth-child(1) { width: calc(55% - 144px); }
+#order-finalists col:nth-child(2) { width: 20% }
+#order-finalists col:nth-child(3) { width: 64px; }
+#order-finalists col:nth-child(4) { width: 10%; }
+#order-finalists col:nth-child(5) { width: 80px; }
+#order-finalists col:nth-child(6) { width: 15%; }
+#order-finalists td:nth-child(3) { text-align: right; }
+#order-finalists td:nth-child(4) { text-align: right; }
+#order-finalists td:nth-child(5) { text-align: right; }
+#order-finalists td:nth-child(6) { text-align: center; }
 
 #order-total {
   width: 192px; 

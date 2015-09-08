@@ -7,20 +7,19 @@ var Header = React.createClass({
 
     render: function() {
         return (
-            <header id="header">
-              <div>
-                <div id="header-upper">
-                  <img id="header-kdulogo" src="img/kdulogo.png" />
-                  <span id="header-petname">Alice</span>
-                  <div id="header-welcome">
-                    ようこそ
-                    <span id="header-username">{this.props.username}</span>
-                    様
-                  </div>
-                </div>
-                <div id="header-lower">Supply Processing Distribution</div>
-              </div>
-            </header>
+          <div id="header">
+            <img id="header-logo" src="img/logo.png" />
+            <div id="header-systitle">
+              <div id="header-sysname">次世代物品調達システム</div>
+              <span id="header-subsysname">
+                Supply Processing Distribution
+              </span>
+            </div>
+            <div id="header-petname">Perry</div>
+            <div id="header-welcome">
+              ようこそ<span id="header-username">{this.props.username}</span>様
+            </div>
+          </div>
         );
     }
 });
