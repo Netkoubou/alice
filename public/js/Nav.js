@@ -165,7 +165,7 @@ var Nav = React.createClass({
     },
 
     render: function() {
-        var selected = this.props.selected;
+        var selected  = this.props.selected;
 
         return (
             <div id="nav">

@@ -1,17 +1,17 @@
 #order-left-side {
   height: 100%;
-  width:  calc(45% - 96px);
+  width:  calc(45% - 4px);
   float: left;
 }
 
 #order-right-side{
   height: 100%;
-  width:  calc(55% - 64px);
+  width:  calc(55% - 4px);
   float:  right;
 }
 
 .order-pane {
-  margin:    8px 8px 8px 8px;
+  margin:    8px 8px 8px 16px;
   font-size: small;
 }
 

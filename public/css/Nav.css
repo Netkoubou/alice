@@ -1,12 +1,24 @@
 #nav {
+  width:         8px;
+  height:        100%;
+  overflow-x:    hidden;
+  overflow-y:    hidden;
+  background:    #2196f3;
+  position:      absolute;
+  left:          0px;
+  transition-property: width;
+  transition-duration: 250ms;
+}
+
+#nav:hover {
   width:         144px;
   height:        100%;
   overflow-y:    hidden;
-  float:         left;
   background:    #2196f3;
   padding:       8px 0 8px 0;
-  margin-bottom: 1px;
-  position:      relative;
+  position:      absolute;
+  left:          0px;
+  z-index:       100;
 }
 
 .nav-item-title {
