@@ -10,10 +10,7 @@
   width:          calc(100% - 16px);
 }
 
-.table-frame-title table {
-  width: 100%;
-}
-
+.table-frame-title table { width: 100%; }
 .table-frame th       { text-align: center; }
 .table-frame th:hover { cursor: pointer; }
 
@@ -23,9 +20,12 @@
 }
 
 .table-frame-body {
+  width:      100%;
   height:     calc(100% - 30px);
   overflow-y: scroll;
 }
+
+.table-frame-body table { width: 100%; }
 
 .table-frame tbody tr {
   border-bottom: 1px solid #cccccc;

@@ -234,10 +234,8 @@ var TableFrame = React.createClass({
               </div>
               <div className="table-frame-body">
                 <table>
-                  <tbody>
-                    {cols}
-                    {tbody}
-                  </tbody>
+                  {cols}
+                  <tbody>{tbody}</tbody>
                 </table>
               </div>
             </div>
