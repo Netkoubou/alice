@@ -243,4 +243,80 @@ var TableFrame = React.createClass({
     }
 });
 
+TableFrame.Input = React.createClass({
+    propTypes: {
+        placeholder: React.PropTypes.string.isRequired,
+        onChange:    React.PropTypes.func.isRequired,
+        type:        React.PropTypes.oneOf([
+            'string',
+            'int',
+            'real'
+        ]).isRequired
+    },
+
+    getInitialState: function() {
+        var value;
+
+        switch (this.props.type) {
+        case 'string':
+            value = this.props.placeholder;
+            break;
+        case 'int':
+            value = parseInt(this.props.placeholder);
+            break;
+        default:
+            value = parseFloat(this.props.placeholder);
+        }
+
+        return { value: value };
+    },
+
+    onChange: function(e) {
+        var value;
+
+        switch (this.props.type) {
+        case 'string':
+            value = e.target.value;
+            break;
+        case 'int':
+            if (e.target.value.match(/^\d+$/) ) {
+                value = parseInt(e.target.value);
+            } else {
+                value = 0;
+            }
+
+            break;
+        default:
+            if (e.target.value.match(/^\d+(\.\d+)?$/) ) {
+                value = parseFloat(e.target.value);
+            } else {
+                value = 0.0;
+            }
+        }
+                
+        this.setState({ value: value });
+    },
+
+    render: function() {
+        var value;
+
+        switch (this.props.type) {
+        case 'string':
+            value = this.state.value;
+            break;
+        case 'int':
+            value = parseInt(this.state.value).toLocaleString();
+            break;
+        default:
+            value = parseFloat(this.state.value).toLocaleString();
+        }
+
+        return (
+            <input value={value}
+                   onBlur={this.props.onChange}
+                   onChange={this.onChange} />
+        );
+    }
+});
+
 module.exports = TableFrame;

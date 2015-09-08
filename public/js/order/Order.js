@@ -27,17 +27,19 @@ var FinalPane     = require('./FinalPane');
 var messages = {
     UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
     ADD_FINALIST:      'ADD_FINALIST',
-    CLEAR_FINALISTS:   'CLEAR_FINALISTS'
+    CLEAR_FINALISTS:   'CLEAR_FINALISTS',
+    CHANGE_QUANTITY:   'CHANGE_QUANTITY'
 };
 
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.candidates   = [];
-        this.final_trader = null;
-        this.finalists    = [];
+        this.candidates   = [];     // 商品の発注候補一覧
+        this.final_trader = null;   // 発注先の販売元
+        this.finalists    = [];     // 発注が確定した商品の一覧
         this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
         this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
         this.bindActions(messages.CLEAR_FINALISTS,   this.onClearFinalists);
+        this.bindActions(messages.CHANGE_QUANTITY,   this.onChangeQuantity);
     },
 
     onSearchCandidates: function(payload) {
@@ -102,6 +104,15 @@ var OrderStore = Fluxxor.createStore({
         this.emit('change');
     },
 
+
+    /*
+     * 確定した商品の発注数量を変更したら 
+     */
+    onChangeQuantity: function(payload) {
+        this.finalists[payload.index].quantity = payload.value;
+        this.emit('change');
+    },
+
     setExistingOrder: function(order) {
         this.finalists    = order.finalists;
         this.final_trader = order.trader;
@@ -135,6 +146,10 @@ var actions = {
 
     clearFinalists: function() {
         this.dispatch(messages.CLEAR_FINALISTS);
+    },
+
+    changeQuantity: function(payload) {
+        this.dispatch(messages.CHANGE_QUANTITY, payload);
     }
 };
 
@@ -197,6 +212,10 @@ var OrderManager = React.createClass({
     }
 });
 
+
+/*
+ * Fluxxor を利用する上でのお約束
+ */
 var stores = { OrderStore: new OrderStore() };
 var flux   = new Fluxxor.Flux(stores, actions);
 

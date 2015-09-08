@@ -46,3 +46,7 @@
   border-right: 0px;
 }
 
+.table-frame input {
+  border: none;
+  width:  100%;
+}

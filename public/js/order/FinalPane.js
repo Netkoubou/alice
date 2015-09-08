@@ -7,6 +7,7 @@ var Button     = require('react-bootstrap').Button;
 var Fluxxor    = require('fluxxor');
 var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
+var Input      = TableFrame.Input;
 
 var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
@@ -42,8 +43,31 @@ var FinalPane = React.createClass({
         order: React.PropTypes.object
     },
 
+
+    /*
+     * クリアボタンがクリックされたら
+     */
     onClear: function() {
         return this.getFlux().actions.clearFinalists();
+    },
+
+
+    /*
+     * 発注が確定した商品の数量が変更されたら呼び出されるコールバック関数を
+     * 返す関数。
+     * コールバック関数そのものではないので注意。
+     * クロージャで、発注が確定した商品が格納される配列のインデックス == index
+     * を保持して、当該商品の数量を変更できるようにしている。
+     */
+    onChangeQuantity: function(index) {
+        return function(e) {
+            var value = e.target.value.match(/^\d+$/)? e.target.value: '0';
+
+            return this.getFlux().actions.changeQuantity({
+                index: index,
+                value: parseInt(value)
+            });
+        }.bind(this);
     },
 
     render: function() {
@@ -124,7 +148,9 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: finalist.quantity,
-                    view:  <span>{finalist.quantity.toLocaleString()}</span>
+                    view:  <Input type='int'
+                                  placeholder={finalist.quantity.toString()}
+                                  onChange={this.onChangeQuantity(i)} />
                 },
                 {
                     value: subtotal,
@@ -135,7 +161,7 @@ var FinalPane = React.createClass({
                     view: <span>{state}</span>
                 }
             ];
-        });
+        }.bind(this) );
 
         return (
             <fieldset id="order-final-pane" className="order-pane">
