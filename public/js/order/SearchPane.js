@@ -9,6 +9,70 @@ var XHR     = require('superagent');
 var Fluxxor = require('fluxxor');
 var Select  = require('../components/Select');
 
+var SelectTrader = React.createClass({
+    propTypes: {
+        final_trader: React.PropTypes.object,
+        onSelect:     React.PropTypes.func.isRequired,
+        value:        React.PropTypes.string.isRequired,
+        options:      React.PropTypes.arrayOf(React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }) ).isRequired
+    },
+
+    render: function() {
+        var placeholder, code, options;
+
+        if (this.props.final_trader === null) {
+            placeholder = '販売元';
+            code        = this.props.value;
+            options     = this.props.options;
+        } else {
+            placeholder = this.props.final_trader.name;
+            code        = this.props.final_trader.code;
+            options     = [ this.props.final_trader ];
+        }
+
+        return (
+            <Select key={placeholder}
+                    placeholder={placeholder}
+                    value={code}
+                    onSelect={this.props.onSelect}
+                    options={options} />
+        );
+    }
+});
+
+var SelectDepartment = React.createClass({
+    propTypes: {
+        onSelect: React.PropTypes.func.isRequired,
+        options:  React.PropTypes.arrayOf(React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }) ).isRequired
+    },
+
+    render: function() {
+        var placeholder, code;
+
+        if (this.props.options.length == 1) {
+            placeholder = this.props.options[0].name;
+            code        = this.props.options[0].code;
+        } else {
+            placeholder = '診療科';
+            code        = this.props.value;
+        }
+
+        return (
+            <Select key={placeholder}
+                    placeholder={placeholder}
+                    onSelect={this.props.onSelect}
+                    value={code}
+                    options={this.props.options} />
+        );
+    }
+});
+
 var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
 
@@ -143,7 +207,7 @@ var SearchPane = React.createClass({
 
 
     /*
-     * コンポーネントとして最初に表示される時、プルダウンメニューに表示する
+     * コンポーネントとして最初に表示される直前、プルダウンメニューに表示する
      * 項目をサーバに問い合わせる。
      */
     componentDidMount: function() {
@@ -178,51 +242,36 @@ var SearchPane = React.createClass({
         }.bind(this) );
     },
 
+    componentWillReceiveProps: function(new_props) {
+        if (new_props.final_trader != null) {
+            this.setState({ trader_code: new_props.final_trader.code });
+        } else if (this.props.final_trader != null) {
+            this.setState({ trader_code: '' });
+        }
+    },
 
     render: function() {
-        var department_placeholder, department_code;
-        var trader_placeholder, trader_code, trader_options;
-
-        if (this.state.departments.length == 1) {
-            department_placeholder = this.state.departments[0].name;
-            department_code        = this.state.departments[0].code;
-        } else {
-            department_placeholder = '診療科';
-            department_code        = this.state.department_code;
-        }
-
-        if (this.props.final_trader === null) {
-            trader_placeholder = '販売元';
-            trader_code        = this.state.trader_code;
-            trader_options     = this.state.traders;
-        } else {
-            trader_placeholder = this.props.final_trader.name;
-            trader_code        = this.props.final_trader.code;
-            trader_options     = [ this.props.final_trader ];
-        }
-
         return (
             <fieldset className="order-pane">
               <legend>検索</legend>
               <div className="order-search-pane-row">
                 <Select placeholder="分類"
-                        onSelect={this.onSelectClass}
                         value={this.state.class_code}
+                        onSelect={this.onSelectClass}
                         options={this.state.classes} />
                 <Select placeholder="品目"
-                        onSelect={this.onSelectCategory}
                         value={this.state.category_code}
+                        onSelect={this.onSelectCategory}
                         options={this.state.categories} />
               </div>
               <div className="order-search-pane-row">
-                <Select placeholder={trader_placeholder}
-                        onSelect={this.onSelectTrader}
-                        value={trader_code}
-                        options={trader_options} />
-                <Select placeholder={department_placeholder}
-                        onSelect={this.onSelectDepartment}
-                        value={department_code}
-                        options={this.state.departments} />
+                <SelectTrader final_trader={this.props.final_trader}
+                              onSelect={this.onSelectTrader}
+                              value={this.state.trader_code}
+                              options={this.state.traders} />
+                <SelectDepartment onSelect={this.onSelectDepartment}
+                                  value={this.state.department_code}
+                                  options={this.state.departments} />
               </div>
               <div className="order-search-pane-row">
                 <Input type="text"

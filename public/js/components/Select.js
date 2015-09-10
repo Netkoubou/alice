@@ -14,6 +14,8 @@ var MenuItem    = require('react-bootstrap').MenuItem;
 var Select = React.createClass({
     propTypes: {
         placeholder: React.PropTypes.string.isRequired,
+        value:       React.PropTypes.string.isRequired,
+        onSelect:    React.PropTypes.func.isRequired,
         options:     React.PropTypes.arrayOf(React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
@@ -42,12 +44,10 @@ var Select = React.createClass({
     },
 
     render: function() {
-        var title;
+        var title = this.props.placeholder;
 
-        if (this.props.value !== '') {
+        if (this.props.value != '') {
             title = this.state.title;
-        } else {
-            title = this.props.placeholder;
         }
 
         return (
