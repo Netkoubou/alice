@@ -75,11 +75,7 @@ var FinalPane = React.createClass({
 
         if (this.props.order == undefined) {
             order_code = '未登録';
-
-            originator = {
-                code: this.props.user.code,
-                name: this.props.user.name
-            };
+            originator = this.props.user.account;
 
             var now   = new Date();
             var year  = now.getFullYear().toString();
@@ -180,7 +176,7 @@ var FinalPane = React.createClass({
                 <div>
                   <Notice className="order-final-pane-notice-left"
                           title='起案者'>
-                    {originator.name}
+                    {originator}
                   </Notice>
                   <Notice className="order-final-pane-notice-right"
                           title='販売元'>

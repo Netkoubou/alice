@@ -18,47 +18,55 @@ app.use(express.static('public') );
  * ダミーデータ
  */
 
-var traders = [
-    { code: '0', name: '阿漕商店' },
-    { code: '1', name: 'バッタモン市場' },
-    { code: '2', name: '贋物マーケット' },
-    { code: '3', name: 'エセショップ' },
-    { code: '4', name: 'Cwm fjord veg balks nth pyx quiz' }
-];
-
 
 /*
  * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
  */
 app.use(bodyParser.json() );
 app.use(bodyParser.urlencoded({ extended: true }) );
-app.post('/searchCategoriesAndTraders', function(req, res) {
-    if (req.body.trader_code != '' ) {
-        res.json({
-            categories: [
-                { code: '9004', name: 'ごっついドレ' },
-                { code: '9005', name: 'むっちゃすごいワレ' }
-            ],
+app.post('/pickMenuItemsForSearchPane', function(req, res) {
+    var classes = [
+        { code: '0000', name: '医科' },
+        { code: '0001', name: '歯科' },
+        { code: '0002', name: 'ええじゃない科' },
+        { code: '0003', name: 'その他' }
+    ];
 
-            traders: [{
-                code: req.body.trader_code,
-                name: traders[parseInt(req.body.trader_code)].name
-            }]
-        });
+    var categories = [
+        { code: '0000', name: '凄いアレ' },
+        { code: '0001', name: '驚きのナニ' },
+        { code: '0002', name: 'ありえないソレ' },
+        { code: '0003', name: '感動のコレ' },
+    ];
+
+    var departments;
+    
+    if (Math.random() < 0.5) {
+        departments = [
+            { code: '0000', name: '外科' },
+            { code: '0001', name: '内科' },
+            { code: '0002', name: '中科' },
+            { code: '0003', name: '小児科' },
+            { code: '0004', name: '眼科' }
+        ];
     } else {
-        res.json({
-            categories: [
-                { code: '0000', name: '凄いアレ' },
-                { code: '0001', name: '驚きのナニ' },
-                { code: '0002', name: 'ありえないソレ' },
-                { code: '0003', name: '感動のコレ' },
-                { code: '9004', name: 'ごっついドレ' },
-                { code: '9005', name: 'むっちゃすごいワレ' }
-            ],
-
-            traders:    traders
-        });
+        departments = [{ code: '0000', name: '外科' }];
     }
+    
+    traders = [
+        { code: '0', name: '阿漕商店' },
+        { code: '1', name: 'バッタモン市場' },
+        { code: '2', name: '贋物マーケット' },
+        { code: '3', name: 'エセショップ' },
+        { code: '4', name: 'Cwm fjord veg balks nth pyx quiz' }
+    ];
+
+    res.json({
+        classes:     classes,
+        categories:  categories,
+        departments: departments,
+        traders:     traders
+    });
 });
 
 

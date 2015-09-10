@@ -13,7 +13,7 @@ var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        user_code:    React.PropTypes.string.isRequired,
+        account:      React.PropTypes.string.isRequired,
         order_type:   React.PropTypes.string.isRequired,
         final_trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -22,36 +22,62 @@ var SearchPane = React.createClass({
     },
 
     getInitialState: function() {
+        var trader_code = '';
+
+        if (this.props.final_trader != null) {
+            trader_code = this.props.final_trader.code;
+        }
+
         return {
-            category_code: '',
-            trader_code:   '',
-            search_text:   '',
-            categories:    [],
-            traders:       []
+            class_code:      '',
+            category_code:   '',
+            department_code: '',
+            trader_code:     trader_code,
+            search_text:     '',
+            classes:         [],
+            categories:      [],
+            departments:     [],
+            traders:         []
         };
+    },
+
+
+    /*
+     * 分類が選択されたら
+     */
+    onSelectClass: function(e) {
+        this.setState({ class_code: e.code });
     },
 
 
     /*
      * 品目が選択されたら
      */
-    onCategorySelect: function(e) {
-        this.searchCategoriesAndTraders(e.code, this.state.trader_code);
+    onSelectCategory: function(e) {
+        this.setState({ category_code: e.code });
+    },
+
+
+    /*
+     * 診療科が選択されたら
+     */
+    onSelectDepartment: function(e) {
+        this.setState({ department_code: e.code });
     },
 
 
     /*
      * 販売元が選択されたら
      */
-    onTraderSelect: function(e) {
-        this.searchCategoriesAndTraders(this.state.category_code, e.code);
+    onSelectTrader: function(e) {
+        this.setState({ trader_code: e.code });
     },
 
 
     /*
      * 検索テキストが変更されたら
      */
-    onSearchTextChange: function(e) {
+    onChangeSearchText: function(e) {
         this.setState({ search_text: e.target.value });
     },
 
@@ -60,33 +86,43 @@ var SearchPane = React.createClass({
      * クリアボタンをクリック
      */
     onClear: function() {
-        var trader_code;
+        var department_code, trader_code;
 
+        if (this.state.departments.length == 1) {
+            /*
+             * 自分の部署の発注しか扱えないのなら
+             *
+             * 一般の部署は他部署の発注を扱うことができない。
+             * つまり、選択の余地はない訳で、クリアする意味がない。
+             */
+            department_code = this.state.departments[0].code;
+        } else {
+            /*
+             * 他部署の発注も扱うことができるなら
+             *
+             * 一部の部署は、他部署の発注を扱う (肩代わりする)
+             * ことが許されている。
+             */
+            department_code = '';
+        }
+
+
+        /*
+         * 発注元が確定している場合、発注元をクリアしちゃいけない
+         */
         if (this.props.final_trader != null) {
             trader_code = this.props.final_trader.code;
         } else {
             trader_code = '';
         }
 
-        XHR.post("searchCategoriesAndTraders").send({
-            user_code:     this.props.user_code,
-            order_type:    this.props.order_type,
-            category_code: '',
-            trader_code:   trader_code
-        }).end(function(err, res) {
-            if (err) {
-                alert('ERROR! searchCategoriesAndTraders');
-                throw 'searchCategoriesAndTraders';
-            }
-
-            this.setState({
-                category_code: '',
-                trader_code:   trader_code,
-                search_text:   '',
-                categories:    res.body.categories,
-                traders:       res.body.traders 
-            });
-        }.bind(this) );
+        this.setState({
+            class_code:      '',
+            category_code:   '',
+            department_code: department_code,
+            trader_code:     trader_code,
+            search_text:     '',
+        });
     },
 
 
@@ -95,97 +131,105 @@ var SearchPane = React.createClass({
      */
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
-            user_code:     this.props.user_code,
-            category_code: this.state.category_code,
-            trader_code:   this.state.trader_code,
-            search_text:   this.state.search_text
+            account:         this.props.account,
+            order_type:      this.props.order_type,
+            class_code:      this.state.class_code,
+            category_code:   this.state.category_code,
+            department_code: this.state.department_code,
+            trader_code:     this.state.trader_code,
+            search_text:     this.state.search_text
         });
     },
 
 
     /*
-     * 品目と販売元のプルダウンメニューに表示する項目をサーバに問い合わせる
-     * 関数。
-     * 品目を選択すればそれを扱う販売元のみが表示され、販売元を選択すればそ
-     * の販売元が扱う品目のみが表示される、という動作を実現するために、品
-     * 目 / 販売元が変更されると、本関数が呼び出され、その結果がプルダウン
-     * メニューの項目に反映される。
+     * コンポーネントとして最初に表示される時、プルダウンメニューに表示する
+     * 項目をサーバに問い合わせる。
      */
-    searchCategoriesAndTraders: function(category_code, trader_code) {
-        XHR.post("searchCategoriesAndTraders").send({
-            user_code:     this.props.user_code,
-            order_type:    this.props.order_type,
-            category_code: category_code,
-            trader_code:   trader_code
+    componentDidMount: function() {
+        XHR.post("pickMenuItemsForSearchPane").send({
+            account: this.props.account,
         }).end(function(err, res) {
             if (err) {
-                alert('ERROR! searchCategoriesAndTraders');
-                throw 'searchCategoriesAndTraders';
+                alert('ERROR! pickMenuItemsForSearchPane');
+                throw 'pickMenuItemsForSearchPane';
+            }
+
+            var department_code;
+
+            if (res.body.departments.length == 1) {
+                /*
+                 * 自分の部署の発注しか扱えない
+                 */
+                department_code = res.body.departments[0].code;
+            } else {
+                /*
+                 * 他部署の発注も扱うことができる
+                 */
+                department_code = '';
             }
 
             this.setState({
-                category_code: category_code,
-                trader_code:   trader_code,
-                categories:    res.body.categories,
-                traders:       res.body.traders 
+                classes:     res.body.classes,
+                categories:  res.body.categories,
+                departments: res.body.departments,
+                traders:     res.body.traders 
             });
         }.bind(this) );
     },
 
 
-    /*
-     * コンポーネントとして最初に表示された時
-     */
-    componentDidMount: function() {
-        this.searchCategoriesAndTraders('', '');
-    },
-
-
-    /*
-     * 販売元が決定していたら (つまり発注が確定した商品が一つでもあれば)
-     * 販売元コートを固定する。
-     */
-    componentWillReceiveProps: function(next_props) {
-        if (next_props.final_trader != null) {
-            var category_code = this.state.category_code
-            var trader_code   = next_props.final_trader.code;
-
-            this.searchCategoriesAndTraders(category_code, trader_code);
-        }
-    },
-
     render: function() {
-        var trader_placeholder, trader_value;
+        var department_placeholder, department_code;
+        var trader_placeholder, trader_code, trader_options;
 
-        if (this.props.final_trader != null) {
-            trader_placeholder = this.props.final_trader.name;
-            trader_value       = '';
+        if (this.state.departments.length == 1) {
+            department_placeholder = this.state.departments[0].name;
+            department_code        = this.state.departments[0].code;
         } else {
+            department_placeholder = '診療科';
+            department_code        = this.state.department_code;
+        }
+
+        if (this.props.final_trader === null) {
             trader_placeholder = '販売元';
-            trader_value       = this.state.trader_code;
+            trader_code        = this.state.trader_code;
+            trader_options     = this.state.traders;
+        } else {
+            trader_placeholder = this.props.final_trader.name;
+            trader_code        = this.props.final_trader.code;
+            trader_options     = [ this.props.final_trader ];
         }
 
         return (
             <fieldset className="order-pane">
               <legend>検索</legend>
-              <div className="order-search-pane-input">
+              <div className="order-search-pane-row">
+                <Select placeholder="分類"
+                        onSelect={this.onSelectClass}
+                        value={this.state.class_code}
+                        options={this.state.classes} />
                 <Select placeholder="品目"
-                        onSelect={this.onCategorySelect}
+                        onSelect={this.onSelectCategory}
                         value={this.state.category_code}
                         options={this.state.categories} />
               </div>
-              <div className="order-search-pane-input">
+              <div className="order-search-pane-row">
                 <Select placeholder={trader_placeholder}
-                        onSelect={this.onTraderSelect}
-                        value={trader_value}
-                        options={this.state.traders} />
+                        onSelect={this.onSelectTrader}
+                        value={trader_code}
+                        options={trader_options} />
+                <Select placeholder={department_placeholder}
+                        onSelect={this.onSelectDepartment}
+                        value={department_code}
+                        options={this.state.departments} />
               </div>
-              <div className="order-search-pane-input">
+              <div className="order-search-pane-row">
                 <Input type="text"
                        bsSize="small"
                        placeholder="検索テキスト"
                        value={this.state.search_text}
-                       onChange={this.onSearchTextChange} />
+                       onChange={this.onChangeSearchText} />
               </div>
               <Button bsSize="small"
                       onClick={this.onSearch}

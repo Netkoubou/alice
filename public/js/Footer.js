@@ -2,7 +2,7 @@
 var React  = require('react');
 var Footer = React.createClass({
     getInitialState: function() {
-        return ({ message: 'とんでもないことになっています。' });
+        return ({ message: '開国して下さい!' });
     },
 
     render: function() {

@@ -193,7 +193,7 @@ var OrderManager = React.createClass({
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane user_code={this.props.user.code}
+                <SearchPane account={this.props.user.account}
                             order_type={order_type}  
                             final_trader={this.state.final_trader} />
                 <CandidatePane key={Math.random()}

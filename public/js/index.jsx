@@ -13,8 +13,7 @@ var Footer = require('./Footer');
  * 情報を受け取る。
  */
 var user = {
-    code: '0001',
-    name: '磯野 まぐろ',
+    account:    'm-perry',
     permission: 'privilige',
     medical:    true,
     urgency:    true,
@@ -66,7 +65,7 @@ var Page = React.createClass({
     render: function() {
         return (
             <div>
-              <Header username={user.name} />
+              <Header account={user.account} />
               <div id="content">
                 <Nav user={user}
                      onSelect={this.setAction}
