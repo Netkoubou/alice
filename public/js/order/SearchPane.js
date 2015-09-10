@@ -255,23 +255,31 @@ var SearchPane = React.createClass({
             <fieldset className="order-pane">
               <legend>検索</legend>
               <div className="order-search-pane-row">
-                <Select placeholder="分類"
-                        value={this.state.class_code}
-                        onSelect={this.onSelectClass}
-                        options={this.state.classes} />
-                <Select placeholder="品目"
-                        value={this.state.category_code}
-                        onSelect={this.onSelectCategory}
-                        options={this.state.categories} />
+                <span className="order-search-pane-menu">
+                  <Select placeholder="分類"
+                          value={this.state.class_code}
+                          onSelect={this.onSelectClass}
+                          options={this.state.classes} />
+                </span>
+                <span className="order-search-pane-menu">
+                  <Select placeholder="品目"
+                          value={this.state.category_code}
+                          onSelect={this.onSelectCategory}
+                          options={this.state.categories} />
+                </span>
               </div>
               <div className="order-search-pane-row">
-                <SelectTrader final_trader={this.props.final_trader}
-                              onSelect={this.onSelectTrader}
-                              value={this.state.trader_code}
-                              options={this.state.traders} />
-                <SelectDepartment onSelect={this.onSelectDepartment}
-                                  value={this.state.department_code}
-                                  options={this.state.departments} />
+                <span className="order-search-pane-menu">
+                  <SelectTrader final_trader={this.props.final_trader}
+                                onSelect={this.onSelectTrader}
+                                value={this.state.trader_code}
+                                options={this.state.traders} />
+                </span>
+                <span className="order-search-pane-menu">
+                  <SelectDepartment onSelect={this.onSelectDepartment}
+                                    value={this.state.department_code}
+                                    options={this.state.departments} />
+                </span>
               </div>
               <div className="order-search-pane-row">
                 <Input type="text"

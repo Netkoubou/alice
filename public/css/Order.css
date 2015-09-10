@@ -19,6 +19,10 @@
   margin: 8px 0 8px 32px;
 }
 
+.order-search-pane-menu {
+  margin-right: 8px;
+}
+
 #order-candidate-pane {
   height: calc(100% - 280px);
 }
