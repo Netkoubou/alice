@@ -28,7 +28,9 @@ var messages = {
     UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
     ADD_FINALIST:      'ADD_FINALIST',
     CLEAR_FINALISTS:   'CLEAR_FINALISTS',
-    CHANGE_QUANTITY:   'CHANGE_QUANTITY'
+    CHANGE_QUANTITY:   'CHANGE_QUANTITY',
+    REGISTER_ORDER:    'REGISTER_ORDER',
+    UPDATE_ORDER:      'UPDATE_ORDER',
 };
 
 var OrderStore = Fluxxor.createStore({
@@ -44,11 +46,13 @@ var OrderStore = Fluxxor.createStore({
 
     onSearchCandidates: function(payload) {
         XHR.post('searchCandidates').send({
-            user_code:     payload.user_code,
-            order_type:    payload.order_type,
-            category_code: payload.category_code,
-            trader_code:   payload.trader_code,
-            search_text:   payload.search_text
+            account:         payload.account,
+            order_type:      payload.order_type,
+            class_code:      payload.class_code,
+            category_code:   payload.category_code,
+            department_code: payload.department_code,
+            trader_code:     payload.trader_code,
+            search_text:     payload.search_text
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! searchCandidates');

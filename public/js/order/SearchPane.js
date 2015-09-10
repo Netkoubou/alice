@@ -195,7 +195,6 @@ var SearchPane = React.createClass({
      */
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
-            account:         this.props.account,
             order_type:      this.props.order_type,
             class_code:      this.state.class_code,
             category_code:   this.state.category_code,

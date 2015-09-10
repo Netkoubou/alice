@@ -69,10 +69,8 @@ var CandidatePane = React.createClass({
                            </CandidateName>
                 },
                 {
-                    value: candidate.maker.name,
-                    view:  <span>
-                             {candidate.maker.name}
-                           </span>
+                    value: candidate.maker,
+                    view:  <span>{candidate.maker}</span>
                 },
                 {
                     value: candidate.trader.name,

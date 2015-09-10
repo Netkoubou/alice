@@ -20,13 +20,9 @@ var FinalPane = React.createClass({
                 name: React.PropTypes.string.isRequired
             }).isRequired,
             
-            maker: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired
-            }).isRequired,
-            
-            price:    React.PropTypes.number,
-            quantity: React.PropTypes.number,
+            maker:    React.PropTypes.string.isRequired,
+            price:    React.PropTypes.number.isRequired,
+            quantity: React.PropTypes.number.isRequired,
             state:    React.PropTypes.oneOf([
                 'PROCESSING',
                 'ORDERED',
@@ -53,6 +49,14 @@ var FinalPane = React.createClass({
 
 
     /*
+     * 確定ボタンがクリックされたら
+     */
+    onFix: function() {
+        return this.getFlux().actions.fixOrder();
+    },
+
+
+    /*
      * 発注が確定した商品の数量が変更されたら呼び出されるコールバック関数を
      * 返す関数。
      * コールバック関数そのものではないので注意。
@@ -61,11 +65,15 @@ var FinalPane = React.createClass({
      */
     onChangeQuantity: function(index) {
         return function(e) {
-            var value = e.target.value.match(/^\d+$/)? e.target.value: '0';
+            var value = 0;
+            
+            if (e.target.value.match(/^[\d,]+$/) ) {
+                value = parseInt(e.target.value.replace(',', '') );
+            }
 
             return this.getFlux().actions.changeQuantity({
                 index: index,
-                value: parseInt(value)
+                value: value
             });
         }.bind(this);
     },
@@ -135,8 +143,8 @@ var FinalPane = React.createClass({
                     view:  <span>{finalist.goods.name}</span>
                 },
                 {
-                    value: finalist.maker.name,
-                    view:  <span>{finalist.maker.name}</span>
+                    value: finalist.maker,
+                    view:  <span>{finalist.maker}</span>
                 },
                 {
                     value: finalist.price,
@@ -145,7 +153,7 @@ var FinalPane = React.createClass({
                 {
                     value: finalist.quantity,
                     view:  <Input type='int'
-                                  placeholder={finalist.quantity.toString()}
+                                  placeholder={finalist.quantity}
                                   onChange={this.onChangeQuantity(i)} />
                 },
                 {
@@ -197,7 +205,7 @@ var FinalPane = React.createClass({
                 <Button bsSize="small" onClick={this.onClear}>
                   クリア
                 </Button>
-                <Button bsSize="small">
+                <Button bsSize="small" onClick={this.onFix}>
                   確定
                 </Button>
               </div>
