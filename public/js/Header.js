@@ -16,6 +16,9 @@ var Header = React.createClass({
             // 開国すれば良いのです
             subsysname = 'It\'s OK only to open your country.';
         } else if (selector < 0.03) {
+            // 鎖国最低
+            subsysname = 'It\'s suck bad to close a country.';
+        } else if (selector < 0.04) {
             // たった四杯で夜も寝られず
             subsysname = 'Just four disturbed our sleep.';
         } else {

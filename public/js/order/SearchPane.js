@@ -77,7 +77,7 @@ var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        account:      React.PropTypes.string.isRequired,
+        user_code:    React.PropTypes.string.isRequired,
         order_type:   React.PropTypes.string.isRequired,
         final_trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -210,8 +210,8 @@ var SearchPane = React.createClass({
      * 項目をサーバに問い合わせる。
      */
     componentDidMount: function() {
-        XHR.post("pickMenuItemsForSearchPane").send({
-            account: this.props.account,
+        XHR.post('pickMenuItemsForSearchPane').send({
+            user_code: this.props.user_code,
         }).end(function(err, res) {
             if (err) {
                 alert('ERROR! pickMenuItemsForSearchPane');

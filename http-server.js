@@ -15,6 +15,14 @@ var app        = express();
 app.use(express.static('public') );
 
 
+
+/*
+ * POST されてきた JSON のデコード用
+ */
+app.use(bodyParser.json() );
+app.use(bodyParser.urlencoded({ extended: true }) );
+
+
 /*
  * ダミーデータ
  */
@@ -30,8 +38,6 @@ var traders = [
 /*
  * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
  */
-app.use(bodyParser.json() );
-app.use(bodyParser.urlencoded({ extended: true }) );
 app.post('/pickMenuItemsForSearchPane', function(req, res) {
     var classes = [
         { code: '0000', name: '医科' },
@@ -232,5 +238,17 @@ app.post('/searchCandidates', function(req, res) {
 
     res.json(candidates);
 });
+
+
+/*
+ * 発注の新規登録
+ */
+app.post('/registerOrder', function(req, res) {
+    console.log(res.body);
+    res.json({
+        status: 0
+    });
+});
+
 
 app.listen(8080);

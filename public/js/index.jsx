@@ -13,6 +13,7 @@ var Footer = require('./Footer');
  * 情報を受け取る。
  */
 var user = {
+    code:       '1853',
     account:    'm-perry',
     permission: 'privilige',
     medical:    true,

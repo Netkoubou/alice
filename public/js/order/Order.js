@@ -30,7 +30,7 @@ var messages = {
     CLEAR_FINALISTS:   'CLEAR_FINALISTS',
     CHANGE_QUANTITY:   'CHANGE_QUANTITY',
     REGISTER_ORDER:    'REGISTER_ORDER',
-    UPDATE_ORDER:      'UPDATE_ORDER',
+    UPDATE_ORDER:      'UPDATE_ORDER'
 };
 
 var OrderStore = Fluxxor.createStore({
@@ -70,6 +70,7 @@ var OrderStore = Fluxxor.createStore({
      */
     onSelectCandidate: function(payload) {
         this.finalists.push({
+            code:     '',
             goods:    payload.candidate.goods,
             maker:    payload.candidate.maker,
             price:    payload.candidate.price,
@@ -79,7 +80,14 @@ var OrderStore = Fluxxor.createStore({
 
         if (this.final_trader == null) {
             this.final_trader = payload.candidate.trader;
-            this.candidates   = this.candidates.filter(function(candidate) {
+
+
+            /*
+             * 販売元が確定したら、候補一覧から当該販売元以外を除く。
+             * 以後は、当該販売元が必ず検索条件に指定されるため、
+             * この操作は必要なくなる。
+             */
+            this.candidates = this.candidates.filter(function(candidate) {
                 return candidate.trader.code === payload.candidate.trader.code;
             });
         }
@@ -117,8 +125,31 @@ var OrderStore = Fluxxor.createStore({
         this.emit('change');
     },
 
+
+    /*
+     * 既存の発注を state に設定
+     */
     setExistingOrder: function(order) {
-        this.finalists    = order.finalists;
+        /*
+         * 発注確定商品一覧の数量は変更される可能性があるため、
+         *
+         *   this.finalists = order.finalists;
+         *
+         * と書いてはいけないことに注意。
+         * これは、引数で渡される order が props === 変更不可であるため。
+         * そのため、ここで逐一内容をコピーする必要がある。
+         */
+        this.finalists = order.finalists.map(function(finalist) {
+            return {
+                code:     finalist.code,
+                goods:    finalist.goods,
+                maker:    finalist.maker,
+                price:    finalist.price,
+                quantity: finalist.quantity,
+                state:    finalist.state
+            };
+        });
+
         this.final_trader = order.trader;
         this.emit('change');
     },
@@ -154,7 +185,7 @@ var actions = {
 
     changeQuantity: function(payload) {
         this.dispatch(messages.CHANGE_QUANTITY, payload);
-    }
+    },
 };
 
 var OrderManager = React.createClass({
@@ -164,9 +195,10 @@ var OrderManager = React.createClass({
     ],
 
     propTypes: {
-        flux:  React.PropTypes.object.isRequired,
-        user:  React.PropTypes.object.isRequired,
-        order: React.PropTypes.object
+        flux:   React.PropTypes.object.isRequired,
+        action: React.PropTypes.string.isRequired,
+        user:   React.PropTypes.object.isRequired,
+        order:  React.PropTypes.object
     },
 
     getStateFromFlux: function() {
@@ -197,7 +229,7 @@ var OrderManager = React.createClass({
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane account={this.props.user.account}
+                <SearchPane user_code={this.props.user.code}
                             order_type={order_type}  
                             final_trader={this.state.final_trader} />
                 <CandidatePane key={Math.random()}
@@ -265,16 +297,14 @@ var Order = React.createClass({
             }),
 
             finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+
                 goods: React.PropTypes.shape({
                     code: React.PropTypes.string.isRequired,
                     name: React.PropTypes.string.isRequired
-                }),
+                }).isRequired,
 
-                maker: React.PropTypes.shape({
-                    code: React.PropTypes.string.isRequired,
-                    name: React.PropTypes.string.isRequired
-                }),
-
+                maker:    React.PropTypes.string.isRequired,
                 price:    React.PropTypes.number.isRequired,
                 quantity: React.PropTypes.number.isRequired,
 
@@ -283,7 +313,7 @@ var Order = React.createClass({
                     'ORDERED',
                     'CANCELED',
                     'DELIVERED'
-                ]),
+                ]).isRequired,
 
                 last_change_date: React.PropTypes.string.isRequired
             }) ).isRequired,
@@ -295,7 +325,6 @@ var Order = React.createClass({
                 'APPROVED',
                 'NULLIFIED',
                 'COMPLETED'
-
             ]).isRequired,
 
             last_modified_date: React.PropTypes.string.isRequired,

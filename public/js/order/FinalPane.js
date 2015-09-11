@@ -5,6 +5,7 @@
 var React      = require('react');
 var Button     = require('react-bootstrap').Button;
 var Fluxxor    = require('fluxxor');
+var XHR        = require('superagent');
 var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
 var Input      = TableFrame.Input;
@@ -13,8 +14,10 @@ var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
+        action:    React.PropTypes.string.isRequired,
         user:      React.PropTypes.object,
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
+            code:  React.PropTypes.string.isRequired,
             goods: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired
@@ -52,7 +55,31 @@ var FinalPane = React.createClass({
      * 確定ボタンがクリックされたら
      */
     onFix: function() {
-        return this.getFlux().actions.fixOrder();
+        if (this.props.order === null) {
+            XHR.post('registerOrger').send({
+                type:       this.props.action,
+                originator: this.props.user.account,
+                trader:     this.props.final_trader.code,
+                finalists:  this.props.finalists.map(function(finalist) {
+                                return {
+                                    goods:    finalist.goods.code,
+                                    quantity: finalist.quantity
+                                };
+                            })
+            }).end(function(err, res) {
+                if (err) {
+                    alert('ERROR! registerOrder');
+                    throw 'registerOrder';
+                }
+
+                if (res.body.status != 0) {
+                    alert(res.body.description);
+                } else {
+                    alert('登録しました');
+                    window.location.replace('index.html');
+                }
+            });
+        }
     },
 
 
@@ -79,11 +106,11 @@ var FinalPane = React.createClass({
     },
 
     render: function() {
-        var order_code, originator, drafting_date;
+        var originator, order_code, drafting_date;
 
         if (this.props.order == undefined) {
-            order_code = '未登録';
             originator = this.props.user.account;
+            order_code = '未登録';
 
             var now   = new Date();
             var year  = now.getFullYear().toString();
@@ -92,9 +119,9 @@ var FinalPane = React.createClass({
 
             drafting_date = year + '-' + month + '-' + day;
         } else {
-            order_code    = this.props.order.code;
             originator    = this.props.order.originator;
-            drafging_date = this.props.order.drafting_date;
+            order_code    = this.props.order.code;
+            drafting_date = this.props.order.drafting_date;
         }
 
         var trader = {};
@@ -115,8 +142,7 @@ var FinalPane = React.createClass({
         ];
 
         var total = 0;
-
-        var data = this.props.finalists.map(function(finalist, i) {
+        var data  = this.props.finalists.map(function(finalist, i) {
             var subtotal = finalist.price * finalist.quantity;
 
             total += subtotal;
@@ -153,7 +179,7 @@ var FinalPane = React.createClass({
                 {
                     value: finalist.quantity,
                     view:  <Input type='int'
-                                  placeholder={finalist.quantity}
+                                  placeholder={finalist.quantity.toString()}
                                   onChange={this.onChangeQuantity(i)} />
                 },
                 {
@@ -205,7 +231,9 @@ var FinalPane = React.createClass({
                 <Button bsSize="small" onClick={this.onClear}>
                   クリア
                 </Button>
-                <Button bsSize="small" onClick={this.onFix}>
+                <Button bsSize="small"
+                        onClick={this.onFix}
+                        disable={this.props.final_trader === null}>
                   確定
                 </Button>
               </div>
