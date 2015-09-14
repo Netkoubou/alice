@@ -15,7 +15,7 @@ var FinalPane = React.createClass({
 
     propTypes: {
         action:    React.PropTypes.string.isRequired,
-        user:      React.PropTypes.object,
+        account:   React.PropTypes.string.isRequired,
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
             code:  React.PropTypes.string.isRequired,
             goods: React.PropTypes.shape({
@@ -34,7 +34,12 @@ var FinalPane = React.createClass({
             ]).isRequired
         }) ).isRequired,
 
-        final_trader: React.PropTypes.shape({
+        department: React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }),
+
+        trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
         }),
@@ -57,15 +62,15 @@ var FinalPane = React.createClass({
     onFix: function() {
         if (this.props.order === null) {
             XHR.post('registerOrger').send({
-                type:       this.props.action,
-                originator: this.props.user.account,
-                trader:     this.props.final_trader.code,
-                finalists:  this.props.finalists.map(function(finalist) {
-                                return {
-                                    goods:    finalist.goods.code,
-                                    quantity: finalist.quantity
-                                };
-                            })
+                type:            this.props.action,
+                department_code: this.props.department.code,
+                trader_code:     this.props.trader.code,
+                finalists:       this.props.finalists.map(function(finalist) {
+                                     return {
+                                         code:     finalist.goods.code,
+                                         quantity: finalist.quantity
+                                     };
+                                 })
             }).end(function(err, res) {
                 if (err) {
                     alert('ERROR! registerOrder');
@@ -109,7 +114,7 @@ var FinalPane = React.createClass({
         var originator, order_code, drafting_date;
 
         if (this.props.order == undefined) {
-            originator = this.props.user.account;
+            originator = this.props.account;
             order_code = '未登録';
 
             var now   = new Date();
@@ -126,10 +131,10 @@ var FinalPane = React.createClass({
 
         var trader = {};
 
-        if (this.props.final_trader == undefined) {
+        if (this.props.trader == undefined) {
             trader = { code: null, name: '未確定' };
         } else {
-            trader = this.props.final_trader;
+            trader = this.props.trader;
         }
 
         var title = [
@@ -163,6 +168,14 @@ var FinalPane = React.createClass({
                 state = '納品済み';
             }
 
+            var price_string = finalist.price.toLocaleString('ja-JP', {
+                minimumFractionDigits: 2
+            });
+
+            var subtotal_string = subtotal.toLocaleString('ja-JP', {
+                minimumFractionDigits: 2
+            });
+
             return [
                 {
                     value: finalist.goods.name,
@@ -174,7 +187,7 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: finalist.price,
-                    view:  <span>{finalist.price.toLocaleString()}</span>
+                    view:  <span>{price_string}</span>
                 },
                 {
                     value: finalist.quantity,
@@ -184,7 +197,7 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: subtotal,
-                    view:  <span>{subtotal.toLocaleString()}</span>
+                    view:  <span>{subtotal_string}</span>
                 },
                 {
                     value: finalist.state,
@@ -213,7 +226,7 @@ var FinalPane = React.createClass({
                     {originator}
                   </Notice>
                   <Notice className="order-final-pane-notice-right"
-                          title='販売元'>
+                          title='発注先 販売元'>
                     {trader.name}
                   </Notice>
                 </div>
@@ -233,7 +246,7 @@ var FinalPane = React.createClass({
                 </Button>
                 <Button bsSize="small"
                         onClick={this.onFix}
-                        disable={this.props.final_trader === null}>
+                        disable={this.props.trader === null}>
                   確定
                 </Button>
               </div>

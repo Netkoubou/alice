@@ -35,9 +35,10 @@ var messages = {
 
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.candidates   = [];     // 商品の発注候補一覧
-        this.final_trader = null;   // 発注先の販売元
-        this.finalists    = [];     // 発注が確定した商品の一覧
+        this.candidates = [];       // 商品の発注候補一覧
+        this.department = null;     // 発注元の診療科
+        this.trader     = null;     // 発注先の販売元
+        this.finalists  = [];       // 発注が確定した商品の一覧
         this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
         this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
         this.bindActions(messages.CLEAR_FINALISTS,   this.onClearFinalists);
@@ -63,8 +64,8 @@ var OrderStore = Fluxxor.createStore({
             state:    'PROCESSING'
         });
 
-        if (this.final_trader == null) {
-            this.final_trader = payload.candidate.trader;
+        if (this.trader == null) {
+            this.trader = payload.candidate.trader;
 
 
             /*
@@ -95,7 +96,7 @@ var OrderStore = Fluxxor.createStore({
         });
 
         if (this.finalists.length == 0) {
-            this.final_trader = null;
+            this.trader = null;
         }
 
         this.emit('change');
@@ -135,22 +136,23 @@ var OrderStore = Fluxxor.createStore({
             };
         });
 
-        this.final_trader = order.trader;
+        this.trader = order.trader;
         this.emit('change');
     },
 
     resetState: function() {
-        this.candidates   = [];
-        this.final_trader = null;
-        this.finalists    = [];
+        this.candidates = [];
+        this.trader     = null;
+        this.finalists  = [];
         this.emit('change');
     },
 
     getState: function() {
         return {
-            candidates:   this.candidates,
-            finalists:    this.finalists,
-            final_trader: this.final_trader,
+            candidates: this.candidates,
+            department: this.department,
+            trader:     this.trader,
+            finalists:  this.finalists,
         }
     }
 });
@@ -221,18 +223,19 @@ var OrderManager = React.createClass({
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane user_code={this.props.user.code}
-                            order_type={order_type}  
-                            final_trader={this.state.final_trader} />
+                <SearchPane order_type={order_type}  
+                            department={this.state.department}
+                            final_trader={this.state.trader} />
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
                 <FinalPane key={Math.random()} 
                            action={this.props.action}
-                           user={this.props.user}
+                           account={this.props.user.account}
                            finalists={this.state.finalists}
-                           final_trader={this.state.final_trader}
+                           department={this.state.department}
+                           trader={this.state.trader}
                            order={this.props.order} />
               </div>
             </div>
@@ -301,22 +304,22 @@ var Order = React.createClass({
                 quantity: React.PropTypes.number.isRequired,
 
                 state: React.PropTypes.oneOf([
-                    'PROCESSING',
-                    'ORDERED',
-                    'CANCELED',
-                    'DELIVERED'
+                    'PROCESSING',   // 処理中
+                    'ORDERED',      // 発注済み
+                    'CANCELED',     // キャンセル
+                    'DELIVERED'     // 納品済み
                 ]).isRequired,
 
                 last_change_date: React.PropTypes.string.isRequired
             }) ).isRequired,
 
             state: React.PropTypes.oneOf([
-                'REQUESTING',
-                'APPROVING',
-                'DENIED',
-                'APPROVED',
-                'NULLIFIED',
-                'COMPLETED'
+                'REQUESTING',       // 依頼中
+                'APPROVING',        // 承認待ち
+                'DENIED',           // 否認
+                'APPROVED',         // 承認済み
+                'NULLIFIED',        // 無効
+                'COMPLETED'         // 完了
             ]).isRequired,
 
             last_modified_date: React.PropTypes.string.isRequired,

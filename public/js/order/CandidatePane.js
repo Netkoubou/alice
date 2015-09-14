@@ -60,7 +60,12 @@ var CandidatePane = React.createClass({
          * ここで、上位要素から貰った候補一覧の生データを
          * TableFrame 用に変換する。
          */
-        var data = this.props.candidates.map(function(candidate) {
+
+        var data  = this.props.candidates.map(function(candidate) {
+            var price_string = candidate.price.toLocaleString('ja-JP', {
+                minimumFractionDigits: 2
+            });
+
             return [
                 {
                     value: candidate.goods.name,
@@ -78,7 +83,7 @@ var CandidatePane = React.createClass({
                 },
                 {
                     value: candidate.price,
-                    view:  <span>{candidate.price.toLocaleString()}</span>
+                    view:  <span>{price_string}</span>
                 }
             ];
         });

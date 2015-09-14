@@ -15,7 +15,7 @@ var Footer = require('./Footer');
 var user = {
     code:       '1853',
     account:    'm-perry',
-    permission: 'privilige',
+    permission: 'PRIVILEGE',
     medical:    true,
     urgency:    true,
     approval:   true

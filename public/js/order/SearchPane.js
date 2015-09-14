@@ -9,8 +9,39 @@ var XHR     = require('superagent');
 var Fluxxor = require('fluxxor');
 var Select  = require('../components/Select');
 
+var SelectDepartment = React.createClass({
+    propTypes: {
+        onSelect: React.PropTypes.func.isRequired,
+        options:  React.PropTypes.arrayOf(React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }) ).isRequired
+    },
+
+    render: function() {
+        var placeholder, code;
+
+        if (this.props.options.length == 1) {
+            placeholder = this.props.options[0].name;
+            code        = this.props.options[0].code;
+        } else {
+            placeholder = '選択して下さい';
+            code        = this.props.value;
+        }
+
+        return (
+            <Select key={placeholder}
+                    placeholder={placeholder}
+                    onSelect={this.props.onSelect}
+                    value={code}
+                    options={this.props.options} />
+        );
+    }
+});
+
 var SelectTrader = React.createClass({
     propTypes: {
+        department:   React.PropTypes.object,
         final_trader: React.PropTypes.object,
         onSelect:     React.PropTypes.func.isRequired,
         value:        React.PropTypes.string.isRequired,
@@ -24,7 +55,7 @@ var SelectTrader = React.createClass({
         var placeholder, code, options;
 
         if (this.props.final_trader === null) {
-            placeholder = '販売元';
+            placeholder = '発注先 販売元';
             code        = this.props.value;
             options     = this.props.options;
         } else {
@@ -43,41 +74,10 @@ var SelectTrader = React.createClass({
     }
 });
 
-var SelectDepartment = React.createClass({
-    propTypes: {
-        onSelect: React.PropTypes.func.isRequired,
-        options:  React.PropTypes.arrayOf(React.PropTypes.shape({
-            code: React.PropTypes.string.isRequired,
-            name: React.PropTypes.string.isRequired
-        }) ).isRequired
-    },
-
-    render: function() {
-        var placeholder, code;
-
-        if (this.props.options.length == 1) {
-            placeholder = this.props.options[0].name;
-            code        = this.props.options[0].code;
-        } else {
-            placeholder = '診療科';
-            code        = this.props.value;
-        }
-
-        return (
-            <Select key={placeholder}
-                    placeholder={placeholder}
-                    onSelect={this.props.onSelect}
-                    value={code}
-                    options={this.props.options} />
-        );
-    }
-});
-
 var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        user_code:    React.PropTypes.string.isRequired,
         order_type:   React.PropTypes.string.isRequired,
         final_trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -86,19 +86,22 @@ var SearchPane = React.createClass({
     },
 
     getInitialState: function() {
-        var trader_code = '';
+        var department_code = '';
+        var trader_code     = '';
+
+        if (this.props.department != null) {
+            department_code = this.props.department_code;
+        }
 
         if (this.props.final_trader != null) {
             trader_code = this.props.final_trader.code;
         }
 
         return {
-            class_code:      '',
+            department_code: department_code,
             category_code:   '',
-            department_code: '',
             trader_code:     trader_code,
             search_text:     '',
-            classes:         [],
             categories:      [],
             departments:     [],
             traders:         []
@@ -107,10 +110,10 @@ var SearchPane = React.createClass({
 
 
     /*
-     * 分類が選択されたら
+     * 診療科が選択されたら
      */
-    onSelectClass: function(e) {
-        this.setState({ class_code: e.code });
+    onSelectDepartment: function(e) {
+        this.setState({ department_code: e.code });
     },
 
 
@@ -119,14 +122,6 @@ var SearchPane = React.createClass({
      */
     onSelectCategory: function(e) {
         this.setState({ category_code: e.code });
-    },
-
-
-    /*
-     * 診療科が選択されたら
-     */
-    onSelectDepartment: function(e) {
-        this.setState({ department_code: e.code });
     },
 
 
@@ -154,36 +149,41 @@ var SearchPane = React.createClass({
 
         if (this.state.departments.length == 1) {
             /*
-             * 自分の部署の発注しか扱えないのなら
+             * そもそも自分の部門診療科の発注しか扱えないのなら
              *
              * 一般の部署は他部署の発注を扱うことができない。
              * つまり、選択の余地はない訳で、クリアする意味がない。
              */
             department_code = this.state.departments[0].code;
+        } else if (this.props.department != null) {
+            /*
+             * 発注元 (部門診療科) が既に決まっているのなら
+             *
+             * 一部の部署は、他部署 (部門診療科) の発注を肩代わりできるのだが、
+             * 既に何処の肩代わりするかが決まっている場合。
+             */
+            department_code = this.props.department.code;
         } else {
             /*
-             * 他部署の発注も扱うことができるなら
-             *
-             * 一部の部署は、他部署の発注を扱う (肩代わりする)
-             * ことが許されている。
+             * 発注元が未だ決まっていないのなら
              */
             department_code = '';
         }
 
 
         /*
-         * 発注元が確定している場合、発注元をクリアしちゃいけない
+         * 発注する商品が一つでも確定している場合、
+         * 販売元をクリアしちゃいけない
          */
-        if (this.props.final_trader != null) {
-            trader_code = this.props.final_trader.code;
-        } else {
+        if (this.props.final_trader == null) {
             trader_code = '';
+        } else {
+            trader_code = this.props.final_trader.code;
         }
 
         this.setState({
-            class_code:      '',
-            category_code:   '',
             department_code: department_code,
+            category_code:   '',
             trader_code:     trader_code,
             search_text:     '',
         });
@@ -193,7 +193,13 @@ var SearchPane = React.createClass({
     /*
      * 検索ボタンをクリック
      */
-    onSearch: function() {
+    onSearch: function(e) {
+        if (this.state.department_code === '') {
+            alert('部門診療科を選択して下さい');
+            e.preventDefault();
+            return;
+        }
+
         return this.getFlux().actions.updateCandidates({
             order_type:      this.props.order_type,
             department_code: this.state.department_code,
@@ -230,10 +236,10 @@ var SearchPane = React.createClass({
             }
 
             this.setState({
-                classes:     res.body.classes,
-                categories:  res.body.categories,
-                departments: res.body.departments,
-                traders:     res.body.traders 
+                department_code: department_code,
+                categories:      res.body.categories,
+                departments:     res.body.departments,
+                traders:         res.body.traders 
             });
         }.bind(this) );
     },
@@ -248,53 +254,50 @@ var SearchPane = React.createClass({
 
     render: function() {
         return (
-            <fieldset className="order-pane">
-              <legend>検索</legend>
-              <div className="order-search-pane-row">
-                <span className="order-search-pane-menu">
-                  <Select placeholder="分類"
-                          value={this.state.class_code}
-                          onSelect={this.onSelectClass}
-                          options={this.state.classes} />
-                </span>
-                <span className="order-search-pane-menu">
-                  <Select placeholder="品目"
-                          value={this.state.category_code}
-                          onSelect={this.onSelectCategory}
-                          options={this.state.categories} />
-                </span>
-              </div>
-              <div className="order-search-pane-row">
-                <span className="order-search-pane-menu">
-                  <SelectTrader final_trader={this.props.final_trader}
-                                onSelect={this.onSelectTrader}
-                                value={this.state.trader_code}
-                                options={this.state.traders} />
-                </span>
-                <span className="order-search-pane-menu">
+            <div>
+              <fieldset className="order-pane">
+                <legend>発注元 部門診療科</legend>
+                <div className="order-search-pane-row">
                   <SelectDepartment onSelect={this.onSelectDepartment}
                                     value={this.state.department_code}
                                     options={this.state.departments} />
-                </span>
-              </div>
-              <div className="order-search-pane-row">
-                <Input type="text"
-                       bsSize="small"
-                       placeholder="検索テキスト"
-                       value={this.state.search_text}
-                       onChange={this.onChangeSearchText} />
-              </div>
-              <Button bsSize="small"
-                      onClick={this.onSearch}
-                      className="order-search-pane-button">
-                検索
-              </Button>
-              <Button bsSize="small"
-                      onClick={this.onClear}
-                      className="order-search-pane-button">
-                クリア
-              </Button>
-            </fieldset>
+                </div>
+              </fieldset>
+              <fieldset className="order-pane">
+                <legend>検索</legend>
+                <div className="order-search-pane-row">
+                  <span className="order-search-pane-menu">
+                    <Select placeholder="品目"
+                            value={this.state.category_code}
+                            onSelect={this.onSelectCategory}
+                            options={this.state.categories} />
+                  </span>
+                  <span className="order-search-pane-menu">
+                    <SelectTrader final_trader={this.props.final_trader}
+                                  onSelect={this.onSelectTrader}
+                                  value={this.state.trader_code}
+                                  options={this.state.traders} />
+                  </span>
+                </div>
+                <div className="order-search-pane-row">
+                  <Input type="text"
+                         bsSize="small"
+                         placeholder="検索テキスト"
+                         value={this.state.search_text}
+                         onChange={this.onChangeSearchText} />
+                </div>
+                <Button bsSize="small"
+                        onClick={this.onSearch}
+                        className="order-search-pane-button">
+                  検索
+                </Button>
+                <Button bsSize="small"
+                        onClick={this.onClear}
+                        className="order-search-pane-button">
+                  クリア
+                </Button>
+              </fieldset>
+            </div>
         );
     }
 });
