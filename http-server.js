@@ -38,7 +38,7 @@ var traders = [
 /*
  * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
  */
-app.post('/pickMenuItemsForSearchPane', function(req, res) {
+app.get('/pickMenuItemsForSearchPane', function(req, res) {
     var classes = [
         { code: '0000', name: '医科' },
         { code: '0001', name: '歯科' },
@@ -92,127 +92,127 @@ app.post('/searchCandidates', function(req, res) {
         {
             goods:  { code: '0001', name: 'b'  },
             maker:  'Y',
-            price:  24
+            price:  24.01
         },
         {
             goods:  { code: '0002', name: 'c'  },
             maker: 'X',
-            price:  23
+            price:  23.02
         },
         {
             goods:  { code: '0003', name: 'd'  },
             maker: 'W',
-            price:  22
+            price:  22.03
         },
         {
             goods:  { code: '0004', name: 'e'  },
             maker: 'V',
-            price:  21
+            price:  21.04
         },
         {
             goods:  { code: '0005', name: 'f'  },
             maker: 'U',
-            price:  20
+            price:  20.05
         },
         {
             goods:  { code: '0006', name: 'g'  },
             maker: 'T',
-            price:  19
+            price:  19.06
         },
         {
             goods:  { code: '0007', name: 'h'  },
             maker: 'S',
-            price:  18
+            price:  18.07
         },
         {
             goods:  { code: '0008', name: 'i'  },
             maker: 'R',
-            price:  17
+            price:  17.08
         },
         {
             goods:  { code: '0009', name: 'j'  },
             maker: 'Q',
-            price:  16
+            price:  16.09
         },
         {
             goods:  { code: '0010', name: 'k'  },
             maker: 'P',
-            price:  15
+            price:  15.10
         },
         {
             goods:  { code: '0011', name: 'l'  },
             maker: 'O',
-            price:  14
+            price:  14.11
         },
         {
             goods:  { code: '0012', name: 'm'  },
             maker: 'N',
-            price:  13
+            price:  13.12
         },
         {
             goods:  { code: '0013', name: 'n'  },
             maker: 'M',
-            price:  12
+            price:  12.13
         },
         {
             goods:  { code: '0014', name: 'o'  },
             maker: 'L',
-            price:  11
+            price:  11.14
         },
         {
             goods:  { code: '0015', name: 'p'  },
             maker: 'K',
-            price:  10
+            price:  10.15
         },
         {
             goods:  { code: '0016', name: 'q'  },
             maker: 'J',
-            price:   9
+            price:   9.16
         },
         {
             goods:  { code: '0017', name: 'r'  },
             maker: 'I',
-            price:   8
+            price:   8.17
         },
         {
             goods:  { code: '0018', name: 's'  },
             maker: 'H',
-            price:   7
+            price:   7.18
         },
         {
             goods:  { code: '0019', name: 't'  },
             maker: 'G',
-            price:   6
+            price:   6.19
         },
         {
             goods:  { code: '0020', name: 'u'  },
             maker: 'F',
-            price:   5
+            price:   5.20
         },
         {
             goods:  { code: '0021', name: 'v'  },
             maker: 'E',
-            price:   4
+            price:   4.21
         },
         {
             goods:  { code: '0022', name: 'w'  },
             maker: 'D',
-            price:   3
+            price:   3.22
         },
         {
             goods:  { code: '0023', name: 'x'  },
             maker: 'C',
-            price:   2
+            price:   2.23
         },
         {
             goods:  { code: '0024', name: 'y'  },
             maker: 'B',
-            price:   1
+            price:   1.24
         },
         {
             goods:  { code: '0025', name: 'z'  },
             maker: 'A',
-            price:   0
+            price:   0.25
         }
     ];
 

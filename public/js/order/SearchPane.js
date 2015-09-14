@@ -196,9 +196,8 @@ var SearchPane = React.createClass({
     onSearch: function() {
         return this.getFlux().actions.updateCandidates({
             order_type:      this.props.order_type,
-            class_code:      this.state.class_code,
-            category_code:   this.state.category_code,
             department_code: this.state.department_code,
+            category_code:   this.state.category_code,
             trader_code:     this.state.trader_code,
             search_text:     this.state.search_text
         });
@@ -210,9 +209,7 @@ var SearchPane = React.createClass({
      * 項目をサーバに問い合わせる。
      */
     componentDidMount: function() {
-        XHR.post('pickMenuItemsForSearchPane').send({
-            user_code: this.props.user_code,
-        }).end(function(err, res) {
+        XHR.get('pickMenuItemsForSearchPane').end(function(err, res) {
             if (err) {
                 alert('ERROR! pickMenuItemsForSearchPane');
                 throw 'pickMenuItemsForSearchPane';
