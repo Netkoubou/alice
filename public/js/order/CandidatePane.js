@@ -36,7 +36,7 @@ var CandidateName = React.createClass({
 
     render: function() {
         return (
-            <div className='order-candidate-pane-name'
+            <div className='order-candidate-name'
                  onClick={this.onSelectCandidate}>
               {this.props.children}
             </div>

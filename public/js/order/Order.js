@@ -29,6 +29,7 @@ var messages = {
     SET_DEPARTMENT_CODE: 'SET_DEPARTMENT_CODE',
     UPDATE_CANDIDATES:   'UPDATE_CANDIDATES',
     ADD_FINALIST:        'ADD_FINALIST',
+    REMOVE_FINALIST:     'REMOVE_FINALIST',
     CLEAR_FINALISTS:     'CLEAR_FINALISTS',
     CHANGE_QUANTITY:     'CHANGE_QUANTITY',
     REGISTER_ORDER:      'REGISTER_ORDER',
@@ -53,6 +54,10 @@ var OrderStore = Fluxxor.createStore({
         this.bindActions(
             messages.ADD_FINALIST,
             this.onSelectCandidate
+        );
+        this.bindActions(
+            messages.REMOVE_FINALIST,
+            this.onSelectFinalist
         );
         this.bindActions(
             messages.CLEAR_FINALISTS,
@@ -108,6 +113,20 @@ var OrderStore = Fluxxor.createStore({
             this.candidates = this.candidates.filter(function(c) {
                 return c.trader.code === payload.candidate.trader.code;
             });
+        }
+
+        this.emit('change');
+    },
+
+
+    /*
+     * 発注確定一覧から商品を選んだら (発注確定一覧から削除)
+     */
+    onSelectFinalist: function(payload) {
+        this.finalists.splice(payload.index, 1);
+
+        if (this.finalists.length == 0) {
+            this.trader = null;
         }
 
         this.emit('change');
@@ -208,6 +227,10 @@ var actions = {
 
     addFinalist: function(payload) {
         this.dispatch(messages.ADD_FINALIST, payload);
+    },
+
+    removeFinalist: function(payload) {
+        this.dispatch(messages.REMOVE_FINALIST, payload);
     },
 
     clearFinalists: function() {

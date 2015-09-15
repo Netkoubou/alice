@@ -1,16 +1,3 @@
-#nav-first {
-  width:         144px;
-  height:        100%;
-  overflow-y:    hidden;
-  background:    #2196f3;
-  padding:       8px 0 8px 0;
-  position:      absolute;
-  left:          0px;
-  transition-property: width;
-  transition-duration: 250ms;
-  z-index:       100;
-}
-
 #nav {
   width:         8px;
   height:        100%;
@@ -24,7 +11,7 @@
   z-index:       100;
 }
 
-#nav:hover {
+#nav-first, #nav:hover {
   width:         144px;
   height:        100%;
   overflow-y:    hidden;

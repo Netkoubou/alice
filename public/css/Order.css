@@ -27,12 +27,6 @@
   height: calc(100% - 348px);
 }
 
-.order-candidate-pane-name:hover {
-  color:           #1976d2;
-  text-decoration: underline;
-  cursor:          pointer;
-}
-
 .order-search-pane-button { float: right; }
 
 #order-candidates {
@@ -45,6 +39,12 @@
 #order-candidates col:nth-child(3) { width: 25%; }
 #order-candidates col:nth-child(4) { width: 80px; }
 #order-candidates td:nth-child(4)  { text-align: right; }
+
+.order-candidate-name:hover {
+  color:           #1976d2;
+  text-decoration: underline;
+  cursor:          pointer;
+}
 
 #order-final-pane {
   height: 100%;
@@ -85,6 +85,12 @@
 #order-finalists td:nth-child(4) { text-align: right; }
 #order-finalists td:nth-child(5) { text-align: right; }
 #order-finalists td:nth-child(6) { text-align: center; }
+
+.order-finalist-name:hover {
+  color:           #ff0000;
+  text-decoration: underline;
+  cursor:          pointer;
+}
 
 #order-total {
   width: 192px; 

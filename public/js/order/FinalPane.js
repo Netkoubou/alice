@@ -11,6 +11,39 @@ var TableFrame = require('../components/TableFrame');
 var Input      = TableFrame.Input;
 var Messages   = require('../lib/Messages');
 
+var FinalistName = React.createClass({
+    mixins:    [ Fluxxor.FluxMixin(React) ],
+
+    propTypes: {
+        index: React.PropTypes.number.isRequired,
+        state: React.PropTypes.oneOf([
+            'PROCESSING',
+            'ORDERRD',
+            'CANCELED',
+            'DELIVERED'
+        ])
+    },
+
+    onSelectFinalist: function() {
+        return this.getFlux().actions.removeFinalist({
+            index: this.props.index
+        });
+    },
+
+    render: function() {
+        if (this.props.state === 'PROCESSING') {
+            return (
+                <div className='order-finalist-name'
+                     onClick={this.onSelectFinalist}>
+                  {this.props.children}
+                </div>
+            );
+        }
+
+        return <span>{this.props.children}</span>;
+    }
+});
+
 var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
@@ -184,7 +217,10 @@ var FinalPane = React.createClass({
             return [
                 {
                     value: finalist.goods.name,
-                    view:  <span>{finalist.goods.name}</span>
+                    view:  <FinalistName index={i}
+                                         state={finalist.state}>
+                             {finalist.goods.name}
+                           </FinalistName>
                 },
                 {
                     value: finalist.maker,
