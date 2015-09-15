@@ -26,24 +26,55 @@ var FinalPane     = require('./FinalPane');
 var Messages      = require('../lib/Messages');
 
 var messages = {
-    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
-    ADD_FINALIST:      'ADD_FINALIST',
-    CLEAR_FINALISTS:   'CLEAR_FINALISTS',
-    CHANGE_QUANTITY:   'CHANGE_QUANTITY',
-    REGISTER_ORDER:    'REGISTER_ORDER',
-    UPDATE_ORDER:      'UPDATE_ORDER'
+    SET_DEPARTMENT_CODE: 'SET_DEPARTMENT_CODE',
+    UPDATE_CANDIDATES:   'UPDATE_CANDIDATES',
+    ADD_FINALIST:        'ADD_FINALIST',
+    CLEAR_FINALISTS:     'CLEAR_FINALISTS',
+    CHANGE_QUANTITY:     'CHANGE_QUANTITY',
+    REGISTER_ORDER:      'REGISTER_ORDER',
+    UPDATE_ORDER:        'UPDATE_ORDER'
 };
 
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.candidates = [];       // 商品の発注候補一覧
-        this.department = null;     // 発注元の診療科
-        this.trader     = null;     // 発注先の販売元
-        this.finalists  = [];       // 発注が確定した商品の一覧
-        this.bindActions(messages.UPDATE_CANDIDATES, this.onSearchCandidates);
-        this.bindActions(messages.ADD_FINALIST,      this.onSelectCandidate);
-        this.bindActions(messages.CLEAR_FINALISTS,   this.onClearFinalists);
-        this.bindActions(messages.CHANGE_QUANTITY,   this.onChangeQuantity);
+        this.department_code = '';      // 発注元となる部門診療科
+        this.candidates      = [];      // 商品の発注候補一覧
+        this.trader          = null;    // 発注先である販売元
+        this.finalists       = [];      // 発注が確定した商品の一覧
+
+        this.bindActions(
+            messages.SET_DEPARTMENT_CODE,
+            this.setDepartmentCode
+        );
+        this.bindActions(
+            messages.UPDATE_CANDIDATES,
+            this.onSearchCandidates
+        );
+        this.bindActions(
+            messages.ADD_FINALIST,
+            this.onSelectCandidate
+        );
+        this.bindActions(
+            messages.CLEAR_FINALISTS,
+            this.onClearFinalists
+        );
+        this.bindActions(
+            messages.CHANGE_QUANTITY,
+            this.onChangeQuantity
+        );
+    },
+
+
+    /*
+     * 発注先 部門診療科を変更したら、発注候補をクリアする。
+     * そうでないと、発注候補にその部門診療科では扱えない商品が表示された
+     * ままになる可能性があり、それが発注確定になる可能性がある。
+     * つまり、本来発注できない商品を発注確定できてしまう。
+     */
+    setDepartmentCode: function(payload) {
+        this.department_code = payload.code;
+        this.candidates      = [];
+        this.emit('change');
     },
 
     onSearchCandidates: function(payload) {
@@ -74,8 +105,8 @@ var OrderStore = Fluxxor.createStore({
              * 以後は、当該販売元が必ず検索条件に指定されるため、
              * この操作は必要なくなる。
              */
-            this.candidates = this.candidates.filter(function(candidate) {
-                return candidate.trader.code === payload.candidate.trader.code;
+            this.candidates = this.candidates.filter(function(c) {
+                return c.trader.code === payload.candidate.trader.code;
             });
         }
 
@@ -126,14 +157,14 @@ var OrderStore = Fluxxor.createStore({
          * これは、引数で渡される order が props === 変更不可であるため。
          * そのため、ここで逐一内容をコピーする必要がある。
          */
-        this.finalists = order.finalists.map(function(finalist) {
+        this.finalists = order.finalists.map(function(f) {
             return {
-                code:     finalist.code,
-                goods:    finalist.goods,
-                maker:    finalist.maker,
-                price:    finalist.price,
-                quantity: finalist.quantity,
-                state:    finalist.state
+                code:     f.code,
+                goods:    f.goods,
+                maker:    f.maker,
+                price:    f.price,
+                quantity: f.quantity,
+                state:    f.state
             };
         });
 
@@ -142,23 +173,28 @@ var OrderStore = Fluxxor.createStore({
     },
 
     resetState: function() {
-        this.candidates = [];
-        this.trader     = null;
-        this.finalists  = [];
+        this.candidates      = [];
+        this.department_code = '';
+        this.trader          = null;
+        this.finalists       = [];
         this.emit('change');
     },
 
     getState: function() {
         return {
-            candidates: this.candidates,
-            department: this.department,
-            trader:     this.trader,
-            finalists:  this.finalists,
+            candidates:      this.candidates,
+            department_code: this.department_code,
+            trader:          this.trader,
+            finalists:       this.finalists,
         }
     }
 });
 
 var actions = {
+    setDepartmentCode: function(payload) {
+        this.dispatch(messages.SET_DEPARTMENT_CODE, payload);
+    },
+
     updateCandidates: function(payload) {
         XHR.post('searchCandidates').send(payload).end(function(err, res) {
             if (err) {
@@ -203,7 +239,7 @@ var OrderManager = React.createClass({
     componentWillMount: function() {
         var store = this.getFlux().store('OrderStore');
 
-        if (this.props.order !== undefined) {
+        if (this.props.order !== null) {
             store.setExistingOrder(this.props.order);
         }
     },
@@ -215,7 +251,7 @@ var OrderManager = React.createClass({
     render: function() {
         var order_type;
         
-        if (this.props.order != undefined) {
+        if (this.props.order != null) {
             order_type = this.props.order.type;
         } else {
             order_type = this.props.action;
@@ -225,7 +261,7 @@ var OrderManager = React.createClass({
             <div id="ope">
               <div id="order-left-side">
                 <SearchPane order_type={order_type}  
-                            department={this.state.department}
+                            department_code={this.state.department_code}
                             final_trader={this.state.trader} />
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
@@ -235,7 +271,7 @@ var OrderManager = React.createClass({
                            action={this.props.action}
                            account={this.props.user.account}
                            finalists={this.state.finalists}
-                           department={this.state.department}
+                           department_code={this.state.department_code}
                            trader={this.state.trader}
                            order={this.props.order} />
               </div>
@@ -330,6 +366,12 @@ var Order = React.createClass({
                 name: React.PropTypes.string.isRequired
             }).isRequired
         })
+    },
+
+    getDefaultProps: function() {
+        return {
+            order: null
+        };
     },
 
     render: function() {

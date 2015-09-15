@@ -14,45 +14,37 @@ var MenuItem    = require('react-bootstrap').MenuItem;
 var Select = React.createClass({
     propTypes: {
         placeholder: React.PropTypes.string.isRequired,
-        value:       React.PropTypes.string.isRequired,
         onSelect:    React.PropTypes.func.isRequired,
+        value:       React.PropTypes.string.isRequired,
         options:     React.PropTypes.arrayOf(React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
         }) ).isRequired
     },
 
-    getInitialState: function() {
-        return({ title: this.props.placeholder });
-    },
-
-    onSelect: function(e) {
-        this.setState({ title: e.name });
-        this.props.onSelect(e);
-    },
-
-    options: function(list) {
-        return list.map(function(opt) {
-            return (
-                <MenuItem eventKey={opt}
-                          key={opt.code}
-                          onSelect={this.onSelect}>
-                  {opt.name}
-                </MenuItem>
-            );
-       }.bind(this) );
-    },
+    onSelect: function(e) { this.props.onSelect(e); },
 
     render: function() {
-        var title = this.props.placeholder;
+        var title   = this.props.placeholder;
+        var options = this.props.options.map(function(o) {
+            return (
+                <MenuItem eventKey={o}
+                          key={o.code}
+                          onSelect={this.onSelect}>
+                  {o.name}
+                </MenuItem>
+            );
+        }.bind(this) );
 
         if (this.props.value != '') {
-            title = this.state.title;
+            title = this.props.options.filter(function(o) {
+                return o.code === this.props.value;
+            }.bind(this) )[0].name;
         }
 
         return (
             <SplitButton bsSize="small" bsStyle="default" title={title}>
-              {this.options(this.props.options)}
+              {options}
             </SplitButton>
         );
     }

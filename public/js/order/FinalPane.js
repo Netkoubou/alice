@@ -35,10 +35,7 @@ var FinalPane = React.createClass({
             ]).isRequired
         }) ).isRequired,
 
-        department: React.PropTypes.shape({
-            code: React.PropTypes.string.isRequired,
-            name: React.PropTypes.string.isRequired
-        }),
+        department_code: React.PropTypes.string,
 
         trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -48,6 +45,13 @@ var FinalPane = React.createClass({
         order: React.PropTypes.object
     },
 
+    getDefaultProps: function() {
+        return {
+            department_code: '',
+            trader:          null,
+            order:           null
+        };
+    },
 
     /*
      * クリアボタンがクリックされたら
@@ -64,12 +68,12 @@ var FinalPane = React.createClass({
         if (this.props.order === null) {
             XHR.post('registerOrger').send({
                 type:            this.props.action,
-                department_code: this.props.department.code,
+                department_code: this.props.department_code,
                 trader_code:     this.props.trader.code,
-                finalists:       this.props.finalists.map(function(finalist) {
+                finalists:       this.props.finalists.map(function(f) {
                                      return {
-                                         code:     finalist.goods.code,
-                                         quantity: finalist.quantity
+                                         code:     f.goods.code,
+                                         quantity: f.quantity
                                      };
                                  })
             }).end(function(err, res) {
@@ -114,7 +118,7 @@ var FinalPane = React.createClass({
     render: function() {
         var originator, order_code, drafting_date;
 
-        if (this.props.order == undefined) {
+        if (this.props.order == null) {
             originator = this.props.account;
             order_code = '未登録';
 
@@ -132,7 +136,7 @@ var FinalPane = React.createClass({
 
         var trader = {};
 
-        if (this.props.trader == undefined) {
+        if (this.props.trader == null) {
             trader = { code: null, name: '未確定' };
         } else {
             trader = this.props.trader;
@@ -245,9 +249,7 @@ var FinalPane = React.createClass({
                 <Button bsSize="small" onClick={this.onClear}>
                   クリア
                 </Button>
-                <Button bsSize="small"
-                        onClick={this.onFix}
-                        disable={this.props.trader === null}>
+                <Button bsSize="small" onClick={this.onFix}>
                   確定
                 </Button>
               </div>

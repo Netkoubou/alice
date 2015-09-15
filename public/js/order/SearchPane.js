@@ -12,6 +12,8 @@ var Messages = require('../lib/Messages');
 
 var SelectDepartment = React.createClass({
     propTypes: {
+        isFixed:  React.PropTypes.bool.isRequired,
+        value:    React.PropTypes.string.isRequired,
         onSelect: React.PropTypes.func.isRequired,
         options:  React.PropTypes.arrayOf(React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -20,11 +22,24 @@ var SelectDepartment = React.createClass({
     },
 
     render: function() {
-        var placeholder, code;
+        var options, placeholder, code;
 
-        if (this.props.options.length == 1) {
-            placeholder = this.props.options[0].name;
-            code        = this.props.options[0].code;
+
+        /*
+         * 発注元 部門診療科が決定している (発注確定している商品がある)
+         * のなら、選択肢をそれだけにするが良い
+         */
+        if (this.props.isFixed) {
+            options = this.props.options.filter(function(o) {
+                return o.code === this.props.value;
+            }.bind(this) );
+        } else {
+            options = this.props.options;
+        }
+
+        if (options.length == 1) {
+            placeholder = options[0].name;
+            code        = options[0].code;
         } else {
             placeholder = '選択して下さい';
             code        = this.props.value;
@@ -35,14 +50,13 @@ var SelectDepartment = React.createClass({
                     placeholder={placeholder}
                     onSelect={this.props.onSelect}
                     value={code}
-                    options={this.props.options} />
+                    options={options} />
         );
     }
 });
 
 var SelectTrader = React.createClass({
     propTypes: {
-        department:   React.PropTypes.object,
         final_trader: React.PropTypes.object,
         onSelect:     React.PropTypes.func.isRequired,
         value:        React.PropTypes.string.isRequired,
@@ -75,31 +89,59 @@ var SelectTrader = React.createClass({
     }
 });
 
+
+/*
+ * 発注元 部門診療科の選択は、UI の配置としても意味的にも、
+ * 検索ペインの外にあるべきなのだが、
+ * コード上は検索ペインの一部として扱っている。
+ * 発注元 部門診療科も、結局は検索条件の一部なので、
+ * その方が、コーディング上何かと都合が良かったりする。
+ *
+ * 発注元 部門診療科と発注先 販売元の扱いは以下のように意外と複雑。
+ *
+ *   - (ログインしている) ユーザの所属している、若しくは発注代行できる
+ *     部門診療科が
+ *
+ *     * 1 つだけ: 発注元 部門診療科としてそれを無条件に選択 (選択の余地なし)
+ *     * 複数ある: ユーザに選択させる (選択必須)
+ *
+ *   - 発注元 部門診療科が選択されていないと発注候補の検索不可
+ *   - 発注確定した商品が 1 つでもあれば
+ *
+ *     * 発注元 部門診療科の変更不可
+ *     * 発注先 販売元は、その商品を扱うそれに固定 (選択 / 変更不可)
+ *
+ *   - 発注確定した商品 0 になったら、発注元 部門診療科も発注先 販売元も
+ *     選択 / 変更できるようになる
+ *
+ * 発注確定した商品が (1 つでも) あれば、
+ *
+ *   this.props.final_trader != null
+ *
+ * となる (つまり this.props.final_trader == 0 なら発注確定した商品はない)
+ * ようになっている (はず) なので、this.props.final_trader は、
+ * 結構重要なフラグとなっている。
+ */
 var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        order_type:   React.PropTypes.string.isRequired,
-        final_trader: React.PropTypes.shape({
+        order_type:      React.PropTypes.string.isRequired,
+        department_code: React.PropTypes.string,
+        final_trader:    React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
         })
     },
 
     getInitialState: function() {
-        var department_code = '';
         var trader_code     = '';
-
-        if (this.props.department != null) {
-            department_code = this.props.department_code;
-        }
 
         if (this.props.final_trader != null) {
             trader_code = this.props.final_trader.code;
         }
 
         return {
-            department_code: department_code,
             category_code:   '',
             trader_code:     trader_code,
             search_text:     '',
@@ -110,11 +152,19 @@ var SearchPane = React.createClass({
     },
 
 
+    getDefaultProps: function() {
+        return {
+            department_code: '',
+            final_trader:    null
+        };
+    },
+
+
     /*
      * 診療科が選択されたら
      */
     onSelectDepartment: function(e) {
-        this.setState({ department_code: e.code });
+        return this.getFlux().actions.setDepartmentCode({ code: e.code });
     },
 
 
@@ -144,6 +194,8 @@ var SearchPane = React.createClass({
 
     /*
      * クリアボタンをクリック
+     *
+     * 
      */
     onClear: function() {
         var department_code, trader_code;
@@ -156,20 +208,20 @@ var SearchPane = React.createClass({
              * つまり、選択の余地はない訳で、クリアする意味がない。
              */
             department_code = this.state.departments[0].code;
-        } else if (this.props.department != null) {
+        } else if (this.props.final_trader != null) {
             /*
-             * 発注元 (部門診療科) が既に決まっているのなら
-             *
-             * 一部の部署は、他部署 (部門診療科) の発注を肩代わりできるのだが、
-             * 既に何処の肩代わりするかが決まっている場合。
+             * 発注元 部門診療科が既に決まっているのなら、
+             * クリアしちゃいけない
              */
-            department_code = this.props.department.code;
+            department_code = this.props.department_code;
         } else {
             /*
              * 発注元が未だ決まっていないのなら
              */
             department_code = '';
         }
+
+        this.getFlux().actions.setDepartmentCode({ code: department_code });
 
 
         /*
@@ -183,10 +235,9 @@ var SearchPane = React.createClass({
         }
 
         this.setState({
-            department_code: department_code,
-            category_code:   '',
-            trader_code:     trader_code,
-            search_text:     '',
+            category_code: '',
+            trader_code:   trader_code,
+            search_text:   '',
         });
     },
 
@@ -195,7 +246,7 @@ var SearchPane = React.createClass({
      * 検索ボタンをクリック
      */
     onSearch: function(e) {
-        if (this.state.department_code === '') {
+        if (this.props.department_code === '') {
             alert('部門診療科を選択して下さい');
             e.preventDefault();
             return;
@@ -203,7 +254,7 @@ var SearchPane = React.createClass({
 
         return this.getFlux().actions.updateCandidates({
             order_type:      this.props.order_type,
-            department_code: this.state.department_code,
+            department_code: this.props.department_code,
             category_code:   this.state.category_code,
             trader_code:     this.state.trader_code,
             search_text:     this.state.search_text
@@ -222,6 +273,12 @@ var SearchPane = React.createClass({
                 throw 'pickMenuItemsForSearchPane';
             }
 
+            this.setState({
+                categories:  res.body.categories,
+                departments: res.body.departments,
+                traders:     res.body.traders 
+            });
+
             var department_code;
 
             if (res.body.departments.length == 1) {
@@ -236,11 +293,8 @@ var SearchPane = React.createClass({
                 department_code = '';
             }
 
-            this.setState({
-                department_code: department_code,
-                categories:      res.body.categories,
-                departments:     res.body.departments,
-                traders:         res.body.traders 
+            this.getFlux().actions.setDepartmentCode({
+                code: department_code
             });
         }.bind(this) );
     },
@@ -259,8 +313,9 @@ var SearchPane = React.createClass({
               <fieldset className="order-pane">
                 <legend>発注元 部門診療科</legend>
                 <div className="order-search-pane-row">
-                  <SelectDepartment onSelect={this.onSelectDepartment}
-                                    value={this.state.department_code}
+                  <SelectDepartment isFixed={this.props.final_trader != null}
+                                    value={this.props.department_code}
+                                    onSelect={this.onSelectDepartment}
                                     options={this.state.departments} />
                 </div>
               </fieldset>
@@ -275,8 +330,8 @@ var SearchPane = React.createClass({
                   </span>
                   <span className="order-search-pane-menu">
                     <SelectTrader final_trader={this.props.final_trader}
-                                  onSelect={this.onSelectTrader}
                                   value={this.state.trader_code}
+                                  onSelect={this.onSelectTrader}
                                   options={this.state.traders} />
                   </span>
                 </div>
