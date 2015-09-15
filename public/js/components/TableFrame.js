@@ -168,9 +168,9 @@ var TableFrame = React.createClass({
          * ここで、ソート対象の配列をコピーしている。
          * これは、ソートに sort 関数を用いているためで、sort 関数は対象の
          * 配列を直接更新してしまう。
-         * ソート対象は上位要素から渡された表の生データなわけだが、属性値を
-         * 変更することは許されていない。
-         * ということで (無駄に見えるが) 一旦ここでコピーしている。
+         * ソート対象は上位要素から属性値として渡された表の生データなわけだが、
+         * 属性値を変更することは許されていない。
+         * ということで (無駄に思えるが) 一旦ここでコピーしている。
          */
         var data = this.props.data.map(function(row) {
             return row;
@@ -243,6 +243,12 @@ var TableFrame = React.createClass({
     }
 });
 
+
+/*
+ * TableFrame のセルに input 要素を配置したい、
+ * 即ち表の値をユーザが直接変更 / 編集できるようにしたい場合に利用する。
+ * ハイライトとかを勝手にやってくれるし、多少は便利。
+ */
 TableFrame.Input = React.createClass({
     propTypes: {
         placeholder: React.PropTypes.string.isRequired,

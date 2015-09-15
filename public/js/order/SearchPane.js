@@ -2,12 +2,13 @@
  * 検索ペイン
  */
 'use strict';
-var React   = require('react');
-var Input   = require('react-bootstrap').Input;
-var Button  = require('react-bootstrap').Button;
-var XHR     = require('superagent');
-var Fluxxor = require('fluxxor');
-var Select  = require('../components/Select');
+var React    = require('react');
+var Input    = require('react-bootstrap').Input;
+var Button   = require('react-bootstrap').Button;
+var XHR      = require('superagent');
+var Fluxxor  = require('fluxxor');
+var Select   = require('../components/Select');
+var Messages = require('../lib/Messages');
 
 var SelectDepartment = React.createClass({
     propTypes: {
@@ -217,7 +218,7 @@ var SearchPane = React.createClass({
     componentDidMount: function() {
         XHR.get('pickMenuItemsForSearchPane').end(function(err, res) {
             if (err) {
-                alert('ERROR! pickMenuItemsForSearchPane');
+                alert(Messages.SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE);
                 throw 'pickMenuItemsForSearchPane';
             }
 

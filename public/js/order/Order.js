@@ -23,6 +23,7 @@ var XHR           = require('superagent');
 var SearchPane    = require('./SearchPane');
 var CandidatePane = require('./CandidatePane');
 var FinalPane     = require('./FinalPane');
+var Messages      = require('../lib/Messages');
 
 var messages = {
     UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
@@ -161,7 +162,7 @@ var actions = {
     updateCandidates: function(payload) {
         XHR.post('searchCandidates').send(payload).end(function(err, res) {
             if (err) {
-                alert('ERROR! searchCandidates');
+                alert(Messages.ORDER_SEARCH_CANDIDATES);
                 throw 'searchCandidates';
             }
 

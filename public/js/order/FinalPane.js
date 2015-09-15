@@ -9,6 +9,7 @@ var XHR        = require('superagent');
 var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
 var Input      = TableFrame.Input;
+var Messages   = require('../lib/Messages');
 
 var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
@@ -73,7 +74,7 @@ var FinalPane = React.createClass({
                                  })
             }).end(function(err, res) {
                 if (err) {
-                    alert('ERROR! registerOrder');
+                    alert(Messages.FINAL_PANE_REGISTER_ORDER);
                     throw 'registerOrder';
                 }
 
