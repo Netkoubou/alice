@@ -31,6 +31,9 @@ var FinalistName = React.createClass({
     },
 
     render: function() {
+        /*
+         * 削除できるのは処理中の商品のみ
+         */
         if (this.props.state === 'PROCESSING') {
             return (
                 <div className='order-finalist-name'
@@ -186,7 +189,7 @@ var FinalPane = React.createClass({
 
         var total = 0;
         var data  = this.props.finalists.map(function(finalist, i) {
-            var subtotal = finalist.price * finalist.quantity;
+            var subtotal = Math.round(finalist.price * finalist.quantity);
 
             total += subtotal;
 
@@ -207,10 +210,6 @@ var FinalPane = React.createClass({
             }
 
             var price_string = finalist.price.toLocaleString('ja-JP', {
-                minimumFractionDigits: 2
-            });
-
-            var subtotal_string = subtotal.toLocaleString('ja-JP', {
                 minimumFractionDigits: 2
             });
 
@@ -238,7 +237,7 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: subtotal,
-                    view:  <span>{subtotal_string}</span>
+                    view:  <span>{subtotal.toLocaleString()}</span>
                 },
                 {
                     value: finalist.state,
