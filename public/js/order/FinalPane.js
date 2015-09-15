@@ -66,7 +66,7 @@ var FinalPane = React.createClass({
      */
     onFix: function() {
         if (this.props.order === null) {
-            XHR.post('registerOrger').send({
+            XHR.post('registerOrder').send({
                 type:            this.props.action,
                 department_code: this.props.department_code,
                 trader_code:     this.props.trader.code,

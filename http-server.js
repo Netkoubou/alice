@@ -244,7 +244,7 @@ app.post('/searchCandidates', function(req, res) {
  * 発注の新規登録
  */
 app.post('/registerOrder', function(req, res) {
-    console.log(res.body);
+    console.log(req.body);
     res.json({
         status: 0
     });
