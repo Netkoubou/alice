@@ -84,17 +84,21 @@ var Nav = React.createClass({
         ]).isRequired
     },
 
+    getInitialState: function() { return { nav_id: 'nav-first' } },
+
     dummy: function() {
         alert('工事中です (そっとしておいて下さい)');
     },
 
     ordinaryOrder: function() {
         this.props.onSelect('ORDINARY_ORDER');
+        this.setState({ nav_id: 'nav' });
     },
 
     urgentlyOrder: function() {
         var onClick = function() {
             this.props.onSelect('URGENCY_ORDER');
+            this.setState({ nav_id: 'nav' });
         }.bind(this);
 
         if (this.props.user.urgency) {
@@ -111,6 +115,7 @@ var Nav = React.createClass({
     medsOrder: function() {
         var onClick = function() {
             this.props.onSelect('MEDS_ORDER');
+            this.setState({ nav_id: 'nav' });
         }.bind(this);
 
         if (this.props.user.medical) {
@@ -167,7 +172,7 @@ var Nav = React.createClass({
         var selected  = this.props.selected;
 
         return (
-            <div id="nav">
+            <div id={this.state.nav_id}>
               <NavItemTitle name="発注" />
               <NavItem name="通常発注"
                        onClick={this.ordinaryOrder}
