@@ -25,6 +25,10 @@ var CandidatePane = require('./CandidatePane');
 var FinalPane     = require('./FinalPane');
 var Messages      = require('../lib/Messages');
 
+
+/*
+ * Flux 定数
+ */
 var messages = {
     SET_DEPARTMENT_CODE: 'SET_DEPARTMENT_CODE',
     UPDATE_CANDIDATES:   'UPDATE_CANDIDATES',
@@ -35,13 +39,17 @@ var messages = {
     FIX_FINALISTS:       'FIX_FINALISTS'
 };
 
+
+/*
+ * Flux Store
+ */
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.department_code = '';      // 発注元となる部門診療科
-        this.candidates      = [];      // 商品の発注候補一覧
-        this.trader          = null;    // 発注先である販売元
-        this.finalists       = [];      // 発注が確定した商品の一覧
-        this.is_updated      = false;   // 最新の発注が DB に登録済みか?
+        this.department_code = '';      // 発注元 部門診療科の ID
+        this.trader          = null;    // 発注先 販売元の ID と名前
+        this.candidates      = [];      // 物品の発注候補一覧
+        this.finalists       = [];      // 物品の発注確定一覧
+        this.need_save       = true;    // 発注確定一覧を DB に登録必要か?
 
         this.bindActions(
             messages.SET_DEPARTMENT_CODE,
@@ -75,10 +83,10 @@ var OrderStore = Fluxxor.createStore({
 
 
     /*
-     * 発注先 部門診療科を変更したら、発注候補をクリアする。
-     * そうでないと、発注候補にその部門診療科では扱えない商品が表示された
-     * ままになる可能性があり、それが発注確定になる可能性がある。
-     * つまり、本来発注できない商品を発注確定できてしまう。
+     * 発注先 部門診療科を変更したら、発注候補一覧をクリアする。
+     * そうでないと、発注候補にその部門診療科では扱えない物品が表示された
+     * ままになる可能性がある、即ち本来発注できない物品が発注確定一覧に入
+     * る可能性がある。
      */
     setDepartmentCode: function(payload) {
         this.department_code = payload.code;
@@ -93,7 +101,7 @@ var OrderStore = Fluxxor.createStore({
 
 
     /*
-     * 候補の中から発注する商品を選んだら (CandidatePane の CandidateName 参照)
+     *  発注候補一覧の中から物品を選択すると、それが発注確定一覧に入る。
      */
     onSelectCandidate: function(payload) {
         this.finalists.push({
@@ -110,7 +118,7 @@ var OrderStore = Fluxxor.createStore({
 
 
             /*
-             * 販売元が確定したら、候補一覧から当該販売元以外を除く。
+             * 販売元が確定したら、発注候補一覧から当該販売元以外を除く。
              * 以後は、当該販売元が必ず検索条件に指定されるため、
              * この操作は必要なくなる。
              */
@@ -119,13 +127,13 @@ var OrderStore = Fluxxor.createStore({
             });
         }
 
-        this.is_updated = false;    // 発注が更新された
+        this.need_save = true;  // 発注確定一覧が更新された
         this.emit('change');
     },
 
 
     /*
-     * 発注確定一覧から商品を選んだら (発注確定一覧から削除)
+     * 発注確定一覧から物品を選んだら、発注確定一覧から削除する。
      */
     onSelectFinalist: function(payload) {
         this.finalists.splice(payload.index, 1);
@@ -134,13 +142,13 @@ var OrderStore = Fluxxor.createStore({
             this.trader = null;
         }
 
-        this.is_updated = false;    // 発注が更新された
+        this.need_save = true;  // 発注確定一覧が更新された
         this.emit('change');
     },
 
 
     /*
-     * 確定した商品をクリアする場合、状態が処理中のもの *だけ* 除去する。
+     * 発注確定一覧をクリアする場合、状態が処理中のもの *だけ* 除去する。
      * 以下の状態のものは除去しちゃいけない。
      *
      *   - 発注済み
@@ -156,26 +164,26 @@ var OrderStore = Fluxxor.createStore({
             this.trader = null;
         }
 
-        this.is_updated = false;    // 発注が更新された
+        this.need_save = true;    // 発注確定一覧が更新された
         this.emit('change');
     },
 
 
     /*
-     * 確定した商品の発注数量を変更したら 
+     * 発注確定一覧の物品の数量を変更したら 
      */
     onChangeQuantity: function(payload) {
         this.finalists[payload.index].quantity = payload.value;
-        this.is_updated = false;    // 発注が更新された
+        this.need_save = true;  // 発注確定一覧が更新された
         this.emit('change');
     },
 
 
     /*
-     * 新規若しくは変更した既存の発注を DB に登録したら
+     * 新規若しくは変更した既存の発注確定一覧を DB に登録したら
      */
     onFixFinalists: function() {
-        this.is_updated = true;
+        this.need_save = false;
         this.emit('change');
     },
 
@@ -185,7 +193,7 @@ var OrderStore = Fluxxor.createStore({
      */
     setExistingOrder: function(order) {
         /*
-         * 発注確定商品一覧の数量は変更される可能性があるため、
+         * 発注確定一覧の数量は変更される可能性があるため、
          *
          *   this.finalists = order.finalists;
          *
@@ -205,7 +213,7 @@ var OrderStore = Fluxxor.createStore({
         });
 
         this.trader     = order.trader;
-        this.is_updated = true;     // 既存の発注 === 最新版 === 未更新
+        this.need_save = false;     // 既存の発注 === 最新版 === 未更新
         this.emit('change');
     },
 
@@ -214,7 +222,7 @@ var OrderStore = Fluxxor.createStore({
         this.department_code = '';
         this.trader          = null;
         this.finalists       = [];
-        this.is_updated      = false;
+        this.need_save       = true;
         this.emit('change');
     },
 
@@ -224,11 +232,15 @@ var OrderStore = Fluxxor.createStore({
             department_code: this.department_code,
             trader:          this.trader,
             finalists:       this.finalists,
-            is_updated:      this.is_updated
+            need_save:       this.need_save
         }
     }
 });
 
+
+/*
+ * Flux Action
+ */
 var actions = {
     setDepartmentCode: function(payload) {
         this.dispatch(messages.SET_DEPARTMENT_CODE, payload);
@@ -266,6 +278,10 @@ var actions = {
     }
 };
 
+
+/*
+ * これが本モジュールにおける事実上の main
+ */
 var OrderManager = React.createClass({
     mixins: [
         Fluxxor.FluxMixin(React),
@@ -273,10 +289,10 @@ var OrderManager = React.createClass({
     ],
 
     propTypes: {
-        flux:   React.PropTypes.object.isRequired,
-        action: React.PropTypes.string.isRequired,
-        user:   React.PropTypes.object.isRequired,
-        order:  React.PropTypes.object
+        flux:    React.PropTypes.object.isRequired,
+        account: React.PropTypes.string.isRequired,
+        action:  React.PropTypes.string.isRequired,
+        order:   React.PropTypes.object
     },
 
     getStateFromFlux: function() {
@@ -307,17 +323,17 @@ var OrderManager = React.createClass({
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane order_type={order_type}  
-                            department_code={this.state.department_code}
-                            final_trader={this.state.trader} />
+                <SearchPane orderType={order_type}  
+                            departmentCode={this.state.department_code}
+                            finalTrader={this.state.trader} />
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
                 <FinalPane key={Math.random()} 
                            action={this.props.action}
-                           account={this.props.user.account}
-                           isUpdated={this.state.is_updated}
+                           account={this.props.account}
+                           needSave={this.state.need_save}
                            finalists={this.state.finalists}
                            departmentCode={this.state.department_code}
                            trader={this.state.trader}
@@ -341,7 +357,7 @@ var flux   = new Fluxxor.Flux(stores, actions);
  */
 var Order = React.createClass({
     propTypes: {
-        user: React.PropTypes.object.isRequired,
+        account: React.PropTypes.string.isRequired,
 
         action: React.PropTypes.oneOf([
             'ORDINARY_ORDER',
@@ -422,7 +438,7 @@ var Order = React.createClass({
 
     render: function() {
         return <OrderManager flux={flux}
-                             user={this.props.user}
+                             account={this.props.account}
                              action={this.props.action}
                              order={this.props.order} />;
     }

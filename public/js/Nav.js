@@ -84,110 +84,94 @@ var Nav = React.createClass({
         ]).isRequired
     },
 
+
+    /*
+     * 最初にページが表示された時は、ナビゲーションバーを表示する (隠さない)
+     */
     getInitialState: function() { return { nav_id: 'nav-first' } },
 
     dummy: function() {
         alert('工事中です (そっとしておいて下さい)');
     },
 
-    ordinaryOrder: function() {
-        this.props.onSelect('ORDINARY_ORDER');
-        this.setState({ nav_id: 'nav' });
-    },
-
-    urgentlyOrder: function() {
-        var onClick = function() {
-            this.props.onSelect('URGENCY_ORDER');
+    onSelect: function(action) {
+        return function() {
+            this.props.onSelect(action);
             this.setState({ nav_id: 'nav' });
         }.bind(this);
-
-        if (this.props.user.urgency) {
-            var selected = this.props.selected;
-
-            return (
-                <NavItem name="緊急発注"
-                         onClick={onClick}
-                         isSelected={selected === 'URGENCY_ORDER'} />
-            );
-        }
-    },
-
-    medsOrder: function() {
-        var onClick = function() {
-            this.props.onSelect('MEDS_ORDER');
-            this.setState({ nav_id: 'nav' });
-        }.bind(this);
-
-        if (this.props.user.medical) {
-            return (
-                <NavItem name="薬剤発注"
-                         onClick={onClick}
-                         isSelected={this.props.selected === 'MEDS_ORDER'} />
-            );
-        }
-    },
-
-    budgetAdmin: function() {
-        if (this.props.user.permission !== 'ordinary') {
-            return (
-              <div>
-                <NavItemTitle name="予算管理" />
-                <NavItem name="予算管理"
-                         onClick={this.dummy}
-                         isSelected={this.props.selected === 'BUDGET_ADMIN'} />
-              </div>
-            );
-        }
-    },
-
-    etcAdmin: function() {
-        var items    = new Array;
-        var selected = this.props.selected;
-
-        if (this.props.user.permission === 'ordinary') {
-            return items;
-        }
-
-        items.push(<NavItemTitle key='0' name="情報管理" />);
-        items.push(<NavItem key='1'
-                            name="ユーザ管理"
-                            onClick={this.dummy}
-                            isSelected={selected === 'USER_ADMIN'} />);
-
-        if (this.props.user.permission === 'privilige') {
-            items.push(<NavItem key='2'
-                                name="販売元管理"
-                                onClick={this.dummy}
-                                isSelected={selected === 'TRADER_ADMIN'} />);
-            items.push(<NavItem key='3'
-                                name="物品管理"
-                                onClick={this.dummy}
-                                isSelected={selected === 'GOODS_ADMIN'} />);
-        }
-
-        return items;
     },
 
     render: function() {
-        var selected  = this.props.selected;
+        var urgently_order = null;
+        var meds_order     = null;
+        var budget_admin   = null;
+        var etc_admin      = null;
+        var selected      = this.props.selected;
+
+        if (this.props.user.urgency) {
+            urgently_order = (
+                <NavItem name="緊急発注"
+                         onClick={this.onSelect('URGENCY_ORDER')}
+                         isSelected={selected === 'URGENCY_ORDER'} />
+            );
+        }
+
+        if (this.props.user.medical) {
+            meds_order = (
+                <NavItem name="薬剤発注"
+                         onClick={this.onSelect('MEDS_ORDER')}
+                         isSelected={selected === 'MEDS_ORDER'} />
+            );
+        }
+
+        if (this.props.user.permission === 'PRIVILEGE') {
+            budget_admin = (
+                <div>
+                  <NavItemTitle name="予算管理" />
+                  <NavItem name="予算管理"
+                           onClick={this.dummy}
+                           isSelected={selected === 'BUDGET_ADMIN'} />
+               </div>
+            );
+        }
+
+        if (this.props.user.permission === 'PRIVILEGE') {
+            etc_admin = (
+                <div>
+                  <NavItemTitle key='0' name="情報管理" />
+                  <NavItem key='1'
+                           name="ユーザ管理"
+                           onClick={this.dummy}
+                           isSelected={selected === 'USER_ADMIN'} />
+                  <NavItem key='2'
+                           name="販売元管理"
+                           onClick={this.dummy}
+                           isSelected={selected === 'TRADER_ADMIN'} />
+                  <NavItem key='3'
+                           name="物品管理"
+                           onClick={this.dummy}
+                           isSelected={selected === 'GOODS_ADMIN'} />
+                </div>
+            );
+        }
 
         return (
             <div id={this.state.nav_id}>
               <NavItemTitle name="発注" />
               <NavItem name="通常発注"
-                       onClick={this.ordinaryOrder}
+                       onClick={this.onSelect('ORDINARY_ORDER')}
                        isSelected={selected === 'ORDINARY_ORDER'} />
-              {this.urgentlyOrder()}
-              {this.medsOrder()}
+              {urgently_order}
+              {meds_order}
               <NavItem name="発注一覧"
-                       onClick={this.dummy}
+                       onClick={this.onSelect('ORDER_LIST')}
                        isSelected={selected === 'ORDER_LIST'} />
               <NavItemTitle name="経費" />
               <NavItem name="経費・精算"
                        onClick={this.dummy}
                        isSelected={selected === 'COST_COUNT'} />
-              {this.budgetAdmin()}
-              {this.etcAdmin()}
+              {budget_admin}
+              {etc_admin}
               <NavItemTitle name="その他" />
               <NavItem name="パスワード変更"
                        onClick={this.dummy}

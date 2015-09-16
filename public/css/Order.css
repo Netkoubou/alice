@@ -104,3 +104,21 @@
   bottom: 14px;
   right:  0px;
 }
+
+#order-list {
+  width: calc(100% - 8px);
+  font-size: small;
+}
+
+#order-list-table {
+  width: calc(100% - 32px);
+}
+
+#order-list-table col:nth-child(1) { width: 160px }
+#order-list-table col:nth-child(2) { width: 80px }
+#order-list-table col:nth-child(3) { width: calc(60% - 480px) }
+#order-list-table col:nth-child(4) { width: 80px }
+#order-list-table col:nth-child(5) { width: 20% }
+#order-list-table col:nth-child(6) { width: 20% }
+#order-list-table col:nth-child(7) { width: 80px }
+#order-list-table col:nth-child(8) { width: 80px }

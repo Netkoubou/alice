@@ -1,11 +1,6 @@
 /*
  * 候補ペイン
  */
-
-/*
- * 発注する商品の候補一覧を表で表示するペイン。
- * 商品の品名をクリックすると確定ペインに入る。
- */
 'use strict';
 var React      = require('react');
 var Fluxxor    = require('fluxxor');
@@ -13,8 +8,8 @@ var TableFrame = require('../components/TableFrame');
 
 
 /*
- * 候補一覧表の品名セル専用のコンポーネント。
- * ここをクリックすることで、その商品が確定ペインに入る。
+ * 発注候補一覧の品名セル専用コンポーネント。
+ * ここをクリックすることで、その物品が発注確定一覧に入る。
  */
 var CandidateName = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
@@ -57,7 +52,7 @@ var CandidatePane = React.createClass({
 
 
         /*
-         * ここで、上位要素から貰った候補一覧の生データを
+         * ここで、上位要素から貰った発注候補一覧用の生データを
          * TableFrame 用に変換する。
          */
 

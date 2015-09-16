@@ -26,8 +26,8 @@ var SelectDepartment = React.createClass({
 
 
         /*
-         * 発注元 部門診療科が決定している (発注確定している商品がある)
-         * のなら、選択肢をそれだけにするが良い
+         * 発注元 部門診療科が決定している (発注確定している物品がある)
+         * のなら、選択肢をその発注元 部門診療科が扱う物品に絞る。
          */
         if (this.props.isFixed) {
             options = this.props.options.filter(function(o) {
@@ -57,10 +57,10 @@ var SelectDepartment = React.createClass({
 
 var SelectTrader = React.createClass({
     propTypes: {
-        final_trader: React.PropTypes.object,
-        onSelect:     React.PropTypes.func.isRequired,
-        value:        React.PropTypes.string.isRequired,
-        options:      React.PropTypes.arrayOf(React.PropTypes.shape({
+        finalTrader: React.PropTypes.object,
+        onSelect:    React.PropTypes.func.isRequired,
+        value:       React.PropTypes.string.isRequired,
+        options:     React.PropTypes.arrayOf(React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
         }) ).isRequired
@@ -69,14 +69,14 @@ var SelectTrader = React.createClass({
     render: function() {
         var placeholder, code, options;
 
-        if (this.props.final_trader === null) {
+        if (this.props.finalTrader === null) {
             placeholder = '発注先 販売元';
             code        = this.props.value;
             options     = this.props.options;
         } else {
-            placeholder = this.props.final_trader.name;
-            code        = this.props.final_trader.code;
-            options     = [ this.props.final_trader ];
+            placeholder = this.props.finalTrader.name;
+            code        = this.props.finalTrader.code;
+            options     = [ this.props.finalTrader ];
         }
 
         return (
@@ -95,7 +95,7 @@ var SelectTrader = React.createClass({
  * 検索ペインの外にあるべきなのだが、
  * コード上は検索ペインの一部として扱っている。
  * 発注元 部門診療科も、結局は検索条件の一部なので、
- * その方が、コーディング上何かと都合が良かったりする。
+ * その方が、コーディング上何かと都合が良かったりするためである。
  *
  * 発注元 部門診療科と発注先 販売元の扱いは以下のように意外と複雑。
  *
@@ -106,29 +106,29 @@ var SelectTrader = React.createClass({
  *     * 複数ある: ユーザに選択させる (選択必須)
  *
  *   - 発注元 部門診療科が選択されていないと発注候補の検索不可
- *   - 発注確定した商品が 1 つでもあれば
+ *   - 発注確定候補一覧に物品が 1 つでも入っていれば
  *
  *     * 発注元 部門診療科の変更不可
- *     * 発注先 販売元は、その商品を扱うそれに固定 (選択 / 変更不可)
+ *     * 発注先 販売元は、その物品を扱うそれに固定 (選択 / 変更不可)
  *
- *   - 発注確定した商品 0 になったら、発注元 部門診療科も発注先 販売元も
+ *   - 発注確定した物品数が 0 になったら、発注元 部門診療科及び発注先 販売元を
  *     選択 / 変更できるようになる
  *
- * 発注確定した商品が (1 つでも) あれば、
+ * 発注確定一覧に物品が (1 つでも) 入っていれば、
  *
- *   this.props.final_trader != null
+ *   this.props.finalTrader != null
  *
- * となる (つまり this.props.final_trader == 0 なら発注確定した商品はない)
- * ようになっている (はず) なので、this.props.final_trader は、
- * 結構重要なフラグとなっている。
+ * となる (つまり this.props.finalTrader == 0 なら発注確定一覧に物品は
+ * 1 つも入ていない) ようになっている (はず) なので、
+ * this.props.finalTrader は、結構重要なフラグとなっている。
  */
 var SearchPane = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        order_type:      React.PropTypes.string.isRequired,
-        department_code: React.PropTypes.string,
-        final_trader:    React.PropTypes.shape({
+        orderType:      React.PropTypes.string.isRequired,
+        departmentCode: React.PropTypes.string,
+        finalTrader:    React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
         })
@@ -137,8 +137,8 @@ var SearchPane = React.createClass({
     getInitialState: function() {
         var trader_code     = '';
 
-        if (this.props.final_trader != null) {
-            trader_code = this.props.final_trader.code;
+        if (this.props.finalTrader != null) {
+            trader_code = this.props.finalTrader.code;
         }
 
         return {
@@ -154,8 +154,8 @@ var SearchPane = React.createClass({
 
     getDefaultProps: function() {
         return {
-            department_code: '',
-            final_trader:    null
+            departmentCode: '',
+            finalTrader:    null
         };
     },
 
@@ -202,21 +202,21 @@ var SearchPane = React.createClass({
 
         if (this.state.departments.length == 1) {
             /*
-             * そもそも自分の部門診療科の発注しか扱えないのなら
+             * そもそも自分の部門診療科の発注しか扱えない場合。
              *
              * 一般の部署は他部署の発注を扱うことができない。
              * つまり、選択の余地はない訳で、クリアする意味がない。
              */
             department_code = this.state.departments[0].code;
-        } else if (this.props.final_trader != null) {
+        } else if (this.props.finalTrader != null) {
             /*
              * 発注元 部門診療科が既に決まっているのなら、
              * クリアしちゃいけない
              */
-            department_code = this.props.department_code;
+            department_code = this.props.departmentCode;
         } else {
             /*
-             * 発注元が未だ決まっていないのなら
+             * 発注元 部門診療科が未だ決まっていないのなら
              */
             department_code = '';
         }
@@ -225,13 +225,13 @@ var SearchPane = React.createClass({
 
 
         /*
-         * 発注する商品が一つでも確定している場合、
-         * 販売元をクリアしちゃいけない
+         * 発注確定一覧に物品が一つでも入っている場合、
+         * 発注先 販売元をクリアしちゃいけない。
          */
-        if (this.props.final_trader == null) {
+        if (this.props.finalTrader == null) {
             trader_code = '';
         } else {
-            trader_code = this.props.final_trader.code;
+            trader_code = this.props.finalTrader.code;
         }
 
         this.setState({
@@ -246,15 +246,15 @@ var SearchPane = React.createClass({
      * 検索ボタンをクリック
      */
     onSearch: function(e) {
-        if (this.props.department_code === '') {
+        if (this.props.departmentCode === '') {
             alert('部門診療科を選択して下さい');
             e.preventDefault();
             return;
         }
 
         return this.getFlux().actions.updateCandidates({
-            order_type:      this.props.order_type,
-            department_code: this.props.department_code,
+            order_type:      this.props.orderType,
+            department_code: this.props.departmentCode,
             category_code:   this.state.category_code,
             trader_code:     this.state.trader_code,
             search_text:     this.state.search_text
@@ -300,9 +300,9 @@ var SearchPane = React.createClass({
     },
 
     componentWillReceiveProps: function(new_props) {
-        if (new_props.final_trader != null) {
-            this.setState({ trader_code: new_props.final_trader.code });
-        } else if (this.props.final_trader != null) {
+        if (new_props.finalTrader != null) {
+            this.setState({ trader_code: new_props.finalTrader.code });
+        } else if (this.props.finalTrader != null) {
             this.setState({ trader_code: '' });
         }
     },
@@ -313,8 +313,8 @@ var SearchPane = React.createClass({
               <fieldset className="order-pane">
                 <legend>発注元 部門診療科</legend>
                 <div className="order-search-pane-row">
-                  <SelectDepartment isFixed={this.props.final_trader != null}
-                                    value={this.props.department_code}
+                  <SelectDepartment isFixed={this.props.finalTrader != null}
+                                    value={this.props.departmentCode}
                                     onSelect={this.onSelectDepartment}
                                     options={this.state.departments} />
                 </div>
@@ -329,7 +329,7 @@ var SearchPane = React.createClass({
                             options={this.state.categories} />
                   </span>
                   <span className="order-search-pane-menu">
-                    <SelectTrader final_trader={this.props.final_trader}
+                    <SelectTrader finalTrader={this.props.finalTrader}
                                   value={this.state.trader_code}
                                   onSelect={this.onSelectTrader}
                                   options={this.state.traders} />

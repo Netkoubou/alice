@@ -2,8 +2,9 @@
  * 操作領域
  */
 'use strict';
-var React = require('react');
-var Order = require('./order/Order');
+var React     = require('react');
+var Order     = require('./order/Order');
+var OrderList = require('./order/OrderList');
 
 
 /*
@@ -40,9 +41,12 @@ var Ope = React.createClass({
              * 以下の key を指定することで、発注の操作を (例えば、通常発注か
              * ら緊急発注へ) 切り替えた時に、検索ペインが再描画される。
              */
-            contents = <Order user={this.props.user}
+            contents = <Order account={this.props.user.account}
                               key={Math.random()}
                               action={this.props.action} />;
+            break;
+        case 'ORDER_LIST':
+            contents = <OrderList user={this.props.user} />
             break;
         default:
             contents = null;

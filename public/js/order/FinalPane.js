@@ -32,7 +32,7 @@ var FinalistName = React.createClass({
 
     render: function() {
         /*
-         * 削除できるのは処理中の商品のみ
+         * 削除できるのは処理中の物品のみ
          */
         if (this.props.state === 'PROCESSING') {
             return (
@@ -51,26 +51,26 @@ var ButtonForNextAction = React.createClass({
     propTypes: {
         onFix:     React.PropTypes.func.isRequired,
         onPrint:   React.PropTypes.func.isRequired,
-        isUpdated: React.PropTypes.bool.isRequired,
+        needSave:  React.PropTypes.bool.isRequired,
         trader:    React.PropTypes.object
     },
 
     getDefaultProps: function() { return { trader: null }; },
 
     render: function() {
-        if (this.props.isUpdated) {
+        if (this.props.needSave) {
             return (
-                <Button bsSize="small" onClick={this.props.onPrint}>
-                  印刷
+                <Button bsSize="small"
+                        onClick={this.props.onFix}
+                        disabled={this.props.trader === null}>
+                  確定
                 </Button>
             );
         }
 
         return (
-            <Button bsSize="small"
-                    onClick={this.props.onFix}
-                    disabled={this.props.trader === null}>
-              確定
+            <Button bsSize="small" onClick={this.props.onPrint}>
+              印刷
             </Button>
         );
     }
@@ -82,7 +82,7 @@ var FinalPane = React.createClass({
     propTypes: {
         action:    React.PropTypes.string.isRequired,
         account:   React.PropTypes.string.isRequired,
-        isUpdated: React.PropTypes.bool.isRequired,
+        needSave:  React.PropTypes.bool.isRequired,
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
             code:  React.PropTypes.string.isRequired,
             goods: React.PropTypes.shape({
@@ -169,11 +169,11 @@ var FinalPane = React.createClass({
 
 
     /*
-     * 発注が確定した商品の数量が変更されたら呼び出されるコールバック関数を
-     * 返す関数。
-     * コールバック関数そのものではないので注意。
-     * クロージャで、発注が確定した商品が格納される配列のインデックス == index
-     * を保持して、当該商品の数量を変更できるようにしている。
+     * 発注確定一覧の数量が変更されたら呼び出される、
+     * コールバック関数を返す関数。
+     * コールバック関数そのものではないことに注意。
+     * クロージャで、発注確定一覧 (配列) のインデックス == index を保持して、
+     * 当該物品の数量を変更できるようにしている。
      */
     onChangeQuantity: function(index) {
         return function(e) {
@@ -322,7 +322,7 @@ var FinalPane = React.createClass({
                 </Button>
                 <ButtonForNextAction onFix={this.onFix}
                                      onPrint={this.onPrint}
-                                     isUpdated={this.props.isUpdated}
+                                     needSave={this.props.needSave}
                                      trader={this.props.trader} />
               </div>
             </fieldset>
