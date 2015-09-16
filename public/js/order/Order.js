@@ -32,8 +32,7 @@ var messages = {
     REMOVE_FINALIST:     'REMOVE_FINALIST',
     CLEAR_FINALISTS:     'CLEAR_FINALISTS',
     CHANGE_QUANTITY:     'CHANGE_QUANTITY',
-    REGISTER_ORDER:      'REGISTER_ORDER',
-    UPDATE_ORDER:        'UPDATE_ORDER'
+    FIX_FINALISTS:       'FIX_FINALISTS'
 };
 
 var OrderStore = Fluxxor.createStore({
@@ -42,6 +41,7 @@ var OrderStore = Fluxxor.createStore({
         this.candidates      = [];      // 商品の発注候補一覧
         this.trader          = null;    // 発注先である販売元
         this.finalists       = [];      // 発注が確定した商品の一覧
+        this.is_updated      = false;   // 最新の発注が DB に登録済みか?
 
         this.bindActions(
             messages.SET_DEPARTMENT_CODE,
@@ -66,6 +66,10 @@ var OrderStore = Fluxxor.createStore({
         this.bindActions(
             messages.CHANGE_QUANTITY,
             this.onChangeQuantity
+        );
+        this.bindActions(
+            messages.FIX_FINALISTS,
+            this.onFixFinalists
         );
     },
 
@@ -115,6 +119,7 @@ var OrderStore = Fluxxor.createStore({
             });
         }
 
+        this.is_updated = false;    // 発注が更新された
         this.emit('change');
     },
 
@@ -129,6 +134,7 @@ var OrderStore = Fluxxor.createStore({
             this.trader = null;
         }
 
+        this.is_updated = false;    // 発注が更新された
         this.emit('change');
     },
 
@@ -150,6 +156,7 @@ var OrderStore = Fluxxor.createStore({
             this.trader = null;
         }
 
+        this.is_updated = false;    // 発注が更新された
         this.emit('change');
     },
 
@@ -159,6 +166,16 @@ var OrderStore = Fluxxor.createStore({
      */
     onChangeQuantity: function(payload) {
         this.finalists[payload.index].quantity = payload.value;
+        this.is_updated = false;    // 発注が更新された
+        this.emit('change');
+    },
+
+
+    /*
+     * 新規若しくは変更した既存の発注を DB に登録したら
+     */
+    onFixFinalists: function() {
+        this.is_updated = true;
         this.emit('change');
     },
 
@@ -187,7 +204,8 @@ var OrderStore = Fluxxor.createStore({
             };
         });
 
-        this.trader = order.trader;
+        this.trader     = order.trader;
+        this.is_updated = true;     // 既存の発注 === 最新版 === 未更新
         this.emit('change');
     },
 
@@ -196,6 +214,7 @@ var OrderStore = Fluxxor.createStore({
         this.department_code = '';
         this.trader          = null;
         this.finalists       = [];
+        this.is_updated      = false;
         this.emit('change');
     },
 
@@ -205,6 +224,7 @@ var OrderStore = Fluxxor.createStore({
             department_code: this.department_code,
             trader:          this.trader,
             finalists:       this.finalists,
+            is_updated:      this.is_updated
         }
     }
 });
@@ -240,6 +260,10 @@ var actions = {
     changeQuantity: function(payload) {
         this.dispatch(messages.CHANGE_QUANTITY, payload);
     },
+
+    fixFinalists: function() {
+        this.dispatch(messages.FIX_FINALISTS);
+    }
 };
 
 var OrderManager = React.createClass({
@@ -293,8 +317,9 @@ var OrderManager = React.createClass({
                 <FinalPane key={Math.random()} 
                            action={this.props.action}
                            account={this.props.user.account}
+                           isUpdated={this.state.is_updated}
                            finalists={this.state.finalists}
-                           department_code={this.state.department_code}
+                           departmentCode={this.state.department_code}
                            trader={this.state.trader}
                            order={this.props.order} />
               </div>
@@ -392,9 +417,7 @@ var Order = React.createClass({
     },
 
     getDefaultProps: function() {
-        return {
-            order: null
-        };
+        return { order: null };
     },
 
     render: function() {

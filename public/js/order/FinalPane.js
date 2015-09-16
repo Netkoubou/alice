@@ -21,7 +21,7 @@ var FinalistName = React.createClass({
             'ORDERRD',
             'CANCELED',
             'DELIVERED'
-        ])
+        ]).isRequired,
     },
 
     onSelectFinalist: function() {
@@ -47,12 +47,42 @@ var FinalistName = React.createClass({
     }
 });
 
+var ButtonForNextAction = React.createClass({
+    propTypes: {
+        onFix:     React.PropTypes.func.isRequired,
+        onPrint:   React.PropTypes.func.isRequired,
+        isUpdated: React.PropTypes.bool.isRequired,
+        trader:    React.PropTypes.object
+    },
+
+    getDefaultProps: function() { return { trader: null }; },
+
+    render: function() {
+        if (this.props.isUpdated) {
+            return (
+                <Button bsSize="small" onClick={this.props.onPrint}>
+                  印刷
+                </Button>
+            );
+        }
+
+        return (
+            <Button bsSize="small"
+                    onClick={this.props.onFix}
+                    disabled={this.props.trader === null}>
+              確定
+            </Button>
+        );
+    }
+});
+
 var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
         action:    React.PropTypes.string.isRequired,
         account:   React.PropTypes.string.isRequired,
+        isUpdated: React.PropTypes.bool.isRequired,
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
             code:  React.PropTypes.string.isRequired,
             goods: React.PropTypes.shape({
@@ -71,7 +101,7 @@ var FinalPane = React.createClass({
             ]).isRequired
         }) ).isRequired,
 
-        department_code: React.PropTypes.string,
+        departmentCode: React.PropTypes.string,
 
         trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -83,9 +113,9 @@ var FinalPane = React.createClass({
 
     getDefaultProps: function() {
         return {
-            department_code: '',
-            trader:          null,
-            order:           null
+            departmentCode: '',
+            trader:         null,
+            order:          null
         };
     },
 
@@ -104,7 +134,7 @@ var FinalPane = React.createClass({
         if (this.props.order === null) {
             XHR.post('registerOrder').send({
                 type:            this.props.action,
-                department_code: this.props.department_code,
+                department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 finalists:       this.props.finalists.map(function(f) {
                                      return {
@@ -122,10 +152,19 @@ var FinalPane = React.createClass({
                     alert(res.body.description);
                 } else {
                     alert('登録しました');
-                    window.location.replace('index.html');
+                    this.getFlux().actions.fixFinalists();
                 }
-            });
+            }.bind(this) );
         }
+
+    },
+
+
+    /*
+     * 印刷ボタンがクリックされたら
+     */
+    onPrint: function() {
+        alert('工事中です');
     },
 
 
@@ -180,7 +219,7 @@ var FinalPane = React.createClass({
 
         var title = [
             { name: '品名',   type: 'string' },
-            { name: '製造者', type: 'string' },
+            { name: 'メーカ', type: 'string' },
             { name: '単価',   type: 'number' },
             { name: '数量',   type: 'number' },
             { name: '小計',   type: 'number' },
@@ -278,15 +317,13 @@ var FinalPane = React.createClass({
                 </Notice>
               </div>
               <div id="order-final-pane-buttons">
-                <Button bsSize="small">
-                  印刷
-                </Button>
                 <Button bsSize="small" onClick={this.onClear}>
                   クリア
                 </Button>
-                <Button bsSize="small" onClick={this.onFix}>
-                  確定
-                </Button>
+                <ButtonForNextAction onFix={this.onFix}
+                                     onPrint={this.onPrint}
+                                     isUpdated={this.props.isUpdated}
+                                     trader={this.props.trader} />
               </div>
             </fieldset>
         );

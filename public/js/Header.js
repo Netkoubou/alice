@@ -11,16 +11,16 @@ var Header = React.createClass({
 
         if (selector < 0.01) {
             // 開国してくださいよ
-            subsysname = 'Open your contry, please!';
+            subsysname = 'Open your contry, please...';
         } else if (selector < 0.02) {
             // 開国すれば良いのです
-            subsysname = 'It\'s OK only to open your country.';
+            subsysname = 'It\'s OK only to open your country!';
         } else if (selector < 0.03) {
             // 鎖国最低
-            subsysname = 'It\'s suck bad to close a country.';
+            subsysname = 'It\'s suck bad to close a country!';
         } else if (selector < 0.04) {
             // たった四杯で夜も寝られず
-            subsysname = 'Just four disturbed our sleep.';
+            subsysname = 'Just four disturbs our sleep.';
         } else {
             subsysname = 'Supply Processing Distribution';
         }
