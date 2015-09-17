@@ -251,4 +251,12 @@ app.post('/registerOrder', function(req, res) {
 });
 
 
+/*
+ * 発注の検索
+ */
+app.post('/searchOrders', function(req, res) {
+    console.log(req.body);
+    res.json([]);
+});
+        
 app.listen(8080);

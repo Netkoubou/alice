@@ -105,19 +105,42 @@
   right:  0px;
 }
 
-#order-list-search {
-  margin: 0 32px 8px 32px;
-  padding-top: 8px;
-}
-
 #order-list {
   width:  calc(100% - 8px);
   height: 100%;
+  padding-top: 8px;
   font-size: small;
 }
 
+#order-list fieldset {
+  width:       calc(100% - 16px);
+  margin-left: 16px;
+}
+
+#order-list-search { height: 128px; }
+
+#order-list-calendar-marker {
+  float:       left;
+  width:       256px;
+  margin-left: 32px;
+}
+
+.order-list-checkbox {
+  float: left;
+  width: 80px;
+}
+
+#order-list-buttons {
+  float: right;
+}
+
+#order-list-table-field {
+  height: calc(100% - 128px);
+}
+
 #order-list-table {
-  width: calc(100% - 32px);
+  width:  calc(100% - 32px);
+  height: calc(100% - 56px);
 }
 
 #order-list-table col:nth-child(1) { width: 160px }

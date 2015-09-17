@@ -387,14 +387,17 @@ var Order = React.createClass({
                 name: React.PropTypes.string.isRequired,
             }).isRequired,
 
+            department: React.PropTypes.shape({
+                code: React.PropTypes.string.isRequired,
+                name: React.PropTypes.string.isRequired
+            }).isRequired,
+
             trader: React.PropTypes.shape({
                 code: React.PropTypes.string.isRequired,
                 name: React.PropTypes.string.isRequired
-            }),
+            }).isRequired,
 
             finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-
                 goods: React.PropTypes.shape({
                     code: React.PropTypes.string.isRequired,
                     name: React.PropTypes.string.isRequired
