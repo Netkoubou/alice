@@ -1,8 +1,13 @@
-var React      = require('react');
-var TableFrame = require('../components/TableFrame');
+var React          = require('react');
+var TableFrame     = require('../components/TableFrame');
+var CalendarMarker = require('../components/CalendarMarker');
 
 var OrderList = React.createClass({
     propTypes: { user: React.PropTypes.object.isRequired },
+
+    onEvent: function(event, picker) {
+        console.log(picker.startDate);
+    },
 
     render: function() {
         var title = [
@@ -21,6 +26,7 @@ var OrderList = React.createClass({
         return (
             <div id="order-list">
               <div id="order-list-search">
+                <CalendarMarker />
               </div>
               <TableFrame id="order-list-table" title={title} data={data} />
             </div>

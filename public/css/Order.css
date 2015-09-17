@@ -105,8 +105,14 @@
   right:  0px;
 }
 
+#order-list-search {
+  margin: 0 32px 8px 32px;
+  padding-top: 8px;
+}
+
 #order-list {
-  width: calc(100% - 8px);
+  width:  calc(100% - 8px);
+  height: 100%;
   font-size: small;
 }
 
