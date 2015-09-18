@@ -121,13 +121,13 @@ var OrderList = React.createClass({
                 <div className="order-list-checkbox">
                   <Input type="checkbox"
                          label="依頼中"
-                         defaultChecked={!this.props.user.approval}
+                         defaultChecked={!this.props.user.is_approval}
                          ref="requesting" />
                 </div>
                 <div className="order-list-checkbox">
                   <Input type="checkbox"
                          label="承認待ち"
-                         defaultChecked={this.props.user.approval}
+                         defaultChecked={this.props.user.is_approval}
                          ref="approving" />
                 </div>
                 <div className="order-list-checkbox">
@@ -136,7 +136,7 @@ var OrderList = React.createClass({
                 <div className="order-list-checkbox">
                   <Input type="checkbox"
                          label="承認済み"
-                         defaultChecked={!this.props.user.approval}
+                         defaultChecked={!this.props.user.is_approval}
                          ref="approved" />
                 </div>
                 <div className="order-list-checkbox">

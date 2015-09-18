@@ -58,14 +58,11 @@ var Nav = React.createClass({
         onSelect: React.PropTypes.func.isRequired,
 
         user: React.PropTypes.shape({
-            account:    React.PropTypes.string.isRequired,
-            permission: React.PropTypes.oneOf([
-                'PRIVILEGE',
-                'ORDINARY'
-            ]).isRequired,
-            medical:  React.PropTypes.bool.isRequired,
-            urgency:  React.PropTypes.bool.isRequired,
-            approval: React.PropTypes.bool.isRequired,
+            account:     React.PropTypes.string.isRequired,
+            is_admin:    React.PropTypes.bool.isRequired,
+            is_medical:  React.PropTypes.bool.isRequired,
+            is_urgency:  React.PropTypes.bool.isRequired,
+            is_approval: React.PropTypes.bool.isRequired,
         }).isRequired,
 
         selected: React.PropTypes.oneOf([
@@ -108,7 +105,7 @@ var Nav = React.createClass({
         var etc_admin      = null;
         var selected      = this.props.selected;
 
-        if (this.props.user.urgency) {
+        if (this.props.user.is_urgency) {
             urgently_order = (
                 <NavItem name="緊急発注"
                          onClick={this.onSelect('URGENCY_ORDER')}
@@ -116,7 +113,7 @@ var Nav = React.createClass({
             );
         }
 
-        if (this.props.user.medical) {
+        if (this.props.user.is_medical) {
             meds_order = (
                 <NavItem name="薬剤発注"
                          onClick={this.onSelect('MEDS_ORDER')}
@@ -124,7 +121,7 @@ var Nav = React.createClass({
             );
         }
 
-        if (this.props.user.permission === 'PRIVILEGE') {
+        if (this.props.user.is_admin) {
             budget_admin = (
                 <div>
                   <NavItemTitle name="予算管理" />
@@ -135,7 +132,7 @@ var Nav = React.createClass({
             );
         }
 
-        if (this.props.user.permission === 'PRIVILEGE') {
+        if (this.props.user.is_admin) {
             etc_admin = (
                 <div>
                   <NavItemTitle key='0' name="情報管理" />
