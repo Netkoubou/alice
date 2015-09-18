@@ -39,13 +39,6 @@ var traders = [
  * 発注画面の SearchPane から発行される品目と販売元の検索リクエスト
  */
 app.get('/pickMenuItemsForSearchPane', function(req, res) {
-    var classes = [
-        { code: '0000', name: '医科' },
-        { code: '0001', name: '歯科' },
-        { code: '0002', name: 'ええじゃない科' },
-        { code: '0003', name: 'その他' }
-    ];
-
     var categories = [
         { code: '0000', name: '凄いアレ' },
         { code: '0001', name: '驚きのナニ' },
@@ -68,9 +61,9 @@ app.get('/pickMenuItemsForSearchPane', function(req, res) {
     }
     
     res.json({
-        classes:     classes,
-        categories:  categories,
+        status:      0,
         departments: departments,
+        categories:  categories,
         traders:     traders
     });
 });

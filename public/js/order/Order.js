@@ -249,8 +249,13 @@ var actions = {
     updateCandidates: function(payload) {
         XHR.post('searchCandidates').send(payload).end(function(err, res) {
             if (err) {
-                alert(Messages.ORDER_SEARCH_CANDIDATES);
-                throw 'searchCandidates';
+                alert(Messages.ajax.ORDER_SEARCH_CANDIDATES);
+                throw 'ajax_searchCandidates';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.ORDER_SEARCH_CANDIDATES);
+                throw 'server_searchCandidates';
             }
 
             this.dispatch(messages.UPDATE_CANDIDATES, res.body);

@@ -268,9 +268,16 @@ var SearchPane = React.createClass({
      */
     componentDidMount: function() {
         XHR.get('pickMenuItemsForSearchPane').end(function(err, res) {
+            var errmsg_index = 'SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE';
+
             if (err) {
-                alert(Messages.SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE);
-                throw 'pickMenuItemsForSearchPane';
+                alert(Messages.ajax[errmsg_index]);
+                throw 'ajax_pickMenuItemsForSearchPane';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server[errmsg_index]);
+                throw 'server_pickMenuItemsForSearchPane';
             }
 
             this.setState({

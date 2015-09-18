@@ -145,8 +145,13 @@ var FinalPane = React.createClass({
                                  })
             }).end(function(err, res) {
                 if (err) {
-                    alert(Messages.FINAL_PANE_REGISTER_ORDER);
-                    throw 'registerOrder';
+                    alert(Messages.ajax.FINAL_PANE_REGISTER_ORDER);
+                    throw 'ajax_registerOrder';
+                }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server.FINAL_PANE_REGISTER_ORDER);
+                    throw 'server_registerOrder';
                 }
 
                 if (res.body.status != 0) {
@@ -157,7 +162,6 @@ var FinalPane = React.createClass({
                 }
             }.bind(this) );
         }
-
     },
 
 

@@ -42,8 +42,13 @@ var OrderList = React.createClass({
             }
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ORDER_LIST_SEARCH_ORDERS);
-                throw 'searchOrders';
+                alert(Messages.ajax.ORDER_LIST_SEARCH_ORDERS);
+                throw 'ajax_searchOrders';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.ORDER_LIST_SEARCH_ORDERS);
+                throw 'server_searchOrders';
             }
 
             var orders = res.body.map(function(order) {
