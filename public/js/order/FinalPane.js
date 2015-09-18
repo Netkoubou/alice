@@ -10,6 +10,7 @@ var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
 var Input      = TableFrame.Input;
 var Messages   = require('../lib/Messages');
+var Util       = require('../lib/Util');
 
 var FinalistName = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
@@ -228,27 +229,16 @@ var FinalPane = React.createClass({
 
         var total = 0;
         var data  = this.props.finalists.map(function(finalist, i) {
-            var subtotal = Math.round(finalist.price * finalist.quantity);
+            var state    = Util.toGoodsStateName(finalist.state);
+            var subtotal = finalist.price * finalist.quantity;
 
             total += subtotal;
 
-            var state;
-
-            switch (finalist.state) {
-            case 'PROCESSING':
-                state = '処理中';
-                break;
-            case 'ORDERED':
-                state = '発注済み';
-                break;
-            case 'CANCELED':
-                state = 'キャンセル';
-                break;
-            default:
-                state = '納品済み';
-            }
-
             var price_string = finalist.price.toLocaleString('ja-JP', {
+                minimumFractionDigits: 2
+            });
+
+            var subtotal_string = subtotal.toLocaleString('ja-JP', {
                 minimumFractionDigits: 2
             });
 
@@ -276,7 +266,7 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: subtotal,
-                    view:  <span>{subtotal.toLocaleString()}</span>
+                    view:  <span>{subtotal}</span>
                 },
                 {
                     value: finalist.state,
@@ -290,22 +280,26 @@ var FinalPane = React.createClass({
               <legend>確定</legend>
               <div id="order-final-pane-notice">
                 <div>
-                  <Notice className="order-final-pane-notice-left"
-                          title='起案番号'>
+                  <Notice className="order-final-pane-code"
+                          title="起案番号">
                     {order_code}
                   </Notice>
-                  <Notice className="order-final-pane-notice-right"
-                          title='起案日'>
+                  <Notice className="order-final-pane-originate-date"
+                          title="起案日">
                     {drafting_date}
+                  </Notice>
+                  <Notice className="order-final-pane-order-type"
+                          title="発注区分">
+                    {Util.toOrderTypeName(this.props.action)}
                   </Notice>
                 </div>
                 <div>
-                  <Notice className="order-final-pane-notice-left"
+                  <Notice className="order-final-pane-originator"
                           title='起案者'>
                     {originator}
                   </Notice>
-                  <Notice className="order-final-pane-notice-right"
-                          title='発注先 販売元'>
+                  <Notice className="order-final-pane-trader"
+                          title="発注先 販売元">
                     {trader.name}
                   </Notice>
                 </div>
@@ -313,7 +307,7 @@ var FinalPane = React.createClass({
               <TableFrame id="order-finalists" title={title} data={data} />
               <div id="order-total">
                 <Notice title="総計">
-                  {total.toLocaleString()}
+                  {Math.round(total).toLocaleString()}
                 </Notice>
               </div>
               <div id="order-final-pane-buttons">

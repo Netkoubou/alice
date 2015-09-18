@@ -57,13 +57,31 @@
   width:         100%;
 }
 
-.order-final-pane-notice-left {
+.order-final-pane-code {
+  float: left;
+  width: 32%;
+  margin-bottom: 8px;
+}
+
+.order-final-pane-originate-date {
+  float: left;
+  width: calc(36% - 8px);
+  margin: 0 4px 8px 4px;
+}
+
+.order-final-pane-order-type {
+  float: right;
+  width: 32%;
+  margin-bottom: 8px;
+}
+
+.order-final-pane-originator {
   float: left;
   width: 49%;
   margin-bottom: 8px;
 }
 
-.order-final-pane-notice-right {
+.order-final-pane-trader {
   float: right;
   width: 49%;
   margin-bottom: 8px;
@@ -151,3 +169,8 @@
 #order-list-table col:nth-child(6) { width: 20% }
 #order-list-table col:nth-child(7) { width: 80px }
 #order-list-table col:nth-child(8) { width: 80px }
+#order-list-table td:nth-child(1) { text-align: center; }
+#order-list-table td:nth-child(2) { text-align: center; }
+#order-list-table td:nth-child(4) { text-align: center; }
+#order-list-table td:nth-child(7) { text-align: right; }
+#order-list-table td:nth-child(8) { text-align: center; }
