@@ -268,60 +268,49 @@ app.post('/registerOrder', function(req, res) {
  */
 app.post('/searchOrders', function(req, res) {
     console.log(req.body);
-    res.json([
-        {
-            code: '0000',
-            type: 'ORDINARY_ORDER',
+    res.json({
+        status: 0,
+        orders: [{
+            order_code: '0000',
+            order_type: 'ORDINARY_ORDER',
+            order_state: 'REQUESTING',
             drafting_date:  '2015/08/01',
             last_edit_date: '2015/08/01',
-            originator: {
-                code: '1853',
-                name: 'm-perry'
-            },
-            last_editor: {
-                code: '1853',
-                name: 'm-perry'
-            },
-            department: {
-                code: '0000',
-                name: '外科'
-            },
-            trader: {
-                code: '0000',
-                name: '阿漕商店'
-            },
-            finalists: [
+            originator_code: '1853',
+            originator_name: 'm-perry',
+            last_editor_code: '1853',
+            last_editor_name: 'm-perry',
+            department_code: '0000',
+            department_name: '外科',
+            trader_code: '0000',
+            trader_name: '阿漕商店',
+            products: [
                 {
-                    goods: {
-                        code: '0000',
-                        name: 'タイガーマスク'
-                    },
-                    maker:    '梶原一騎',
-                    price:    42.19,
-                    quantity: 8,
-                    state:    'PROCESSING',
+                    code:        '0000',
+                    name:        'タイガーマスク',
+                    maker:       '梶原一騎',
+                    order_price: 42.19,
+                    final_price: 43.00,
+                    quantity:    8,
+                    state:       'PROCESSING',
                     last_change_date: '2014/03/24'
                 },
                 {
-                    goods: {
-                        code: '4126',
-                        name: 'マングローブ'
-                    },
+                    code: '4126',
+                    name: 'マングローブ',
                     maker:    '亜熱帯潮間帯',
-                    price:    11.92,
+                    order_price:    11.92,
+                    final_price:    11.92,
                     quantity: 3,
                     state:    'ORDERED',
                     last_change_date: '2015/10/10'
                 }
             ],
-            state: 'REQUESTING',
             last_modified_date: '2015/10/10',
-            last_modifier: {
-                code: '1603',
-                name: 'i-tokugawa'
-            }
-        },
-    ]);
+            last_modifier_code: '1603',
+            last_modifier_name: 'i-tokugawa'
+        }],
+    });
 });
         
 app.listen(8080);

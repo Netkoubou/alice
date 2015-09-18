@@ -33,12 +33,12 @@ var OrderList = React.createClass({
             start_date: this.state.start_date.format('YYYY/MM/DD'),
             end_date:   this.state.end_date.format('YYYY/MM/DD'),
             state: {
-                requesting: this.refs.requesting.getChecked(),
-                approving:  this.refs.approving.getChecked(),
-                denied:     this.refs.denied.getChecked(),
-                approved:   this.refs.approved.getChecked(),
-                nullified:  this.refs.nullified.getChecked(),
-                completed:  this.refs.completed.getChecked()
+                is_requesting: this.refs.requesting.getChecked(),
+                is_approving:  this.refs.approving.getChecked(),
+                is_denied:     this.refs.denied.getChecked(),
+                is_approved:   this.refs.approved.getChecked(),
+                is_nullified:  this.refs.nullified.getChecked(),
+                is_completed:  this.refs.completed.getChecked()
             }
         }).end(function(err, res) {
             if (err) {
@@ -51,49 +51,56 @@ var OrderList = React.createClass({
                 throw 'server_searchOrders';
             }
 
-            var orders = res.body.map(function(order) {
-                var state = Util.toOrderStateName(order.state);
-                var type  = Util.toOrderTypeName(order.type);
-                var total = 0.0;
+            var orders = res.body.orders.map(function(order) {
+                var order_state = Util.toOrderStateName(order.order_state);
+                var order_type  = Util.toOrderTypeName(order.order_type);
+                var order_total = 0.0;
+                var final_total = 0.0;
 
-                order.finalists.forEach(function(f) {
-                    total += f.price * f.quantity;
+                order.products.forEach(function(f) {
+                    order_total += f.order_price * f.quantity;
+                    final_total += f.final_price * f.quantity;
                 });
 
-                total = Math.round(total);
+                order_total = Math.round(order_total);
+                final_total = Math.round(final_total);
 
                 return [
                     {   // 起案番号
-                        value: order.code,
-                        view:  order.code
+                        value: order.order_code,
+                        view:  order.order_code
                     },
                     {   // 起案日
                         value: order.drafting_date,
                         view:  order.drafting_date
                     },
                     {   // 起案者
-                        value: order.originator.name,
-                        view:  order.originator.name
+                        value: order.originator_name,
+                        view:  order.originator_name
                     },
                     {   // 発注区分
-                        value: type,
-                        view:  type
+                        value: order_type,
+                        view:  order_type
                     },
                     {   // 発注元 部門診療科
-                        value: order.department.name,
-                        view:  order.department.name
+                        value: order.department_name,
+                        view:  order.department_name
                     },
                     {   // 発注先 販売元
-                        value: order.trader.name,
-                        view:  order.trader.name
+                        value: order.trader_name,
+                        view:  order.trader_name
                     },
-                    {   // 総計
-                        value: total,
-                        view:  total.toLocaleString(),
+                    {   // 発注総計
+                        value: order_total,
+                        view:  order_total.toLocaleString()
+                    },
+                    {   // 確定総計
+                        value: final_total,
+                        view:  final_total.toLocaleString()
                     },
                     {   // 状態
-                        value: state,
-                        view:  state
+                        value: order_state,
+                        view:  order_state
                     }
                 ];
             }.bind(this) );
@@ -110,7 +117,8 @@ var OrderList = React.createClass({
             { name: '発注区分',          type: 'string' },
             { name: '発注元 部門診療科', type: 'string' },
             { name: '発注先 販売元',     type: 'string' },
-            { name: '総計',              type: 'number' },
+            { name: '発注総計',          type: 'number' },
+            { name: '確定総計',          type: 'number' },
             { name: '状態',              type: 'string' }
         ];
 
