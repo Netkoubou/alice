@@ -75,161 +75,180 @@ app.get('/pickMenuItemsForSearchPane', function(req, res) {
 app.post('/searchCandidates', function(req, res) {
     var candidates = [
         {
-            goods:  {
-                code: '0000',
-                name: 'The quick brown fox jumps over the lazy dog'
-            },
-            maker: 'J.Q. Vandz struck my big fox whelp',
-            price:  2500000
+            product_code: '0000',
+            product_name: 'The quick brown fox jumps over the lazy dog',
+            maker:        'J.Q. Vandz struck my big fox whelp',
+            price:        2500000
         },
         {
-            goods:  { code: '0001', name: 'b'  },
+            product_code: '0001',
+            product_name: 'b',
             maker:  'Y',
             price:  24.01
         },
         {
-            goods:  { code: '0002', name: 'c'  },
+            product_code: '0002',
+            product_name: 'c',
             maker: 'X',
             price:  23.02
         },
         {
-            goods:  { code: '0003', name: 'd'  },
+            product_code: '0003',
+            product_name: 'd',
             maker: 'W',
             price:  22.03
         },
         {
-            goods:  { code: '0004', name: 'e'  },
+            product_code: '0004',
+            product_name: 'e',
             maker: 'V',
             price:  21.04
         },
         {
-            goods:  { code: '0005', name: 'f'  },
+            product_code: '0005',
+            product_name: 'f',
             maker: 'U',
             price:  20.05
         },
         {
-            goods:  { code: '0006', name: 'g'  },
+            product_code: '0006',
+            product_name: 'g',
             maker: 'T',
             price:  19.06
         },
         {
-            goods:  { code: '0007', name: 'h'  },
+            product_code: '0007',
+            product_name: 'h',
             maker: 'S',
             price:  18.07
         },
         {
-            goods:  { code: '0008', name: 'i'  },
+            product_code: '0008',
+            product_name: 'i',
             maker: 'R',
             price:  17.08
         },
         {
-            goods:  { code: '0009', name: 'j'  },
+            product_code: '0009',
+            product_name: 'j',
             maker: 'Q',
             price:  16.09
         },
         {
-            goods:  { code: '0010', name: 'k'  },
+            product_code: '0010',
+            product_name: 'k',
             maker: 'P',
             price:  15.10
         },
         {
-            goods:  { code: '0011', name: 'l'  },
+            product_code: '0011',
+            product_name: 'l',
             maker: 'O',
             price:  14.11
         },
         {
-            goods:  { code: '0012', name: 'm'  },
+            product_code: '0012',
+            product_name: 'm',
             maker: 'N',
             price:  13.12
         },
         {
-            goods:  { code: '0013', name: 'n'  },
+            product_code: '0013',
+            product_name: 'n',
             maker: 'M',
             price:  12.13
         },
         {
-            goods:  { code: '0014', name: 'o'  },
+            product_code: '0014',
+            product_name: 'o',
             maker: 'L',
             price:  11.14
         },
         {
-            goods:  { code: '0015', name: 'p'  },
+            product_code: '0015',
+            product_name: 'p',
             maker: 'K',
             price:  10.15
         },
         {
-            goods:  { code: '0016', name: 'q'  },
+            product_code: '0016',
+            product_name: 'q',
             maker: 'J',
             price:   9.16
         },
         {
-            goods:  { code: '0017', name: 'r'  },
+            product_code: '0017',
+            product_name: 'r',
             maker: 'I',
             price:   8.17
         },
         {
-            goods:  { code: '0018', name: 's'  },
+            product_code: '0018',
+            product_name: 's',
             maker: 'H',
             price:   7.18
         },
         {
-            goods:  { code: '0019', name: 't'  },
+            product_code: '0019',
+            product_name: 't',
             maker: 'G',
             price:   6.19
         },
         {
-            goods:  { code: '0020', name: 'u'  },
+            product_code: '0020',
+            product_name: 'u',
             maker: 'F',
             price:   5.20
         },
         {
-            goods:  { code: '0021', name: 'v'  },
+            product_code: '0021',
+            product_name: 'v',
             maker: 'E',
             price:   4.21
         },
         {
-            goods:  { code: '0022', name: 'w'  },
+            product_code: '0022',
+            product_name: 'w',
             maker: 'D',
             price:   3.22
         },
         {
-            goods:  { code: '0023', name: 'x'  },
+            product_code: '0023',
+            product_name: 'x',
             maker: 'C',
             price:   2.23
         },
         {
-            goods:  { code: '0024', name: 'y'  },
+            product_code: '0024',
+            product_name: 'y',
             maker: 'B',
             price:   1.24
         },
         {
-            goods:  { code: '0025', name: 'z'  },
+            product_code: '0025',
+            product_name: 'z',
             maker: 'A',
             price:   0.25
         }
     ];
 
     if (req.body.trader_code != '') {
-        candidates = candidates.map(function(candidate) {
-            candidate.trader = {
-                code: req.body.trader_code,
-                name: traders[parseInt(req.body.trader_code)].name
-            }
+        candidates = candidates.map(function(c) {
+            c.trader_code = req.body.trader_code;
+            c.trader_name = traders[parseInt(req.body.trader_code)].name;
 
-            return candidate;
+            return c;
         });
     } else {
-        candidates = candidates.map(function(candidate, i) {
-            candidate.trader = {
-                code: (i % traders.length).toString(),
-                name: traders[(i % traders.length)].name
-            }
+        candidates = candidates.map(function(c, i) {
+            c.trader_code = (i % traders.length).toString();
+            c.trader_name = traders[(i % traders.length)].name;
 
-            return candidate;
+            return c;
         });
     }
 
-    res.json(candidates);
+    res.json({ status: 0, candidates: candidates });
 });
 
 

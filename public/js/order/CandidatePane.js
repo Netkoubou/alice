@@ -12,17 +12,8 @@ var TableFrame = require('../components/TableFrame');
  * ここをクリックすることで、その物品が発注確定一覧に入る。
  */
 var CandidateName = React.createClass({
-    mixins: [ Fluxxor.FluxMixin(React) ],
-
-    propType: {
-        candidate: React.PropTypes.shape({
-            code:   React.PropTypes.string.isRequired,
-            name:   React.PropTypes.string.isRequired,
-            maker:  React.PropTypes.string.isRequired,
-            trader: React.PropTypes.string.isRequired,
-            price:  React.PropTypes.number.isRequired
-        })
-    },
+    mixins:   [ Fluxxor.FluxMixin(React) ],
+    propType: { candidate: React.PropTypes.object.isRequired },
 
     onSelectCandidate: function() {
         var candidate = this.props.candidate;
@@ -40,7 +31,16 @@ var CandidateName = React.createClass({
 });
 
 var CandidatePane = React.createClass({
-    propTypes: { candidates: React.PropTypes.array.isRequired },
+    propTypes: {
+        candidates: React.PropTypes.arrayOf(React.PropTypes.shape({
+            product_code: React.PropTypes.string.isRequired,
+            product_name: React.PropTypes.string.isRequired,
+            maker:        React.PropTypes.string.isRequired,
+            price:        React.PropTypes.number.isRequired,
+            trader_code:  React.PropTypes.string.isRequired,
+            trader_name:  React.PropTypes.string.isRequired
+        }) ).isRequired
+    },
 
     render: function() {
         var title = [
@@ -63,9 +63,9 @@ var CandidatePane = React.createClass({
 
             return [
                 {
-                    value: candidate.goods.name,
+                    value: candidate.product_name,
                     view:  <CandidateName candidate={candidate}>
-                             {candidate.goods.name}
+                             {candidate.product_name}
                            </CandidateName>
                 },
                 {
@@ -73,8 +73,8 @@ var CandidatePane = React.createClass({
                     view:  <span>{candidate.maker}</span>
                 },
                 {
-                    value: candidate.trader.name,
-                    view:  <span>{candidate.trader.name}</span>
+                    value: candidate.trader_name,
+                    view:  <span>{candidate.trader_name}</span>
                 },
                 {
                     value: candidate.price,

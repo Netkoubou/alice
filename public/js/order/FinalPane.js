@@ -85,12 +85,8 @@ var FinalPane = React.createClass({
         account:   React.PropTypes.string.isRequired,
         needSave:  React.PropTypes.bool.isRequired,
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
-            code:  React.PropTypes.string.isRequired,
-            goods: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired
-            }).isRequired,
-            
+            code:     React.PropTypes.string.isRequired,
+            name:     React.PropTypes.string.isRequired,
             maker:    React.PropTypes.string.isRequired,
             price:    React.PropTypes.number.isRequired,
             quantity: React.PropTypes.number.isRequired,
@@ -134,12 +130,12 @@ var FinalPane = React.createClass({
     onFix: function() {
         if (this.props.order === null) {
             XHR.post('registerOrder').send({
-                type:            this.props.action,
+                order_type:      this.props.action,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
-                finalists:       this.props.finalists.map(function(f) {
+                products:        this.props.finalists.map(function(f) {
                                      return {
-                                         code:     f.goods.code,
+                                         code:     f.code,
                                          quantity: f.quantity
                                      };
                                  })
@@ -248,10 +244,10 @@ var FinalPane = React.createClass({
 
             return [
                 {
-                    value: finalist.goods.name,
+                    value: finalist.name,
                     view:  <FinalistName index={i}
                                          state={finalist.state}>
-                             {finalist.goods.name}
+                             {finalist.name}
                            </FinalistName>
                 },
                 {

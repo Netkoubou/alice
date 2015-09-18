@@ -45,8 +45,8 @@ var messages = {
  */
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.department_code = '';      // 発注元 部門診療科の ID
-        this.trader          = null;    // 発注先 販売元の ID と名前
+        this.department_code = '';      // 発注元 部門診療科のコード
+        this.trader          = null;    // 発注先 販売元のコードと名前
         this.candidates      = [];      // 物品の発注候補一覧
         this.finalists       = [];      // 物品の発注確定一覧
         this.need_save       = true;    // 発注確定一覧を DB に登録必要か?
@@ -105,16 +105,19 @@ var OrderStore = Fluxxor.createStore({
      */
     onSelectCandidate: function(payload) {
         this.finalists.push({
-            code:     '',
-            goods:    payload.candidate.goods,
+            code:     payload.candidate.product_code,
+            name:     payload.candidate.product_name,
             maker:    payload.candidate.maker,
             price:    payload.candidate.price,
             quantity: 0,
             state:    'PROCESSING'
         });
 
-        if (this.trader == null) {
-            this.trader = payload.candidate.trader;
+        if (this.trader === null) {
+            this.trader = {
+                code: payload.candidate.trader_code,
+                name: payload.candidate.trader_name
+            }
 
 
             /*
@@ -123,7 +126,7 @@ var OrderStore = Fluxxor.createStore({
              * この操作は必要なくなる。
              */
             this.candidates = this.candidates.filter(function(c) {
-                return c.trader.code === payload.candidate.trader.code;
+                return c.trader_code === payload.candidate.trader_code;
             });
         }
 
@@ -201,18 +204,22 @@ var OrderStore = Fluxxor.createStore({
          * これは、引数で渡される order が props === 変更不可であるため。
          * そのため、ここで逐一内容をコピーする必要がある。
          */
-        this.finalists = order.finalists.map(function(f) {
+        this.finalists = order.products.map(function(p) {
             return {
-                code:     f.code,
-                goods:    f.goods,
-                maker:    f.maker,
-                price:    f.price,
-                quantity: f.quantity,
-                state:    f.state
+                code:     p.code,
+                name:     p.name,
+                maker:    p.maker,
+                price:    p.order_price,
+                quantity: p.quantity,
+                state:    p.state
             };
         });
 
-        this.trader     = order.trader;
+        this.trader = {
+            code: order.trader_code,
+            name: order.trader_name
+        };
+
         this.need_save = false;     // 既存の発注 === 最新版 === 未更新
         this.emit('change');
     },
@@ -258,7 +265,7 @@ var actions = {
                 throw 'server_searchCandidates';
             }
 
-            this.dispatch(messages.UPDATE_CANDIDATES, res.body);
+            this.dispatch(messages.UPDATE_CANDIDATES, res.body.candidates);
         }.bind(this) );
     },
 
@@ -371,43 +378,37 @@ var Order = React.createClass({
         ]),
 
         order: React.PropTypes.shape({
-            code: React.PropTypes.string.isRequired,
+            order_code: React.PropTypes.string.isRequired,
 
-            type: React.PropTypes.oneOf([
+            order_type: React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
                 'URGENCY_ORDER',
                 'MEDS_ORDER'
             ]),
 
-            drafting_date:  React.PropTypes.string.isRequired,
-            last_edit_date: React.PropTypes.string.isRequired,
+            order_state: React.PropTypes.oneOf([
+                'REQUESTING',       // 依頼中
+                'APPROVING',        // 承認待ち
+                'DENIED',           // 否認
+                'APPROVED',         // 承認済み
+                'NULLIFIED',        // 無効
+                'COMPLETED'         // 完了
+            ]).isRequired,
 
-            originator: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired,
-            }).isRequired,
+            drafting_date:    React.PropTypes.string.isRequired,
+            last_edit_date:   React.PropTypes.string.isRequired,
+            originator_code:  React.PropTypes.string.isRequired,
+            originator_name:  React.PropTypes.string.isRequired,
+            last_editor_code: React.PropTypes.string.isRequired,
+            last_editor_name: React.PropTypes.string.isRequired,
+            department_code:  React.PropTypes.string.isRequired,
+            department_name:  React.PropTypes.string.isRequired,
+            trader_code:      React.PropTypes.string.isRequired,
+            trader_name:      React.PropTypes.string.isRequired,
 
-            last_editor: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired,
-            }).isRequired,
-
-            department: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired
-            }).isRequired,
-
-            trader: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired
-            }).isRequired,
-
-            finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
-                goods: React.PropTypes.shape({
-                    code: React.PropTypes.string.isRequired,
-                    name: React.PropTypes.string.isRequired
-                }).isRequired,
-
+            products: React.PropTypes.arrayOf(React.PropTypes.shape({
+                code:     React.PropTypes.string.isRequired,
+                name:     React.PropTypes.string.isRequired,
                 maker:    React.PropTypes.string.isRequired,
                 price:    React.PropTypes.number.isRequired,
                 quantity: React.PropTypes.number.isRequired,
@@ -422,21 +423,9 @@ var Order = React.createClass({
                 last_change_date: React.PropTypes.string.isRequired
             }) ).isRequired,
 
-            state: React.PropTypes.oneOf([
-                'REQUESTING',       // 依頼中
-                'APPROVING',        // 承認待ち
-                'DENIED',           // 否認
-                'APPROVED',         // 承認済み
-                'NULLIFIED',        // 無効
-                'COMPLETED'         // 完了
-            ]).isRequired,
-
             last_modified_date: React.PropTypes.string.isRequired,
-
-            last_modifier: React.PropTypes.shape({
-                code: React.PropTypes.string.isRequired,
-                name: React.PropTypes.string.isRequired
-            }).isRequired
+            last_modifier_code: React.PropTypes.string.isRequired,
+            last_modifier_name: React.PropTypes.string.isRequired
         })
     },
 
