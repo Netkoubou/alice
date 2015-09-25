@@ -288,14 +288,20 @@ var SearchPane = React.createClass({
 
             var department_code;
 
-            if (res.body.departments.length == 1) {
+            if (this.props.departmentCode != '') {
                 /*
-                 * 自分の部署の発注しか扱えない
+                 * 既に発注元 部門診療科が決まっている、
+                 * つまり既存の発注を編集する場合
+                 */
+                department_code = this.props.departmentCode;
+            } else if (res.body.departments.length == 1) {
+                /*
+                 * 自分の所属する部門診療科の発注しか扱えない
                  */
                 department_code = res.body.departments[0].code;
             } else {
                 /*
-                 * 他部署の発注も扱うことができる
+                 * 他の部門診療科の発注も扱うことができる
                  */
                 department_code = '';
             }

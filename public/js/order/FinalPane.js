@@ -19,7 +19,7 @@ var FinalistName = React.createClass({
         index: React.PropTypes.number.isRequired,
         state: React.PropTypes.oneOf([
             'PROCESSING',
-            'ORDERRD',
+            'ORDERED',
             'CANCELED',
             'DELIVERED'
         ]).isRequired,
@@ -129,16 +129,19 @@ var FinalPane = React.createClass({
      */
     onFix: function() {
         if (this.props.order === null) {
+            /*
+             * 発注を新規登録
+             */
             XHR.post('registerOrder').send({
                 order_type:      this.props.action,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(f) {
-                                     return {
-                                         code:     f.code,
-                                         quantity: f.quantity
-                                     };
-                                 })
+                    return {
+                        code:     f.code,
+                        quantity: f.quantity
+                    };
+                })
             }).end(function(err, res) {
                 if (err) {
                     alert(Messages.ajax.FINAL_PANE_REGISTER_ORDER);
@@ -150,12 +153,36 @@ var FinalPane = React.createClass({
                     throw 'server_registerOrder';
                 }
 
-                if (res.body.status != 0) {
-                    alert(res.body.description);
-                } else {
-                    alert('登録しました');
-                    this.getFlux().actions.fixFinalists();
+                alert('登録しました');
+                this.getFlux().actions.fixFinalists();
+            }.bind(this) );
+        } else {
+            /*
+             * 既存の発注を更新
+             */
+            XHR.post('updateOrder').send({
+                order_code:      this.props.order.order_code,
+                department_code: this.props.departmentCode,
+                trader_code:     this.props.trader.code,
+                products:        this.props.finalists.map(function(f) {
+                    return{
+                        code:     f.code,
+                        quantity: f.quantity
+                    };
+                })
+            }).end(function(err, res) {
+                if (err) {
+                    alert(Messages.ajax.FINAL_PANE_UPDATE_ORDER);
+                    throw 'ajax_updateOrder';
                 }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server.FINAL_PANE_UPDATE_ORDER);
+                    throw 'server_registerOrder';
+                }
+
+                alert('更新しました');
+                this.getFlux().actions.fixFinalists();
             }.bind(this) );
         }
     },
@@ -205,8 +232,8 @@ var FinalPane = React.createClass({
 
             drafting_date = year + '-' + month + '-' + day;
         } else {
-            originator    = this.props.order.originator;
-            order_code    = this.props.order.code;
+            originator    = this.props.order.originator_name;
+            order_code    = this.props.order.order_code;
             drafting_date = this.props.order.drafting_date;
         }
 
@@ -266,7 +293,7 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: subtotal,
-                    view:  <span>{subtotal}</span>
+                    view:  <span>{subtotal_string}</span>
                 },
                 {
                     value: finalist.state,

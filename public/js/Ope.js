@@ -41,12 +41,12 @@ var Ope = React.createClass({
              * 以下の key を指定することで、発注の操作を (例えば、通常発注か
              * ら緊急発注へ) 切り替えた時に、検索ペインが再描画される。
              */
-            contents = <Order account={this.props.user.account}
-                              key={Math.random()}
+            contents = <Order key={Math.random()}
+                              account={this.props.user.account}
                               action={this.props.action} />;
             break;
         case 'ORDER_LIST':
-            contents = <OrderList user={this.props.user} />
+            contents = <OrderList key={Math.random()} user={this.props.user} />
             break;
         default:
             contents = null;

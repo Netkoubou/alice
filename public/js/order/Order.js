@@ -195,6 +195,9 @@ var OrderStore = Fluxxor.createStore({
      * 既存の発注を state に設定
      */
     setExistingOrder: function(order) {
+        this.department_code = order.department_code;
+
+
         /*
          * 発注確定一覧の数量は変更される可能性があるため、
          *
@@ -311,7 +314,7 @@ var OrderManager = React.createClass({
         return this.getFlux().store('OrderStore').getState();
     },
 
-    componentWillMount: function() {
+    componentDidMount: function() {
         var store = this.getFlux().store('OrderStore');
 
         if (this.props.order !== null) {
@@ -324,18 +327,10 @@ var OrderManager = React.createClass({
     },
 
     render: function() {
-        var order_type;
-        
-        if (this.props.order != null) {
-            order_type = this.props.order.type;
-        } else {
-            order_type = this.props.action;
-        }
-
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane orderType={order_type}  
+                <SearchPane orderType={this.props.action}  
                             departmentCode={this.state.department_code}
                             finalTrader={this.state.trader} />
                 <CandidatePane key={Math.random()}
@@ -407,11 +402,12 @@ var Order = React.createClass({
             trader_name:      React.PropTypes.string.isRequired,
 
             products: React.PropTypes.arrayOf(React.PropTypes.shape({
-                code:     React.PropTypes.string.isRequired,
-                name:     React.PropTypes.string.isRequired,
-                maker:    React.PropTypes.string.isRequired,
-                price:    React.PropTypes.number.isRequired,
-                quantity: React.PropTypes.number.isRequired,
+                code:        React.PropTypes.string.isRequired,
+                name:        React.PropTypes.string.isRequired,
+                maker:       React.PropTypes.string.isRequired,
+                order_price: React.PropTypes.number.isRequired,
+                final_price: React.PropTypes.number.isRequired,
+                quantity:    React.PropTypes.number.isRequired,
 
                 state: React.PropTypes.oneOf([
                     'PROCESSING',   // 処理中

@@ -176,3 +176,9 @@
 #order-list-table td:nth-child(7) { text-align: right; }
 #order-list-table td:nth-child(8) { text-align: right; }
 #order-list-table td:nth-child(9) { text-align: center; }
+
+.order-list-code:hover {
+  color:           #1976d2;
+  text-decoration: underline;
+  cursor:          pointer;
+}

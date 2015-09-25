@@ -257,9 +257,16 @@ app.post('/searchCandidates', function(req, res) {
  */
 app.post('/registerOrder', function(req, res) {
     console.log(req.body);
-    res.json({
-        status: 0
-    });
+    res.json({ status: 0 });
+});
+
+
+/*
+ * 既存の発注の更新
+ */
+app.post('/updateOrder', function(req, res) {
+    console.log(req.body);
+    res.json({ status: 0 });
 });
 
 
@@ -280,8 +287,8 @@ app.post('/searchOrders', function(req, res) {
             originator_name: 'm-perry',
             last_editor_code: '1853',
             last_editor_name: 'm-perry',
-            department_code: '0000',
-            department_name: '外科',
+            department_code: '0001',
+            department_name: '内科',
             trader_code: '0000',
             trader_name: '阿漕商店',
             products: [
@@ -308,7 +315,47 @@ app.post('/searchOrders', function(req, res) {
             ],
             last_modified_date: '2015/10/10',
             last_modifier_code: '1603',
-            last_modifier_name: 'i-tokugawa'
+            last_modifier_name: 'y-tokugawa'
+        },
+        {
+            order_code: '4219',
+            order_type: 'ORDINARY_ORDER',
+            order_state: 'REQUESTING',
+            drafting_date:  '2015/08/01',
+            last_edit_date: '2015/09/18',
+            originator_code: '1853',
+            originator_name: 'm-perry',
+            last_editor_code: '1853',
+            last_editor_name: 'm-perry',
+            department_code: '0002',
+            department_name: '中科',
+            trader_code: '0001',
+            trader_name: 'バッタモン市場',
+            products: [
+                {
+                    code:        '0001',
+                    name:        '危険薬',
+                    maker:       '酩酊ラリ子',
+                    order_price: 42.19,
+                    final_price: 43.00,
+                    quantity:    666,
+                    state:       'PROCESSING',
+                    last_change_date: '2014/03/24'
+                },
+                {
+                    code: '0645',
+                    name: 'STAP細胞',
+                    maker:    '小保方製薬',
+                    order_price:    11.92,
+                    final_price:    11.92,
+                    quantity: 9,
+                    state:    'ORDERED',
+                    last_change_date: '2015/10/10'
+                }
+            ],
+            last_modified_date: '2015/10/10',
+            last_modifier_code: '1603',
+            last_modifier_name: 'k-katsu'
         }],
     });
 });

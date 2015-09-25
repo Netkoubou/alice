@@ -4,19 +4,81 @@ var Input          = require('react-bootstrap').Input;
 var Button         = require('react-bootstrap').Button;
 var XHR            = require('superagent');
 var moment         = require('moment');
+var Order          = require('./Order');
 var TableFrame     = require('../components/TableFrame');
 var CalendarMarker = require('../components/CalendarMarker');
 var Messages       = require('../lib/Messages');
 var Util           = require('../lib/Util');
 
+var OrderCode = React.createClass({
+    propTypes: {
+        account:  React.PropTypes.string.isRequired,
+        order:    React.PropTypes.object.isRequired,
+        onSelect: React.PropTypes.func.isRequired
+    },
+
+    render: function() {
+        var on_click;
+
+        switch (this.props.order.order_state) {
+        case 'REQUESTING':
+            on_click = function() {
+                this.props.onSelect(
+                    <Order account={this.props.account}
+                           action={this.props.order.order_type}
+                           order={this.props.order} />
+                );
+            }.bind(this);
+            break;
+        case 'APPROVING':
+            on_click = function() {
+                this.props.onSelect(
+                );
+            }.bind(this);
+            break;
+        case 'DENIED':
+            on_click = function() {
+                this.props.onSelect(
+                );
+            }.bind(this);
+            break;
+        case 'APPROVED':
+            on_click = function() {
+                this.props.onSelect(
+                );
+            }.bind(this);
+            break;
+        case 'NULLIFIED':
+            on_click = function() {
+                this.props.onSelect(
+                );
+            }.bind(this);
+            break;
+        default:    // COMPLETED
+            on_click = function() {
+                this.props.onSelect(
+                );
+            }.bind(this);
+        }
+
+        return (
+            <div onClick={on_click}
+                 className="order-list-code">
+              {this.props.order.order_code}
+            </div>
+        );
+    }
+});
+
 var OrderList = React.createClass({
-    propTypes: { user: React.PropTypes.object.isRequired },
+    propTypes: { user:   React.PropTypes.object.isRequired },
 
     getInitialState: function() {
         return {
-            start_date: moment(),
-            end_date:   moment(),
-            orders:     []
+            next_action: null,
+            start_date:  moment(),
+            end_date:    moment(),
+            orders:      []
 
         }
     },
@@ -26,6 +88,10 @@ var OrderList = React.createClass({
             start_date: start_date,
             end_date:   end_date
         });
+    },
+
+    onSelect: function(next_action) {
+        this.setState({ next_action: next_action });
     },
 
     onSearch: function() {
@@ -68,7 +134,9 @@ var OrderList = React.createClass({
                 return [
                     {   // 起案番号
                         value: order.order_code,
-                        view:  order.order_code
+                        view:  <OrderCode account={this.props.user.account}
+                                          order={order}
+                                          onSelect={this.onSelect} />
                     },
                     {   // 起案日
                         value: order.drafting_date,
@@ -110,6 +178,12 @@ var OrderList = React.createClass({
     },
 
     render: function() {
+        if (this.state.next_action != null) {
+            return this.state.next_action;
+        }
+
+        
+        // ORDER_LIST
         var title = [
             { name: '起案番号',          type: 'string' },
             { name: '起案日',            type: 'string' },
