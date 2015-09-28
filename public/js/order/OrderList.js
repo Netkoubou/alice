@@ -1,3 +1,9 @@
+/*
+ * DB に登録された発注を一覧するためのページ。
+ * このページは、他のページへ遷移するための中継ページでしかない。
+ * ここで何らかの操作する発注を選択すると、
+ * その何らかの操作するためのページへ遷移する。
+ */
 'use strict';
 var React          = require('react');
 var Input          = require('react-bootstrap').Input;
@@ -5,14 +11,19 @@ var Button         = require('react-bootstrap').Button;
 var XHR            = require('superagent');
 var moment         = require('moment');
 var Order          = require('./Order');
+var Approve        = require('./Approve');
 var TableFrame     = require('../components/TableFrame');
 var CalendarMarker = require('../components/CalendarMarker');
 var Messages       = require('../lib/Messages');
 var Util           = require('../lib/Util');
 
+
+/*
+ * 表の発注番号
+ */
 var OrderCode = React.createClass({
     propTypes: {
-        account:  React.PropTypes.string.isRequired,
+        user:     React.PropTypes.object.isRequired,
         order:    React.PropTypes.object.isRequired,
         onSelect: React.PropTypes.func.isRequired
     },
@@ -21,44 +32,48 @@ var OrderCode = React.createClass({
         var on_click;
 
         switch (this.props.order.order_state) {
-        case 'REQUESTING':
+        case 'REQUESTING':      // 依頼中
             on_click = function() {
                 this.props.onSelect(
-                    <Order account={this.props.account}
+                    <Order account={this.props.user.account}
                            action={this.props.order.order_type}
                            order={this.props.order} />
                 );
             }.bind(this);
+
             break;
-        case 'APPROVING':
+        case 'APPROVED':        // 承認済み
             on_click = function() {
                 this.props.onSelect(
                 );
             }.bind(this);
+
             break;
-        case 'DENIED':
-            on_click = function() {
-                this.props.onSelect(
-                );
-            }.bind(this);
-            break;
-        case 'APPROVED':
-            on_click = function() {
-                this.props.onSelect(
-                );
-            }.bind(this);
-            break;
-        case 'NULLIFIED':
-            on_click = function() {
-                this.props.onSelect(
-                );
-            }.bind(this);
-            break;
-        default:    // COMPLETED
-            on_click = function() {
-                this.props.onSelect(
-                );
-            }.bind(this);
+        case 'APPROVING':       // 承認中
+            /*
+             * 承認権限を持っているなら
+             */
+            if (this.props.user.is_approval) {
+                on_click = function() {
+                    this.props.onSelect(
+                    );
+                }.bind(this);
+
+                break;  // ここで switch を抜ける
+            }
+
+            // 承認権限を持っていない場合はフォールスルー
+        case 'DENIED':              // 否認済み
+        case 'NULLIFIED':           // 無効
+        default:    // COMPLETED       完了
+            /*
+             * 変更できないし、できちゃいけない
+             */
+            return (
+                <div className="order-list-nop-code">
+                  {this.props.order.order_code}
+                </div>
+            );
         }
 
         return (
@@ -70,15 +85,19 @@ var OrderCode = React.createClass({
     }
 });
 
+
+/*
+ * 以下、本コンポーネントの main
+ */
 var OrderList = React.createClass({
-    propTypes: { user:   React.PropTypes.object.isRequired },
+    propTypes: { user: React.PropTypes.object.isRequired },
 
     getInitialState: function() {
         return {
-            next_action: null,
-            start_date:  moment(),
-            end_date:    moment(),
-            orders:      []
+            next_ope:   null,
+            start_date: moment(),
+            end_date:   moment(),
+            orders:     []
 
         }
     },
@@ -90,8 +109,8 @@ var OrderList = React.createClass({
         });
     },
 
-    onSelect: function(next_action) {
-        this.setState({ next_action: next_action });
+    onSelect: function(next_ope) {
+        this.setState({ next_ope: next_ope });
     },
 
     onSearch: function() {
@@ -134,7 +153,7 @@ var OrderList = React.createClass({
                 return [
                     {   // 起案番号
                         value: order.order_code,
-                        view:  <OrderCode account={this.props.user.account}
+                        view:  <OrderCode user={this.props.user}
                                           order={order}
                                           onSelect={this.onSelect} />
                     },
@@ -178,8 +197,8 @@ var OrderList = React.createClass({
     },
 
     render: function() {
-        if (this.state.next_action != null) {
-            return this.state.next_action;
+        if (this.state.next_ope != null) {
+            return this.state.next_ope;
         }
 
         

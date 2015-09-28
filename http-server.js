@@ -356,6 +356,36 @@ app.post('/searchOrders', function(req, res) {
             last_modified_date: '2015/10/10',
             last_modifier_code: '1603',
             last_modifier_name: 'k-katsu'
+        },
+        {
+            order_code: '4351',
+            order_type: 'ORDINARY_ORDER',
+            order_state: 'DENIED',
+            drafting_date:  '2015/08/01',
+            last_edit_date: '2015/09/18',
+            originator_code: '1853',
+            originator_name: 'm-perry',
+            last_editor_code: '1853',
+            last_editor_name: 'm-perry',
+            department_code: '0003',
+            department_name: '小児科',
+            trader_code: '0003',
+            trader_name: 'エセショップ',
+            products: [
+                {
+                    code:        '0001',
+                    name:        '危険薬',
+                    maker:       '酩酊ラリ子',
+                    order_price: 42.19,
+                    final_price: 43.00,
+                    quantity:    666,
+                    state:       'PROCESSING',
+                    last_change_date: '2014/03/24'
+                },
+            ],
+            last_modified_date: '2015/10/10',
+            last_modifier_code: '1603',
+            last_modifier_name: 'k-katsu'
         }],
     });
 });

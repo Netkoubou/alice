@@ -177,6 +177,10 @@
 #order-list-table td:nth-child(8) { text-align: right; }
 #order-list-table td:nth-child(9) { text-align: center; }
 
+.order-list-nop-code {
+  color: #888888;
+}
+
 .order-list-code:hover {
   color:           #1976d2;
   text-decoration: underline;
