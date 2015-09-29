@@ -116,6 +116,7 @@ var FinalPane = React.createClass({
         };
     },
 
+
     /*
      * クリアボタンがクリックされたら
      */
@@ -158,7 +159,7 @@ var FinalPane = React.createClass({
             }.bind(this) );
         } else {
             /*
-             * 既存の発注を更新
+             * 登録済みの若しくは既存の発注を更新
              */
             XHR.post('updateOrder').send({
                 order_code:      this.props.order.order_code,
