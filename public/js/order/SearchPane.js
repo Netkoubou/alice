@@ -57,7 +57,7 @@ var SelectDepartment = React.createClass({
 
 var SelectTrader = React.createClass({
     propTypes: {
-        finalTrader: React.PropTypes.object,
+        finalTrader: React.PropTypes.object.isRequired,
         onSelect:    React.PropTypes.func.isRequired,
         value:       React.PropTypes.string.isRequired,
         options:     React.PropTypes.arrayOf(React.PropTypes.shape({
@@ -69,7 +69,7 @@ var SelectTrader = React.createClass({
     render: function() {
         var placeholder, code, options;
 
-        if (this.props.finalTrader === null) {
+        if (this.props.finalTrader.code === '') {
             placeholder = '発注先 販売元';
             code        = this.props.value;
             options     = this.props.options;
@@ -116,9 +116,9 @@ var SelectTrader = React.createClass({
  *
  * 発注確定一覧に物品が (1 つでも) 入っていれば、
  *
- *   this.props.finalTrader != null
+ *   this.props.finalTrader.code != ''
  *
- * となる (つまり this.props.finalTrader == 0 なら発注確定一覧に物品は
+ * となる (つまり this.props.finalTrader.code === '' なら発注確定一覧に物品は
  * 1 つも入ていない) ようになっている (はず) なので、
  * this.props.finalTrader は、結構重要なフラグとなっている。
  */
@@ -127,35 +127,21 @@ var SearchPane = React.createClass({
 
     propTypes: {
         orderType:      React.PropTypes.string.isRequired,
-        departmentCode: React.PropTypes.string,
+        departmentCode: React.PropTypes.string.isRequired,
         finalTrader:    React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
             name: React.PropTypes.string.isRequired
-        })
+        }).isRequired
     },
 
     getInitialState: function() {
-        var trader_code     = '';
-
-        if (this.props.finalTrader != null) {
-            trader_code = this.props.finalTrader.code;
-        }
-
         return {
             category_code:   '',
-            trader_code:     trader_code,
+            trader_code:     this.props.finalTrader.code,
             search_text:     '',
             categories:      [],
             departments:     [],
             traders:         []
-        };
-    },
-
-
-    getDefaultProps: function() {
-        return {
-            departmentCode: '',
-            finalTrader:    null
         };
     },
 
@@ -198,7 +184,7 @@ var SearchPane = React.createClass({
      * 
      */
     onClear: function() {
-        var department_code, trader_code;
+        var department_code;
 
         if (this.state.departments.length == 1) {
             /*
@@ -208,7 +194,7 @@ var SearchPane = React.createClass({
              * つまり、選択の余地はない訳で、クリアする意味がない。
              */
             department_code = this.state.departments[0].code;
-        } else if (this.props.finalTrader != null) {
+        } else if (this.props.finalTrader.code != '') {
             /*
              * 発注元 部門診療科が既に決まっているのなら、
              * クリアしちゃいけない
@@ -228,15 +214,9 @@ var SearchPane = React.createClass({
          * 発注確定一覧に物品が一つでも入っている場合、
          * 発注先 販売元をクリアしちゃいけない。
          */
-        if (this.props.finalTrader == null) {
-            trader_code = '';
-        } else {
-            trader_code = this.props.finalTrader.code;
-        }
-
         this.setState({
             category_code: '',
-            trader_code:   trader_code,
+            trader_code:   this.props.finalTrader.code,
             search_text:   '',
         });
     },
@@ -313,9 +293,24 @@ var SearchPane = React.createClass({
     },
 
     componentWillReceiveProps: function(new_props) {
-        if (new_props.finalTrader != null) {
+        if (new_props.finalTrader.code != '') {
+            /*
+             * 新たに Props を受け取る時、発注元 販売元が確定している、
+             * つまり発注確定している商品が一つでもある場合には、
+             * 検索条件に (確定した) 発注先 販売元を強制的に加える必要がある。
+             * でないと、その販売元が取り扱っていない商品が候補に上がって
+             * しまう可能性がある訳で、そうなると最悪発注できないはずの商品
+             * を発注確定することができてしまう。
+             */
             this.setState({ trader_code: new_props.finalTrader.code });
-        } else if (this.props.finalTrader != null) {
+        } else if (this.props.finalTrader.code != '') {
+            /*
+             * 新たに受け取った finalTrader.code 空文字列で、
+             * しかもその直前に受け取った finalTrader.code が空じゃなかった、
+             * ということは、発注確定した商品が全て消去されて無くなった、
+             * ということである。
+             * その場合、検索条件から発注先 販売元を外してやる必要がある。
+             */
             this.setState({ trader_code: '' });
         }
     },
@@ -326,7 +321,7 @@ var SearchPane = React.createClass({
               <fieldset className="order-pane">
                 <legend>発注元 部門診療科</legend>
                 <div className="order-search-pane-row">
-                  <SelectDepartment isFixed={this.props.finalTrader != null}
+                  <SelectDepartment isFixed={this.props.finalTrader.code != ''}
                                     value={this.props.departmentCode}
                                     onSelect={this.onSelectDepartment}
                                     options={this.state.departments} />

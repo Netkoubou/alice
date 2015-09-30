@@ -63,7 +63,6 @@ var OrderCode = React.createClass({
             }
 
             // 承認権限を持っていない場合はフォールスルー
-        case 'DENIED':              // 否認済み
         case 'NULLIFIED':           // 無効
         default:    // COMPLETED       完了
             /*
@@ -139,16 +138,16 @@ var OrderList = React.createClass({
             var orders = res.body.orders.map(function(order) {
                 var order_state = Util.toOrderStateName(order.order_state);
                 var order_type  = Util.toOrderTypeName(order.order_type);
-                var order_total = 0.0;
-                var final_total = 0.0;
+
+                var order_total   = 0.0;
+                var billing_total = 0;
 
                 order.products.forEach(function(f) {
-                    order_total += f.order_price * f.quantity;
-                    final_total += f.final_price * f.quantity;
+                    order_total   += f.price * f.quantity;
+                    billing_total += f.billing_amount;
                 });
 
                 order_total = Math.round(order_total);
-                final_total = Math.round(final_total);
 
                 return [
                     {   // 起案番号
@@ -162,8 +161,8 @@ var OrderList = React.createClass({
                         view:  order.drafting_date
                     },
                     {   // 起案者
-                        value: order.originator_name,
-                        view:  order.originator_name
+                        value: order.drafter_account,
+                        view:  order.drafter_account
                     },
                     {   // 発注区分
                         value: order_type,
@@ -181,9 +180,9 @@ var OrderList = React.createClass({
                         value: order_total,
                         view:  order_total.toLocaleString()
                     },
-                    {   // 確定総計
-                        value: final_total,
-                        view:  final_total.toLocaleString()
+                    {   // 請求総計
+                        value: billing_total,
+                        view:  billing_total.toLocaleString()
                     },
                     {   // 状態
                         value: order_state,
@@ -211,7 +210,7 @@ var OrderList = React.createClass({
             { name: '発注元 部門診療科', type: 'string' },
             { name: '発注先 販売元',     type: 'string' },
             { name: '発注総計',          type: 'number' },
-            { name: '確定総計',          type: 'number' },
+            { name: '請求総計',          type: 'number' },
             { name: '状態',              type: 'string' }
         ];
 

@@ -24,12 +24,14 @@ var SearchPane    = require('./SearchPane');
 var CandidatePane = require('./CandidatePane');
 var FinalPane     = require('./FinalPane');
 var Messages      = require('../lib/Messages');
+var Util          = require('../lib/Util');
 
 
 /*
  * Flux 定数
  */
 var messages = {
+    SET_ORDER_CODE:      'SET_ORDER_CODE',
     SET_DEPARTMENT_CODE: 'SET_DEPARTMENT_CODE',
     UPDATE_CANDIDATES:   'UPDATE_CANDIDATES',
     ADD_FINALIST:        'ADD_FINALIST',
@@ -45,12 +47,17 @@ var messages = {
  */
 var OrderStore = Fluxxor.createStore({
     initialize: function() {
-        this.department_code = '';      // 発注元 部門診療科のコード
-        this.trader          = null;    // 発注先 販売元のコードと名前
-        this.candidates      = [];      // 物品の発注候補一覧
-        this.finalists       = [];      // 物品の発注確定一覧
-        this.need_save       = true;    // 発注確定一覧を DB に登録必要か?
+        this.department_code = '';          // 発注元 部門診療科のコード
+        this.order_code      = '';          // 起案番号
+        this.trader        = { code: '', name: '未確定'};   // 発注先 販売元
+        this.candidates      = [];          // 物品の発注候補一覧
+        this.finalists       = [];          // 物品の発注確定一覧
+        this.need_save       = true;        // 発注確定一覧を DB に登録必要か?
 
+        this.bindActions(
+            messages.SET_ORDER_CODE,
+            this.setOrderCode
+        );
         this.bindActions(
             messages.SET_DEPARTMENT_CODE,
             this.setDepartmentCode
@@ -79,6 +86,12 @@ var OrderStore = Fluxxor.createStore({
             messages.FIX_FINALISTS,
             this.onFixFinalists
         );
+    },
+
+    setOrderCode: function(payload) {
+        this.order_code = payload.code;
+        this.need_save  = false;
+        this.emit('change');
     },
 
 
@@ -113,7 +126,7 @@ var OrderStore = Fluxxor.createStore({
             state:    'PROCESSING'
         });
 
-        if (this.trader === null) {
+        if (this.trader.code === '') {
             this.trader = {
                 code: payload.candidate.trader_code,
                 name: payload.candidate.trader_name
@@ -142,7 +155,7 @@ var OrderStore = Fluxxor.createStore({
         this.finalists.splice(payload.index, 1);
 
         if (this.finalists.length == 0) {
-            this.trader = null;
+            this.trader = { code: '', name: '未確定' };
         }
 
         this.need_save = true;  // 発注確定一覧が更新された
@@ -164,7 +177,7 @@ var OrderStore = Fluxxor.createStore({
         });
 
         if (this.finalists.length == 0) {
-            this.trader = null;
+            this.trader = { code: '', name: '未確定' };
         }
 
         this.need_save = true;    // 発注確定一覧が更新された
@@ -196,6 +209,8 @@ var OrderStore = Fluxxor.createStore({
      */
     setExistingOrder: function(order) {
         this.department_code = order.department_code;
+        this.order_code      = order.order_code;
+        this.drafting_date   = order.drafting_date;
 
 
         /*
@@ -212,7 +227,7 @@ var OrderStore = Fluxxor.createStore({
                 code:     p.code,
                 name:     p.name,
                 maker:    p.maker,
-                price:    p.order_price,
+                price:    p.price,
                 quantity: p.quantity,
                 state:    p.state
             };
@@ -228,9 +243,10 @@ var OrderStore = Fluxxor.createStore({
     },
 
     resetState: function() {
-        this.candidates      = [];
         this.department_code = '';
-        this.trader          = null;
+        this.order_code      = '';
+        this.candidates      = [];
+        this.trader          = { code: '', name: '未確定' };
         this.finalists       = [];
         this.need_save       = true;
         this.emit('change');
@@ -238,8 +254,10 @@ var OrderStore = Fluxxor.createStore({
 
     getState: function() {
         return {
-            candidates:      this.candidates,
             department_code: this.department_code,
+            order_code:      this.order_code,
+            drafting_date:   this.drafting_date,
+            candidates:      this.candidates,
             trader:          this.trader,
             finalists:       this.finalists,
             need_save:       this.need_save
@@ -252,6 +270,10 @@ var OrderStore = Fluxxor.createStore({
  * Flux Action
  */
 var actions = {
+    setOrderCode: function(payload) {
+        this.dispatch(messages.SET_ORDER_CODE, payload);
+    },
+
     setDepartmentCode: function(payload) {
         this.dispatch(messages.SET_DEPARTMENT_CODE, payload);
     },
@@ -327,6 +349,14 @@ var OrderManager = React.createClass({
     },
 
     render: function() {
+        var drafting_date = Util.toCanonicalizedDate(new Date() ); // 起案日
+        var drafter       = this.props.account;
+
+        if (this.props.order != null) {
+            drafting_date = this.props.order.drafting_date;
+            drafter       = this.props.order.drafter_account;
+        }
+
         return (
             <div id="ope">
               <div id="order-left-side">
@@ -338,13 +368,14 @@ var OrderManager = React.createClass({
               </div>
               <div id="order-right-side">
                 <FinalPane key={Math.random()} 
-                           action={this.props.action}
-                           account={this.props.account}
-                           needSave={this.state.need_save}
-                           finalists={this.state.finalists}
                            departmentCode={this.state.department_code}
+                           orderCode={this.state.order_code}
+                           draftingDate={drafting_date}
+                           orderType={this.props.action}
+                           drafter={drafter}
                            trader={this.state.trader}
-                           order={this.props.order} />
+                           finalists={this.state.finalists}
+                           needSave={this.state.need_save} />
               </div>
             </div>
         );
@@ -384,30 +415,25 @@ var Order = React.createClass({
             order_state: React.PropTypes.oneOf([
                 'REQUESTING',       // 依頼中
                 'APPROVING',        // 承認待ち
-                'DENIED',           // 否認
                 'APPROVED',         // 承認済み
                 'NULLIFIED',        // 無効
                 'COMPLETED'         // 完了
             ]).isRequired,
 
-            drafting_date:    React.PropTypes.string.isRequired,
-            last_edit_date:   React.PropTypes.string.isRequired,
-            originator_code:  React.PropTypes.string.isRequired,
-            originator_name:  React.PropTypes.string.isRequired,
-            last_editor_code: React.PropTypes.string.isRequired,
-            last_editor_name: React.PropTypes.string.isRequired,
-            department_code:  React.PropTypes.string.isRequired,
-            department_name:  React.PropTypes.string.isRequired,
-            trader_code:      React.PropTypes.string.isRequired,
-            trader_name:      React.PropTypes.string.isRequired,
+            drafting_date:   React.PropTypes.string.isRequired,
+            drafter_code:    React.PropTypes.string.isRequired,
+            drafter_account: React.PropTypes.string.isRequired,
+            department_code: React.PropTypes.string.isRequired,
+            department_name: React.PropTypes.string.isRequired,
+            trader_code:     React.PropTypes.string.isRequired,
+            trader_name:     React.PropTypes.string.isRequired,
 
             products: React.PropTypes.arrayOf(React.PropTypes.shape({
-                code:        React.PropTypes.string.isRequired,
-                name:        React.PropTypes.string.isRequired,
-                maker:       React.PropTypes.string.isRequired,
-                order_price: React.PropTypes.number.isRequired,
-                final_price: React.PropTypes.number.isRequired,
-                quantity:    React.PropTypes.number.isRequired,
+                code:     React.PropTypes.string.isRequired,
+                name:     React.PropTypes.string.isRequired,
+                maker:    React.PropTypes.string.isRequired,
+                price:    React.PropTypes.number.isRequired,
+                quantity: React.PropTypes.number.isRequired,
 
                 state: React.PropTypes.oneOf([
                     'PROCESSING',   // 処理中
@@ -416,12 +442,15 @@ var Order = React.createClass({
                     'DELIVERED'     // 納品済み
                 ]).isRequired,
 
-                last_change_date: React.PropTypes.string.isRequired
+                billing_amount:      React.PropTypes.number.isRequired,
+                last_edited_date:    React.PropTypes.string.isRequired,
+                last_editor_code:    React.PropTypes.string.isRequired,
+                last_editor_account: React.PropTypes.string.isRequired,
             }) ).isRequired,
 
-            last_modified_date: React.PropTypes.string.isRequired,
-            last_modifier_code: React.PropTypes.string.isRequired,
-            last_modifier_name: React.PropTypes.string.isRequired
+            last_modified_date:    React.PropTypes.string.isRequired,
+            last_modifier_code:    React.PropTypes.string.isRequired,
+            last_modifier_account: React.PropTypes.string.isRequired
         })
     },
 

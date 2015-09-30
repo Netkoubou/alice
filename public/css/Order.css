@@ -63,7 +63,7 @@
   margin-bottom: 8px;
 }
 
-.order-final-pane-originate-date {
+.order-final-pane-drafting-date {
   float: left;
   width: calc(36% - 8px);
   margin: 0 4px 8px 4px;
@@ -75,7 +75,7 @@
   margin-bottom: 8px;
 }
 
-.order-final-pane-originator {
+.order-final-pane-drafter {
   float: left;
   width: 49%;
   margin-bottom: 8px;

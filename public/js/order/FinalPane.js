@@ -50,20 +50,18 @@ var FinalistName = React.createClass({
 
 var ButtonForNextAction = React.createClass({
     propTypes: {
-        onFix:     React.PropTypes.func.isRequired,
-        onPrint:   React.PropTypes.func.isRequired,
-        needSave:  React.PropTypes.bool.isRequired,
-        trader:    React.PropTypes.object
+        onFix:    React.PropTypes.func.isRequired,
+        onPrint:  React.PropTypes.func.isRequired,
+        needSave: React.PropTypes.bool.isRequired,
+        trader:   React.PropTypes.object.isRequired
     },
-
-    getDefaultProps: function() { return { trader: null }; },
 
     render: function() {
         if (this.props.needSave) {
             return (
                 <Button bsSize="small"
                         onClick={this.props.onFix}
-                        disabled={this.props.trader === null}>
+                        disabled={this.props.trader.code === ''}>
                   確定
                 </Button>
             );
@@ -81,9 +79,17 @@ var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        action:    React.PropTypes.string.isRequired,
-        account:   React.PropTypes.string.isRequired,
-        needSave:  React.PropTypes.bool.isRequired,
+        departmentCode: React.PropTypes.string.isRequired,
+        orderCode:      React.PropTypes.string.isRequired,
+        draftingDate:   React.PropTypes.string.isRequired,
+        orderType:      React.PropTypes.string.isRequired,
+        drafter:        React.PropTypes.string.isRequired,
+
+        trader: React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }).isRequired,
+
         finalists: React.PropTypes.arrayOf(React.PropTypes.shape({
             code:     React.PropTypes.string.isRequired,
             name:     React.PropTypes.string.isRequired,
@@ -98,22 +104,7 @@ var FinalPane = React.createClass({
             ]).isRequired
         }) ).isRequired,
 
-        departmentCode: React.PropTypes.string,
-
-        trader: React.PropTypes.shape({
-            code: React.PropTypes.string.isRequired,
-            name: React.PropTypes.string.isRequired
-        }),
-
-        order: React.PropTypes.object
-    },
-
-    getDefaultProps: function() {
-        return {
-            departmentCode: '',
-            trader:         null,
-            order:          null
-        };
+        needSave: React.PropTypes.bool.isRequired
     },
 
 
@@ -129,12 +120,12 @@ var FinalPane = React.createClass({
      * 確定ボタンがクリックされたら
      */
     onFix: function() {
-        if (this.props.order === null) {
+        if (this.props.orderCode === '') {
             /*
              * 発注を新規登録
              */
             XHR.post('registerOrder').send({
-                order_type:      this.props.action,
+                order_type:      this.props.orderType,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(f) {
@@ -155,14 +146,16 @@ var FinalPane = React.createClass({
                 }
 
                 alert('登録しました');
-                this.getFlux().actions.fixFinalists();
+                this.getFlux().actions.setOrderCode({
+                    code: res.body.order_code
+                });
             }.bind(this) );
         } else {
             /*
              * 登録済みの若しくは既存の発注を更新
              */
             XHR.post('updateOrder').send({
-                order_code:      this.props.order.order_code,
+                order_code:      this.props.orderCode,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(f) {
@@ -220,30 +213,10 @@ var FinalPane = React.createClass({
     },
 
     render: function() {
-        var originator, order_code, drafting_date;
+        var order_code = this.props.orderCode;
 
-        if (this.props.order == null) {
-            originator = this.props.account;
-            order_code = '未登録';
-
-            var now   = new Date();
-            var year  = now.getFullYear().toString();
-            var month = (now.getMonth() + 1).toString();
-            var day   = now.getDate().toString();
-
-            drafting_date = year + '-' + month + '-' + day;
-        } else {
-            originator    = this.props.order.originator_name;
-            order_code    = this.props.order.order_code;
-            drafting_date = this.props.order.drafting_date;
-        }
-
-        var trader = {};
-
-        if (this.props.trader == null) {
-            trader = { code: null, name: '未確定' };
-        } else {
-            trader = this.props.trader;
+        if (order_code === '') {
+            order_code = '未確定';
         }
 
         var title = [
@@ -312,23 +285,23 @@ var FinalPane = React.createClass({
                           title="起案番号">
                     {order_code}
                   </Notice>
-                  <Notice className="order-final-pane-originate-date"
+                  <Notice className="order-final-pane-drafting-date"
                           title="起案日">
-                    {drafting_date}
+                    {this.props.draftingDate}
                   </Notice>
                   <Notice className="order-final-pane-order-type"
                           title="発注区分">
-                    {Util.toOrderTypeName(this.props.action)}
+                    {Util.toOrderTypeName(this.props.orderType)}
                   </Notice>
                 </div>
                 <div>
-                  <Notice className="order-final-pane-originator"
+                  <Notice className="order-final-pane-drafter"
                           title='起案者'>
-                    {originator}
+                    {this.props.drafter}
                   </Notice>
                   <Notice className="order-final-pane-trader"
                           title="発注先 販売元">
-                    {trader.name}
+                    {this.props.trader.name}
                   </Notice>
                 </div>
               </div>

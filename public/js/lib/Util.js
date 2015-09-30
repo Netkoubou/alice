@@ -12,7 +12,6 @@ module.exports = {
         switch (state) {
         case 'REQUESTING': return '依頼中';
         case 'APPROVING':  return '承認まち';
-        case 'DENIED':     return '否認';
         case 'APPROVED':   return '承認済み';
         case 'NULLIFIED':  return '無効';
         }
@@ -28,5 +27,23 @@ module.exports = {
         }
 
         return '納品済み';  // DELIVERED
+    },
+
+    toCanonicalizedDate: function(date) {
+        var yyyy  = date.getFullYear().toString();
+        var month = date.getMonth() + 1;
+        var day   = date.getDate();
+        var mm    = month.toString();
+        var dd    = day.toString();
+
+        if (month < 10) {
+            mm = '0' + mm;
+        }
+
+        if (day < 10) {
+            dd = '0' + dd;
+        }
+
+        return yyyy + '/' + mm + '/' + dd;
     }
 };

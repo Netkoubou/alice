@@ -36,7 +36,7 @@ var Select = React.createClass({
             );
         }.bind(this) );
 
-        if (this.props.value != '') {
+        if (this.props.value != '' && this.props.options.length != 0) {
             title = this.props.options.filter(function(o) {
                 return o.code === this.props.value;
             }.bind(this) )[0].name;
