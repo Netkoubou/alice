@@ -226,3 +226,37 @@
 .order-list-remark:hover {
   text-decoration: underline;
 }
+
+#order-approve {
+  width: calc(100% - 16px);
+  height: 100%;
+  padding-top: 8px;
+  margin: 0 0 0 16px;
+}
+
+#order-approve-order-code {
+  width: 15%;
+}
+
+#order-approve-drafting-date {
+  width: 15%;
+}
+
+#order-approve-drafter {
+  width: 15%;
+}
+
+#order-approve-order-type {
+  width: 15%;
+}
+
+#order-approve-department {
+  width: 15%;
+}
+
+#order-approve-trader {
+  width: 15%;
+}
+
+#order-approve-remark {
+}

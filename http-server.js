@@ -387,7 +387,7 @@ app.post('/searchOrders', function(req, res) {
         {
             order_code:      '4219',
             order_type:      'URGENCY_ORDER',
-            order_state:     'REQUESTING',
+            order_state:     'APPROVING',
             order_remark:    'それで何を表現しようと言うの?',
             drafting_date:   '2015/08/01',
             drafter_code:    '1853',

@@ -47,18 +47,18 @@ var OrderCode = React.createClass({
         case 'APPROVED':        // 承認済み
             on_click = function() {
                 this.props.onSelect(
-                    <Approve order={this.props.order} />
                 );
             }.bind(this);
 
             break;
-        case 'APPROVING':       // 承認中
+        case 'APPROVING':       // 承認待ち
             /*
              * 承認権限を持っているなら
              */
             if (this.props.user.is_approval) {
                 on_click = function() {
                     this.props.onSelect(
+                        <Approve order={this.props.order} />
                     );
                 }.bind(this);
 
@@ -155,7 +155,7 @@ var OrderList = React.createClass({
                 var billing_total = 0;
 
                 order.products.forEach(function(f) {
-                    order_total   += f.price * f.quantity;
+                    order_total   += f.cur_price * f.quantity;
                     billing_total += f.billing_amount;
                 });
 
