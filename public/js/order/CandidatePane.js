@@ -36,7 +36,9 @@ var CandidatePane = React.createClass({
             product_code: React.PropTypes.string.isRequired,
             product_name: React.PropTypes.string.isRequired,
             maker:        React.PropTypes.string.isRequired,
-            price:        React.PropTypes.number.isRequired,
+            min_price:    React.PropTypes.number.isRequired,
+            cur_price:    React.PropTypes.number.isRequired,
+            max_price:    React.PropTypes.number.isRequired,
             trader_code:  React.PropTypes.string.isRequired,
             trader_name:  React.PropTypes.string.isRequired
         }) ).isRequired
@@ -44,10 +46,12 @@ var CandidatePane = React.createClass({
 
     render: function() {
         var title = [
-            { name: '品名',   type: 'string' },
-            { name: 'メーカ', type: 'string' },
-            { name: '販売元', type: 'string' },
-            { name: '単価',   type: 'number' }
+            { name: '品名',     type: 'string' },
+            { name: 'メーカ',   type: 'string' },
+            { name: '販売元',   type: 'string' },
+            { name: '最安単価', type: 'number' },
+            { name: '現在単価', type: 'number' },
+            { name: '最高単価', type: 'number' }
         ];
 
 
@@ -57,7 +61,15 @@ var CandidatePane = React.createClass({
          */
 
         var data  = this.props.candidates.map(function(candidate) {
-            var price_string = candidate.price.toLocaleString('ja-JP', {
+            var min_price = candidate.min_price.toLocaleString('ja-JP', {
+                minimumFractionDigits: 2
+            });
+
+            var cur_price = candidate.cur_price.toLocaleString('ja-JP', {
+                minimumFractionDigits: 2
+            });
+
+            var max_price = candidate.max_price.toLocaleString('ja-JP', {
                 minimumFractionDigits: 2
             });
 
@@ -77,9 +89,17 @@ var CandidatePane = React.createClass({
                     view:  <span>{candidate.trader_name}</span>
                 },
                 {
-                    value: candidate.price,
-                    view:  <span>{price_string}</span>
-                }
+                    value: candidate.min_price,
+                    view:  <span>{min_price}</span>
+                },
+                {
+                    value: candidate.cur_price,
+                    view:  <span>{cur_price}</span>
+                },
+                {
+                    value: candidate.max_price,
+                    view:  <span>{max_price}</span>
+                },
             ];
         });
 

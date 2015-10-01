@@ -15,6 +15,11 @@ module.exports = {
             '発注の更新に失敗しました。\n' +
             'システム管理者に問い合わせて下さい。',
 
+        FINAL_PANE_ERASE_ORDER:
+            'AJAX error: eraseOrder in FinalPane.js\n\n' +
+            '発注の消去に失敗しました。\n' +
+            'システム管理者に問い合わせて下さい。',
+
         SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE:
             'AJAX error: pickMenuItemsForSearchPane in SearchPane.js\n\n' +
             'メニューの項目の獲得に失敗しました。\n' +
@@ -40,6 +45,11 @@ module.exports = {
         FINAL_PANE_UPDATE_ORDER:
             'Server error: updateOrder in FinalPane.js\n\n' +
             '発注の更新でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        FINAL_PANE_ERASE_ORDER:
+            'Server error: eraseOrder in FinalPane.js\n\n' +
+            '発注の消去でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE:

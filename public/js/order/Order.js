@@ -39,7 +39,8 @@ var messages = {
     REMOVE_FINALIST:     'REMOVE_FINALIST',
     CLEAR_FINALISTS:     'CLEAR_FINALISTS',
     CHANGE_QUANTITY:     'CHANGE_QUANTITY',
-    FIX_FINALISTS:       'FIX_FINALISTS'
+    FIX_FINALISTS:       'FIX_FINALISTS',
+    RESET_ORDER:         'RESET_ORDER'
 };
 
 
@@ -92,6 +93,10 @@ var OrderStore = Fluxxor.createStore({
             messages.FIX_FINALISTS,
             this.onFixFinalists
         );
+        this.bindActions(
+            messages.RESET_ORDER,
+            this.resetState
+        );
     },
 
 
@@ -140,7 +145,7 @@ var OrderStore = Fluxxor.createStore({
             code:     payload.candidate.product_code,
             name:     payload.candidate.product_name,
             maker:    payload.candidate.maker,
-            price:    payload.candidate.price,
+            price:    payload.candidate.cur_price,
             quantity: 0,
             state:    'PROCESSING'
         });
@@ -247,7 +252,7 @@ var OrderStore = Fluxxor.createStore({
                 code:     p.code,
                 name:     p.name,
                 maker:    p.maker,
-                price:    p.price,
+                price:    p.cur_price,
                 quantity: p.quantity,
                 state:    p.state
             };
@@ -338,6 +343,10 @@ var actions = {
 
     fixFinalists: function() {
         this.dispatch(messages.FIX_FINALISTS);
+    },
+
+    resetOrder: function() {
+        this.dispatch(messages.RESET_ORDER);
     }
 };
 
@@ -456,11 +465,13 @@ var Order = React.createClass({
             trader_name:     React.PropTypes.string.isRequired,
 
             products: React.PropTypes.arrayOf(React.PropTypes.shape({
-                code:     React.PropTypes.string.isRequired,
-                name:     React.PropTypes.string.isRequired,
-                maker:    React.PropTypes.string.isRequired,
-                price:    React.PropTypes.number.isRequired,
-                quantity: React.PropTypes.number.isRequired,
+                code:      React.PropTypes.string.isRequired,
+                name:      React.PropTypes.string.isRequired,
+                maker:     React.PropTypes.string.isRequired,
+                min_price: React.PropTypes.number.isRequired,
+                cur_price: React.PropTypes.number.isRequired,
+                max_price: React.PropTypes.number.isRequired,
+                quantity:  React.PropTypes.number.isRequired,
 
                 state: React.PropTypes.oneOf([
                     'PROCESSING',   // 処理中

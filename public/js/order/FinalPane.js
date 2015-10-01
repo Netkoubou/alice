@@ -49,15 +49,58 @@ var FinalistName = React.createClass({
 });
 
 var ButtonForNextAction = React.createClass({
+    mixins: [ Fluxxor.FluxMixin(React) ],
+
     propTypes: {
-        onFix:    React.PropTypes.func.isRequired,
-        onPrint:  React.PropTypes.func.isRequired,
-        needSave: React.PropTypes.bool.isRequired,
-        trader:   React.PropTypes.object.isRequired
+        onFix:     React.PropTypes.func.isRequired,
+        onPrint:   React.PropTypes.func.isRequired,
+        needSave:  React.PropTypes.bool.isRequired,
+        orderCode: React.PropTypes.string.isRequired,
+        trader:    React.PropTypes.object.isRequired
+    },
+
+    eraseOrder: function() {
+        if (confirm("この発注を消去します。よろしいですか?") ) {
+            XHR.post('eraseOrder').send({
+                order_code: this.props.orderCode
+            }).end(function(err, res) {
+                if (err) {
+                    alert(Messages.ajax.FINAL_PANE_ERASE_ORDER);
+                    throw 'ajax_eraseOrder';
+                }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server.FINAL_PANE_ERASE_ORDER);
+                    throw 'server_eraseOrder';
+                }
+
+                alert('消去しました');
+                this.getFlux().actions.resetOrder();
+            }.bind(this) );
+        }
     },
 
     render: function() {
-        if (this.props.needSave) {
+        if (this.props.orderCode != '' && this.props.trader.code === '') {
+            /*
+             * 既存の発注 (起案番号が付与された発注） の発注確定一覧を
+             * 空にした状態で updateOrder を発行すると、その発注を消去する
+             * ことができる (但し、実際に DB から消去する訳ではない。
+             * DB によって検索対象から外されるため、ユーザからは消去された
+             * ように見える)。
+             *
+             * 発注確定一覧が空になると 販売元コード (trader.code)
+             * も空文字になる。つまり、trader.code === '' が真だと、finalists
+             * が空ということになる。
+             * ここに来るということは即ち、起案番号は付与された状態で、
+             * 且つ発注確定一覧 （finalists) を空、という状態である。
+             */
+             return (
+                <Button bsSize="small" onClick={this.eraseOrder}>
+                  消去
+                </Button>
+             );
+        } else if (this.props.needSave) {
             return (
                 <Button bsSize="small"
                         onClick={this.props.onFix}
@@ -336,6 +379,7 @@ var FinalPane = React.createClass({
                 <ButtonForNextAction onFix={this.onFix}
                                      onPrint={this.onPrint}
                                      needSave={this.props.needSave}
+                                     orderCode={this.props.orderCode}
                                      trader={this.props.trader} />
               </div>
             </fieldset>

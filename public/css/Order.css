@@ -1,12 +1,12 @@
 #order-left-side {
   height: 100%;
-  width:  calc(45% - 4px);
+  width:  calc(50% - 4px);
   float: left;
 }
 
 #order-right-side{
   height: 100%;
-  width:  calc(55% - 4px);
+  width:  calc(50% - 4px);
   float:  right;
 }
 
@@ -34,11 +34,15 @@
   width:  calc(100% - 32px);
 }
 
-#order-candidates col:nth-child(1) { width: calc(50% - 80px); }
-#order-candidates col:nth-child(2) { width: 25%; }
-#order-candidates col:nth-child(3) { width: 25%; }
+#order-candidates col:nth-child(1) { width: calc(70% - 240px); }
+#order-candidates col:nth-child(2) { width: 15%; }
+#order-candidates col:nth-child(3) { width: 15%; }
 #order-candidates col:nth-child(4) { width: 80px; }
+#order-candidates col:nth-child(5) { width: 80px; }
+#order-candidates col:nth-child(6) { width: 80px; }
 #order-candidates td:nth-child(4)  { text-align: right; }
+#order-candidates td:nth-child(5)  { text-align: right; }
+#order-candidates td:nth-child(6)  { text-align: right; }
 
 .order-candidate-name {
   color:  #1976d2;

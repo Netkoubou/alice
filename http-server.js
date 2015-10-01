@@ -78,157 +78,209 @@ app.post('/searchCandidates', function(req, res) {
             product_code: '0000',
             product_name: 'The quick brown fox jumps over the lazy dog',
             maker:        'J.Q. Vandz struck my big fox whelp',
-            price:        2500000
+            min_price:        0,
+            cur_price:        2499999,
+            max_price:        2500000
         },
         {
             product_code: '0001',
             product_name: 'b',
             maker:  'Y',
-            price:  24.01
+            min_price:  24.00,
+            cur_price:  24.01,
+            max_price:  24.02
         },
         {
             product_code: '0002',
             product_name: 'c',
             maker: 'X',
-            price:  23.02
+            min_price:  23.03,
+            cur_price:  23.04,
+            max_price:  23.05
         },
         {
             product_code: '0003',
             product_name: 'd',
             maker: 'W',
-            price:  22.03
+            min_price:  22.06,
+            cur_price:  22.07,
+            max_price:  22.08
         },
         {
             product_code: '0004',
             product_name: 'e',
             maker: 'V',
-            price:  21.04
+            min_price:  21.09,
+            cur_price:  21.10,
+            max_price:  21.11
         },
         {
             product_code: '0005',
             product_name: 'f',
             maker: 'U',
-            price:  20.05
+            min_price:  20.12,
+            cur_price:  20.13,
+            max_price:  20.14
         },
         {
             product_code: '0006',
             product_name: 'g',
             maker: 'T',
-            price:  19.06
+            min_price:  19.15,
+            cur_price:  19.16,
+            max_price:  19.17
         },
         {
             product_code: '0007',
             product_name: 'h',
             maker: 'S',
-            price:  18.07
+            min_price:  18.18,
+            cur_price:  18.19,
+            max_price:  18.20
         },
         {
             product_code: '0008',
             product_name: 'i',
             maker: 'R',
-            price:  17.08
+            min_price:  17.21,
+            cur_price:  17.22,
+            max_price:  17.23
         },
         {
             product_code: '0009',
             product_name: 'j',
             maker: 'Q',
-            price:  16.09
+            min_price:  16.24,
+            cur_price:  16.25,
+            max_price:  16.26
         },
         {
             product_code: '0010',
             product_name: 'k',
             maker: 'P',
-            price:  15.10
+            min_price:  15.27,
+            cur_price:  15.28,
+            max_price:  15.29
         },
         {
             product_code: '0011',
             product_name: 'l',
             maker: 'O',
-            price:  14.11
+            min_price:  14.30,
+            cur_price:  14.31,
+            max_price:  14.32
         },
         {
             product_code: '0012',
             product_name: 'm',
             maker: 'N',
-            price:  13.12
+            min_price:  13.33,
+            cur_price:  13.34,
+            max_price:  13.35
         },
         {
             product_code: '0013',
             product_name: 'n',
             maker: 'M',
-            price:  12.13
+            min_price:  12.36,
+            cur_price:  12.37,
+            max_price:  12.38
         },
         {
             product_code: '0014',
             product_name: 'o',
             maker: 'L',
-            price:  11.14
+            min_price:  11.39,
+            cur_price:  11.40,
+            max_price:  11.41
         },
         {
             product_code: '0015',
             product_name: 'p',
             maker: 'K',
-            price:  10.15
+            min_price:  10.42,
+            cur_price:  10.43,
+            max_price:  10.44
         },
         {
             product_code: '0016',
             product_name: 'q',
             maker: 'J',
-            price:   9.16
+            min_price:   9.45,
+            cur_price:   9.46,
+            max_price:   9.47
         },
         {
             product_code: '0017',
             product_name: 'r',
             maker: 'I',
-            price:   8.17
+            min_price:   8.48,
+            cur_price:   8.49,
+            max_price:   8.50
         },
         {
             product_code: '0018',
             product_name: 's',
             maker: 'H',
-            price:   7.18
+            min_price:   7.51,
+            cur_price:   7.52,
+            max_price:   7.53
         },
         {
             product_code: '0019',
             product_name: 't',
             maker: 'G',
-            price:   6.19
+            min_price:   6.54,
+            cur_price:   6.55,
+            max_price:   6.56
         },
         {
             product_code: '0020',
             product_name: 'u',
             maker: 'F',
-            price:   5.20
+            min_price:   5.57,
+            cur_price:   5.58,
+            max_price:   5.59
         },
         {
             product_code: '0021',
             product_name: 'v',
             maker: 'E',
-            price:   4.21
+            min_price:   4.60,
+            cur_price:   4.61,
+            max_price:   4.62
         },
         {
             product_code: '0022',
             product_name: 'w',
             maker: 'D',
-            price:   3.22
+            min_price:   3.63,
+            cur_price:   3.64,
+            max_price:   3.65
         },
         {
             product_code: '0023',
             product_name: 'x',
             maker: 'C',
-            price:   2.23
+            min_price:   2.67,
+            cur_price:   2.68,
+            max_price:   2.69
         },
         {
             product_code: '0024',
             product_name: 'y',
             maker: 'B',
-            price:   1.24
+            min_price:   1.70,
+            cur_price:   1.71,
+            max_price:   1.72
         },
         {
             product_code: '0025',
             product_name: 'z',
             maker: 'A',
-            price:   0.25
+            min_price:   0.73,
+            cur_price:   0.74,
+            max_price:   0.75
         }
     ];
 
@@ -271,6 +323,15 @@ app.post('/updateOrder', function(req, res) {
 
 
 /*
+ * 既存の発注の消去
+ */
+app.post('/eraseOrder', function(req, res) {
+    console.log(req.body);
+    res.json({ status: 0 });
+});
+
+
+/*
  * 発注の検索
  */
 app.post('/searchOrders', function(req, res) {
@@ -294,7 +355,9 @@ app.post('/searchOrders', function(req, res) {
                     code:     '0000',
                     name:     'タイガーマスク',
                     maker:    '梶原一騎',
-                    price:    43.00,
+                    min_price:    43.00,
+                    cur_price:    43.01,
+                    max_price:    43.02,
                     quantity: 8,
                     state:    'PROCESSING',
                     billing_amount:      0,
@@ -306,7 +369,9 @@ app.post('/searchOrders', function(req, res) {
                     code:     '4126',
                     name:     'マングローブ',
                     maker:    '亜熱帯潮間帯',
-                    price:    11.92,
+                    min_price:    11.92,
+                    cur_price:    11.92,
+                    max_price:    11.92,
                     quantity: 3,
                     state:    'ORDERED',
                     billing_amount:      0,
@@ -336,7 +401,9 @@ app.post('/searchOrders', function(req, res) {
                     code:     '0001',
                     name:     '危険薬',
                     maker:    '酩酊ラリ子',
-                    price:    43.00,
+                    min_price:    43.01,
+                    cur_price:    43.02,
+                    max_price:    43.03,
                     quantity: 666,
                     state:    'PROCESSING',
                     billing_amount:      0,
@@ -348,7 +415,9 @@ app.post('/searchOrders', function(req, res) {
                     code: '   0645',
                     name:     'STAP細胞',
                     maker:    '小保方製薬',
-                    price:    11.92,
+                    min_price:    11.92,
+                    cur_price:    11.92,
+                    max_price:    11.92,
                     quantity: 9,
                     state:    'ORDERED',
                     billing_amount:      0,
@@ -378,7 +447,9 @@ app.post('/searchOrders', function(req, res) {
                     code:     '0001',
                     name:     '危険薬',
                     maker:    '酩酊ラリ子',
-                    price:    42.19,
+                    min_price:    42.19,
+                    cur_price:    42.19,
+                    max_price:    42.19,
                     quantity: 666,
                     state:    'PROCESSING',
                     billing_amount:      0,
