@@ -59,10 +59,11 @@ var Nav = React.createClass({
 
         user: React.PropTypes.shape({
             account:     React.PropTypes.string.isRequired,
-            is_admin:    React.PropTypes.bool.isRequired,
-            is_medical:  React.PropTypes.bool.isRequired,
-            is_urgency:  React.PropTypes.bool.isRequired,
-            is_approval: React.PropTypes.bool.isRequired,
+            is_privileged: React.PropTypes.bool.isRequired,
+            is_admin:      React.PropTypes.bool.isRequired,
+            is_medical:    React.PropTypes.bool.isRequired,
+            is_urgency:    React.PropTypes.bool.isRequired,
+            is_approval:   React.PropTypes.bool.isRequired
         }).isRequired,
 
         selected: React.PropTypes.oneOf([
@@ -104,7 +105,7 @@ var Nav = React.createClass({
         var meds_order     = null;
         var budget_admin   = null;
         var etc_admin      = null;
-        var selected      = this.props.selected;
+        var selected       = this.props.selected;
 
         if (this.props.user.is_urgency) {
             urgently_order = (
@@ -123,17 +124,28 @@ var Nav = React.createClass({
         }
 
         if (this.props.user.is_admin) {
-            budget_admin = (
-                <div>
-                  <NavItemTitle name="予算" />
-                  <NavItem name="予算一覧"
-                           onClick={this.dummy}
-                           isSelected={selected === 'BUDGET_LIST'} />
-                  <NavItem name="予算管理"
-                           onClick={this.dummy}
-                           isSelected={selected === 'BUDGET_ADMIN'} />
-               </div>
-            );
+            if (this.props.user.is_privileged) {
+                budget_admin = (
+                    <div>
+                      <NavItemTitle name="予算" />
+                      <NavItem name="予算一覧"
+                               onClick={this.dummy}
+                               isSelected={selected === 'BUDGET_LIST'} />
+                      <NavItem name="予算管理"
+                               onClick={this.dummy}
+                               isSelected={selected === 'BUDGET_ADMIN'} />
+                   </div>
+                );
+            } else {
+                budget_admin = (
+                    <div>
+                      <NavItemTitle name="予算" />
+                      <NavItem name="予算一覧"
+                               onClick={this.dummy}
+                               isSelected={selected === 'BUDGET_LIST'} />
+                    </div>
+                );
+            }
         }
 
         if (this.props.user.is_admin) {
