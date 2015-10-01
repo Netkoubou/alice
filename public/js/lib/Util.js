@@ -11,7 +11,7 @@ module.exports = {
     toOrderStateName: function(state) {
         switch (state) {
         case 'REQUESTING': return '依頼中';
-        case 'APPROVING':  return '承認まち';
+        case 'APPROVING':  return '承認待ち';
         case 'APPROVED':   return '承認済み';
         case 'NULLIFIED':  return '無効';
         }

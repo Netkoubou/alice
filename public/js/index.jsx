@@ -36,6 +36,7 @@ var Page = React.createClass({
      *   - ORDER_LIST:     発注一覧
      *   - COST_COUNT:     経費 / 精算
      *   - BUDGET_ADMIN:   予算管理
+     *   - BUDGET_LIST:    予算一覧
      *   - USER_ADMIN:     ユーザ管理
      *   - TRADER_ADMIN:   販売元管理
      *   - GOODS_ADMIN:    物品管理

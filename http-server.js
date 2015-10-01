@@ -321,7 +321,7 @@ app.post('/searchOrders', function(req, res) {
         },
         {
             order_code:      '4219',
-            order_type:      'ORDINARY_ORDER',
+            order_type:      'URGENCY_ORDER',
             order_state:     'REQUESTING',
             order_remark:    'それで何を表現しようと言うの?',
             drafting_date:   '2015/08/01',
@@ -363,7 +363,7 @@ app.post('/searchOrders', function(req, res) {
         },
         {
             order_code:      '4351',
-            order_type:      'ORDINARY_ORDER',
+            order_type:      'MEDS_ORDER',
             order_state:     'DENIED',
             order_remark:    '怒り? 哀しみ? 喜び? 喜怒哀楽?',
             drafting_date:   '2015/08/01',

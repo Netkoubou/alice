@@ -73,6 +73,7 @@ var Nav = React.createClass({
             'ORDER_LIST',
             'COST_COUNT',
             'BUDGET_ADMIN',
+            'BUDGET_LIST',
             'USER_ADMIN',
             'TRADER_ADMIN',
             'GOODS_ADMIN',
@@ -124,7 +125,10 @@ var Nav = React.createClass({
         if (this.props.user.is_admin) {
             budget_admin = (
                 <div>
-                  <NavItemTitle name="予算管理" />
+                  <NavItemTitle name="予算" />
+                  <NavItem name="予算一覧"
+                           onClick={this.dummy}
+                           isSelected={selected === 'BUDGET_LIST'} />
                   <NavItem name="予算管理"
                            onClick={this.dummy}
                            isSelected={selected === 'BUDGET_ADMIN'} />

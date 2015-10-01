@@ -8,6 +8,8 @@
 var React          = require('react');
 var Input          = require('react-bootstrap').Input;
 var Button         = require('react-bootstrap').Button;
+var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
+var Popover        = require('react-bootstrap').Popover;
 var XHR            = require('superagent');
 var moment         = require('moment');
 var Order          = require('./Order');
@@ -119,7 +121,6 @@ var OrderList = React.createClass({
             state: {
                 is_requesting: this.refs.requesting.getChecked(),
                 is_approving:  this.refs.approving.getChecked(),
-                is_denied:     this.refs.denied.getChecked(),
                 is_approved:   this.refs.approved.getChecked(),
                 is_nullified:  this.refs.nullified.getChecked(),
                 is_completed:  this.refs.completed.getChecked()
@@ -137,7 +138,17 @@ var OrderList = React.createClass({
 
             var orders = res.body.orders.map(function(order) {
                 var order_state = Util.toOrderStateName(order.order_state);
-                var order_type  = Util.toOrderTypeName(order.order_type);
+                var order_type = Util.toOrderTypeName(order.order_type);
+
+                if (order.order_type === 'URGENCY_ORDER') {
+                    if (order.order_state != 'COMPLETED') {
+                        if (order.order_state != 'NULLIFIED') {
+                            order_type = <span className="order-list-urgency">
+                                           {order_type}
+                                         </span>
+                        }
+                    }
+                }
 
                 var order_total   = 0.0;
                 var billing_total = 0;
@@ -148,6 +159,21 @@ var OrderList = React.createClass({
                 });
 
                 order_total = Math.round(order_total);
+
+                var order_remark = '';
+
+                if (order.order_remark != '') {
+                    var popover = <Popover title="備考・連絡">
+                                    {order.order_remark}
+                                  </Popover>;
+
+                    order_remark = <OverlayTrigger placement="left"
+                                                   overlay={popover}>
+                                     <span className="order-list-remark">
+                                       !
+                                     </span>
+                                   </OverlayTrigger>;
+                }
 
                 return [
                     {   // 起案番号
@@ -187,6 +213,10 @@ var OrderList = React.createClass({
                     {   // 状態
                         value: order_state,
                         view:  order_state
+                    },
+                    {   // 備考・連絡
+                        value: '',
+                        view:  order_remark,
                     }
                 ];
             }.bind(this) );
@@ -211,7 +241,8 @@ var OrderList = React.createClass({
             { name: '発注先 販売元',     type: 'string' },
             { name: '発注総計',          type: 'number' },
             { name: '請求総計',          type: 'number' },
-            { name: '状態',              type: 'string' }
+            { name: '状態',              type: 'string' },
+            { name: '!',                 type: 'string' }
         ];
 
         return (
@@ -234,9 +265,6 @@ var OrderList = React.createClass({
                          label="承認待ち"
                          defaultChecked={this.props.user.is_approval}
                          ref="approving" />
-                </div>
-                <div className="order-list-checkbox">
-                  <Input type="checkbox" label="否認" ref="denied" />
                 </div>
                 <div className="order-list-checkbox">
                   <Input type="checkbox"

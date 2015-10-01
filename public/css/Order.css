@@ -40,10 +40,13 @@
 #order-candidates col:nth-child(4) { width: 80px; }
 #order-candidates td:nth-child(4)  { text-align: right; }
 
+.order-candidate-name {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
 .order-candidate-name:hover {
-  color:           #1976d2;
   text-decoration: underline;
-  cursor:          pointer;
 }
 
 #order-final-pane {
@@ -108,10 +111,13 @@
 #order-finalists td:nth-child(5) { text-align: right; }
 #order-finalists td:nth-child(6) { text-align: center; }
 
+.order-finalist-name {
+  color:  #ff0000;
+  cursor: pointer;
+}
+
 .order-finalist-name:hover {
-  color:           #ff0000;
   text-decoration: underline;
-  cursor:          pointer;
 }
 
 #order-total {
@@ -165,28 +171,54 @@
   height: calc(100% - 56px);
 }
 
-#order-list-table col:nth-child(1) { width: 140px }
-#order-list-table col:nth-child(2) { width: 80px }
-#order-list-table col:nth-child(3) { width: calc(65% - 540px) }
-#order-list-table col:nth-child(4) { width: 80px }
-#order-list-table col:nth-child(5) { width: 15% }
-#order-list-table col:nth-child(6) { width: 20% }
-#order-list-table col:nth-child(7) { width: 80px }
-#order-list-table col:nth-child(8) { width: 80px }
-#order-list-table col:nth-child(9) { width: 80px }
+#order-list-table col:nth-child(1)  { width: 130px }
+#order-list-table col:nth-child(2)  { width: 80px }
+#order-list-table col:nth-child(3)  { width: calc(65% - 545px) }
+#order-list-table col:nth-child(4)  { width: 80px }
+#order-list-table col:nth-child(5)  { width: 15% }
+#order-list-table col:nth-child(6)  { width: 20% }
+#order-list-table col:nth-child(7)  { width: 80px }
+#order-list-table col:nth-child(8)  { width: 80px }
+#order-list-table col:nth-child(9)  { width: 80px }
+#order-list-table col:nth-child(10) { width: 15px }
 #order-list-table td:nth-child(1) { text-align: center; }
 #order-list-table td:nth-child(2) { text-align: center; }
 #order-list-table td:nth-child(4) { text-align: center; }
 #order-list-table td:nth-child(7) { text-align: right; }
 #order-list-table td:nth-child(8) { text-align: right; }
 #order-list-table td:nth-child(9) { text-align: center; }
+#order-list-table td:nth-child(10) { text-align: center; }
 
 .order-list-nop-code {
   color: #888888;
 }
 
+.order-list-code {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
 .order-list-code:hover {
-  color:           #1976d2;
   text-decoration: underline;
-  cursor:          pointer;
+}
+
+@keyframes urgency {
+  from { font-size: xx-small; font-weight: lighter; color: orange; }
+  to   { font-size: normal;   font-weight: bold;    color: red     }
+}
+
+.order-list-urgency {
+  animation-name: urgency;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+}
+
+.order-list-remark {
+  font-weight: bold;
+  color:       #1976d2;
+  cursor:      pointer;
+}
+
+.order-list-remark:hover {
+  text-decoration: underline;
 }
