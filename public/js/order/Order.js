@@ -32,6 +32,7 @@ var Util          = require('../lib/Util');
  */
 var messages = {
     SET_ORDER_CODE:      'SET_ORDER_CODE',
+    SET_ORDER_REMARK:    'SET_ORDER_REMARK',
     SET_DEPARTMENT_CODE: 'SET_DEPARTMENT_CODE',
     UPDATE_CANDIDATES:   'UPDATE_CANDIDATES',
     ADD_FINALIST:        'ADD_FINALIST',
@@ -49,6 +50,7 @@ var OrderStore = Fluxxor.createStore({
     initialize: function() {
         this.department_code = '';          // 発注元 部門診療科のコード
         this.order_code      = '';          // 起案番号
+        this.order_remark    = '';          // 備考
         this.trader        = { code: '', name: '未確定'};   // 発注先 販売元
         this.candidates      = [];          // 物品の発注候補一覧
         this.finalists       = [];          // 物品の発注確定一覧
@@ -57,6 +59,10 @@ var OrderStore = Fluxxor.createStore({
         this.bindActions(
             messages.SET_ORDER_CODE,
             this.setOrderCode
+        );
+        this.bindActions(
+            messages.SET_ORDER_REMARK,
+            this.setOrderRemark
         );
         this.bindActions(
             messages.SET_DEPARTMENT_CODE,
@@ -88,9 +94,22 @@ var OrderStore = Fluxxor.createStore({
         );
     },
 
+
+    /*
+     * 新規発注の DB 登録時に確定した起案番号を記録する。
+     * これが呼び出されるということは即ち、
+     * 最新の発注が DB に登録済みである、ということである。
+     * と言うことで、need_save フラグを false にしている。
+     */
     setOrderCode: function(payload) {
         this.order_code = payload.code;
         this.need_save  = false;
+        this.emit('change');
+    },
+
+    setOrderRemark: function(payload) {
+        this.order_remark = payload.remark;
+        this.need_save    = true;   // 備考が更新された
         this.emit('change');
     },
 
@@ -210,6 +229,7 @@ var OrderStore = Fluxxor.createStore({
     setExistingOrder: function(order) {
         this.department_code = order.department_code;
         this.order_code      = order.order_code;
+        this.order_remark    = order.order_remark;
         this.drafting_date   = order.drafting_date;
 
 
@@ -245,6 +265,7 @@ var OrderStore = Fluxxor.createStore({
     resetState: function() {
         this.department_code = '';
         this.order_code      = '';
+        this.order_remark    = '';
         this.candidates      = [];
         this.trader          = { code: '', name: '未確定' };
         this.finalists       = [];
@@ -256,6 +277,7 @@ var OrderStore = Fluxxor.createStore({
         return {
             department_code: this.department_code,
             order_code:      this.order_code,
+            order_remark:    this.order_remark,
             drafting_date:   this.drafting_date,
             candidates:      this.candidates,
             trader:          this.trader,
@@ -272,6 +294,10 @@ var OrderStore = Fluxxor.createStore({
 var actions = {
     setOrderCode: function(payload) {
         this.dispatch(messages.SET_ORDER_CODE, payload);
+    },
+
+    setOrderRemark: function(payload) {
+        this.dispatch(messages.SET_ORDER_REMARK, payload);
     },
 
     setDepartmentCode: function(payload) {
@@ -367,9 +393,9 @@ var OrderManager = React.createClass({
                                candidates={this.state.candidates} />
               </div>
               <div id="order-right-side">
-                <FinalPane key={Math.random()} 
-                           departmentCode={this.state.department_code}
+                <FinalPane departmentCode={this.state.department_code}
                            orderCode={this.state.order_code}
+                           orderRemark={this.state.order_remark}
                            draftingDate={drafting_date}
                            orderType={this.props.action}
                            drafter={drafter}
@@ -404,7 +430,7 @@ var Order = React.createClass({
         ]),
 
         order: React.PropTypes.shape({
-            order_code: React.PropTypes.string.isRequired,
+            order_code:   React.PropTypes.string.isRequired,
 
             order_type: React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
@@ -420,6 +446,7 @@ var Order = React.createClass({
                 'COMPLETED'         // 完了
             ]).isRequired,
 
+            order_remark:    React.PropTypes.string.isRequired,
             drafting_date:   React.PropTypes.string.isRequired,
             drafter_code:    React.PropTypes.string.isRequired,
             drafter_account: React.PropTypes.string.isRequired,

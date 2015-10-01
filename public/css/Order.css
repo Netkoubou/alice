@@ -53,7 +53,7 @@
 
 #order-final-pane-notice {
   padding-left:  32px;
-  height:        128px;
+  height:        176px;
   width:         100%;
 }
 
@@ -78,18 +78,22 @@
 .order-final-pane-drafter {
   float: left;
   width: 49%;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .order-final-pane-trader {
   float: right;
   width: 49%;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+#order-final-pane-remark {
+  clear: both;
 }
 
 #order-finalists {
   clear:  both;
-  height: calc(100% - 260px);
+  height: calc(100% - 308px);
   width:  calc(100% - 32px);
 }
 

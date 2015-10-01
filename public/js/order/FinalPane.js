@@ -4,11 +4,11 @@
 'use strict';
 var React      = require('react');
 var Button     = require('react-bootstrap').Button;
+var Input      = require('react-bootstrap').Input;
 var Fluxxor    = require('fluxxor');
 var XHR        = require('superagent');
 var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
-var Input      = TableFrame.Input;
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 
@@ -81,6 +81,7 @@ var FinalPane = React.createClass({
     propTypes: {
         departmentCode: React.PropTypes.string.isRequired,
         orderCode:      React.PropTypes.string.isRequired,
+        orderRemark:    React.PropTypes.string.isRequired,
         draftingDate:   React.PropTypes.string.isRequired,
         orderType:      React.PropTypes.string.isRequired,
         drafter:        React.PropTypes.string.isRequired,
@@ -126,6 +127,7 @@ var FinalPane = React.createClass({
              */
             XHR.post('registerOrder').send({
                 order_type:      this.props.orderType,
+                order_remark:    this.props.orderRemark,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(f) {
@@ -156,6 +158,7 @@ var FinalPane = React.createClass({
              */
             XHR.post('updateOrder').send({
                 order_code:      this.props.orderCode,
+                order_remark:    this.props.orderRemark,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(f) {
@@ -212,6 +215,12 @@ var FinalPane = React.createClass({
         }.bind(this);
     },
 
+    onChangeRemark: function(e) {
+        return this.getFlux().actions.setOrderRemark({
+            remark: e.target.value
+        });
+    },
+
     render: function() {
         var order_code = this.props.orderCode;
 
@@ -261,9 +270,10 @@ var FinalPane = React.createClass({
                 },
                 {
                     value: finalist.quantity,
-                    view:  <Input type='int'
-                                  placeholder={finalist.quantity.toString()}
-                                  onChange={this.onChangeQuantity(i)} />
+                    view:  <TableFrame.Input
+                             type='int'
+                             placeholder={finalist.quantity.toString()}
+                             onChange={this.onChangeQuantity(i)} />
                 },
                 {
                     value: subtotal,
@@ -303,6 +313,14 @@ var FinalPane = React.createClass({
                           title="発注先 販売元">
                     {this.props.trader.name}
                   </Notice>
+                </div>
+                <div>
+                  <Input id="order-final-pane-remark"
+                         type="text"
+                         bsSize="small"
+                         placeholder="備考・連絡"
+                         value={this.props.orderRemark}
+                         onChange={this.onChangeRemark} />
                 </div>
               </div>
               <TableFrame id="order-finalists" title={title} data={data} />
