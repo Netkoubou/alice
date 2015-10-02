@@ -47,7 +47,7 @@ var CandidatePane = React.createClass({
     render: function() {
         var title = [
             { name: '品名',     type: 'string' },
-            { name: 'メーカ',   type: 'string' },
+            { name: '製造元',   type: 'string' },
             { name: '販売元',   type: 'string' },
             { name: '最安単価', type: 'number' },
             { name: '現在単価', type: 'number' },

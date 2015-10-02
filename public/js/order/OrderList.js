@@ -168,12 +168,13 @@ var OrderList = React.createClass({
                                     {order.order_remark}
                                   </Popover>;
 
-                    order_remark = <OverlayTrigger placement="left"
-                                                   overlay={popover}>
-                                     <span className="order-list-remark">
-                                       !
-                                     </span>
-                                   </OverlayTrigger>;
+                    order_remark = (
+                        <OverlayTrigger container={this.refs.orderList}
+                                        placement="left"
+                                        overlay={popover}>
+                          <span className="order-list-remark">!</span>
+                        </OverlayTrigger>
+                    );
                 }
 
                 return [
@@ -247,7 +248,7 @@ var OrderList = React.createClass({
         ];
 
         return (
-            <div id="order-list">
+            <div id="order-list" ref="orderList">
               <fieldset id="order-list-search">
                 <legend>検索</legend>
                 <div id="order-list-calendar-marker">

@@ -273,7 +273,7 @@ var FinalPane = React.createClass({
 
         var title = [
             { name: '品名',   type: 'string' },
-            { name: 'メーカ', type: 'string' },
+            { name: '製造元', type: 'string' },
             { name: '単価',   type: 'number' },
             { name: '数量',   type: 'number' },
             { name: '小計',   type: 'number' },
