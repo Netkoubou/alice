@@ -272,17 +272,17 @@ var FinalPane = React.createClass({
         }
 
         var title = [
-            { name: '品名',   type: 'string' },
-            { name: '製造元', type: 'string' },
-            { name: '単価',   type: 'number' },
-            { name: '数量',   type: 'number' },
-            { name: '小計',   type: 'number' },
-            { name: '状態',   type: 'string' }
+            { name: '品名',     type: 'string' },
+            { name: '製造元',   type: 'string' },
+            { name: '現在単価', type: 'number' },
+            { name: '数量',     type: 'number' },
+            { name: '発注小計', type: 'number' },
+            { name: '状態',     type: 'string' }
         ];
 
         var total = 0;
         var data  = this.props.finalists.map(function(finalist, i) {
-            var state    = Util.toGoodsStateName(finalist.state);
+            var state    = Util.toProductStateName(finalist.state);
             var subtotal = finalist.price * finalist.quantity;
 
             total += subtotal;
@@ -315,7 +315,7 @@ var FinalPane = React.createClass({
                     value: finalist.quantity,
                     view:  <TableFrame.Input
                              type='int'
-                             placeholder={finalist.quantity.toString()}
+                             placeholder={finalist.quantity.toLocaleString()}
                              onChange={this.onChangeQuantity(i)} />
                 },
                 {
@@ -367,8 +367,8 @@ var FinalPane = React.createClass({
                 </div>
               </div>
               <TableFrame id="order-finalists" title={title} data={data} />
-              <div id="order-total">
-                <Notice title="総計">
+              <div id="order-finalist-total">
+                <Notice title="発注総計">
                   {Math.round(total).toLocaleString()}
                 </Notice>
               </div>

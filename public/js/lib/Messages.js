@@ -29,6 +29,11 @@ module.exports = {
             'AJAX error: searchOrders in OrderList.js\n\n' +
             '発注の検索に失敗しました。\n' +
             'システム管理者に問い合わせて下さい。',
+
+        APPROVE_CHANGE_ORDER_STATE:
+            'AJAX error: changeOrderState in Approve.js\n\n' +
+            '発注の状態変更に失敗しました。\n' +
+            'システム管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -61,5 +66,10 @@ module.exports = {
             'Server error: searchOrders in OrderList.js\n\n' +
             '発注の検索でサーバにエラーが発生しました。\n' +
             'システム管理者に問い合わせて下さい。',
+
+        APPROVE_CHANGE_ORDER_STATE:
+            'Server error: changeOrderState in Approve.js\n\n' +
+            '発注の状態変更でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
     },
 };

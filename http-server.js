@@ -332,6 +332,15 @@ app.post('/eraseOrder', function(req, res) {
 
 
 /*
+ * 発注の状態変更
+ */
+app.post('/changeOrderState', function(req, res) {
+    console.log(req.body);
+    res.json({ status: 0 });
+});
+
+
+/*
  * 発注の検索
  */
 app.post('/searchOrders', function(req, res) {

@@ -101,13 +101,13 @@
 #order-finalists {
   clear:  both;
   height: calc(100% - 308px);
-  width:  calc(100% - 32px);
+  width:  calc(100% -  32px);
 }
 
-#order-finalists col:nth-child(1) { width: calc(57% - 160px); }
+#order-finalists col:nth-child(1) { width: calc(55% - 160px); }
 #order-finalists col:nth-child(2) { width: 20% }
 #order-finalists col:nth-child(3) { width: 80px; }
-#order-finalists col:nth-child(4) { width:  8%; }
+#order-finalists col:nth-child(4) { width: 10%; }
 #order-finalists col:nth-child(5) { width: 80px; }
 #order-finalists col:nth-child(6) { width: 15%; }
 #order-finalists td:nth-child(3) { text-align: right; }
@@ -124,9 +124,9 @@
   text-decoration: underline;
 }
 
-#order-total {
-  width: 192px; 
-  margin: 8px 0 8px 32px;
+#order-finalist-total {
+  width:    192px; 
+  margin:   8px 0 8px 32px;
   position: absolute;
   bottom:   4px;
 }
@@ -134,14 +134,14 @@
 #order-final-pane-buttons {
   position: absolute;
   bottom: 14px;
-  right:  0px;
+  right:   0px;
 }
 
 #order-list {
-  width:  calc(100% - 8px);
-  height: 100%;
+  width:       calc(100% - 8px);
+  height:      100%;
   padding-top: 8px;
-  font-size: small;
+  font-size:   small;
 }
 
 #order-list fieldset {
@@ -228,35 +228,74 @@
 }
 
 #order-approve {
-  width: calc(100% - 16px);
-  height: 100%;
+  width:       calc(100% - 8px);
+  height:      100%;
   padding-top: 8px;
-  margin: 0 0 0 16px;
+  font-size:   small;
+  position:    relative;
 }
 
-#order-approve-order-code {
-  width: 15%;
+#order-approve fieldset {
+  width:       calc(100% - 16px);
+  margin-left: 16px;
 }
 
-#order-approve-drafting-date {
-  width: 15%;
+#order-approve-infos {
+  margin-left:   32px;
+  margin-bottom: 16px;
+  display:       flex;
 }
 
-#order-approve-drafter {
+.order-approve-info {
   width: 15%;
+  padding-right: 8px;
 }
 
-#order-approve-order-type {
-  width: 15%;
-}
-
-#order-approve-department {
-  width: 15%;
-}
-
-#order-approve-trader {
-  width: 15%;
-}
+#order-approve-trader { width: 25%; }
 
 #order-approve-remark {
+  margin: 0 8px 32px 32px;
+  width: calc(100% - 32px);
+}
+
+#order-approve-products {
+  margin-left: 48px;
+  height: calc(100% - 248px);
+  width:  calc(100% -  48px)
+}
+
+#order-approve-products col:nth-child(1) { width: calc(70% - 450px); }
+#order-approve-products col:nth-child(2) { width: 20%; }
+#order-approve-products col:nth-child(3) { width: 80px; }
+#order-approve-products col:nth-child(4) { width: 80px; }
+#order-approve-products col:nth-child(5) { width: 80px; }
+#order-approve-products col:nth-child(6) { width: 50px; }
+#order-approve-products col:nth-child(7) { width: 80px; }
+#order-approve-products col:nth-child(8) { width: 80px; }
+#order-approve-products col:nth-child(9) { width: 10%; }
+#order-approve-products td:nth-child(3)  { text-align: right; }
+#order-approve-products td:nth-child(4)  { text-align: right; }
+#order-approve-products td:nth-child(5)  { text-align: right; }
+#order-approve-products td:nth-child(6)  { text-align: right; }
+#order-approve-products td:nth-child(7)  { text-align: right; }
+#order-approve-products td:nth-child(8)  { text-align: right; }
+#order-approve-products td:nth-child(9)  { text-align: center; }
+
+#order-approve-totals {
+  display:     flex;
+  margin-left: 48px;
+  position:    absolute;
+  bottom:      4px;
+}
+
+.order-approve-total {
+  width: 192px;
+  margin-right: 8px;
+}
+
+
+#order-approve-buttons {
+  position: absolute;
+  bottom:   4px;
+  right:    0px;
 }

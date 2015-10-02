@@ -19,7 +19,7 @@ module.exports = {
         return '完了';  // COMPLETED
     },
 
-    toGoodsStateName: function(state) {
+    toProductStateName: function(state) {
         switch (state) {
         case 'PROCESSING': return '処理中';
         case 'ORDERED':    return '発注済み';

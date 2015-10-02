@@ -58,7 +58,8 @@ var OrderCode = React.createClass({
             if (this.props.user.is_approval) {
                 on_click = function() {
                     this.props.onSelect(
-                        <Approve order={this.props.order} />
+                        <Approve user={this.props.user}
+                                 order={this.props.order} />
                     );
                 }.bind(this);
 
