@@ -7,8 +7,8 @@ var Input    = require('react-bootstrap').Input;
 var Button   = require('react-bootstrap').Button;
 var XHR      = require('superagent');
 var Fluxxor  = require('fluxxor');
-var Select   = require('../components/Select');
-var Messages = require('../lib/Messages');
+var Select   = require('../../components/Select');
+var Messages = require('../../lib/Messages');
 
 var SelectDepartment = React.createClass({
     propTypes: {

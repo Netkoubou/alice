@@ -12,8 +12,8 @@ var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Popover        = require('react-bootstrap').Popover;
 var XHR            = require('superagent');
 var moment         = require('moment');
-var Order          = require('./Order');
-var Approve        = require('./Approve');
+var EditOrder      = require('./EditOrder');
+var ApproveOrder   = require('./ApproveOrder');
 var TableFrame     = require('../components/TableFrame');
 var CalendarMarker = require('../components/CalendarMarker');
 var Messages       = require('../lib/Messages');
@@ -37,9 +37,8 @@ var OrderCode = React.createClass({
         case 'REQUESTING':      // 依頼中
             on_click = function() {
                 this.props.onSelect(
-                    <Order account={this.props.user.account}
-                           action={this.props.order.order_type}
-                           order={this.props.order} />
+                    <EditOrder account={this.props.user.account}
+                               order={this.props.order} />
                 );
             }.bind(this);
 
@@ -58,8 +57,8 @@ var OrderCode = React.createClass({
             if (this.props.user.is_approval) {
                 on_click = function() {
                     this.props.onSelect(
-                        <Approve user={this.props.user}
-                                 order={this.props.order} />
+                        <ApproveOrder user={this.props.user}
+                                      order={this.props.order} />
                     );
                 }.bind(this);
 
@@ -92,7 +91,7 @@ var OrderCode = React.createClass({
 /*
  * 以下、本コンポーネントの main
  */
-var OrderList = React.createClass({
+var ListOrders = React.createClass({
     propTypes: { user: React.PropTypes.object.isRequired },
 
     getInitialState: function() {
@@ -296,4 +295,4 @@ var OrderList = React.createClass({
     }
 });
 
-module.exports = OrderList;
+module.exports = ListOrders;

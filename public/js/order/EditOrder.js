@@ -20,9 +20,9 @@
 var React         = require('react');
 var Fluxxor       = require('fluxxor');
 var XHR           = require('superagent');
-var SearchPane    = require('./SearchPane');
-var CandidatePane = require('./CandidatePane');
-var FinalPane     = require('./FinalPane');
+var SearchPane    = require('./edit-order/SearchPane');
+var CandidatePane = require('./edit-order/CandidatePane');
+var FinalPane     = require('./edit-order/FinalPane');
 var Messages      = require('../lib/Messages');
 var Util          = require('../lib/Util');
 
@@ -47,7 +47,7 @@ var messages = {
 /*
  * Flux Store
  */
-var OrderStore = Fluxxor.createStore({
+var StoreForEditOrder = Fluxxor.createStore({
     initialize: function() {
         this.department_code = '';          // 発注元 部門診療科のコード
         this.order_code      = '';          // 起案番号
@@ -268,7 +268,6 @@ var OrderStore = Fluxxor.createStore({
     },
 
     resetState: function() {
-        this.department_code = '';
         this.order_code      = '';
         this.order_remark    = '';
         this.candidates      = [];
@@ -354,25 +353,29 @@ var actions = {
 /*
  * これが本モジュールにおける事実上の main
  */
-var OrderManager = React.createClass({
+var SubeditOrder = React.createClass({
     mixins: [
         Fluxxor.FluxMixin(React),
-        Fluxxor.StoreWatchMixin('OrderStore')
+        Fluxxor.StoreWatchMixin('StoreForEditOrder')
     ],
 
     propTypes: {
-        flux:    React.PropTypes.object.isRequired,
-        account: React.PropTypes.string.isRequired,
-        action:  React.PropTypes.string.isRequired,
-        order:   React.PropTypes.object
+        flux:      React.PropTypes.object.isRequired,
+        account:   React.PropTypes.string.isRequired,
+        orderType: React.PropTypes.oneOf([
+            'ORDINARY_ORDER',
+            'URGENCY_ORDER',
+            'MEDS_ORDER'
+        ]).isRequired,
+        order: React.PropTypes.object,
     },
 
     getStateFromFlux: function() {
-        return this.getFlux().store('OrderStore').getState();
+        return this.getFlux().store('StoreForEditOrder').getState();
     },
 
     componentDidMount: function() {
-        var store = this.getFlux().store('OrderStore');
+        var store = this.getFlux().store('StoreForEditOrder');
 
         if (this.props.order !== null) {
             store.setExistingOrder(this.props.order);
@@ -380,7 +383,7 @@ var OrderManager = React.createClass({
     },
 
     componentWillUnmount: function() {
-        this.getFlux().store('OrderStore').resetState();
+        this.getFlux().store('StoreForEditOrder').resetState();
     },
 
     render: function() {
@@ -395,7 +398,7 @@ var OrderManager = React.createClass({
         return (
             <div id="ope">
               <div id="order-left-side">
-                <SearchPane orderType={this.props.action}  
+                <SearchPane orderType={this.props.orderType}  
                             departmentCode={this.state.department_code}
                             finalTrader={this.state.trader} />
                 <CandidatePane key={Math.random()}
@@ -406,7 +409,7 @@ var OrderManager = React.createClass({
                            orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}
                            draftingDate={drafting_date}
-                           orderType={this.props.action}
+                           orderType={this.props.orderType}
                            drafter={drafter}
                            trader={this.state.trader}
                            finalists={this.state.finalists}
@@ -421,21 +424,21 @@ var OrderManager = React.createClass({
 /*
  * Fluxxor を利用する上でのお約束
  */
-var stores = { OrderStore: new OrderStore() };
+var stores = { StoreForEditOrder: new StoreForEditOrder() };
 var flux   = new Fluxxor.Flux(stores, actions);
 
 
 /*
  * Fluxxor を利用する都合上設けた、ダミーの最上位コンポーネント。
  */
-var Order = React.createClass({
+var EditOrder = React.createClass({
     propTypes: {
         account: React.PropTypes.string.isRequired,
 
         action: React.PropTypes.oneOf([
-            'ORDINARY_ORDER',
-            'URGENCY_ORDER',
-            'MEDS_ORDER'
+            'DRAFT_ORDINARY_ORDER',
+            'DRAFT_URGENCY_ORDER',
+            'DRAFT_MEDS_ORDER'
         ]),
 
         order: React.PropTypes.shape({
@@ -497,11 +500,32 @@ var Order = React.createClass({
     },
 
     render: function() {
-        return <OrderManager flux={flux}
+        var order_type;
+
+        if (this.props.order != null) {
+            order_type = this.props.order.order_type;
+        } else {
+            switch (this.props.action) {
+            case 'DRAFT_ORDINARY_ORDER':
+                order_type = 'ORDINARY_ORDER';
+                break;
+            case 'DRAFT_URGENCY_ORDER':
+                order_type = 'URGENCY_ORDER';
+                break;
+            case 'DRAFT_MEDS_ORDER':
+                order_type = 'MEDS_ORDER';
+                break;
+            default:
+                alert(Messages.internal.UNEXPECTED_ACTION);
+                throw 'internal_unexpectedAction';
+            }
+        }
+
+        return <SubeditOrder flux={flux}
                              account={this.props.account}
-                             action={this.props.action}
+                             orderType={order_type}
                              order={this.props.order} />;
     }
 });
 
-module.exports = Order;
+module.exports = EditOrder;

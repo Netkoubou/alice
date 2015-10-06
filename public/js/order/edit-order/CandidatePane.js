@@ -4,7 +4,7 @@
 'use strict';
 var React      = require('react');
 var Fluxxor    = require('fluxxor');
-var TableFrame = require('../components/TableFrame');
+var TableFrame = require('../../components/TableFrame');
 
 
 /*

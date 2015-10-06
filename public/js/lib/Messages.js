@@ -72,4 +72,11 @@ module.exports = {
             '発注の状態変更でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
+
+    internal: {
+        UNEXPECTED_ACTION:
+            'Internal error: render method in EditOrder, EditOrder.js\n\n' +
+            'クライアントの JavaScript でエラーが発生しました。\n' +
+            'システム管理者に問い合わせて下さい。',
+    },
 };

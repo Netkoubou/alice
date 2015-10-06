@@ -7,10 +7,10 @@ var Button     = require('react-bootstrap').Button;
 var Input      = require('react-bootstrap').Input;
 var Fluxxor    = require('fluxxor');
 var XHR        = require('superagent');
-var Notice     = require('../components/Notice');
-var TableFrame = require('../components/TableFrame');
-var Messages   = require('../lib/Messages');
-var Util       = require('../lib/Util');
+var Notice     = require('../../components/Notice');
+var TableFrame = require('../../components/TableFrame');
+var Messages   = require('../../lib/Messages');
+var Util       = require('../../lib/Util');
 
 var FinalistName = React.createClass({
     mixins:    [ Fluxxor.FluxMixin(React) ],
@@ -314,6 +314,7 @@ var FinalPane = React.createClass({
                 {
                     value: finalist.quantity,
                     view:  <TableFrame.Input
+                             key={Math.random()}
                              type='int'
                              placeholder={finalist.quantity.toLocaleString()}
                              onChange={this.onChangeQuantity(i)} />

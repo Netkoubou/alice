@@ -28,21 +28,7 @@ var Page = React.createClass({
      *   action: これから何をしようとしているのか === 今何をしているのか
      *
      * を管理する。
-     * 値は以下の文字列:
-     * 
-     *   - NONE:           未選択
-     *   - ORDINARY_ORDER: 通常発注
-     *   - URGENTRY_ORDER: 緊急発注
-     *   - MEDS_ORDER:     薬剤発注
-     *   - ORDER_LIST:     発注一覧
-     *   - COST_COUNT:     経費 / 精算
-     *   - BUDGET_ADMIN:   予算管理
-     *   - BUDGET_LIST:    予算一覧
-     *   - USER_ADMIN:     ユーザ管理
-     *   - TRADER_ADMIN:   販売元管理
-     *   - GOODS_ADMIN:    物品管理
-     *   - PASSWD_CHANGE:  パスワード変更
-     *   - LOGOUT:         ログアウト
+     * 値は Nav.js を参照。
      */
     getInitialState: function() {
         return ({
