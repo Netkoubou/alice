@@ -47,27 +47,21 @@ var OrderCode = React.createClass({
         case 'APPROVED':        // 承認済み
             on_click = function() {
                 this.props.onSelect(
+                    <ProcessProducts order={this.props.order} />
                 );
             }.bind(this);
 
             break;
         case 'APPROVING':       // 承認待ち
-            /*
-             * 承認権限を持っているなら
-             */
-            if (this.props.user.is_approval) {
-                on_click = function() {
-                    this.props.onSelect(
-                        <ApproveOrder user={this.props.user}
-                                      order={this.props.order}
-                                      goBack={this.props.goBack} />
-                    );
-                }.bind(this);
+            on_click = function() {
+                this.props.onSelect(
+                    <ApproveOrder user={this.props.user}
+                                  order={this.props.order}
+                                  goBack={this.props.goBack} />
+                );
+            }.bind(this);
 
-                break;  // ここで switch を抜ける
-            }
-
-            // 承認権限を持っていない場合はフォールスルー
+            break;
         case 'NULLIFIED':           // 無効
         default:    // COMPLETED       完了
             /*

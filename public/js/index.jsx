@@ -14,11 +14,11 @@ var Footer = require('./Footer');
  */
 var user = {
     account:    'm-perry',
-    is_privileged: true,
-    is_admin:      true,
-    is_medical:    true,
-    is_urgency:    true,
-    is_approval:   true
+    is_privileged: false,
+    is_admin:      false,
+    is_medical:    false,
+    is_urgency:    false,
+    is_approval:   false
 };
 
 var Page = React.createClass({

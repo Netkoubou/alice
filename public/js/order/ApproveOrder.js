@@ -1,9 +1,14 @@
+/*
+ * 承認権限を持ったユーザが、発注を承認若しくは否認するためのページ。
+ * 但し、承認権限が *ない* ユーザにとっては、発注を「承認待ち」から「依頼中」へ
+ * 引き戻すためのページになる。
+ * 一部の表示がちょっと違うだけだし、分けるのも面倒なので共通としちゃった。
+ */
 'use strict';
 var React      = require('react');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
 var XHR        = require('superagent');
-var ListOrders = require('./ListOrders');
 var TableFrame = require('../components/TableFrame');
 var Notice     = require('../components/Notice');
 var Util       = require('../lib/Util');
@@ -47,14 +52,20 @@ var ApproveOrder = React.createClass({
     },
 
     approveOrder: function() {
-        if (confirm("この発注を承認します。よろしいですか?") ) {
-            this.changeOrderState("APPROVED");
+        if (confirm('この発注を承認します。よろしいですか?') ) {
+            this.changeOrderState('APPROVED');
         }
     },
 
     denyOrder: function() {
-        if (confirm("この発注を *否認* します。よろしいですか?") ) {
-            this.changeOrderState("REQUESTING");
+        if (confirm('この発注を *否認* します。よろしいですか?') ) {
+            this.changeOrderState('REQUESTING');
+        }
+    },
+
+    backToRequesting: function() {
+        if (confirm('この発注を「依頼中」に引き戻します。よろしいですか?') ) {
+            this.changeOrderState('REQUESTING');
         }
     },
 
@@ -108,7 +119,7 @@ var ApproveOrder = React.createClass({
                     value: product.quantity, 
                     view:  product.quantity.toLocaleString()
                 },
-                { value: subtotal,      view: subtotal_string },
+                { value: subtotal, view: subtotal_string },
                 {
                     value: product.billing_amount,
                     view:  product.billing_amount.toLocaleString()
@@ -117,10 +128,36 @@ var ApproveOrder = React.createClass({
             ];
         }.bind(this) );
 
+        var legend;
+        var buttons;
+
+        if (this.props.user.is_approval) {
+            legend = '承認';
+            buttons = (
+                <div id="order-approve-buttons">
+                  <Button bsSize="small" onClick={this.approveOrder}>
+                    承認
+                  </Button>
+                  <Button bsSize="small" onClick={this.denyOrder}>
+                    否認 
+                  </Button>
+                </div>
+            );
+        } else {
+            legend = '引き戻し?';
+            buttons = (
+                <div id="order-approve-buttons">
+                  <Button bsSize="small" onClick={this.backToRequesting}>
+                    引き戻し
+                  </Button>
+                </div>
+            );
+        }
+
         return (
             <div id="order-approve">
               <fieldset> 
-                <legend>承認</legend>
+                <legend>{legend}</legend>
                 <div id="order-approve-infos">
                   <Notice className="order-approve-info" title="起案番号">
                   {this.props.order.order_code}
@@ -160,14 +197,7 @@ var ApproveOrder = React.createClass({
                   {Math.round(billing_total).toLocaleString()}
                 </Notice>
               </div>
-              <div id="order-approve-buttons">
-                <Button bsSize="small" onClick={this.approveOrder}>
-                  承認
-                </Button>
-                <Button bsSize="small" onClick={this.denyOrder}>
-                  否認 
-                </Button>
-              </div>
+              {buttons}
             </div>
         );
     }
