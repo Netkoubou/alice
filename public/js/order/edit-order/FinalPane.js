@@ -251,8 +251,16 @@ var FinalPane = React.createClass({
             alert('承認待ちになりました');
 
             if (this.props.goBack === undefined) {
+                /*
+                 * ナビゲーションバーの *発注起案から飛んで来た場合、
+                 * 返るページは無いので、連続で発注を起案できるよう
+                 * ページを初期化する。
+                 */
                 this.getFlux().actions.resetOrder();
             } else {
+                /*
+                 * 発注一覧から飛んで来た場合は、発注一覧へ返る。
+                 */
                 this.props.goBack();
             }
         }.bind(this) );
