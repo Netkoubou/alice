@@ -8,16 +8,16 @@ var TableFrame = require('../components/TableFrame');
 var Notice     = require('../components/Notice');
 var Util       = require('../lib/Util');
 
-var Approve = React.createClass({
+var ApproveOrder = React.createClass({
     propTypes: {
-        user:  React.PropTypes.object.isRequired,
-        order: React.PropTypes.object.isRequired
+        user:   React.PropTypes.object.isRequired,
+        order:  React.PropTypes.object.isRequired,
+        goBack: React.PropTypes.func.isRequired,
     },
 
     getInitialState: function() {
         return {
             order_remark: this.props.order.order_remark,
-            is_finished:  false
         }
     },
 
@@ -42,7 +42,7 @@ var Approve = React.createClass({
             }
 
             alert('完了しました');
-            this.setState({ is_finished: true });
+            this.props.goBack();
         }.bind(this) );
     },
 
@@ -59,10 +59,6 @@ var Approve = React.createClass({
     },
 
     render: function() {
-        if (this.state.is_finished) {
-            return <OrderList key={Math.random()} user={this.props.user} />;
-        }
-
         var title = [
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
@@ -177,4 +173,4 @@ var Approve = React.createClass({
     }
 });
 
-module.exports = Approve;
+module.exports = ApproveOrder;

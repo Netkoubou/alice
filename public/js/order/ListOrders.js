@@ -27,6 +27,7 @@ var OrderCode = React.createClass({
     propTypes: {
         user:     React.PropTypes.object.isRequired,
         order:    React.PropTypes.object.isRequired,
+        goBack:   React.PropTypes.func.isRequired,
         onSelect: React.PropTypes.func.isRequired
     },
 
@@ -58,7 +59,8 @@ var OrderCode = React.createClass({
                 on_click = function() {
                     this.props.onSelect(
                         <ApproveOrder user={this.props.user}
-                                      order={this.props.order} />
+                                      order={this.props.order}
+                                      goBack={this.props.goBack} />
                     );
                 }.bind(this);
 
@@ -96,11 +98,15 @@ var ListOrders = React.createClass({
 
     getInitialState: function() {
         return {
-            next_ope:   null,
-            start_date: moment(),
-            end_date:   moment(),
+            next_ope:      null,
+            start_date:    moment(),
+            end_date:      moment(),
+            is_requesting: !this.props.user.is_approval,
+            is_approving:   this.props.user.is_approval,
+            is_approved:   !this.props.user.is_approval,
+            is_nullified:  false,
+            is_completed:  false,
             orders:     []
-
         }
     },
 
@@ -115,16 +121,21 @@ var ListOrders = React.createClass({
         this.setState({ next_ope: next_ope });
     },
 
+    backToHere: function() {
+        this.setState({ next_ope: null });
+        this.onSearch();
+    },
+
     onSearch: function() {
         XHR.post('searchOrders').send({
             start_date: this.state.start_date.format('YYYY/MM/DD'),
             end_date:   this.state.end_date.format('YYYY/MM/DD'),
             state: {
-                is_requesting: this.refs.requesting.getChecked(),
-                is_approving:  this.refs.approving.getChecked(),
-                is_approved:   this.refs.approved.getChecked(),
-                is_nullified:  this.refs.nullified.getChecked(),
-                is_completed:  this.refs.completed.getChecked()
+                is_requesting: this.state.is_requesting,
+                is_approving:  this.state.is_approving,
+                is_approved:   this.state.is_approved,
+                is_nullified:  this.state.is_nullified,
+                is_completed:  this.state.is_completed
             }
         }).end(function(err, res) {
             if (err) {
@@ -182,6 +193,7 @@ var ListOrders = React.createClass({
                         value: order.order_code,
                         view:  <OrderCode user={this.props.user}
                                           order={order}
+                                          goBack={this.backToHere}
                                           onSelect={this.onSelect} />
                     },
                     {   // 起案日
@@ -227,13 +239,22 @@ var ListOrders = React.createClass({
         }.bind(this) )
     },
 
+    onChangeCheckbox: function() {
+        this.setState({
+            is_requesting: this.refs.requesting.getChecked(),
+            is_approving:  this.refs.approving.getChecked(),
+            is_approved:   this.refs.approved.getChecked(),
+            is_nullified:  this.refs.nullified.getChecked(),
+            is_completed:  this.refs.completed.getChecked()
+        });
+    },
+
     render: function() {
         if (this.state.next_ope != null) {
             return this.state.next_ope;
         }
-
         
-        // ORDER_LIST
+        // LIST_ORDERS
         var title = [
             { name: '起案番号',          type: 'string' },
             { name: '起案日',            type: 'string' },
@@ -259,26 +280,37 @@ var ListOrders = React.createClass({
                 <div className="order-list-checkbox">
                   <Input type="checkbox"
                          label="依頼中"
-                         defaultChecked={!this.props.user.is_approval}
+                         checked={this.state.is_requesting}
+                         onChange={this.onChangeCheckbox}
                          ref="requesting" />
                 </div>
                 <div className="order-list-checkbox">
                   <Input type="checkbox"
                          label="承認待ち"
-                         defaultChecked={this.props.user.is_approval}
+                         checked={this.state.is_approving}
+                         onChange={this.onChangeCheckbox}
                          ref="approving" />
                 </div>
                 <div className="order-list-checkbox">
                   <Input type="checkbox"
                          label="承認済み"
-                         defaultChecked={!this.props.user.is_approval}
+                         checked={this.state.is_approved}
+                         onChange={this.onChangeCheckbox}
                          ref="approved" />
                 </div>
                 <div className="order-list-checkbox">
-                  <Input type="checkbox" label="無効" ref="nullified" />
+                  <Input type="checkbox"
+                         label="無効"
+                         checked={this.state.is_nullified}
+                         onChange={this.onChangeCheckbox}
+                         ref="nullified" />
                 </div>
                 <div className="order-list-checkbox">
-                  <Input type="checkbox" label="完了" ref="completed" />
+                  <Input type="checkbox"
+                         label="完了"
+                         checked={this.state.is_completed}
+                         onChange={this.onChangeCheckbox}
+                         ref="completed" />
                 </div>
                 <div id="order-list-buttons">
                   <Button bsSize="small" onClick={this.onSearch}>検索</Button>
