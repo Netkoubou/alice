@@ -148,7 +148,8 @@ var FinalPane = React.createClass({
             ]).isRequired
         }) ).isRequired,
 
-        needSave: React.PropTypes.bool.isRequired
+        needSave: React.PropTypes.bool.isRequired,
+        goBack:   React.PropTypes.func
     },
 
 
@@ -232,7 +233,29 @@ var FinalPane = React.createClass({
      * 印刷ボタンがクリックされたら
      */
     onPrint: function() {
-        alert('工事中です');
+        XHR.post('changeOrderState').send({
+            order_code:   this.props.orderCode,
+            order_state:  'APPROVING',
+            order_remark: this.props.orderRemark
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.FINAL_PANE_CHANGE_ORDER_STATE);
+                throw 'ajax_changeOrderState';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.FINAL_PANE_CHANGE_ORDER_STATE);
+                throw 'server_changeOrderState';
+            }
+
+            alert('承認待ちになりました');
+
+            if (this.props.goBack === undefined) {
+                this.getFlux().actions.resetOrder();
+            } else {
+                this.props.goBack();
+            }
+        }.bind(this) );
     },
 
 

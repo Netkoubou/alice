@@ -367,7 +367,8 @@ var SubeditOrder = React.createClass({
             'URGENCY_ORDER',
             'MEDS_ORDER'
         ]).isRequired,
-        order: React.PropTypes.object,
+        order:  React.PropTypes.object,
+        goBack: React.PropTypes.func
     },
 
     getStateFromFlux: function() {
@@ -413,7 +414,8 @@ var SubeditOrder = React.createClass({
                            drafter={drafter}
                            trader={this.state.trader}
                            finalists={this.state.finalists}
-                           needSave={this.state.need_save} />
+                           needSave={this.state.need_save}
+                           goBack={this.props.goBack} />
               </div>
             </div>
         );
@@ -492,7 +494,9 @@ var EditOrder = React.createClass({
             last_modified_date:    React.PropTypes.string.isRequired,
             last_modifier_code:    React.PropTypes.string.isRequired,
             last_modifier_account: React.PropTypes.string.isRequired
-        })
+        }),
+
+        goBack: React.PropTypes.func
     },
 
     getDefaultProps: function() {
@@ -524,7 +528,8 @@ var EditOrder = React.createClass({
         return <SubeditOrder flux={flux}
                              account={this.props.account}
                              orderType={order_type}
-                             order={this.props.order} />;
+                             order={this.props.order}
+                             goBack={this.props.goBack} />;
     }
 });
 
