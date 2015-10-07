@@ -5,19 +5,20 @@
  * その何らかの操作するためのページへ遷移する。
  */
 'use strict';
-var React          = require('react');
-var Input          = require('react-bootstrap').Input;
-var Button         = require('react-bootstrap').Button;
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Popover        = require('react-bootstrap').Popover;
-var XHR            = require('superagent');
-var moment         = require('moment');
-var EditOrder      = require('./EditOrder');
-var ApproveOrder   = require('./ApproveOrder');
-var TableFrame     = require('../components/TableFrame');
-var CalendarMarker = require('../components/CalendarMarker');
-var Messages       = require('../lib/Messages');
-var Util           = require('../lib/Util');
+var React           = require('react');
+var Input           = require('react-bootstrap').Input;
+var Button          = require('react-bootstrap').Button;
+var OverlayTrigger  = require('react-bootstrap').OverlayTrigger;
+var Popover         = require('react-bootstrap').Popover;
+var XHR             = require('superagent');
+var moment          = require('moment');
+var EditOrder       = require('./EditOrder');
+var ApproveOrder    = require('./ApproveOrder');
+var ProcessProducts = require('./ProcessProducts');
+var TableFrame      = require('../components/TableFrame');
+var CalendarMarker  = require('../components/CalendarMarker');
+var Messages        = require('../lib/Messages');
+var Util            = require('../lib/Util');
 
 
 /*
@@ -48,7 +49,8 @@ var OrderCode = React.createClass({
         case 'APPROVED':        // 承認済み
             on_click = function() {
                 this.props.onSelect(
-                    <ProcessProducts order={this.props.order} />
+                    <ProcessProducts order={this.props.order}
+                                     goBack={this.props.goBack} />
                 );
             }.bind(this);
 

@@ -361,6 +361,10 @@ var FinalPane = React.createClass({
             ];
         }.bind(this) );
 
+
+        /*
+         * 発注一覧から飛んで来た場合、発注一覧へ返れるようにする。
+         */
         var go_back_button = null;
 
         if (this.props.goBack != undefined) {

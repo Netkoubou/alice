@@ -227,35 +227,47 @@
   text-decoration: underline;
 }
 
+#order-infos {
+  width:       calc(100% - 16px);
+  margin-left: 16px;
+}
+
+#order-infos-notices {
+  margin-left:   32px;
+  margin-bottom: 16px;
+  display:       flex;
+}
+
+.order-infos-notice {
+  width: 15%;
+  padding-right: 8px;
+}
+
+#order-infos-trader { width: 25%; }
+
+#order-infos-remark {
+  margin: 0 8px 32px 32px;
+  width: calc(100% - 32px);
+}
+
+#order-infos-totals {
+  display:     flex;
+  margin-left: 48px;
+  position:    absolute;
+  bottom:      4px;
+}
+
+.order-infos-total {
+  width: 192px;
+  margin-right: 8px;
+}
+
 #order-approve {
   width:       calc(100% - 8px);
   height:      100%;
   padding-top: 8px;
   font-size:   small;
   position:    relative;
-}
-
-#order-approve fieldset {
-  width:       calc(100% - 16px);
-  margin-left: 16px;
-}
-
-#order-approve-infos {
-  margin-left:   32px;
-  margin-bottom: 16px;
-  display:       flex;
-}
-
-.order-approve-info {
-  width: 15%;
-  padding-right: 8px;
-}
-
-#order-approve-trader { width: 25%; }
-
-#order-approve-remark {
-  margin: 0 8px 32px 32px;
-  width: calc(100% - 32px);
 }
 
 #order-approve-products {
@@ -281,21 +293,16 @@
 #order-approve-products td:nth-child(8)  { text-align: right; }
 #order-approve-products td:nth-child(9)  { text-align: center; }
 
-#order-approve-totals {
-  display:     flex;
-  margin-left: 48px;
-  position:    absolute;
-  bottom:      4px;
-}
-
-.order-approve-total {
-  width: 192px;
-  margin-right: 8px;
-}
-
-
 #order-approve-buttons {
   position: absolute;
   bottom:   4px;
   right:    0px;
+}
+
+#order-process-products {
+  width:       calc(100% - 8px);
+  height:      100%;
+  padding-top: 8px;
+  font-size:   small;
+  position:    relative;
 }
