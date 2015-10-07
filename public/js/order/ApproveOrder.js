@@ -2,7 +2,7 @@
  * 承認権限を持ったユーザが、発注を承認若しくは否認するためのページ。
  * 但し、承認権限が *ない* ユーザにとっては、発注を「承認待ち」から「依頼中」へ
  * 引き戻すためのページになる。
- * 一部の表示がちょっと違うだけだし、分けるのも面倒なので共通としちゃった。
+ * 一部の表示がちょっと違うだけだし、分けるのも面倒なので共通にしちゃった。
  */
 'use strict';
 var React      = require('react');
@@ -135,6 +135,9 @@ var ApproveOrder = React.createClass({
             legend = '承認';
             buttons = (
                 <div id="order-approve-buttons">
+                  <Button bsSize="small" onClick={this.props.goBack}>
+                    戻る
+                  </Button>
                   <Button bsSize="small" onClick={this.approveOrder}>
                     承認
                   </Button>
@@ -147,6 +150,9 @@ var ApproveOrder = React.createClass({
             legend = '引き戻し?';
             buttons = (
                 <div id="order-approve-buttons">
+                  <Button bsSize="small" onClick={this.props.goBack}>
+                    戻る
+                  </Button>
                   <Button bsSize="small" onClick={this.backToRequesting}>
                     引き戻し
                   </Button>

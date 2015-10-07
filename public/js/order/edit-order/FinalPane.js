@@ -361,6 +361,16 @@ var FinalPane = React.createClass({
             ];
         }.bind(this) );
 
+        var go_back_button = null;
+
+        if (this.props.goBack != undefined) {
+            go_back_button = (
+                <Button bsSize="small" onClick={this.props.goBack}>
+                  戻る
+                </Button>
+            );
+        }
+
         return (
             <fieldset id="order-final-pane" className="order-pane">
               <legend>確定</legend>
@@ -405,6 +415,7 @@ var FinalPane = React.createClass({
                 </Notice>
               </div>
               <div id="order-final-pane-buttons">
+                {go_back_button}
                 <Button bsSize="small" onClick={this.onClear}>
                   クリア
                 </Button>
