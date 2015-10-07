@@ -101,31 +101,43 @@ var Nav = React.createClass({
     },
 
     render: function() {
-        var urgently_order = null;
-        var meds_order     = null;
-        var budget_admin   = null;
-        var etc_admin      = null;
-        var selected       = this.props.selected;
+        var draft_ordinary_order = null;
+        var draft_urgently_order = null;
+        var draft_meds_order     = null;
+        var budget   = null;
+        var etc      = null;
+        var selected = this.props.selected;
 
-        if (this.props.user.is_urgency) {
-            urgently_order = (
-                <NavItem name="緊急発注起案"
-                         onClick={this.onSelect('DRAFT_URGENCY_ORDER')}
-                         isSelected={selected === 'DRAFT_URGENCY_ORDER'} />
+        /*
+         * 発注権限を持った人は発注を起案できない
+         */
+        if (!this.props.user.is_approval) {
+            draft_ordinary_order = (
+                <NavItem name="通常発注起案"
+                         onClick={this.onSelect('DRAFT_ORDINARY_ORDER')}
+                         isSelected={selected === 'DRAFT_ORDINARY_ORDER'} />
             );
-        }
 
-        if (this.props.user.is_medical) {
-            meds_order = (
-                <NavItem name="薬剤発注起案"
-                         onClick={this.onSelect('DRAFT_MEDS_ORDER')}
-                         isSelected={selected === 'DRAFT_MEDS_ORDER'} />
-            );
+            if (this.props.user.is_urgency) {
+                draft_urgently_order = (
+                    <NavItem name="緊急発注起案"
+                             onClick={this.onSelect('DRAFT_URGENCY_ORDER')}
+                             isSelected={selected === 'DRAFT_URGENCY_ORDER'} />
+                );
+            }
+
+            if (this.props.user.is_medical) {
+                draft_meds_order = (
+                    <NavItem name="薬剤発注起案"
+                             onClick={this.onSelect('DRAFT_MEDS_ORDER')}
+                             isSelected={selected === 'DRAFT_MEDS_ORDER'} />
+                );
+            }
         }
 
         if (this.props.user.is_admin) {
             if (this.props.user.is_privileged) {
-                budget_admin = (
+                budget = (
                     <div>
                       <NavItemTitle name="予算" />
                       <NavItem name="予算一覧"
@@ -137,7 +149,7 @@ var Nav = React.createClass({
                    </div>
                 );
             } else {
-                budget_admin = (
+                budget = (
                     <div>
                       <NavItemTitle name="予算" />
                       <NavItem name="予算一覧"
@@ -149,7 +161,7 @@ var Nav = React.createClass({
         }
 
         if (this.props.user.is_admin) {
-            etc_admin = (
+            etc = (
                 <div>
                   <NavItemTitle key='0' name="情報管理" />
                   <NavItem key='1'
@@ -171,11 +183,9 @@ var Nav = React.createClass({
         return (
             <div id={this.state.nav_id}>
               <NavItemTitle name="発注" />
-              <NavItem name="通常発注起案"
-                       onClick={this.onSelect('DRAFT_ORDINARY_ORDER')}
-                       isSelected={selected === 'DRAFT_ORDINARY_ORDER'} />
-              {urgently_order}
-              {meds_order}
+              {draft_ordinary_order}
+              {draft_urgently_order}
+              {draft_meds_order}
               <NavItem name="発注一覧"
                        onClick={this.onSelect('LIST_ORDERS')}
                        isSelected={selected === 'LIST_ORDERS'} />
@@ -183,8 +193,8 @@ var Nav = React.createClass({
               <NavItem name="経費・精算"
                        onClick={this.dummy}
                        isSelected={selected === 'COUNT_COST'} />
-              {budget_admin}
-              {etc_admin}
+              {budget}
+              {etc}
               <NavItemTitle name="その他" />
               <NavItem name="パスワード変更"
                        onClick={this.dummy}

@@ -193,10 +193,6 @@
 #order-list-table td:nth-child(9) { text-align: center; }
 #order-list-table td:nth-child(10) { text-align: center; }
 
-.order-list-nop-code {
-  color: #888888;
-}
-
 .order-list-code {
   color:  #1976d2;
   cursor: pointer;

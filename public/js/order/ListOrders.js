@@ -32,42 +32,29 @@ var OrderCode = React.createClass({
     },
 
     render: function() {
-        var on_click;
-
-        switch (this.props.order.order_state) {
-        case 'REQUESTING':      // 依頼中
-            on_click = function() {
-                this.props.onSelect(
-                    <EditOrder account={this.props.user.account}
-                               order={this.props.order}
-                               goBack={this.props.goBack} />
-                );
-            }.bind(this);
-
-            break;
-        case 'APPROVED':        // 承認済み
-        case 'APPROVING':       // 承認待ち
-            on_click = function() {
-                this.props.onSelect(
-                    <ProcessOrder user={this.props.user}
-                                  order={this.props.order}
-                                  goBack={this.props.goBack} />
-                );
-            }.bind(this);
-
-            break;
-        case 'NULLIFIED':           // 無効
-        default:    // COMPLETED       完了
-            /*
-             * 変更できないし、できちゃいけない
-             */
-            return (
-                <div className="order-list-nop-code">
-                  {this.props.order.order_code}
-                </div>
+        var on_click = function() {
+            this.props.onSelect(
+                <ProcessOrder user={this.props.user}
+                              order={this.props.order}
+                              goBack={this.props.goBack} />
             );
-        }
+        }.bind(this);
 
+        if (this.props.order.order_state === 'REQUESTING') {
+            if (!this.props.user.is_approval) {
+                /*
+                 * 承認権限を持たない人だけが発注を編集できる
+                 */
+                on_click = function() {
+                    this.props.onSelect(
+                        <EditOrder account={this.props.user.account}
+                                   order={this.props.order}
+                                   goBack={this.props.goBack} />
+                    );
+                }.bind(this);
+            }
+        }
+                
         return (
             <div onClick={on_click}
                  className="order-list-code">

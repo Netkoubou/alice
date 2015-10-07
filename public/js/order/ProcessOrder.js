@@ -1,9 +1,3 @@
-/*
- * 承認権限を持ったユーザが、発注を承認若しくは否認するためのページ。
- * 但し、承認権限が *ない* ユーザにとっては、発注を「承認待ち」から「依頼中」へ
- * 引き戻すためのページになる。
- * 一部の表示がちょっと違うだけだし、分けるのも面倒なので共通にしちゃった。
- */
 'use strict';
 var React      = require('react');
 var Input      = require('react-bootstrap').Input;
@@ -22,7 +16,24 @@ var ProcessOrder = React.createClass({
     },
 
     getInitialState: function() {
-        return { order_remark: this.props.order.order_remark };
+        var products = this.props.order.products.map(function(p) {
+            return {
+                code:           p.code,
+                name:           p.name,
+                maker:          p.maker,
+                min_price:      p.min_price,
+                cur_price:      p.cur_price,
+                max_price:      p.max_price,
+                quantity:       p.quantity,
+                state:          p.state,
+                billing_amount: p.billing_amount
+            };
+        });
+
+        return {
+            order_remark: this.props.order.order_remark,
+            products:     products
+        };
     },
 
     onChangeRemark: function(e) {
@@ -50,25 +61,45 @@ var ProcessOrder = React.createClass({
         }.bind(this) );
     },
 
-    approveOrder: function() {
+    onApprove: function() {
         if (confirm('この発注を承認します。よろしいですか?') ) {
             this.changeOrderState('APPROVED');
         }
     },
 
-    denyOrder: function() {
+    onDeny: function() {
         if (confirm('この発注を *否認* します。よろしいですか?') ) {
             this.changeOrderState('REQUESTING');
         }
     },
 
-    backToRequesting: function() {
+    onRevertToRequesting: function() {
         if (confirm('この発注を「依頼中」に引き戻します。よろしいですか?') ) {
             this.changeOrderState('REQUESTING');
         }
     },
 
+    onFix: function() {
+        if (confirm('この発注を確定します。よろしいですか?') ) {
+            /* XXX */
+        }
+    },
+
     render: function() {
+        var order_state = this.props.order.order_state;
+        var is_approval = this.props.user.is_approval;
+        var permission  = 'REFER_ONLY';
+
+        if (order_state === 'APPROVING') {
+            if (is_approval) {
+                permission = 'APPROVE';
+            } else {
+                permission = 'BACK_TO_REQUESTING';
+            }
+        } else if (order_state === 'APPROVED' && !is_approval) {
+            permission = 'PROCESS';
+        }
+
         var title = [
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
@@ -84,7 +115,7 @@ var ProcessOrder = React.createClass({
         var order_total   = 0.0;
         var billing_total = 0.0;
 
-        var data = this.props.order.products.map(function(product) {
+        var data = this.state.products.map(function(product) {
             var min_price_string = product.min_price.toLocaleString('ja-JP', {
                 minimunFractionDigits: 2
             });
@@ -128,35 +159,47 @@ var ProcessOrder = React.createClass({
         }.bind(this) );
 
         var legend;
-        var buttons;
+        var buttons = [
+            <Button key="0" bsSize="small" onClick={this.props.goBack}>
+              戻る
+            </Button>
+        ];
 
-        if (this.props.user.is_approval) {
+        switch (permission) {
+        case 'APPROVE':
             legend = '承認';
-            buttons = (
-                <div id="order-process-buttons">
-                  <Button bsSize="small" onClick={this.props.goBack}>
-                    戻る
-                  </Button>
-                  <Button bsSize="small" onClick={this.approveOrder}>
-                    承認
-                  </Button>
-                  <Button bsSize="small" onClick={this.denyOrder}>
-                    否認 
-                  </Button>
-                </div>
+            buttons.push(
+                <Button key="1" bsSize="small" onClick={this.onApprove}>
+                  承認
+                </Button>
             );
-        } else {
+            buttons.push(
+                <Button key="2" bsSize="small" onClick={this.onDeny}>
+                  否認 
+                </Button>
+            );
+
+            break;
+        case 'BACK_TO_REQUESTING':
             legend = '引き戻し?';
-            buttons = (
-                <div id="order-process-buttons">
-                  <Button bsSize="small" onClick={this.props.goBack}>
-                    戻る
-                  </Button>
-                  <Button bsSize="small" onClick={this.backToRequesting}>
-                    引き戻し
-                  </Button>
-                </div>
+            buttons.push(
+                <Button key="3"
+                        bsSize="small"
+                        onClick={this.onRevertToRequesting}>
+                  引き戻し
+                </Button>
             );
+
+            break;
+        case 'PROCESS':
+            legend = '発注処理';
+            buttons.push(
+                <Button key="4" bsSize="small" onClick={this.onFix}>
+                  確定
+                </Button>
+            );
+        default:
+            legend = '参照';
         }
 
         return (
@@ -189,7 +232,7 @@ var ProcessOrder = React.createClass({
                         bsSize="small"
                         placeholder="備考・連絡"
                         value={this.state.order_remark}
-                        onChange={this.props.onChangeRemark} />
+                        onChange={this.onChangeRemark} />
               </fieldset>
               <TableFrame id="order-process-products"
                           title={title}
@@ -202,7 +245,9 @@ var ProcessOrder = React.createClass({
                   {Math.round(billing_total).toLocaleString()}
                 </Notice>
               </div>
-              {buttons}
+              <div id="order-process-buttons">
+                {buttons}
+              </div>
             </div>
         );
     }

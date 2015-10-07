@@ -174,10 +174,10 @@ var FinalPane = React.createClass({
                 order_remark:    this.props.orderRemark,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
-                products:        this.props.finalists.map(function(f) {
+                products:        this.props.finalists.map(function(p) {
                     return {
-                        code:     f.code,
-                        quantity: f.quantity
+                        code:     p.code,
+                        quantity: p.quantity
                     };
                 })
             }).end(function(err, res) {
@@ -205,10 +205,13 @@ var FinalPane = React.createClass({
                 order_remark:    this.props.orderRemark,
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
-                products:        this.props.finalists.map(function(f) {
+                products:        this.props.finalists.map(function(p) {
                     return{
-                        code:     f.code,
-                        quantity: f.quantity
+                        code:           p.code,
+                        price:          p.price,
+                        quantity:       p.quantity,
+                        state:          p.state,
+                        billing_amount: p.billing_amount
                     };
                 })
             }).end(function(err, res) {

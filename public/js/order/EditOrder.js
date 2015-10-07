@@ -142,12 +142,13 @@ var StoreForEditOrder = Fluxxor.createStore({
      */
     onSelectCandidate: function(payload) {
         this.finalists.push({
-            code:     payload.candidate.product_code,
-            name:     payload.candidate.product_name,
-            maker:    payload.candidate.maker,
-            price:    payload.candidate.cur_price,
-            quantity: 0,
-            state:    'PROCESSING'
+            code:           payload.candidate.product_code,
+            name:           payload.candidate.product_name,
+            maker:          payload.candidate.maker,
+            price:          payload.candidate.cur_price,
+            quantity:       0,
+            state:          'PROCESSING',
+            billing_amount: 0
         });
 
         if (this.trader.code === '') {
@@ -249,12 +250,13 @@ var StoreForEditOrder = Fluxxor.createStore({
          */
         this.finalists = order.products.map(function(p) {
             return {
-                code:     p.code,
-                name:     p.name,
-                maker:    p.maker,
-                price:    p.cur_price,
-                quantity: p.quantity,
-                state:    p.state
+                code:           p.code,
+                name:           p.name,
+                maker:          p.maker,
+                price:          p.cur_price,
+                quantity:       p.quantity,
+                state:          p.state,
+                billing_amount: p.billing_amount,
             };
         });
 
