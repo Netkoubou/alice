@@ -398,14 +398,14 @@ var SubeditOrder = React.createClass({
 
         return (
             <div id="ope">
-              <div id="order-left-side">
+              <div id="order-edit-left-side">
                 <SearchPane orderType={this.props.orderType}  
                             departmentCode={this.state.department_code}
                             finalTrader={this.state.trader} />
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
               </div>
-              <div id="order-right-side">
+              <div id="order-edit-right-side">
                 <FinalPane departmentCode={this.state.department_code}
                            orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}

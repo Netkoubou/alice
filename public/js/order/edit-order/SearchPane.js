@@ -318,32 +318,32 @@ var SearchPane = React.createClass({
     render: function() {
         return (
             <div>
-              <fieldset className="order-pane">
+              <fieldset className="order-edit-pane">
                 <legend>発注元 部門診療科</legend>
-                <div className="order-search-pane-row">
+                <div className="order-edit-search-pane-row">
                   <SelectDepartment isFixed={this.props.finalTrader.code != ''}
                                     value={this.props.departmentCode}
                                     onSelect={this.onSelectDepartment}
                                     options={this.state.departments} />
                 </div>
               </fieldset>
-              <fieldset className="order-pane">
+              <fieldset className="order-edit-pane">
                 <legend>検索</legend>
-                <div className="order-search-pane-row">
-                  <span className="order-search-pane-menu">
+                <div className="order-edit-search-pane-row">
+                  <span className="order-edit-search-pane-menu">
                     <Select placeholder="品目"
                             value={this.state.category_code}
                             onSelect={this.onSelectCategory}
                             options={this.state.categories} />
                   </span>
-                  <span className="order-search-pane-menu">
+                  <span className="order-edit-search-pane-menu">
                     <SelectTrader finalTrader={this.props.finalTrader}
                                   value={this.state.trader_code}
                                   onSelect={this.onSelectTrader}
                                   options={this.state.traders} />
                   </span>
                 </div>
-                <div className="order-search-pane-row">
+                <div className="order-edit-search-pane-row">
                   <Input type="text"
                          bsSize="small"
                          placeholder="検索テキスト"
@@ -352,12 +352,12 @@ var SearchPane = React.createClass({
                 </div>
                 <Button bsSize="small"
                         onClick={this.onSearch}
-                        className="order-search-pane-button">
+                        className="order-edit-search-pane-button">
                   検索
                 </Button>
                 <Button bsSize="small"
                         onClick={this.onClear}
-                        className="order-search-pane-button">
+                        className="order-edit-search-pane-button">
                   クリア
                 </Button>
               </fieldset>

@@ -1,137 +1,137 @@
-#order-left-side {
+#order-edit-left-side {
   height: 100%;
   width:  calc(50% - 4px);
   float: left;
 }
 
-#order-right-side{
+#order-edit-right-side{
   height: 100%;
   width:  calc(50% - 4px);
   float:  right;
 }
 
-.order-pane {
+.order-edit-pane {
   margin:    8px 8px 8px 16px;
   font-size: small;
 }
 
-.order-search-pane-row {
+.order-edit-search-pane-row {
   margin: 8px 0 8px 32px;
 }
 
-.order-search-pane-menu {
+.order-edit-search-pane-menu {
   margin-right: 8px;
 }
 
-#order-candidate-pane {
+.order-edit-search-pane-button { float: right; }
+
+#order-edit-candidate-pane {
   height: calc(100% - 348px);
 }
 
-.order-search-pane-button { float: right; }
-
-#order-candidates {
+#order-edit-candidates {
   height: 100%;
   width:  calc(100% - 32px);
 }
 
-#order-candidates col:nth-child(1) { width: calc(70% - 240px); }
-#order-candidates col:nth-child(2) { width: 15%; }
-#order-candidates col:nth-child(3) { width: 15%; }
-#order-candidates col:nth-child(4) { width: 80px; }
-#order-candidates col:nth-child(5) { width: 80px; }
-#order-candidates col:nth-child(6) { width: 80px; }
-#order-candidates td:nth-child(4)  { text-align: right; }
-#order-candidates td:nth-child(5)  { text-align: right; }
-#order-candidates td:nth-child(6)  { text-align: right; }
+#order-edit-candidates col:nth-child(1) { width: calc(70% - 240px); }
+#order-edit-candidates col:nth-child(2) { width: 15%; }
+#order-edit-candidates col:nth-child(3) { width: 15%; }
+#order-edit-candidates col:nth-child(4) { width: 80px; }
+#order-edit-candidates col:nth-child(5) { width: 80px; }
+#order-edit-candidates col:nth-child(6) { width: 80px; }
+#order-edit-candidates td:nth-child(4)  { text-align: right; }
+#order-edit-candidates td:nth-child(5)  { text-align: right; }
+#order-edit-candidates td:nth-child(6)  { text-align: right; }
 
-.order-candidate-name {
+.order-edit-candidate-name {
   color:  #1976d2;
   cursor: pointer;
 }
 
-.order-candidate-name:hover {
+.order-edit-candidate-name:hover {
   text-decoration: underline;
 }
 
-#order-final-pane {
+#order-edit-final-pane {
   height: 100%;
   position: relative;
 }
 
-#order-final-pane-notice {
+#order-edit-final-pane-notice {
   padding-left:  32px;
   height:        176px;
   width:         100%;
 }
 
-.order-final-pane-code {
+.order-edit-final-pane-code {
   float: left;
   width: 32%;
   margin-bottom: 8px;
 }
 
-.order-final-pane-drafting-date {
+.order-edit-final-pane-drafting-date {
   float: left;
   width: calc(36% - 8px);
   margin: 0 4px 8px 4px;
 }
 
-.order-final-pane-order-type {
+.order-edit-final-pane-order-type {
   float: right;
   width: 32%;
   margin-bottom: 8px;
 }
 
-.order-final-pane-drafter {
+.order-edit-final-pane-drafter {
   float: left;
   width: 49%;
   margin-bottom: 16px;
 }
 
-.order-final-pane-trader {
+.order-edit-final-pane-trader {
   float: right;
   width: 49%;
   margin-bottom: 16px;
 }
 
-#order-final-pane-remark {
+#order-edit-final-pane-remark {
   clear: both;
 }
 
-#order-finalists {
+#order-edit-finalists {
   clear:  both;
   height: calc(100% - 308px);
   width:  calc(100% -  32px);
 }
 
-#order-finalists col:nth-child(1) { width: calc(55% - 160px); }
-#order-finalists col:nth-child(2) { width: 20% }
-#order-finalists col:nth-child(3) { width: 80px; }
-#order-finalists col:nth-child(4) { width: 10%; }
-#order-finalists col:nth-child(5) { width: 80px; }
-#order-finalists col:nth-child(6) { width: 15%; }
-#order-finalists td:nth-child(3) { text-align: right; }
-#order-finalists td:nth-child(4) { text-align: right; }
-#order-finalists td:nth-child(5) { text-align: right; }
-#order-finalists td:nth-child(6) { text-align: center; }
+#order-edit-finalists col:nth-child(1) { width: calc(55% - 160px); }
+#order-edit-finalists col:nth-child(2) { width: 20% }
+#order-edit-finalists col:nth-child(3) { width: 80px; }
+#order-edit-finalists col:nth-child(4) { width: 10%; }
+#order-edit-finalists col:nth-child(5) { width: 80px; }
+#order-edit-finalists col:nth-child(6) { width: 15%; }
+#order-edit-finalists td:nth-child(3) { text-align: right; }
+#order-edit-finalists td:nth-child(4) { text-align: right; }
+#order-edit-finalists td:nth-child(5) { text-align: right; }
+#order-edit-finalists td:nth-child(6) { text-align: center; }
 
-.order-finalist-name {
+.order-edit-finalist-name {
   color:  #ff0000;
   cursor: pointer;
 }
 
-.order-finalist-name:hover {
+.order-edit-finalist-name:hover {
   text-decoration: underline;
 }
 
-#order-finalist-total {
+#order-edit-finalist-total {
   width:    192px; 
   margin:   8px 0 8px 32px;
   position: absolute;
   bottom:   4px;
 }
 
-#order-final-pane-buttons {
+#order-edit-final-pane-buttons {
   position: absolute;
   bottom: 14px;
   right:   0px;
@@ -227,82 +227,74 @@
   text-decoration: underline;
 }
 
-#order-infos {
-  width:       calc(100% - 16px);
+#order-process {
+  width:       calc(100% - 8px);
+  height:      100%;
+  padding-top: 8px;
+  font-size:   small;
+  position:    relative;
+}
+
+#order-process fieldset {
+  height:     176px;
   margin-left: 16px;
 }
 
-#order-infos-notices {
+#order-process-notices {
   margin-left:   32px;
   margin-bottom: 16px;
   display:       flex;
 }
 
-.order-infos-notice {
+.order-process-notice {
   width: 15%;
   padding-right: 8px;
 }
 
-#order-infos-trader { width: 25%; }
+#order-process-trader { width: 25%; }
 
-#order-infos-remark {
+#order-process-remark {
   margin: 0 8px 32px 32px;
   width: calc(100% - 32px);
 }
 
-#order-infos-totals {
+#order-process-products {
+  margin-left: 48px;
+  height: calc(100% - 240px);
+  width:  calc(100% -  48px);
+}
+
+#order-process-products col:nth-child(1) { width: calc(70% - 450px); }
+#order-process-products col:nth-child(2) { width: 20%; }
+#order-process-products col:nth-child(3) { width: 80px; }
+#order-process-products col:nth-child(4) { width: 80px; }
+#order-process-products col:nth-child(5) { width: 80px; }
+#order-process-products col:nth-child(6) { width: 50px; }
+#order-process-products col:nth-child(7) { width: 80px; }
+#order-process-products col:nth-child(8) { width: 80px; }
+#order-process-products col:nth-child(9) { width: 10%; }
+#order-process-products td:nth-child(3)  { text-align: right; }
+#order-process-products td:nth-child(4)  { text-align: right; }
+#order-process-products td:nth-child(5)  { text-align: right; }
+#order-process-products td:nth-child(6)  { text-align: right; }
+#order-process-products td:nth-child(7)  { text-align: right; }
+#order-process-products td:nth-child(8)  { text-align: right; }
+#order-process-products td:nth-child(9)  { text-align: center; }
+
+#order-process-totals {
   display:     flex;
   margin-left: 48px;
   position:    absolute;
   bottom:      4px;
 }
 
-.order-infos-total {
+.order-process-total {
   width: 192px;
   margin-right: 8px;
 }
 
-#order-approve {
-  width:       calc(100% - 8px);
-  height:      100%;
-  padding-top: 8px;
-  font-size:   small;
-  position:    relative;
-}
-
-#order-approve-products {
-  margin-left: 48px;
-  height: calc(100% - 248px);
-  width:  calc(100% -  48px)
-}
-
-#order-approve-products col:nth-child(1) { width: calc(70% - 450px); }
-#order-approve-products col:nth-child(2) { width: 20%; }
-#order-approve-products col:nth-child(3) { width: 80px; }
-#order-approve-products col:nth-child(4) { width: 80px; }
-#order-approve-products col:nth-child(5) { width: 80px; }
-#order-approve-products col:nth-child(6) { width: 50px; }
-#order-approve-products col:nth-child(7) { width: 80px; }
-#order-approve-products col:nth-child(8) { width: 80px; }
-#order-approve-products col:nth-child(9) { width: 10%; }
-#order-approve-products td:nth-child(3)  { text-align: right; }
-#order-approve-products td:nth-child(4)  { text-align: right; }
-#order-approve-products td:nth-child(5)  { text-align: right; }
-#order-approve-products td:nth-child(6)  { text-align: right; }
-#order-approve-products td:nth-child(7)  { text-align: right; }
-#order-approve-products td:nth-child(8)  { text-align: right; }
-#order-approve-products td:nth-child(9)  { text-align: center; }
-
-#order-approve-buttons {
+#order-process-buttons {
   position: absolute;
   bottom:   4px;
   right:    0px;
-}
-
-#order-process-products {
-  width:       calc(100% - 8px);
-  height:      100%;
-  padding-top: 8px;
-  font-size:   small;
-  position:    relative;
 }

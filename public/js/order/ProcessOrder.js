@@ -6,14 +6,15 @@
  */
 'use strict';
 var React      = require('react');
+var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
 var XHR        = require('superagent');
-var OrderInfos = require('./OrderInfos');
 var TableFrame = require('../components/TableFrame');
+var Notice     = require('../components/Notice');
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 
-var ApproveOrder = React.createClass({
+var ProcessOrder = React.createClass({
     propTypes: {
         user:   React.PropTypes.object.isRequired,
         order:  React.PropTypes.object.isRequired,
@@ -80,6 +81,9 @@ var ApproveOrder = React.createClass({
             { name: '状態',     type: 'string' }
         ];
 
+        var order_total   = 0.0;
+        var billing_total = 0.0;
+
         var data = this.props.order.products.map(function(product) {
             var min_price_string = product.min_price.toLocaleString('ja-JP', {
                 minimunFractionDigits: 2
@@ -94,6 +98,9 @@ var ApproveOrder = React.createClass({
             });
 
             var subtotal = product.cur_price * product.quantity;
+
+            order_total   += subtotal;
+            billing_total += product.billing_amount;
 
             var subtotal_string = subtotal.toLocaleString('ja-JP', {
                 minimunFractionDigits: 2
@@ -126,7 +133,7 @@ var ApproveOrder = React.createClass({
         if (this.props.user.is_approval) {
             legend = '承認';
             buttons = (
-                <div id="order-approve-buttons">
+                <div id="order-process-buttons">
                   <Button bsSize="small" onClick={this.props.goBack}>
                     戻る
                   </Button>
@@ -141,7 +148,7 @@ var ApproveOrder = React.createClass({
         } else {
             legend = '引き戻し?';
             buttons = (
-                <div id="order-approve-buttons">
+                <div id="order-process-buttons">
                   <Button bsSize="small" onClick={this.props.goBack}>
                     戻る
                   </Button>
@@ -153,19 +160,52 @@ var ApproveOrder = React.createClass({
         }
 
         return (
-            <div id="order-approve">
-              <OrderInfos legend={legend}
-                          order={this.props.order}
-                          orderRemark={this.state.order_remark}
-                          onChangeRemark={this.onChangeRemark} />
-              <TableFrame id="order-approve-products"
+            <div id="order-process">
+              <fieldset>
+                <legend>{legend}</legend>
+                  <div id="order-process-notices">
+                    <Notice className="order-process-notice" title="起案番号">
+                      {this.props.order.order_code}
+                    </Notice>
+                    <Notice className="order-process-notice" title="起案日">
+                      {this.props.order.drafting_date}
+                    </Notice>
+                    <Notice className="order-process-notice" title="起案者">
+                      {this.props.order.drafter_account}
+                    </Notice>
+                    <Notice className="order-process-notice" title="発注区分">
+                      {Util.toOrderTypeName(this.props.order.order_type)}
+                    </Notice>
+                    <Notice className="order-process-notice"
+                            title="発注元 部門診療科">
+                      {this.props.order.department_name}
+                   </Notice>
+                   <Notice id="order-process-trader" title="発注先 販売元">
+                     {this.props.order.trader_name}
+                   </Notice>
+                 </div>
+                 <Input id="order-process-remark"
+                        type="text"
+                        bsSize="small"
+                        placeholder="備考・連絡"
+                        value={this.state.order_remark}
+                        onChange={this.props.onChangeRemark} />
+              </fieldset>
+              <TableFrame id="order-process-products"
                           title={title}
-                          data={data}/>
-              <OrderInfos.Totals order={this.props.order} />
+                          data={data} />
+              <div id="order-process-totals">
+                <Notice className="order-process-total" title="発注総計">
+                  {Math.round(order_total).toLocaleString()}
+                </Notice>
+                <Notice className="order-process-total" title="請求総計">
+                  {Math.round(billing_total).toLocaleString()}
+                </Notice>
+              </div>
               {buttons}
             </div>
         );
     }
 });
 
-module.exports = ApproveOrder;
+module.exports = ProcessOrder;

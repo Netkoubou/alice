@@ -13,8 +13,7 @@ var Popover         = require('react-bootstrap').Popover;
 var XHR             = require('superagent');
 var moment          = require('moment');
 var EditOrder       = require('./EditOrder');
-var ApproveOrder    = require('./ApproveOrder');
-var ProcessProducts = require('./ProcessProducts');
+var ProcessOrder    = require('./ProcessOrder');
 var TableFrame      = require('../components/TableFrame');
 var CalendarMarker  = require('../components/CalendarMarker');
 var Messages        = require('../lib/Messages');
@@ -47,18 +46,10 @@ var OrderCode = React.createClass({
 
             break;
         case 'APPROVED':        // 承認済み
-            on_click = function() {
-                this.props.onSelect(
-                    <ProcessProducts order={this.props.order}
-                                     goBack={this.props.goBack} />
-                );
-            }.bind(this);
-
-            break;
         case 'APPROVING':       // 承認待ち
             on_click = function() {
                 this.props.onSelect(
-                    <ApproveOrder user={this.props.user}
+                    <ProcessOrder user={this.props.user}
                                   order={this.props.order}
                                   goBack={this.props.goBack} />
                 );

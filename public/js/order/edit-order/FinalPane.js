@@ -37,7 +37,7 @@ var FinalistName = React.createClass({
          */
         if (this.props.state === 'PROCESSING') {
             return (
-                <div className='order-finalist-name'
+                <div className='order-edit-finalist-name'
                      onClick={this.onSelectFinalist}>
                   {this.props.children}
                 </div>
@@ -376,35 +376,35 @@ var FinalPane = React.createClass({
         }
 
         return (
-            <fieldset id="order-final-pane" className="order-pane">
+            <fieldset id="order-edit-final-pane" className="order-edit-pane">
               <legend>確定</legend>
-              <div id="order-final-pane-notice">
+              <div id="order-edit-final-pane-notice">
                 <div>
-                  <Notice className="order-final-pane-code"
+                  <Notice className="order-edit-final-pane-code"
                           title="起案番号">
                     {order_code}
                   </Notice>
-                  <Notice className="order-final-pane-drafting-date"
+                  <Notice className="order-edit-final-pane-drafting-date"
                           title="起案日">
                     {this.props.draftingDate}
                   </Notice>
-                  <Notice className="order-final-pane-order-type"
+                  <Notice className="order-edit-final-pane-order-type"
                           title="発注区分">
                     {Util.toOrderTypeName(this.props.orderType)}
                   </Notice>
                 </div>
                 <div>
-                  <Notice className="order-final-pane-drafter"
+                  <Notice className="order-edit-final-pane-drafter"
                           title='起案者'>
                     {this.props.drafter}
                   </Notice>
-                  <Notice className="order-final-pane-trader"
+                  <Notice className="order-edit-final-pane-trader"
                           title="発注先 販売元">
                     {this.props.trader.name}
                   </Notice>
                 </div>
                 <div>
-                  <Input id="order-final-pane-remark"
+                  <Input id="order-edit-final-pane-remark"
                          type="text"
                          bsSize="small"
                          placeholder="備考・連絡"
@@ -412,13 +412,15 @@ var FinalPane = React.createClass({
                          onChange={this.onChangeRemark} />
                 </div>
               </div>
-              <TableFrame id="order-finalists" title={title} data={data} />
-              <div id="order-finalist-total">
+              <TableFrame id="order-edit-finalists"
+                          title={title}
+                          data={data} />
+              <div id="order-edit-finalist-total">
                 <Notice title="発注総計">
                   {Math.round(total).toLocaleString()}
                 </Notice>
               </div>
-              <div id="order-final-pane-buttons">
+              <div id="order-edit-final-pane-buttons">
                 {go_back_button}
                 <Button bsSize="small" onClick={this.onClear}>
                   クリア
