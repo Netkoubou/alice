@@ -85,6 +85,20 @@ var ProcessOrder = React.createClass({
         }
     },
 
+    onChangeCurPrice: function(index) {
+        return function(cur_price) {
+            this.state.products[index].cur_price = cur_price;
+            this.setState({ products: this.state.products });
+        }.bind(this);
+    },
+
+    onChangeBillingAmount: function(i) {
+        return function(billing_amount) {
+            this.state.products[i].billing_amount = billing_amount;
+            this.setState({ products: this.state.products });
+        }.bind(this);
+    },
+
     render: function() {
         var order_state = this.props.order.order_state;
         var is_approval = this.props.user.is_approval;
@@ -100,7 +114,7 @@ var ProcessOrder = React.createClass({
             permission = 'PROCESS';
         }
 
-        var title = [
+        var table_title = [
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
             { name: '最安単価', type: 'number' },
@@ -115,17 +129,20 @@ var ProcessOrder = React.createClass({
         var order_total   = 0.0;
         var billing_total = 0.0;
 
-        var data = this.state.products.map(function(product) {
-            var min_price_string = product.min_price.toLocaleString('ja-JP', {
-                minimunFractionDigits: 2
+        var table_data = this.state.products.map(function(product, i) {
+            var min_price_view = product.min_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
             });
 
-            var cur_price_string = product.cur_price.toLocaleString('ja-JP', {
-                minimunFractionDigits: 2
+            var cur_price_view = product.cur_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
             });
 
-            var max_price_string = product.max_price.toLocaleString('ja-JP', {
-                minimunFractionDigits: 2
+            var max_price_view = product.max_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
             });
 
             var subtotal = product.cur_price * product.quantity;
@@ -133,28 +150,75 @@ var ProcessOrder = React.createClass({
             order_total   += subtotal;
             billing_total += product.billing_amount;
 
-            var subtotal_string = subtotal.toLocaleString('ja-JP', {
-                minimunFractionDigits: 2
+            var subtotal_view = subtotal.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
             });
 
-            var state_string = Util.toProductStateName(product.state);
+            var billing_amount_view = product.billing_amount.toLocaleString();
+            var state_view          = Util.toProductStateName(product.state);
+
+            if (permission === 'PROCESS') {
+                switch (product.state) {
+                case 'PROCESSING':
+                    break;
+                case 'ORDERED':
+                    cur_price_view = (
+                        <TableFrame.Input
+                          key={Math.random()}
+                          type='real'
+                          placeholder={cur_price_view}
+                          onChange={this.onChangeCurPrice(i)} />
+                    );
+
+                    billing_amount_view = (
+                        <TableFrame.Input
+                          key={Math.random()}
+                          type='int'
+                          placeholder={billing_amount_view}
+                          onChange={this.onChangeBillingAmount(i)} />
+                    );
+
+                    state_view = (
+                        <TableFrame.Select onSelect={function() {} }>
+                          <TableFrame.Option code="ORDERED" selected={true}>
+                            発注済み
+                          </TableFrame.Option>
+                          <TableFrame.Option code="CANCELED">
+                            キャンセル
+                          </TableFrame.Option>
+                          <TableFrame.Option code="DELIVERED">
+                            納品済み
+                          </TableFrame.Option>
+                        </TableFrame.Select>
+                    );
+
+                    break;
+                }
+            }
 
             return [
                 { value: product.name,      view: product.name     },
                 { value: product.maker,     view: product.maker    },
-                { value: product.min_price, view: min_price_string },
-                { value: product.cur_price, view: cur_price_string },
-                { value: product.max_price, view: max_price_string },
+                { value: product.min_price, view: min_price_view },
+                {
+                    value: product.cur_price,
+                    view:  cur_price_view
+                },
+                { value: product.max_price, view: max_price_view },
                 {
                     value: product.quantity, 
                     view:  product.quantity.toLocaleString()
                 },
-                { value: subtotal, view: subtotal_string },
+                { value: subtotal, view: subtotal_view },
                 {
                     value: product.billing_amount,
-                    view:  product.billing_amount.toLocaleString()
+                    view:  billing_amount_view
                 },
-                { value: product.state, view: state_string }
+                {
+                    value: product.state,
+                    view: state_view
+                }
             ];
         }.bind(this) );
 
@@ -198,6 +262,8 @@ var ProcessOrder = React.createClass({
                   確定
                 </Button>
             );
+
+            break;
         default:
             legend = '参照';
         }
@@ -235,8 +301,8 @@ var ProcessOrder = React.createClass({
                         onChange={this.onChangeRemark} />
               </fieldset>
               <TableFrame id="order-process-products"
-                          title={title}
-                          data={data} />
+                          title={table_title}
+                          data={table_data} />
               <div id="order-process-totals">
                 <Notice className="order-process-total" title="発注総計">
                   {Math.round(order_total).toLocaleString()}

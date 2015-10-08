@@ -278,16 +278,10 @@ var FinalPane = React.createClass({
      * 当該物品の数量を変更できるようにしている。
      */
     onChangeQuantity: function(index) {
-        return function(e) {
-            var value = 0;
-            
-            if (e.target.value.match(/^[\d,]+$/) ) {
-                value = parseInt(e.target.value.replace(',', '') );
-            }
-
+        return function(quantity) {
             return this.getFlux().actions.changeQuantity({
                 index: index,
-                value: value
+                value: quantity
             });
         }.bind(this);
     },
@@ -322,10 +316,12 @@ var FinalPane = React.createClass({
             total += subtotal;
 
             var price_string = finalist.price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 
             var subtotal_string = subtotal.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 

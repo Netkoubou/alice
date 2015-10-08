@@ -47,12 +47,21 @@
 }
 
 .table-frame input {
+  color:  #2196f3;
   border: none;
   width:  100%;
   transition-property: box-shadow;
   transition-duration: 250ms;
 }
 
+.table-frame input.number {
+  text-align: right;
+}
+
 .table-frame input:focus {
   box-shadow: inset #2196f3 1px -1px 1px 1px, inset #2196f3 -1px 1px 1px 1px;
+}
+
+.table-frame select {
+  border: none;
 }

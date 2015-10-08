@@ -62,14 +62,17 @@ var CandidatePane = React.createClass({
 
         var data  = this.props.candidates.map(function(candidate) {
             var min_price = candidate.min_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 
             var cur_price = candidate.cur_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 
             var max_price = candidate.max_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 

@@ -260,22 +260,7 @@ TableFrame.Input = React.createClass({
         ]).isRequired
     },
 
-    getInitialState: function() {
-        var value;
-
-        switch (this.props.type) {
-        case 'string':
-            value = this.props.placeholder;
-            break;
-        case 'int':
-            value = parseInt(this.props.placeholder);
-            break;
-        default:
-            value = parseFloat(this.props.placeholder);
-        }
-
-        return { value: value };
-    },
+    getInitialState: function() { return { value: this.props.placeholder }; },
 
     onChange: function(e) {
         var value;
@@ -285,42 +270,90 @@ TableFrame.Input = React.createClass({
             value = e.target.value;
             break;
         case 'int':
-            if (e.target.value.match(/^\d+$/) ) {
-                value = parseInt(e.target.value);
+            if (e.target.value.match(/^(\d+)?$/) ) {
+                value = e.target.value;
             } else {
-                value = 0;
+                value = '0';
             }
 
             break;
         default:
-            if (e.target.value.match(/^\d+(\.\d+)?$/) ) {
-                value = parseFloat(e.target.value);
+            if (e.target.value.match(/^(\d+\.?\d*)?$/) ) {
+                value = e.target.value;
             } else {
-                value = 0.0;
+                value = '0.00';
             }
         }
                 
         this.setState({ value: value });
     },
 
-    render: function() {
-        var value;
+    onBlur: function(e) {
+        var value = e.target.value;
 
         switch (this.props.type) {
-        case 'string':
-            value = this.state.value;
-            break;
         case 'int':
-            value = parseInt(this.state.value).toLocaleString();
+            if (value === '') {
+                value = '0';
+            }
+
+            value = parseInt(value);
+            this.setState({ value: value.toLocaleString() });
             break;
-        default:
-            value = parseFloat(this.state.value).toLocaleString();
+        case 'real':
+            if (value === '') {
+                value = '0.00';
+            }
+
+            value = parseFloat(value);
+            this.setState({ value: value.toLocaleString('ja-JP', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+            })});
+            break;
+        }
+
+        this.props.onChange(value);
+    },
+
+    render: function() {
+        var class_name;
+
+        if (this.props.type === 'int' || this.props.type === 'real') {
+            class_name = 'number';
+        } else {
+            class_name = 'string';
         }
 
         return (
-            <input value={value}
-                   onBlur={this.props.onChange}
+            <input value={this.state.value}
+                   className={class_name}
+                   onBlur={this.onBlur}
                    onChange={this.onChange} />
+        );
+    }
+});
+
+TableFrame.Option = React.createClass({
+    propTypes: {
+        selected: React.PropTypes.bool,
+    },
+
+    render: function() {
+        return (
+            <option selected={this.props.selected}>
+              {this.props.children}
+            </option>
+        );
+    }
+});
+
+TableFrame.Select = React.createClass({
+    render: function() {
+        return (
+            <select>
+              {this.props.children}
+            </select>
         );
     }
 });
