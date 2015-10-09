@@ -21,9 +21,9 @@ module.exports = {
 
     toProductStateName: function(state) {
         switch (state) {
-        case 'PROCESSING': return '処理中';
-        case 'ORDERED':    return '発注済み';
-        case 'CANCELED':   return 'キャンセル';
+        case 'UNORDERED': return '未発注';
+        case 'ORDERED':   return '発注済み';
+        case 'CANCELED':  return 'キャンセル';
         }
 
         return '納品済み';  // DELIVERED

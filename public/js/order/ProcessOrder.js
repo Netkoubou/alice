@@ -8,6 +8,33 @@ var Notice     = require('../components/Notice');
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 
+var SelectProductState = React.createClass({
+    propTypes: {
+        initialSelected: React.PropTypes.string.isRequired,
+        onSelect:        React.PropTypes.func.isRequired
+    },
+
+    render: function() {
+        return (
+            <TableFrame.Select initialSelected={this.props.initialSelected}
+                               onSelect={this.props.onSelect}>
+              <TableFrame.Option value="UNORDERED">
+                未発注
+              </TableFrame.Option>
+              <TableFrame.Option value="ORDERED">
+                発注済み
+              </TableFrame.Option>
+              <TableFrame.Option value="CANCELED">
+                キャンセル
+              </TableFrame.Option>
+              <TableFrame.Option value="DELIVERED">
+                納品済み
+              </TableFrame.Option>
+            </TableFrame.Select>
+        );
+    }
+});
+
 var ProcessOrder = React.createClass({
     propTypes: {
         user:   React.PropTypes.object.isRequired,
@@ -74,14 +101,62 @@ var ProcessOrder = React.createClass({
     },
 
     onRevertToRequesting: function() {
-        if (confirm('この発注を「依頼中」に引き戻します。よろしいですか?') ) {
+        if (confirm('この発注を「依頼中」に戻します。よろしいですか?') ) {
             this.changeOrderState('REQUESTING');
         }
     },
 
     onFix: function() {
+        for (var i = 0; i < this.state.products.length; i++) {
+            var p = this.state.products[i];
+
+            if (p.state === 'DELIVERED') {
+                var e;
+
+                if (p.cur_price <= 0.0) {
+                    alert('現在単価に 0 以下の値を指定することはできません。');
+                    var e = this.refs['cur_price' + i.toString()];
+                    React.findDOMNode(e).focus();
+                    return;
+                }
+
+                if (p.billing_amount == 0) {
+                    alert('請求額を指定して下さい。');
+                    var e = this.refs['billing_amount' + i.toString()];
+                    React.findDOMNode(e).focus();
+                    return;
+                }
+            }
+        }
+
         if (confirm('この発注を確定します。よろしいですか?') ) {
-            /* XXX */
+            XHR.post('updateOrder').send({
+                order_code:      this.props.order.order_code,
+                order_remark:    this.state.order_remark,
+                department_code: this.props.order.department_code,
+                trader_code:     this.props.order.trader_code,
+                products:        this.state.products.map(function(p) {
+                    return {
+                        code:     p.code,
+                        price:    p.cur_price,
+                        quantity: p.quantity,
+                        state:    p.state,
+                        billing_amount: p.billing_amount
+                    };
+                })
+            }).end(function(err, res) {
+                if (err) {
+                    alert(Messages.ajax.PROCESS_ORDER_UPDATE_ORDER);
+                    throw 'ajax_updateOrder';
+                }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server.PROCESS_ORDER_UPDATE_ORDER);
+                    throw 'server_updateOrder';
+                }
+
+                alert('確定しました');
+            }.bind(this) );
         }
     },
 
@@ -92,9 +167,24 @@ var ProcessOrder = React.createClass({
         }.bind(this);
     },
 
-    onChangeBillingAmount: function(i) {
+    onChangeBillingAmount: function(index) {
         return function(billing_amount) {
-            this.state.products[i].billing_amount = billing_amount;
+            this.state.products[index].billing_amount = billing_amount;
+            this.setState({ products: this.state.products });
+        }.bind(this);
+    },
+
+    onChangeState: function(index) {
+        return function(e) {
+            if (e.target.value != 'DELIVERED') {
+                var original = this.props.order.products[index];
+                var current  = this.state.products[index];
+
+                current.cur_price      = original.cur_price;
+                current.billing_amount = original.billing_amount;
+            }
+
+            this.state.products[index].state = e.target.value;
             this.setState({ products: this.state.products });
         }.bind(this);
     },
@@ -129,7 +219,7 @@ var ProcessOrder = React.createClass({
         var order_total   = 0.0;
         var billing_total = 0.0;
 
-        var table_data = this.state.products.map(function(product, i) {
+        var table_data = this.state.products.map(function(product, index) {
             var min_price_view = product.min_price.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
@@ -147,8 +237,13 @@ var ProcessOrder = React.createClass({
 
             var subtotal = product.cur_price * product.quantity;
 
-            order_total   += subtotal;
-            billing_total += product.billing_amount;
+            if (product.state != 'CANCELED') {
+                order_total += subtotal;
+            }
+
+            if (product.state === 'DELIVERED') {
+                billing_total += product.billing_amount;
+            }
 
             var subtotal_view = subtotal.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
@@ -159,41 +254,31 @@ var ProcessOrder = React.createClass({
             var state_view          = Util.toProductStateName(product.state);
 
             if (permission === 'PROCESS') {
-                switch (product.state) {
-                case 'PROCESSING':
-                    break;
-                case 'ORDERED':
-                    cur_price_view = (
-                        <TableFrame.Input
-                          key={Math.random()}
-                          type='real'
-                          placeholder={cur_price_view}
-                          onChange={this.onChangeCurPrice(i)} />
-                    );
+                state_view = (
+                    <SelectProductState initialSelected={product.state}
+                                        onSelect={this.onChangeState(index)} />
+                );
 
-                    billing_amount_view = (
-                        <TableFrame.Input
-                          key={Math.random()}
-                          type='int'
-                          placeholder={billing_amount_view}
-                          onChange={this.onChangeBillingAmount(i)} />
-                    );
+                if (this.props.order.products[index].state === 'ORDERED') {
+                    if (product.state === 'DELIVERED') {
+                        cur_price_view = (
+                            <TableFrame.Input
+                              key={Math.random()}
+                              type='real'
+                              placeholder={cur_price_view}
+                              onChange={this.onChangeCurPrice(index)}
+                              ref={"cur_price" + index.toString()} />
+                        );
 
-                    state_view = (
-                        <TableFrame.Select onSelect={function() {} }>
-                          <TableFrame.Option code="ORDERED" selected={true}>
-                            発注済み
-                          </TableFrame.Option>
-                          <TableFrame.Option code="CANCELED">
-                            キャンセル
-                          </TableFrame.Option>
-                          <TableFrame.Option code="DELIVERED">
-                            納品済み
-                          </TableFrame.Option>
-                        </TableFrame.Select>
-                    );
-
-                    break;
+                        billing_amount_view = (
+                            <TableFrame.Input
+                              key={Math.random()}
+                              type='int'
+                              placeholder={billing_amount_view}
+                              onChange={this.onChangeBillingAmount(index)}
+                              ref={"billing_amount" + index.toString()} />
+                        );
+                    }
                 }
             }
 
@@ -217,7 +302,7 @@ var ProcessOrder = React.createClass({
                 },
                 {
                     value: product.state,
-                    view: state_view
+                    view:  state_view
                 }
             ];
         }.bind(this) );
@@ -245,12 +330,12 @@ var ProcessOrder = React.createClass({
 
             break;
         case 'BACK_TO_REQUESTING':
-            legend = '引き戻し?';
+            legend = '取り下げ?';
             buttons.push(
                 <Button key="3"
                         bsSize="small"
                         onClick={this.onRevertToRequesting}>
-                  引き戻し
+                  取り下げ
                 </Button>
             );
 
@@ -258,7 +343,14 @@ var ProcessOrder = React.createClass({
         case 'PROCESS':
             legend = '発注処理';
             buttons.push(
-                <Button key="4" bsSize="small" onClick={this.onFix}>
+                <Button key="4"
+                        bsSize="small"
+                        onClick={this.onRevertToRequesting}>
+                  引き下げ
+                </Button>
+            );
+            buttons.push(
+                <Button key="5" bsSize="small" onClick={this.onFix}>
                   確定
                 </Button>
             );
@@ -300,7 +392,8 @@ var ProcessOrder = React.createClass({
                         value={this.state.order_remark}
                         onChange={this.onChangeRemark} />
               </fieldset>
-              <TableFrame id="order-process-products"
+              <TableFrame key={Math.random()}
+                          id="order-process-products"
                           title={table_title}
                           data={table_data} />
               <div id="order-process-totals">

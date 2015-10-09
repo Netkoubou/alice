@@ -253,6 +253,7 @@ TableFrame.Input = React.createClass({
     propTypes: {
         placeholder: React.PropTypes.string.isRequired,
         onChange:    React.PropTypes.func.isRequired,
+        ref:         React.PropTypes.string,
         type:        React.PropTypes.oneOf([
             'string',
             'int',
@@ -270,7 +271,7 @@ TableFrame.Input = React.createClass({
             value = e.target.value;
             break;
         case 'int':
-            if (e.target.value.match(/^(\d+)?$/) ) {
+            if (e.target.value.match(/^-?(\d+)?$/) ) {
                 value = e.target.value;
             } else {
                 value = '0';
@@ -278,7 +279,7 @@ TableFrame.Input = React.createClass({
 
             break;
         default:
-            if (e.target.value.match(/^(\d+\.?\d*)?$/) ) {
+            if (e.target.value.match(/^-?(\d+\.?\d*)?$/) ) {
                 value = e.target.value;
             } else {
                 value = '0.00';
@@ -326,7 +327,8 @@ TableFrame.Input = React.createClass({
         }
 
         return (
-            <input value={this.state.value}
+            <input ref={this.props.ref}
+                   value={this.state.value}
                    className={class_name}
                    onBlur={this.onBlur}
                    onChange={this.onChange} />
@@ -334,14 +336,18 @@ TableFrame.Input = React.createClass({
     }
 });
 
+
+/*
+ * TableFrame のセルで <select> を使いたい場合に利用する。
+ * ほとんど素の <select> と同じ。
+ * わざわざ作る意味があるのかは大いに疑問だが、それは言わない約束。
+ */
 TableFrame.Option = React.createClass({
-    propTypes: {
-        selected: React.PropTypes.bool,
-    },
+    propTypes: { value: React.PropTypes.string.isRequired },
 
     render: function() {
         return (
-            <option selected={this.props.selected}>
+            <option value={this.props.value}>
               {this.props.children}
             </option>
         );
@@ -349,9 +355,15 @@ TableFrame.Option = React.createClass({
 });
 
 TableFrame.Select = React.createClass({
+    propTypes: {
+        initialSelected: React.PropTypes.string.isRequired,
+        onSelect:        React.PropTypes.func.isRequired
+    },
+
     render: function() {
         return (
-            <select>
+            <select value={this.props.initialSelected}
+                    onChange={this.props.onSelect}>
               {this.props.children}
             </select>
         );

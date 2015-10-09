@@ -147,7 +147,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             maker:          payload.candidate.maker,
             price:          payload.candidate.cur_price,
             quantity:       0,
-            state:          'PROCESSING',
+            state:          'UNORDERED',
             billing_amount: 0
         });
 
@@ -198,7 +198,7 @@ var StoreForEditOrder = Fluxxor.createStore({
      */
     onClearFinalists: function() {
         this.finalists = this.finalists.filter(function(finalist) {
-            return finalist.state !== 'PROCESSING';
+            return finalist.state !== 'UNORDERED';
         });
 
         if (this.finalists.length == 0) {
@@ -481,7 +481,7 @@ var EditOrder = React.createClass({
                 quantity:  React.PropTypes.number.isRequired,
 
                 state: React.PropTypes.oneOf([
-                    'PROCESSING',   // 処理中
+                    'UNORDERED',    // 未発注
                     'ORDERED',      // 発注済み
                     'CANCELED',     // キャンセル
                     'DELIVERED'     // 納品済み

@@ -18,7 +18,7 @@ var FinalistName = React.createClass({
     propTypes: {
         index: React.PropTypes.number.isRequired,
         state: React.PropTypes.oneOf([
-            'PROCESSING',
+            'UNORDERED',
             'ORDERED',
             'CANCELED',
             'DELIVERED'
@@ -33,9 +33,9 @@ var FinalistName = React.createClass({
 
     render: function() {
         /*
-         * 削除できるのは処理中の物品のみ
+         * 削除できるのは未発注の物品のみ
          */
-        if (this.props.state === 'PROCESSING') {
+        if (this.props.state === 'UNORDERED') {
             return (
                 <div className='order-edit-finalist-name'
                      onClick={this.onSelectFinalist}>
@@ -141,7 +141,7 @@ var FinalPane = React.createClass({
             price:    React.PropTypes.number.isRequired,
             quantity: React.PropTypes.number.isRequired,
             state:    React.PropTypes.oneOf([
-                'PROCESSING',
+                'UNORDERED',
                 'ORDERED',
                 'CANCELED',
                 'DELIVERED'
@@ -206,7 +206,7 @@ var FinalPane = React.createClass({
                 department_code: this.props.departmentCode,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(p) {
-                    return{
+                    return {
                         code:           p.code,
                         price:          p.price,
                         quantity:       p.quantity,
@@ -222,7 +222,7 @@ var FinalPane = React.createClass({
 
                 if (res.body.status != 0) {
                     alert(Messages.server.FINAL_PANE_UPDATE_ORDER);
-                    throw 'server_registerOrder';
+                    throw 'server_updateOrder';
                 }
 
                 alert('更新しました');
