@@ -141,6 +141,15 @@ var StoreForEditOrder = Fluxxor.createStore({
      *  発注候補一覧の中から物品を選択すると、それが発注確定一覧に入る。
      */
     onSelectCandidate: function(payload) {
+        var duplicates = this.finalists.filter(function(f) {
+            return f.code === payload.candidate.product_code;
+        });
+
+        if (duplicates.length != 0) {
+            alert('同じ物品を同時に複数発注することはできません。');
+            return;
+        }
+
         this.finalists.push({
             code:           payload.candidate.product_code,
             name:           payload.candidate.product_name,
