@@ -48,3 +48,8 @@
 #ope {
   height: 100%;
 }
+
+#login {
+  margin:     128px 256px 0 256px;
+  text-align: right;
+}

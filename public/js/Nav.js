@@ -55,8 +55,6 @@ var NavItem = React.createClass({
 
 var Nav = React.createClass({
     propTypes: {
-        onSelect: React.PropTypes.func.isRequired,
-
         user: React.PropTypes.shape({
             account:     React.PropTypes.string.isRequired,
             is_privileged: React.PropTypes.bool.isRequired,
@@ -65,6 +63,9 @@ var Nav = React.createClass({
             is_urgency:    React.PropTypes.bool.isRequired,
             is_approval:   React.PropTypes.bool.isRequired
         }).isRequired,
+
+        onSelect: React.PropTypes.func.isRequired,
+        logout:   React.PropTypes.func.isRequired,
 
         selected: React.PropTypes.oneOf([
             'NONE',                     // 未選択
@@ -200,7 +201,7 @@ var Nav = React.createClass({
                        onClick={this.dummy}
                        isSelected={selected === 'CHANGE_PASSWORD'} />
               <NavItem name="ログアウト"
-                       onClick={this.dummy}
+                       onClick={this.props.logout}
                        isSelected={selected === 'LOGOUT'}
                        bottom={true}  />
             </div>
