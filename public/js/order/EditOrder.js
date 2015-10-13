@@ -31,16 +31,16 @@ var Util          = require('../lib/Util');
  * Flux 定数
  */
 var messages = {
-    SET_ORDER_CODE:      'SET_ORDER_CODE',
-    SET_ORDER_REMARK:    'SET_ORDER_REMARK',
-    SET_DEPARTMENT_CODE: 'SET_DEPARTMENT_CODE',
-    UPDATE_CANDIDATES:   'UPDATE_CANDIDATES',
-    ADD_FINALIST:        'ADD_FINALIST',
-    REMOVE_FINALIST:     'REMOVE_FINALIST',
-    CLEAR_FINALISTS:     'CLEAR_FINALISTS',
-    CHANGE_QUANTITY:     'CHANGE_QUANTITY',
-    FIX_FINALISTS:       'FIX_FINALISTS',
-    RESET_ORDER:         'RESET_ORDER'
+    SET_ORDER_CODE:    'SET_ORDER_CODE',
+    SET_ORDER_REMARK:  'SET_ORDER_REMARK',
+    SET_DEPARTMENT:    'SET_DEPARTMENT',
+    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
+    ADD_FINALIST:      'ADD_FINALIST',
+    REMOVE_FINALIST:   'REMOVE_FINALIST',
+    CLEAR_FINALISTS:   'CLEAR_FINALISTS',
+    CHANGE_QUANTITY:   'CHANGE_QUANTITY',
+    FIX_FINALISTS:     'FIX_FINALISTS',
+    RESET_ORDER:       'RESET_ORDER'
 };
 
 
@@ -49,13 +49,22 @@ var messages = {
  */
 var StoreForEditOrder = Fluxxor.createStore({
     initialize: function() {
-        this.department_code = '';          // 発注元 部門診療科のコード
-        this.order_code      = '';          // 起案番号
-        this.order_remark    = '';          // 備考
-        this.trader        = { code: '', name: '未確定'};   // 発注先 販売元
-        this.candidates      = [];          // 物品の発注候補一覧
-        this.finalists       = [];          // 物品の発注確定一覧
-        this.need_save       = true;        // 発注確定一覧を DB に登録必要か?
+        this.order_code   = '';     // 起案番号
+        this.order_remark = '';     // 備考
+        this.department   = '';     // 発注元 部門診療科のコード
+        this.candidates   = [];     // 物品の発注候補一覧
+        this.finalists    = [];     // 物品の発注確定一覧
+        this.need_save    = true;   // 発注確定一覧を DB に登録必要か?
+
+        this.department = {
+            code: '',
+            name: ''
+        };
+
+        this.trader = { // 発注先 販売元
+            code: '',
+            name: '未確定'
+        };
 
         this.bindActions(
             messages.SET_ORDER_CODE,
@@ -66,8 +75,8 @@ var StoreForEditOrder = Fluxxor.createStore({
             this.setOrderRemark
         );
         this.bindActions(
-            messages.SET_DEPARTMENT_CODE,
-            this.setDepartmentCode
+            messages.SET_DEPARTMENT,
+            this.setDepartment
         );
         this.bindActions(
             messages.UPDATE_CANDIDATES,
@@ -125,9 +134,9 @@ var StoreForEditOrder = Fluxxor.createStore({
      * ままになる可能性がある、即ち本来発注できない物品が発注確定一覧に入
      * る可能性がある。
      */
-    setDepartmentCode: function(payload) {
-        this.department_code = payload.code;
-        this.candidates      = [];
+    setDepartment: function(payload) {
+        this.department = payload;
+        this.candidates = [];
         this.emit('change');
     },
 
@@ -242,10 +251,14 @@ var StoreForEditOrder = Fluxxor.createStore({
      * 既存の発注を state に設定
      */
     setExistingOrder: function(order) {
-        this.department_code = order.department_code;
-        this.order_code      = order.order_code;
-        this.order_remark    = order.order_remark;
-        this.drafting_date   = order.drafting_date;
+        this.department = {
+            code: order.department_code,
+            name: order.department_name
+        };
+
+        this.order_code    = order.order_code;
+        this.order_remark  = order.order_remark;
+        this.drafting_date = order.drafting_date;
 
 
         /*
@@ -290,14 +303,14 @@ var StoreForEditOrder = Fluxxor.createStore({
 
     getState: function() {
         return {
-            department_code: this.department_code,
-            order_code:      this.order_code,
-            order_remark:    this.order_remark,
-            drafting_date:   this.drafting_date,
-            candidates:      this.candidates,
-            trader:          this.trader,
-            finalists:       this.finalists,
-            need_save:       this.need_save
+            department:    this.department,
+            order_code:    this.order_code,
+            order_remark:  this.order_remark,
+            drafting_date: this.drafting_date,
+            candidates:    this.candidates,
+            trader:        this.trader,
+            finalists:     this.finalists,
+            need_save:     this.need_save
         }
     }
 });
@@ -315,8 +328,8 @@ var actions = {
         this.dispatch(messages.SET_ORDER_REMARK, payload);
     },
 
-    setDepartmentCode: function(payload) {
-        this.dispatch(messages.SET_DEPARTMENT_CODE, payload);
+    setDepartment: function(payload) {
+        this.dispatch(messages.SET_DEPARTMENT, payload);
     },
 
     updateCandidates: function(payload) {
@@ -411,18 +424,18 @@ var SubeditOrder = React.createClass({
             <div id="ope">
               <div id="order-edit-left-side">
                 <SearchPane orderType={this.props.orderType}  
-                            departmentCode={this.state.department_code}
+                            department={this.state.department}
                             finalTrader={this.state.trader} />
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
               </div>
               <div id="order-edit-right-side">
-                <FinalPane departmentCode={this.state.department_code}
-                           orderCode={this.state.order_code}
+                <FinalPane orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}
                            draftingDate={drafting_date}
                            orderType={this.props.orderType}
                            drafter={drafter}
+                           department={this.state.department}
                            trader={this.state.trader}
                            finalists={this.state.finalists}
                            needSave={this.state.need_save}

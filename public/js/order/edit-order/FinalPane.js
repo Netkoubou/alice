@@ -122,12 +122,16 @@ var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        departmentCode: React.PropTypes.string.isRequired,
         orderCode:      React.PropTypes.string.isRequired,
         orderRemark:    React.PropTypes.string.isRequired,
         draftingDate:   React.PropTypes.string.isRequired,
         orderType:      React.PropTypes.string.isRequired,
         drafter:        React.PropTypes.string.isRequired,
+
+        department: React.PropTypes.shape({
+            code: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired
+        }),
 
         trader: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -172,7 +176,7 @@ var FinalPane = React.createClass({
             XHR.post('registerOrder').send({
                 order_type:      this.props.orderType,
                 order_remark:    this.props.orderRemark,
-                department_code: this.props.departmentCode,
+                department_code: this.props.department.code,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(p) {
                     return {
@@ -203,7 +207,7 @@ var FinalPane = React.createClass({
             XHR.post('updateOrder').send({
                 order_code:      this.props.orderCode,
                 order_remark:    this.props.orderRemark,
-                department_code: this.props.departmentCode,
+                department_code: this.props.department.code,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(p) {
                     return {
@@ -252,17 +256,21 @@ var FinalPane = React.createClass({
             }
 
             alert('承認待ちになりました');
+            var w = window.open('order.html', '印刷プレビュー');
+
+            w.onload = function() {
+            };
 
             if (this.props.goBack === undefined) {
                 /*
                  * ナビゲーションバーの *発注起案から飛んで来た場合、
-                 * 返るページは無いので、連続で発注を起案できるよう
+                 * 戻り先ページは無いので、連続で発注を起案できるよう
                  * ページを初期化する。
                  */
                 this.getFlux().actions.resetOrder();
             } else {
                 /*
-                 * 発注一覧から飛んで来た場合は、発注一覧へ返る。
+                 * 発注一覧から飛んで来た場合は、発注一覧へ戻る。
                  */
                 this.props.goBack();
             }
