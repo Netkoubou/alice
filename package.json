@@ -8,7 +8,7 @@
     "url": "https://github.com/Netkoubou/alice.git"
   },
   "scripts": {
-    "build": "browserify --debug public/js/index.jsx > public/js/index.js",
+    "build": "browserify --debug public/js/index.jsx > public/js/index.js; browserify --debug public/js/order/PreviewOrder.jsx > public/js/order/PreviewOrder.js",
     "build-dist": "NODE_ENV=production browserify js/index.jsx > | uglifyjs -m > js/index.min.js",
     "http-server": "node http-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"

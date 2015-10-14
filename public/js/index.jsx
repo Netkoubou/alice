@@ -1,5 +1,4 @@
 'use strict';
-
 var React    = require('react');
 var Input    = require('react-bootstrap').Input;
 var Button   = require('react-bootstrap').Button;

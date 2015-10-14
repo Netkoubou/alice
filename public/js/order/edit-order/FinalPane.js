@@ -112,7 +112,7 @@ var ButtonForNextAction = React.createClass({
 
         return (
             <Button bsSize="small" onClick={this.props.onPrint}>
-              印刷
+              提出 
             </Button>
         );
     }
@@ -256,10 +256,15 @@ var FinalPane = React.createClass({
             }
 
             alert('承認待ちになりました');
-            var w = window.open('order.html', '印刷プレビュー');
-
-            w.onload = function() {
+            window.info = {
+                order_code:    this.props.orderCode,
+                department:    this.props.department.name,
+                trader:        this.props.trader.name,
+                drafting_date: this.props.draftingDate,
+                finalists:     this.props.finalists
             };
+
+            var w = window.open('preview-order.html', '発注書 印刷プレビュー');
 
             if (this.props.goBack === undefined) {
                 /*
