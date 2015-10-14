@@ -569,7 +569,7 @@ app.post('/searchOrders', function(req, res) {
         {
             order_code:      '4351',
             order_type:      'MEDS_ORDER',
-            order_state:     'DENIED',
+            order_state:     'NULLIFIED',
             order_remark:    '怒り? 哀しみ? 喜び? 喜怒哀楽?',
             drafting_date:   '2015/08/01',
             drafter_code:    '1853',
@@ -587,7 +587,7 @@ app.post('/searchOrders', function(req, res) {
                     cur_price:    42.19,
                     max_price:    42.19,
                     quantity: 666,
-                    state:    'UNORDERED',
+                    state:    'CANCELED',
                     billing_amount:      0,
                     last_edited_date:    '2015/09/18',
                     last_editor_code:    '1853',

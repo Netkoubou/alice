@@ -9,21 +9,6 @@ var Ope      = require('./Ope');
 var Footer   = require('./Footer');
 var Messages = require('./lib/Messages');
 
-
-/*
- * 仮のユーザ情報。
- * 正しくは (きちんと実装が進めば) ログインページから (何らかの手段で)
- * 情報を受け取る。
- */
-var user = {
-    account:    'm-perry',
-    is_privileged: false,
-    is_admin:      false,
-    is_medical:    false,
-    is_urgency:    false,
-    is_approval:   false
-};
-
 var Page = React.createClass({
     /*
      * 状態として
@@ -59,7 +44,9 @@ var Page = React.createClass({
 
             switch (res.body.status) {
             case 0:
-                this.setState({ user: res.body.user });
+                this.state.user         = res.body.user;
+                this.state.user.account = account;
+                this.setState({ user: this.state.user });
                 break;
             case 1:
                 alert('アカウントとパスワードが一致しません。');
@@ -117,15 +104,15 @@ var Page = React.createClass({
 
         return (
             <div>
-              <Header account={user.account} />
+              <Header account={this.state.user.account} />
               <div id="content">
-                <Nav user={user}
+                <Nav user={this.state.user}
                      onSelect={this.setAction}
                      logout={this.logout}
                      selected={this.state.action} />
-                <Ope user={user} action={this.state.action} />
+                <Ope user={this.state.user} action={this.state.action} />
               </div>
-              <Footer user={user} />
+              <Footer user={this.state.user} />
             </div>
         );
     }

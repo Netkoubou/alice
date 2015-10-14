@@ -206,6 +206,7 @@ var FinalPane = React.createClass({
              */
             XHR.post('updateOrder').send({
                 order_code:      this.props.orderCode,
+                order_state:     'REQUESTING',
                 order_remark:    this.props.orderRemark,
                 department_code: this.props.department.code,
                 trader_code:     this.props.trader.code,

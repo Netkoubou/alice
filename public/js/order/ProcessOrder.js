@@ -106,6 +106,12 @@ var ProcessOrder = React.createClass({
         }
     },
 
+    onRevertToApproved: function() {
+        if (confirm('この発注を「承認済み」に戻します。よろしいですか?') ) {
+            this.changeOrderState('APPROVED');
+        }
+    },
+
     onFix: function() {
         for (var i = 0; i < this.state.products.length; i++) {
             var p = this.state.products[i];
@@ -130,8 +136,26 @@ var ProcessOrder = React.createClass({
         }
 
         if (confirm('この発注を確定します。よろしいですか?') ) {
+            var order_state     = this.props.order.order_state;
+            var num_of_products = this.state.products.length;
+
+            var num_of_canceled = this.state.products.filter(function(p) {
+                return p.state === 'CANCELED';
+            }).length;
+
+            var num_of_delivered = this.state.products.filter(function(p) {
+                return p.state === 'DELIVERED';
+            }).length;
+
+            if (num_of_products == num_of_canceled) {
+                order_state = 'NULLIFIED';
+            } else if (num_of_products == num_of_canceled + num_of_delivered) {
+                order_state = 'COMPLETED';
+            }
+
             XHR.post('updateOrder').send({
                 order_code:      this.props.order.order_code,
+                order_state:     order_state,
                 order_remark:    this.state.order_remark,
                 department_code: this.props.order.department_code,
                 trader_code:     this.props.order.trader_code,
@@ -200,8 +224,12 @@ var ProcessOrder = React.createClass({
             } else {
                 permission = 'BACK_TO_REQUESTING';
             }
-        } else if (order_state === 'APPROVED' && !is_approval) {
-            permission = 'PROCESS';
+        } else if (!is_approval) {
+            if (order_state === 'NULLIFIED' || order_state === 'COMPLETED') {
+                permission = 'BACK_TO_APPROVED';
+            } else if (order_state === 'APPROVED') {
+                permission = 'PROCESS';
+            } 
         }
 
         var table_title = [
@@ -335,7 +363,7 @@ var ProcessOrder = React.createClass({
                 <Button key="3"
                         bsSize="small"
                         onClick={this.onRevertToRequesting}>
-                  取り下げ
+                  依頼中に戻す
                 </Button>
             );
 
@@ -346,12 +374,23 @@ var ProcessOrder = React.createClass({
                 <Button key="4"
                         bsSize="small"
                         onClick={this.onRevertToRequesting}>
-                  引き下げ
+                  依頼中へ戻す
                 </Button>
             );
             buttons.push(
                 <Button key="5" bsSize="small" onClick={this.onFix}>
                   確定
+                </Button>
+            );
+
+            break;
+        case 'BACK_TO_APPROVED':
+            legend = '要訂正?';
+            buttons.push(
+                <Button key="6"
+                        bsSize="small"
+                        onClick={this.onRevertToApproved}>
+                  承認済みへ戻す
                 </Button>
             );
 
