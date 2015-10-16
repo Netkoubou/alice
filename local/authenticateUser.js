@@ -1,43 +1,30 @@
 'use strict';
+var query = require('./query');
 
 module.exports = function(req, res) {
     var account    = req.body.account;
     var passphrase = req.body.passphrase;
+    
+    query(function(db) {
+        var cursor = db.collection('users').find({ account: account });
 
-    if (account === 'm-perry' && passphrase === 'jesus') {
-        res.json({
-            status: 0,
-            user: {
-                is_privileged: false,
-                is_admin:      false,
-                is_medical:    false,
-                is_urgency:    false,
-                is_approval:   false
+        cursor.each(function(err, user) {
+            if (user != null && user.passphrase === passphrase) {
+                res.json({
+                    status: 0,
+                    user: {
+                        is_privileged: user.is_privileged,
+                        is_admin:      user.is_admin,
+                        is_urgency:    user.is_urgency,
+                        is_approval:   user.is_approval
+                    }
+                });
+            } else {
+                res.json({ status: 1 });
             }
+
+            db.close();
+            return false;
         });
-    } else if (account === 't-harris' && passphrase === 'jesus') {
-        res.json({
-            status: 0,
-            user: {
-                is_privileged: true,
-                is_admin:      true,
-                is_medical:    false,
-                is_urgency:    false,
-                is_approval:   true
-            }
-        });
-    } else if (account === 'j-mung' && passphrase === 'jesus') {
-        res.json({
-            status: 0,
-            user: {
-                is_privileged: false,
-                is_admin:      false,
-                is_medical:    true,
-                is_urgency:    true,
-                is_approval:   false
-            }
-        });
-    } else {
-        res.json({ status: 1 });
-    }
+    });
 };

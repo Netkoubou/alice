@@ -34,6 +34,7 @@
     "express": "^4.13.3",
     "fluxxor": "^1.7.1",
     "moment": "^2.10.6",
+    "mongodb": "^2.0.45",
     "react": "^0.13.3",
     "react-bootstrap": "^0.24.5",
     "react-bootstrap-daterangepicker": "^0.4.0",
