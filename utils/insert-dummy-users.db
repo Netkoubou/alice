@@ -1,0 +1,8 @@
+db.users.insert({
+    account: 'ordinary',
+    hash: '$2a$10$fh6RsTGneLJN3zRRYh3W5ObSdDhvIGUPQ49RdtsVMWOgLgM4tyjxy',
+    is_privileged: false,
+    is_admin: false,
+    is_urgency: false,
+    is_approval: false
+});

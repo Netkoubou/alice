@@ -1,6 +1,9 @@
 'use strict';
 var express    = require('express');
+var https      = require('https');
+var fs         = require('fs');
 var bodyParser = require('body-parser');
+var session    = require('express-session');
 
 var logout                     = require('./logout');
 var pickMenuItemsForSearchPane = require('./pickMenuItemsForSearchPane');
@@ -14,6 +17,22 @@ var changeOrderState = require('./changeOrderState');
 var searchOrders     = require('./searchOrders');
 
 var $ = express();
+
+https.createServer({
+    key:  fs.readFileSync('./certs/key.pem'),
+    cert: fs.readFileSync('./certs/cert.pem')
+}, $).listen(8080);
+
+
+/*
+ * ユーザセッション
+ */
+$.use(session({
+    secret:            'keyboard cat',
+    resave:            false,
+    saveUninitialized: false,
+    cookie: { secure: true }
+}) );
 
 
 /*
@@ -42,9 +61,3 @@ $.post('/updateOrder',      updateOrder);
 $.post('/eraseOrder',       eraseOrder);
 $.post('/changeOrderState', changeOrderState);
 $.post('/searchOrders',     searchOrders);
-        
-
-/*
- * 待ち受けポート
- */
-$.listen(8080);

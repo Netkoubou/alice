@@ -1,5 +1,6 @@
 'use strict';
-var query = require('./query');
+var bcrypt = require('bcrypt');
+var query  = require('./query');
 
 module.exports = function(req, res) {
     var account    = req.body.account;
@@ -9,7 +10,8 @@ module.exports = function(req, res) {
         var cursor = db.collection('users').find({ account: account });
 
         cursor.each(function(err, user) {
-            if (user != null && user.passphrase === passphrase) {
+            if (user != null && bcrypt.compareSync(passphrase, user.hash) ) {
+                req.session.account = user.account;
                 res.json({
                     status: 0,
                     user: {
