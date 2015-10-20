@@ -14,11 +14,9 @@ module.exports = function(req, res) {
                 req.session.account = user.account;
                 res.json({
                     status: 0,
-                    user: {
-                        is_privileged: user.is_privileged,
-                        is_admin:      user.is_admin,
-                        is_urgency:    user.is_urgency,
-                        is_approval:   user.is_approval
+                    user: { 
+                        privileged:  user.privileged,
+                        departments: user.departments
                     }
                 });
             } else {

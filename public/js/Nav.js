@@ -56,12 +56,22 @@ var NavItem = React.createClass({
 var Nav = React.createClass({
     propTypes: {
         user: React.PropTypes.shape({
-            account:     React.PropTypes.string.isRequired,
-            is_privileged: React.PropTypes.bool.isRequired,
-            is_admin:      React.PropTypes.bool.isRequired,
-            is_medical:    React.PropTypes.bool.isRequired,
-            is_urgency:    React.PropTypes.bool.isRequired,
-            is_approval:   React.PropTypes.bool.isRequired
+            account:    React.PropTypes.string.isRequired,
+            privileged: React.PropTypes.shape({
+                administrate:     React.PropTypes.bool.isRequired,
+                draft_ordinarily: React.PropTypes.bool.isRequired,
+                draft_urgently:   React.PropTypes.bool.isRequired,
+                process_order:    React.PropTypes.bool.isRequired,
+                approve_order:    React.PropTypes.bool.isRequired
+            }).isRequired,
+            departments: React.PropTypes.arrayOf(React.PropTypes.shape({
+                code:             React.PropTypes.string.isRequired,
+                administrate:     React.PropTypes.bool.isRequired,
+                draft_ordinarily: React.PropTypes.bool.isRequired,
+                draft_urgently:   React.PropTypes.bool.isRequired,
+                process_order:    React.PropTypes.bool.isRequired,
+                approve_order:    React.PropTypes.bool.isRequired
+            }) ).isRequired
         }).isRequired,
 
         onSelect: React.PropTypes.func.isRequired,
