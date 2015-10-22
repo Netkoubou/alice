@@ -1,46 +1,55 @@
 // 部門診療科
 db.departments.insert({
     name: '外科',
+    abbr: 'SUR',
     tel:  '3210'
 });
 
 db.departments.insert({
     name: '中科',
+    abbr: 'MID',
     tel:  '3211'
 });
 
 db.departments.insert({
     name: '内科',
+    abbr: 'IM',
     tel:  '3212'
 });
 
 db.departments.insert({
     name: '歯科',
+    abbr: 'DENT',
     tel:  '3213'
 });
 
 db.departments.insert({
     name: '小児科',
+    abbr: 'PED',
     tel:  '3213'
 });
 
 db.departments.insert({
     name: '眼科',
+    abbr: 'OPH',
     tel:  '3214'
 });
 
 db.departments.insert({
     name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科',
+    abbr: 'OK',
     tel:  '3215'
 });
 
 db.departments.insert({
     name: '薬剤科',
+    abbr: 'MED',
     tel:  '3216'
 });
 
 db.departments.insert({
     name: '薬剤科 (薬剤発注専用)',
+    abbr: 'MED',
     tel:  '3216'
 });
 
@@ -193,7 +202,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [{
         code: db.departments.find({ name: '外科' })[0]._id,
@@ -201,11 +210,11 @@ db.users.insert({
         draft_ordinarily: true,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     }]
 });
 
-db.user.insert({
+db.users.insert({
     account: 'ord1',
     hash:    '$2a$10$bR0wrdlmYgAkB5y39AQkhui25dyOp1LG7WD58qILunT4h5StcVi6q',
     name:    '通常 花子',
@@ -216,7 +225,7 @@ db.user.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [
         {
@@ -225,7 +234,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '内科' })[0]._id,
@@ -233,7 +242,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '歯科' })[0]._id,
@@ -241,7 +250,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '小児科' })[0]._id,
@@ -249,7 +258,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '眼科' })[0]._id,
@@ -257,7 +266,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科' })[0]._id,
@@ -265,7 +274,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         }
     ]
 });
@@ -281,7 +290,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [
         {
@@ -290,7 +299,7 @@ db.users.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '薬剤科 (薬剤発注専用)' })[0]._id,
@@ -298,23 +307,23 @@ db.users.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         }
     ]
 });
 
 db.users.insert({
     account: 'spd',
-    hash:    '$2a$10$ndcJmyXoTiauLgWvYYiy4OGF86795n2b6mrzB2OsiJ6uES8s1HRcu',
+    hash:    '$2a$10$uZ0GoMnUNGIeyhmFrmeFzOKDoYHz2LBa9ZI.T9/DPNHj.R5cbDUgK',
     name:    '何でも でき太',
     tel:     '0003',
     email:   'spd@example.jp',
     privileged: {
-        administrate:   false,
-        draft_ordinary: true,
-        draft_urgency:  true,
-        process_order:  true,
-        approve_order:  false
+        administrate:     false,
+        draft_ordinarily: true,
+        draft_urgently:   true,
+        process_order:    true,
+        approve:          false
     },
     departments: []
 });
@@ -326,11 +335,11 @@ db.users.insert({
     tel:     '0004',
     email:   'spdadm@example.jp',
     privileged: {
-        administrate:   true,
-        draft_ordinary: true,
-        draft_urgency:  true,
-        process_order:  true,
-        approve_order:  false
+        administrate:     true,
+        draft_ordinarily: true,
+        draft_urgently:   true,
+        process_order:    true,
+        approve:          false
     },
     departments: []
 });
@@ -342,11 +351,11 @@ db.users.insert({
     tel:     '0005',
     email:   'dir@example.jp',
     privileged: {
-        administrate:   true,
-        draft_ordinary: false,
-        draft_urgency:  false,
-        process_order:  false,
-        approve_order:  true
+        administrate:     true,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
+        approve:          true
     },
     departments: []
 });
@@ -362,7 +371,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [{
         code: db.departments.find({ name: '外科' })[0]._id,
@@ -370,7 +379,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    true
+        approve:          true
     }]
 });
 
@@ -385,7 +394,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [
         {
@@ -394,7 +403,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         },
         {
             code: db.departments.find({ name: '内科' })[0]._id,
@@ -402,7 +411,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         },
         {
             code: db.departments.find({ name: '歯科' })[0]._id,
@@ -410,7 +419,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         },
         {
             code: db.departments.find({ name: '小児科' })[0]._id,
@@ -418,7 +427,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         },
         {
             code: db.departments.find({ name: '眼科' })[0]._id,
@@ -426,7 +435,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         },
         {
             code: db.departments.find({ name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科' })[0]._id,
@@ -434,7 +443,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         }
     ]
 });
@@ -450,7 +459,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [
         {
@@ -459,7 +468,7 @@ db.users.insert({
             draft_ordinarily: true,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '内科' })[0]._id,
@@ -467,7 +476,7 @@ db.users.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '歯科' })[0]._id,
@@ -475,7 +484,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         },
     ]
 });
@@ -491,7 +500,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [{
         code: db.departments.find({ name: '外科' })[0]._id,
@@ -499,11 +508,11 @@ db.users.insert({
         draft_ordinarily: true,
         draft_urgently:   true,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     }]
 });
 
-db.user.insert({
+db.users.insert({
     account: 'urg1',
     hash:    '$2a$10$q7bE.djIHz7JZjeO5Br/e.OO8zSlt6DAb0cvEKIPtxRITt2mV8Gq6',
     name:    '緊急 優子',
@@ -514,7 +523,7 @@ db.user.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [
         {
@@ -523,7 +532,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '内科' })[0]._id,
@@ -531,7 +540,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '歯科' })[0]._id,
@@ -539,7 +548,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '小児科' })[0]._id,
@@ -547,7 +556,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '眼科' })[0]._id,
@@ -555,7 +564,7 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科' })[0]._id,
@@ -563,14 +572,14 @@ db.user.insert({
             draft_ordinarily: true,
             draft_urgently:   true,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         }
     ]
 });
 
 db.users.insert({
     account: 'appmed',
-    hash:    '$2a$10$bhHirIDV1cu9nROVKG45z.DaaNOMDacUx8T7lMTAdd.gIcK9svcEu',
+    hash:    '$2a$10$T6J/T0f8yTBD4iXFHJV96eRrL7Syq/ACVptdj5Xvm6S1Tx3cpgaoy',
     name:    '薬 漬雄',
     tel:     '0011',
     email:   'appmed@example.jp',
@@ -579,7 +588,7 @@ db.users.insert({
         draft_ordinarily: false,
         draft_urgently:   false,
         process_order:    false,
-        approve_order:    false
+        approve:          false
     },
     departments: [
         {
@@ -588,7 +597,7 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    false
+            approve:          false
         },
         {
             code: db.departments.find({ name: '薬剤科 (薬剤発注専用)' })[0]._id,
@@ -596,8 +605,30 @@ db.users.insert({
             draft_ordinarily: false,
             draft_urgently:   false,
             process_order:    false,
-            approve_order:    true
+            approve:          true
         }
     ]
 });
 
+db.users.insert({
+    account: 'void',
+    hash:    '$2a$10$2662AL.7FbIdD6.t9CrExuISX7kbdH.k7i8pT.5MPxibsqNwZJ3Vm',
+    name:    '丸出 ダメ夫',
+    tel:     '0012',
+    email:   'void@example.jp',
+    privileged: {
+        administrate:     false,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
+        approve:          false
+    },
+    departments: [{
+        code: db.departments.find({ name: '歯科' })[0]._id,
+        administrate:     false,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
+        approve:          false
+    }],
+});

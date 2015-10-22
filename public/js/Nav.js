@@ -62,7 +62,7 @@ var Nav = React.createClass({
                 draft_ordinarily: React.PropTypes.bool.isRequired,
                 draft_urgently:   React.PropTypes.bool.isRequired,
                 process_order:    React.PropTypes.bool.isRequired,
-                approve_order:    React.PropTypes.bool.isRequired
+                approve:          React.PropTypes.bool.isRequired
             }).isRequired,
             departments: React.PropTypes.arrayOf(React.PropTypes.shape({
                 code:             React.PropTypes.string.isRequired,
@@ -70,7 +70,7 @@ var Nav = React.createClass({
                 draft_ordinarily: React.PropTypes.bool.isRequired,
                 draft_urgently:   React.PropTypes.bool.isRequired,
                 process_order:    React.PropTypes.bool.isRequired,
-                approve_order:    React.PropTypes.bool.isRequired
+                approve:          React.PropTypes.bool.isRequired
             }) ).isRequired
         }).isRequired,
 
@@ -81,7 +81,6 @@ var Nav = React.createClass({
             'NONE',                     // 未選択
             'DRAFT_ORDINARY_ORDER',     // 通常発注起案
             'DRAFT_URGENCY_ORDER',      // 緊急発注起案
-            'DRAFT_MEDS_ORDER',         // 薬剤発注起案
             'LIST_ORDERS',              // 発注一覧
             'COUNT_COST',               // 経費・精算
             'VIEW_BUDGET',              // 予算一覧
@@ -112,94 +111,165 @@ var Nav = React.createClass({
     },
 
     render: function() {
-        var draft_ordinary_order = null;
-        var draft_urgently_order = null;
-        var draft_meds_order     = null;
-        var budget   = null;
-        var etc      = null;
-        var selected = this.props.selected;
+        var is_admin            = false;    // 管理者か?
+        var is_ordinary_drafter = false;    // 通常発注権限があるか?
+        var is_urgency_drafter  = false;    // 緊急発注権限があるか?
+        var can_list_order      = false;    // 発注一覧を参照できるか?
+
 
         /*
-         * 発注権限を持った人は発注を起案できない
+         * ユーザに何をさせて良いのか、何をさせてはダメなのか、
+         * の判断が結構複雑であるため、if 文をすっきりさせるため、
+         * その判断用のフラグを利用することにした。
+         * ここから、そのフラグの設定用コード。
          */
-        if (!this.props.user.is_approval) {
-            draft_ordinary_order = (
-                <NavItem name="通常発注起案"
+        this.props.user.departments.forEach(function(d) {
+            if (d.administrate) {
+                /*
+                 * 所属する部門診療科の中で、一つでも administrate フラグ
+                 * が立っていたら、つまり当該部門診療科の各種情報を管理する
+                 * 権限があるなら、、情報管理のメニュー項目を表示する。
+                 */
+                is_admin = true;
+            }
+
+            if (d.draft_ordinarily) {
+                /*
+                 * 通常発注起案について同上
+                 */
+                is_ordinary_drafter = true;
+                can_list_order      = true;
+            }
+
+            if (d.draft_urgently) {
+                /*
+                 * 緊急発注起案について同上
+                 */
+                is_urgency_drafter = true;
+                can_list_order     = true;
+            }
+
+            if (d.process_order || d.approve) {
+                /*
+                 * 発注を処理したり承認したりするには、
+                 * 発注を一覧できる必要がある。
+                 */
+                can_list_order = true;
+            }
+
+        });
+
+
+        /*
+         * 所属する部門診療科で、各種権限のフラグが立っていなくても、
+         * privileged でフラグが立っていたら、問答無用でその権限が
+         * あることになる。
+         * 以下、そのためのコード。
+         */
+        var privileged = this.props.user.privileged;
+
+        if (!is_admin && privileged.administrate) {
+            is_admin = true;
+        }
+
+        if (!is_ordinary_drafter && privileged.draft_ordinarily) {
+            is_ordinary_drafter = true;
+        }
+
+        if (!is_urgency_drafter && privileged.draft_urgently) {
+            is_urgency_drafter = true;
+        }
+
+        if (!can_list_order) {
+            if (privileged.process_order || privileged.approve) {
+                can_list_order = true;
+            }
+        }
+
+
+        /*
+         * 以上で、ユーザが何をできるか、のフラグを設定し終わったので、
+         * 以下、それに合わせて表示して良いメニュー項目を設定していく。
+         */
+        var draft_order = [];
+        var budget      = [];
+        var etc         = null;
+        var selected    = this.props.selected;
+
+        if (is_ordinary_drafter) {
+            draft_order.push(
+                <NavItem key="1"
+                         name="通常発注起案"
                          onClick={this.onSelect('DRAFT_ORDINARY_ORDER')}
                          isSelected={selected === 'DRAFT_ORDINARY_ORDER'} />
             );
-
-            if (this.props.user.is_urgency) {
-                draft_urgently_order = (
-                    <NavItem name="緊急発注起案"
-                             onClick={this.onSelect('DRAFT_URGENCY_ORDER')}
-                             isSelected={selected === 'DRAFT_URGENCY_ORDER'} />
-                );
-            }
-
-            if (this.props.user.is_medical) {
-                draft_meds_order = (
-                    <NavItem name="薬剤発注起案"
-                             onClick={this.onSelect('DRAFT_MEDS_ORDER')}
-                             isSelected={selected === 'DRAFT_MEDS_ORDER'} />
-                );
-            }
         }
 
-        if (this.props.user.is_admin) {
-            if (this.props.user.is_privileged) {
-                budget = (
-                    <div>
-                      <NavItemTitle name="予算" />
-                      <NavItem name="予算一覧"
-                               onClick={this.dummy}
-                               isSelected={selected === 'VIEW_BUDGET'} />
-                      <NavItem name="予算管理"
-                               onClick={this.dummy}
-                               isSelected={selected === 'MANAGE_BUDGET'} />
-                   </div>
-                );
-            } else {
-                budget = (
-                    <div>
-                      <NavItemTitle name="予算" />
-                      <NavItem name="予算一覧"
-                               onClick={this.dummy}
-                               isSelected={selected === 'VIEW_BUDGET'} />
-                    </div>
-                );
-            }
+        if (is_urgency_drafter) {
+            draft_order.push(
+                <NavItem key="2"
+                         name="緊急発注起案"
+                         onClick={this.onSelect('DRAFT_URGENCY_ORDER')}
+                         isSelected={selected === 'DRAFT_URGENCY_ORDER'} />
+            );
         }
 
-        if (this.props.user.is_admin) {
+        if (can_list_order) {
+            draft_order.push(
+                <NavItem key="3"
+                         name="発注一覧"
+                         onClick={this.onSelect('LIST_ORDERS')}
+                         isSelected={selected === 'LIST_ORDERS'} />
+            );
+        }
+
+        if (draft_order.length != 0) {
+            draft_order.unshift(<NavItemTitle key="0" name="発注" />);
+        }
+
+        if (is_admin) {
+            budget.push(<NavItemTitle key="0" name="予算" />);
+            budget.push(
+                <NavItem key="1"
+                         name="予算一覧"
+                         onClick={this.dummy}
+                         isSelected={selected === 'VIEW_BUDGET'} />
+            );
+        }
+
+        if (this.props.user.privileged.administrate) {
+            budget.push(<NavItem key="2"
+                                 name="予算管理"
+                                 onClick={this.dummy}
+                                 isSelected={selected === 'MANAGE_BUDGET'} />
+            );
+        }
+
+        if (is_admin) {
             etc = (
                 <div>
-                  <NavItemTitle key='0' name="情報管理" />
-                  <NavItem key='1'
-                           name="ユーザ管理"
+                  <NavItemTitle name="情報管理" />
+                  <NavItem name="ユーザ管理"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_USERS'} />
-                  <NavItem key='2'
-                           name="販売元管理"
+                  <NavItem name="販売元管理"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_TRADERS'} />
-                  <NavItem key='3'
-                           name="物品管理"
+                  <NavItem name="物品管理"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_PRODUCTS'} />
                 </div>
             );
         }
 
+
+        /*
+         * 以下、レンダリングする内容。
+         * 長かった ...
+         */
         return (
             <div id={this.state.nav_id}>
-              <NavItemTitle name="発注" />
-              {draft_ordinary_order}
-              {draft_urgently_order}
-              {draft_meds_order}
-              <NavItem name="発注一覧"
-                       onClick={this.onSelect('LIST_ORDERS')}
-                       isSelected={selected === 'LIST_ORDERS'} />
+              {draft_order}
               <NavItemTitle name="経費" />
               <NavItem name="経費・精算"
                        onClick={this.dummy}
