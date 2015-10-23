@@ -1,17 +1,19 @@
 'use strict';
 var bcrypt = require('bcrypt');
-var query  = require('./query');
+var util   = require('./util');
 
 module.exports = function(req, res) {
     var account    = req.body.account;
     var passphrase = req.body.passphrase;
     
-    query(function(db) {
+    util.query(function(db) {
         var cursor = db.collection('users').find({ account: account });
 
-        cursor.each(function(err, user) {
+        cursor.limit(1).next(function(err, user) {
+            db.close();
+
             if (user != null && bcrypt.compareSync(passphrase, user.hash) ) {
-                req.session.account = user.account;
+                req.session.user_id = user._id;
                 res.json({
                     status: 0,
                     user: { 
@@ -22,9 +24,6 @@ module.exports = function(req, res) {
             } else {
                 res.json({ status: 1 });
             }
-
-            db.close();
-            return false;
         });
     });
 };

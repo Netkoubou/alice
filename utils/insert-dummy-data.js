@@ -139,7 +139,7 @@ db.products.insert({
         db.departments.find({ name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科' })[0]._id,
         db.departments.find({ name: '薬剤科' })[0]._id
     ],
-    traders: db.traders.find({ name: '贋物マーケット' })[0]._id,
+    trader: db.traders.find({ name: '贋物マーケット' })[0]._id,
     min_price:  7.94,
     cur_price: 11.92,
     max_price: 13.33,
@@ -153,7 +153,7 @@ db.products.insert({
     departments: [
         db.departments.find({ name: '外科' })[0]._id
     ],
-    traders: db.traders.find({ name: 'エセショップ' })[0]._id,
+    trader: db.traders.find({ name: 'エセショップ' })[0]._id,
     min_price: 15.43,
     cur_price: 16.03,
     max_price: 18.53,
@@ -167,7 +167,7 @@ db.products.insert({
     departments: [
         db.departments.find({ name: '薬剤科 (薬剤発注専用)' })[0]._id
     ],
-    traders: db.traders.find({ name: 'あっとおどろくためごろうのお店' })[0]._id,
+    trader: db.traders.find({ name: 'あっとおどろくためごろうのお店' })[0]._id,
     min_price: 18.18,
     cur_price: 18.19,
     max_price: 19.19,
@@ -181,7 +181,7 @@ db.products.insert({
     departments: [
         db.departments.find({ name: '歯科' })[0]._id
     ],
-    traders: db.traders.find({ name: '阿漕商会' })[0]._id,
+    trader: db.traders.find({ name: '阿漕商会' })[0]._id,
     min_price: 9999999.99,
     cur_price: 9999999.99,
     max_price: 9999999.99,
