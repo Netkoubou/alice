@@ -1,6 +1,11 @@
 'use strict';
 var bcrypt = require('bcrypt');
+var log4js = require('log4js');
 var util   = require('./util');
+
+var log_info = log4js.getLogger('info');
+var log_warn = log4js.getLogger('warning');
+var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
     var account    = req.body.account;
@@ -21,8 +26,11 @@ module.exports = function(req, res) {
                         departments: user.departments
                     }
                 });
+
+                log_info.info(account + ' logged in.');
             } else {
                 res.json({ status: 1 });
+                log_info.info(account + ' login failed.');
             }
         });
     });
