@@ -1,5 +1,10 @@
 'use strict';
 var mongodb = require('mongodb').MongoClient;
+var log4js  = require('log4js';
+
+var log_info = log4js.getLogger('info');
+var log_warn = log4js.getLogger('warning');
+var log_crit = log4js.getLogger('ctitical');
 
 module.exports = {
     query: function(callback) {
@@ -7,7 +12,8 @@ module.exports = {
 
         mongodb.connect('mongodb://localhost:27017/alice', function(err, db) {
             if (err != null) {
-                console.log('Cannot connect with MongoDB.');
+                log_warn(err);
+                log_warn('[util.query] cannot connect with MongoDB.');
             } else {
                 callback(db);
             }

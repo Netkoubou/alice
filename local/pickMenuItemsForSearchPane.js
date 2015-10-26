@@ -25,7 +25,7 @@ function pick_all(db, res) {
             res.json({ status: 255 });
             
             log_warn.warn(err);
-            msg = '[pickMenuItemsForSearchPane]' +
+            msg = '[pickMenuItemsForSearchPane] ' +
                   'failed to access "departments" collection.';
             log_warn.warn(msg);
         } else {
@@ -35,7 +35,7 @@ function pick_all(db, res) {
                     res.json({ status: 255 });
 
                     log_warn.warn(err);
-                    msg = '[pickMenuItemsForSearchPane]' +
+                    msg = '[pickMenuItemsForSearchPane] ' +
                           'failed to access "categories" collection.';
                     log_warn.warn(msg);
                 } else {
@@ -45,7 +45,7 @@ function pick_all(db, res) {
                         if (err != null) {
                             res.json({ status: 255 });
                             log_warn.warn(err);
-                            msg = '[pickMenuItemsForSearchPane]' +
+                            msg = '[pickMenuItemsForSearchPane] ' +
                                   'failed to access "traders" collection.';
                             log_warn.warn(msg);
                         } else {
@@ -161,7 +161,7 @@ function pick_step_by_step(user, db, res) {
                     log_warn.warn(err);
                 }
 
-                var msg = '[pickMenuItemsForSearchPane]' +
+                var msg = '[pickMenuItemsForSearchPane] ' +
                           'failed to find trader id: "' + id +
                           '" in "traders" collection.';
 
@@ -190,7 +190,7 @@ function pick_step_by_step(user, db, res) {
                     log_warn.warn(err);
                 }
 
-                var msg = '[pickMenuItemsForSearchPane]' +
+                var msg = '[pickMenuItemsForSearchPane] ' +
                           'failed to find category id: "' + id +
                           '" in "categories" collection.';
 
@@ -233,7 +233,7 @@ function pick_step_by_step(user, db, res) {
                         log_warn.warn(err);
                     }
 
-                    var msg = '[pickMenuItemsForSearchPane]' +
+                    var msg = '[pickMenuItemsForSearchPane] ' +
                               'failed to find department id: "' + id +
                               '" in "departments" collection.';
 
@@ -276,7 +276,7 @@ module.exports = function(req, res) {
                     log_warn.warn(err);
                 }
 
-                var msg = '[pickMenuItemsForSearchPane]' +
+                var msg = '[pickMenuItemsForSearchPane] ' +
                           'failed to find user id: "' + user_id + 
                           '" in "users" collection.';
                 log_warn.warn(msg);
