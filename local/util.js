@@ -1,6 +1,6 @@
 'use strict';
 var mongodb = require('mongodb').MongoClient;
-var log4js  = require('log4js';
+var log4js  = require('log4js');
 
 var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');
