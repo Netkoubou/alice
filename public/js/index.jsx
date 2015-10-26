@@ -72,7 +72,7 @@ var Page = React.createClass({
                     throw 'server_logout';
                 }
 
-                this.setState({ user: null });
+                this.setState({ user: null, action: 'NONE' });
             }.bind(this) );
         }
     },

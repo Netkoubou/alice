@@ -18,7 +18,6 @@ var Ope = React.createClass({
             'NONE',
             'DRAFT_ORDINARY_ORDER',
             'DRAFT_URGENCY_ORDER',
-            'DRAFT_MEDS_ORDER',
             'LIST_ORDERS',
             'COUNT_COST',
             'VIEW_BUDGET',
@@ -37,7 +36,6 @@ var Ope = React.createClass({
         switch (this.props.action) {
         case 'DRAFT_ORDINARY_ORDER':
         case 'DRAFT_URGENCY_ORDER':
-        case 'DRAFT_MEDS_ORDER':
             /*
              * 以下の key を指定することで、発注の操作を (例えば、通常発注か
              * ら緊急発注へ) 切り替えた時に、検索ペインが再描画される。
