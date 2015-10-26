@@ -12,8 +12,9 @@ var Messages = require('../../lib/Messages');
 
 var SelectDepartment = React.createClass({
     propTypes: {
-        isFixed:  React.PropTypes.bool.isRequired,
-        onSelect: React.PropTypes.func.isRequired,
+        orderCode:   React.PropTypes.string.isRequired,
+        finalTrader: React.PropTypes.object.isRequired,
+        onSelect:    React.PropTypes.func.isRequired,
 
         value: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -35,8 +36,10 @@ var SelectDepartment = React.createClass({
         /*
          * 発注元 部門診療科が決定している (発注確定している物品がある)
          * のなら、選択肢をその発注元 部門診療科が扱う物品に絞る。
+         * また、発注に起案番号が付与されている場合も、その発注は既に
+         * 発注元 部門診療科に結び付けられているわけで、同様に扱う。
          */
-        if (this.props.isFixed) {
+        if (this.props.finalTrader.code != '' || this.props.orderCode != '') {
             options = [ this.props.value ];
         }
 
@@ -127,6 +130,7 @@ var SearchPane = React.createClass({
 
     propTypes: {
         orderType: React.PropTypes.string.isRequired,
+        orderCode: React.PropTypes.string.isRequired,
 
         department: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -315,7 +319,8 @@ var SearchPane = React.createClass({
               <fieldset className="order-edit-pane">
                 <legend>発注元 部門診療科</legend>
                 <div className="order-edit-search-pane-row">
-                  <SelectDepartment isFixed={this.props.finalTrader.code != ''}
+                  <SelectDepartment orderCode={this.props.orderCode}
+                                    finalTrader={this.props.finalTrader}
                                     onSelect={this.onSelectDepartment}
                                     value={this.props.department}
                                     options={this.state.departments} />

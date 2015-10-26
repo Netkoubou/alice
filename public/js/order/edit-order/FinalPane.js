@@ -122,6 +122,7 @@ var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
+        user:           React.PropTypes.object.isRequired,
         orderCode:      React.PropTypes.string.isRequired,
         orderRemark:    React.PropTypes.string.isRequired,
         draftingDate:   React.PropTypes.string.isRequired,
@@ -169,6 +170,18 @@ var FinalPane = React.createClass({
      * 確定ボタンがクリックされたら
      */
     onFix: function() {
+        var can_process_order = false;
+
+        if (this.props.user.privileged.process_order) {
+            can_process_order = true;
+        } else {
+            this.props.user.departments.forEach(function(d) {
+                if (d.code === this.props.department.code && d.process_order) {
+                    can_process_order = true;
+                }
+            }.bind(this) );
+        }
+
         if (this.props.orderCode === '') {
             /*
              * 発注を新規登録
@@ -199,6 +212,27 @@ var FinalPane = React.createClass({
                 this.getFlux().actions.setOrderCode({
                     code: res.body.order_code
                 });
+
+
+                /*
+                 * 発注の起案権限しかないユーザは、
+                 * 以降発注を変更することはできない
+                 */
+                if (!can_process_order) {
+                    if (this.props.goBack === undefined) {
+                        /*
+                         * ナビゲーションバーの *発注起案から飛んで来た場合、
+                         * 戻り先ページは無いので、連続で発注を起案できるよう
+                         * ページを初期化する。
+                         */
+                        this.getFlux().actions.resetOrder();
+                    } else {
+                        /*
+                         * 発注一覧から飛んで来た場合は、発注一覧へ戻る。
+                         */
+                        this.props.goBack();
+                    }
+                }
             }.bind(this) );
         } else {
             /*

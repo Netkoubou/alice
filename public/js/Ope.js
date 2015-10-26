@@ -43,7 +43,7 @@ var Ope = React.createClass({
              * ら緊急発注へ) 切り替えた時に、検索ペインが再描画される。
              */
             contents = <EditOrder key={Math.random()}
-                                  account={this.props.user.account}
+                                  user={this.props.user}
                                   action={this.props.action} />;
             break;
         case 'LIST_ORDERS':

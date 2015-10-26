@@ -385,7 +385,7 @@ var SubeditOrder = React.createClass({
 
     propTypes: {
         flux:      React.PropTypes.object.isRequired,
-        account:   React.PropTypes.string.isRequired,
+        user:      React.PropTypes.object.isRequired,
         orderType: React.PropTypes.oneOf([
             'ORDINARY_ORDER',
             'URGENCY_ORDER',
@@ -413,7 +413,7 @@ var SubeditOrder = React.createClass({
 
     render: function() {
         var drafting_date = Util.toCanonicalizedDate(new Date() ); // 起案日
-        var drafter       = this.props.account;
+        var drafter       = this.props.user.account;
 
         if (this.props.order != null) {
             drafting_date = this.props.order.drafting_date;
@@ -424,13 +424,15 @@ var SubeditOrder = React.createClass({
             <div id="ope">
               <div id="order-edit-left-side">
                 <SearchPane orderType={this.props.orderType}  
+                            orderCode={this.state.order_code}
                             department={this.state.department}
                             finalTrader={this.state.trader} />
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
               </div>
               <div id="order-edit-right-side">
-                <FinalPane orderCode={this.state.order_code}
+                <FinalPane user={this.props.user}
+                           orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}
                            draftingDate={drafting_date}
                            orderType={this.props.orderType}
@@ -459,7 +461,7 @@ var flux   = new Fluxxor.Flux(stores, actions);
  */
 var EditOrder = React.createClass({
     propTypes: {
-        account: React.PropTypes.string.isRequired,
+        user: React.PropTypes.object.isRequired,
 
         action: React.PropTypes.oneOf([
             'DRAFT_ORDINARY_ORDER',
@@ -550,7 +552,7 @@ var EditOrder = React.createClass({
         }
 
         return <SubeditOrder flux={flux}
-                             account={this.props.account}
+                             user={this.props.user}
                              orderType={order_type}
                              order={this.props.order}
                              goBack={this.props.goBack} />;
