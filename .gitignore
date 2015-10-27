@@ -1,0 +1,5 @@
+node_modules/
+public/js/index.js
+public/js/order/PreviewOrder.js
+*.swp
+*~
