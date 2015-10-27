@@ -51,7 +51,6 @@ var StoreForEditOrder = Fluxxor.createStore({
     initialize: function() {
         this.order_code   = '';     // 起案番号
         this.order_remark = '';     // 備考
-        this.department   = '';     // 発注元 部門診療科のコード
         this.candidates   = [];     // 物品の発注候補一覧
         this.finalists    = [];     // 物品の発注確定一覧
         this.need_save    = true;   // 発注確定一覧を DB に登録必要か?

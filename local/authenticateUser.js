@@ -17,7 +17,7 @@ module.exports = function(req, res) {
         cursor.limit(1).next(function(err, user) {
             db.close();
 
-            if (err != null) {
+            if (err == null) {
                 if (user != null && compareSync(passphrase, user.hash) ) {
                     req.session.user_id = user._id;
                     res.json({

@@ -7,32 +7,29 @@ var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
-    var order_code = req.body.order_code;
-    var msg;
-
     util.query(function(db) {
         db.collection('orders').deleteOne(
-            { order_code: order_code },
+            { order_code: req.body.order_code },
             function(err, result) {
+                var msg;
+
                 db.close();
 
-                if (err == null && result.ok = 1) {
+                if (err == null) {
                     res.json({ status: 0 });
 
                     msg = '[eraseOrder] ' +
-                          'erased order: "' + order_code + '" ' +
+                          'erased order: "' + req.body.order_code + '" ' +
                           'by "' + req.session.user_id + '".';
 
                     log_info.info(msg);
                 } else {
                     res.json({ status: 255 });
-
-                    if (err != null) {
-                        log_warn.warn(err);
-                    }
+                    log_warn.warn(err);
 
                     msg = '[eraseOrder] ' +
-                          'failed to erase order: "' + order_code + '" ' +
+                          'failed to erase order: "' +
+                          req.body.order_code + '" ' +
                           'by "' + req.session.user_id + '".';
 
                     log_warn.warn(msg);

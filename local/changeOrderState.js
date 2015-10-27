@@ -7,11 +7,6 @@ var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
-    var order_code   = req.body.order_code;
-    var order_state  = req.body.order_state;
-    var order_remark = req.body.order_remark;
-    var msg;
-
     util.query(function(db) {
         db.collection('orders').updateOne(
             { order_code: req.body.order_code },
@@ -22,24 +17,24 @@ module.exports = function(req, res) {
                 }
             },
             function(err, result) {
+                var msg;
+
                 db.close();
 
-                if (err == null && result.ok == 1) {
+                if (err == null) {
                     res.json({ status: 0 });
 
                     msg = '[changeOrderState] ' +
-                          'updated order: "' + order_code + '" ' +
+                          'updated order: "' + req.body.order_code + '" ' +
                           'by "' + req.session.user_id + '".';
                     log_info.info(msg);
                 } else {
                     res.json({ status: 255 });
-
-                    if (err != null) {
-                        log_warn.warn(err);
-                    }
+                    log_warn.warn(err);
 
                     msg = '[changeOrderState] ' +
-                          'failed to update order: "' + order_code + '" ' +
+                          'failed to update order: "' +
+                          req.body.order_code + '" ' +
                           'by "' + req.session.user_id + '".';
 
                     log_warn.warn(msg);

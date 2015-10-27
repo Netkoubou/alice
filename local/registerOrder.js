@@ -5,37 +5,10 @@ var moment   = require('moment');
 var util     = require('./util');
 
 var log_info = log4js.getLogger('info');
-var log_warn = log4js.getLogger('warn');
-var log_crit = log4js.getLogger('ctitical');
+var log_warn = log4js.getLogger('warning');
+var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
-    var now   = moment().format('YYYY/MM/DD');
-    var order = {
-        order_code:   '',
-        order_type:   req.body.order_type,
-        order_state:  'REQUESTING',
-        order_remark: req.body.order_remark,
-
-        drafting_date:   now,
-        drafter_code:    req.session.user_id,
-        department_code: req.body.department_code,
-        trader_code:     req.body.trader_code,
-
-        products: req.body.products.map(function(p) {
-            return {
-                code:             p.code,
-                quantity:         p.quantity,
-                state:            'UNORDERED',
-                billing_amount:   0,
-                last_edited_date: now,
-                last_editor_code: req.session.user_id
-            };
-        }),
-
-        last_modified_date: now,
-        last_modifier_code: req.session.user_id
-    };
-
     util.query(function(db) {    
         /*
          * 発注を登録する前に、まず発注番号を作る。
@@ -49,10 +22,36 @@ module.exports = function(req, res) {
          * ということで、まずその部門診療科が幾つ発注を登録したかを数える。
          */
         var orders = db.collection('orders');
-        var sel    = { department_code: department_code };
-        var msg;
+        var sel    = { department_code: req.body.department_code };
 
         orders.count(sel, function(err, count) {
+            var now   = moment().format('YYYY/MM/DD');
+            var order = {
+                order_code:   '',
+                order_type:   req.body.order_type,
+                order_state:  'REQUESTING',
+                order_remark: req.body.order_remark,
+
+                drafting_date:   now,
+                drafter_code:    req.session.user_id,
+                department_code: req.body.department_code,
+                trader_code:     req.body.trader_code,
+
+                products: req.body.products.map(function(p) {
+                    return {
+                        code:             p.code,
+                        quantity:         p.quantity,
+                        state:            'UNORDERED',
+                        billing_amount:   0,
+                    };
+                }),
+
+                last_modified_date: now,
+                last_modifier_code: req.session.user_id
+            };
+
+            var msg;
+
             if (err == null && count != null) {
                 /*
                  * 次に、部門診療科の略称を引く。
@@ -72,7 +71,7 @@ module.exports = function(req, res) {
                             /*
                              * ここでやっとこさ登録
                              */
-                            if (err != null && result.ok == 1) {
+                            if (err == null) {
                                 res.json({
                                     status: 0,
                                     order_code: order.order_code
@@ -88,10 +87,7 @@ module.exports = function(req, res) {
                             } else {
                                 db.close();
                                 res.json({ status: 255 });
-
-                                if (err != null) {
-                                    log_warn(err);
-                                }
+                                log_warn.warn(err);
 
                                 msg = '[registerOrder] ' +
                                       'failed to register order: "' +
