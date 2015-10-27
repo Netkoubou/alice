@@ -35,8 +35,10 @@ function pick_all(db, res) {
                     res.json({ status: 255 });
 
                     log_warn.warn(err);
+
                     msg = '[pickMenuItemsForSearchPane] ' +
                           'failed to access "categories" collection.';
+
                     log_warn.warn(msg);
                 } else {
                     ct.find().toArray(function(err, ts) {
@@ -45,8 +47,10 @@ function pick_all(db, res) {
                         if (err != null) {
                             res.json({ status: 255 });
                             log_warn.warn(err);
+
                             msg = '[pickMenuItemsForSearchPane] ' +
                                   'failed to access "traders" collection.';
+
                             log_warn.warn(msg);
                         } else {
                             var departments = ds.map(function(d) {
@@ -162,8 +166,7 @@ function pick_step_by_step(user, db, res) {
                 }
 
                 var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find trader id: "' + id +
-                          '" in "traders" collection.';
+                          'failed to find trader: "' + id + '".';
 
                 log_warn.warn(msg);
             }
@@ -191,8 +194,7 @@ function pick_step_by_step(user, db, res) {
                 }
 
                 var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find category id: "' + id +
-                          '" in "categories" collection.';
+                          'failed to find category: "' + id + '".';
 
                 log_warn.warn(msg);
             }
@@ -234,8 +236,7 @@ function pick_step_by_step(user, db, res) {
                     }
 
                     var msg = '[pickMenuItemsForSearchPane] ' +
-                              'failed to find department id: "' + id +
-                              '" in "departments" collection.';
+                              'failed to find department: "' + id + '".';
 
                     log_warn.warn(msg);
                 }
@@ -277,8 +278,8 @@ module.exports = function(req, res) {
                 }
 
                 var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find user id: "' + user_id + 
-                          '" in "users" collection.';
+                          'failed to find user: "' + user_id + '".';
+
                 log_warn.warn(msg);
             }
         });

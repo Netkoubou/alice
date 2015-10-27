@@ -1,7 +1,7 @@
 'use strict';
-var bcrypt = require('bcrypt');
-var log4js = require('log4js');
-var util   = require('./util');
+var compareSync = require('bcrypt').compareSync;
+var log4js      = require('log4js');
+var util        = require('./util');
 
 var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');
@@ -17,20 +17,29 @@ module.exports = function(req, res) {
         cursor.limit(1).next(function(err, user) {
             db.close();
 
-            if (user != null && bcrypt.compareSync(passphrase, user.hash) ) {
-                req.session.user_id = user._id;
-                res.json({
-                    status: 0,
-                    user: { 
-                        privileged:  user.privileged,
-                        departments: user.departments
-                    }
-                });
+            if (err != null) {
+                if (user != null && compareSync(passphrase, user.hash) ) {
+                    req.session.user_id = user._id;
+                    res.json({
+                        status: 0,
+                        user: { 
+                            privileged:  user.privileged,
+                            departments: user.departments
+                        }
+                    });
 
-                log_info.info(account + ' logged in.');
+                    log_info.info(account + ' logged in.');
+                } else {
+                    res.json({ status: 1 });
+                    log_info.info(account + ' login failed.');
+                }
             } else {
-                res.json({ status: 1 });
-                log_info.info(account + ' login failed.');
+                log_warn.warn(err);
+
+                var msg = '[authenticateUser] ' +
+                          'failed to access "users" collection.';
+
+                log_warn.warn(msg);
             }
         });
     });

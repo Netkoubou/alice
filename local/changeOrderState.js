@@ -13,7 +13,7 @@ module.exports = function(req, res) {
     var msg;
 
     util.query(function(db) {
-        db.collection('orders').update(
+        db.collection('orders').updateOne(
             { order_code: req.body.order_code },
             {
                 '$set': {
@@ -21,11 +21,16 @@ module.exports = function(req, res) {
                     order_remark: req.body.order_remark
                 }
             },
-            function(err) {
+            function(err, result) {
                 db.close();
 
-                if (err == null) {
+                if (err == null && result.ok == 1) {
                     res.json({ status: 0 });
+
+                    msg = '[changeOrderState] ' +
+                          'updated order: "' + order_code + '" ' +
+                          'by "' + req.session.user_id + '".';
+                    log_info.info(msg);
                 } else {
                     res.json({ status: 255 });
 
@@ -34,8 +39,9 @@ module.exports = function(req, res) {
                     }
 
                     msg = '[changeOrderState] ' +
-                          'failed to find order code: "' + order_code +
-                          '" in "orders" collection.';
+                          'failed to update order: "' + order_code + '" ' +
+                          'by "' + req.session.user_id + '".';
+
                     log_warn.warn(msg);
                 }
             }

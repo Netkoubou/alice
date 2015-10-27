@@ -1,6 +1,43 @@
 'use strict';
+var log4js = require('log4js');
+var util   = require('./util');
+
+var log_info = log4js.getLogger('info');
+var log_warn = log4js.getLogger('warning');
+var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
-    console.log(req.body);
-    res.json({ status: 0 });
+    var order_code = req.body.order_code;
+    var msg;
+
+    util.query(function(db) {
+        db.collection('orders').deleteOne(
+            { order_code: order_code },
+            function(err, result) {
+                db.close();
+
+                if (err == null && result.ok = 1) {
+                    res.json({ status: 0 });
+
+                    msg = '[eraseOrder] ' +
+                          'erased order: "' + order_code + '" ' +
+                          'by "' + req.session.user_id + '".';
+
+                    log_info.info(msg);
+                } else {
+                    res.json({ status: 255 });
+
+                    if (err != null) {
+                        log_warn.warn(err);
+                    }
+
+                    msg = '[eraseOrder] ' +
+                          'failed to erase order: "' + order_code + '" ' +
+                          'by "' + req.session.user_id + '".';
+
+                    log_warn.warn(msg);
+                }
+            }
+        );
+    });
 };
