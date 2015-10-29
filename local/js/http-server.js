@@ -24,8 +24,8 @@ var $ = express();
  * SSL 証明書
  */
 https.createServer({
-    key:  fs.readFileSync('./certs/key.pem'),
-    cert: fs.readFileSync('./certs/cert.pem')
+    key:  fs.readFileSync('local/certs/key.pem'),
+    cert: fs.readFileSync('local/certs/cert.pem')
 }, $).listen(8080);
 
 
@@ -53,7 +53,7 @@ log4js.configure({
              */
             type:     'file',
             category: 'info',
-            filename: 'log/info.log',
+            filename: 'local/log/info.log',
         },
         {
             /*
@@ -62,7 +62,7 @@ log4js.configure({
              */
             type:     'file',
             category: 'warning',
-            filename: 'log/warning.log',
+            filename: 'local/log/warning.log',
         },
         {
             /*
@@ -73,7 +73,7 @@ log4js.configure({
              */
             type:     'file',
             category: 'ctitical',
-            filename: 'log/critical.log',
+            filename: 'local/log/critical.log',
         }
     ]
 });

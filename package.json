@@ -10,7 +10,7 @@
   "scripts": {
     "build": "browserify --debug public/js/index.jsx > public/js/index.js; browserify --debug public/js/order/PreviewOrder.jsx > public/js/order/PreviewOrder.js",
     "build-dist": "NODE_ENV=production browserify js/index.jsx > | uglifyjs -m > js/index.min.js",
-    "http-server": "node local/http-server.js",
+    "http-server": "node local/js/http-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "browserify": {
