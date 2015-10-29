@@ -145,22 +145,23 @@ var SearchPane = React.createClass({
 
     getInitialState: function() {
         return {
-            category_code:   '',
-            trader_code:     this.props.finalTrader.code,
-            search_text:     '',
-            categories:      [],
-            departments:     [],
-            traders:         []
+            department:    this.props.department,
+            category_code: '',
+            trader_code:   this.props.finalTrader.code,
+            search_text:   '',
+            categories:    [],
+            departments:   [],
+            traders:       []
         };
     },
 
 
     /*
-     * 診療科が選択されたら
+     * 部門診療科が選択されたら
      */
     onSelectDepartment: function(e) {
-        // return this.getFlux().actions.setDepartmentCode({ code: e.code });
-        return this.getFlux().actions.setDepartment(e);
+        this.getFlux().actions.clearCandidates();
+        this.setState({ department: e });
     },
 
 
@@ -212,7 +213,7 @@ var SearchPane = React.createClass({
             department = this.props.department;
         }
 
-        this.getFlux().actions.setDepartment(department);
+        this.getFlux().actions.clearCandidates();
 
 
         /*
@@ -220,6 +221,7 @@ var SearchPane = React.createClass({
          * 発注先 販売元をクリアしちゃいけない。
          */
         this.setState({
+            department:    department,
             category_code: '',
             trader_code:   this.props.finalTrader.code,
             search_text:   '',
@@ -231,7 +233,7 @@ var SearchPane = React.createClass({
      * 検索ボタンをクリック
      */
     onSearch: function(e) {
-        if (this.props.department.code === '') {
+        if (this.state.department.code === '') {
             alert('部門診療科を選択して下さい');
             e.preventDefault();
             return;
@@ -240,7 +242,7 @@ var SearchPane = React.createClass({
         return this.getFlux().actions.updateCandidates({
             order_type:      this.props.orderType,
             category_code:   this.state.category_code,
-            department_code: this.props.department.code,
+            department:      this.state.department,
             trader_code:     this.state.trader_code,
             search_text:     this.state.search_text
         });
@@ -271,23 +273,12 @@ var SearchPane = React.createClass({
                 traders:     res.body.traders 
             });
 
-            var department = { code: '', name: '' };
-
-            if (this.props.department.code != '') {
-                /*
-                 * 既に発注元 部門診療科が決まっている、
-                 * つまり既存の発注を編集する場合
-                 */
-                department = this.props.department;
-            } else if (res.body.departments.length == 1) {
-                /*
-                 * 自分の所属する部門診療科の発注しか扱えない
-                 */
-                department = res.body.departments[0];
+            if (this.props.department.code === '') {
+                if (res.body.departments.length == 1) {
+                    this.setState({ department: res.body.departments[0] });
+                }
             }
-
-            this.getFlux().actions.setDepartment(department);
-        }.bind(this) );
+      }.bind(this) );
     },
 
     componentWillReceiveProps: function(new_props) {
@@ -305,11 +296,84 @@ var SearchPane = React.createClass({
             /*
              * 新たに受け取った finalTrader.code 空文字列で、
              * しかもその直前に受け取った finalTrader.code が空じゃなかった、
-             * ということは、発注確定した商品が全て消去されて無くなった、
-             * ということである。
-             * その場合、検索条件から発注先 販売元を外してやる必要がある。
+             * ということは、発注確定した商品が、全て消去されたか、若しくは
+             * リセットされたかして、無くなったということである。
+             * その場合、検索条件をまっさらにしてやらなくてはならない。
              */
-            this.setState({ trader_code: '' });
+            var department;
+
+            if (new_props.department.code === '') {
+                if (this.state.departments.length == 1) {
+                    department = this.state.departments[0];
+                } else {
+                    department = { code: '', name: '' };
+                }
+            } else {
+                department = new_props.department;
+            }
+
+            this.setState({
+                department:    department,
+                category_code: '',
+                trader_code:   '',
+                search_text:   ''
+            });
+        } else if (new_props.department.code === '') {
+            if (this.state.department.code != '') {
+                if (this.state.departments.length != 1) {
+                    /*
+                     * ここに来る経路はかなり複雑なので、if 文の条件を順番に
+                     * 整理してみる。
+                     *
+                     * (0) まず、現状の発注先 販売元は確定していない、
+                     *     つまり、発注が確定した物品のリストは空である。
+                     *
+                     * (1) 直前の発注先 販売元も確定していない、
+                     *     つまり、前回も発注が確定した物品のリストは空である。
+                     *    
+                     * (2) 現状、発注元 部門診療科は確定していない
+                     *
+                     * (3) ただ部門診療科は選択された状態である
+                     *
+                     * さて、ここに至る条件は何だろうか?
+                     * 発注のページを開いた直後だと、(0) 〜 (2) の条件に合致
+                     * するが、部門診療科は一度でも検索しないと確定しないため
+                     * (EditOrder.js の onSelectDepartment 及び
+                     * onSearchDepartment を参照)、(3) の条件には合致しない。
+                     *
+                     * もったいぶってもしょうがないので、サクっと解答してし
+                     * まうと、一旦登録した発注を消去した状態である。
+                     * 消去するためには、まず発注が確定した物品を空にしなく
+                     * てはならない。
+                     * ここで (0) と (1) の条件に合致する。
+                     * そして、発注を消去したすると resetOrder() が発行される
+                     * (FinalPane.js 参照) ので、発注元 部門診療科は空になり
+                     * (EditOrder.js 参照)、(2）の条件にも合致することになる。
+                     *
+                     * そして、ここがキモなのだが、発注を消去するということは、
+                     * 発注が確定していた、ということである。
+                     * つまり、発注元 部門診療科が選択されていないと発注を
+                     * 確定することはできない訳で、つまりここで (3) の条件にも
+                     * 合致するのである。
+                     *
+                     * 発注を消去した後は、ユーザの利便性を考慮して、新たな
+                     * 発注を起案できるようにするのだが、複数の部門診療科に
+                     * 所属するユーザは、それを選択できるようにしてあげるのが
+                     * 親切というものだ。
+                     * かくして、
+                     *
+                     * (4) ユーザが所属する部門診療科が複数である
+                     *
+                     * という条件が活きてくる訳である。
+                     * 因みに、一つの部門診療科にしか所属していないユーザは、
+                     * その選択の余地はないため、確定済みの部門診療科を引き
+                     * 続き利用する。
+                     *
+                     * ふぅ、長かった。
+                     */
+                    this.setState({ department: { code: '', name: '' } });
+                }
+            }
         }
     },
 
@@ -322,7 +386,7 @@ var SearchPane = React.createClass({
                   <SelectDepartment orderCode={this.props.orderCode}
                                     finalTrader={this.props.finalTrader}
                                     onSelect={this.onSelectDepartment}
-                                    value={this.props.department}
+                                    value={this.state.department}
                                     options={this.state.departments} />
                 </div>
               </fieldset>

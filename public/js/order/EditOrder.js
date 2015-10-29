@@ -33,7 +33,7 @@ var Util          = require('../lib/Util');
 var messages = {
     SET_ORDER_CODE:    'SET_ORDER_CODE',
     SET_ORDER_REMARK:  'SET_ORDER_REMARK',
-    SET_DEPARTMENT:    'SET_DEPARTMENT',
+    CLEAR_CANDIDATES:  'CLEAR_CANDIDATES',
     UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
     ADD_FINALIST:      'ADD_FINALIST',
     REMOVE_FINALIST:   'REMOVE_FINALIST',
@@ -74,8 +74,8 @@ var StoreForEditOrder = Fluxxor.createStore({
             this.setOrderRemark
         );
         this.bindActions(
-            messages.SET_DEPARTMENT,
-            this.setDepartment
+            messages.CLEAR_CANDIDATES,
+            this.onSelectDepartment
         );
         this.bindActions(
             messages.UPDATE_CANDIDATES,
@@ -128,19 +128,25 @@ var StoreForEditOrder = Fluxxor.createStore({
 
 
     /*
-     * 発注先 部門診療科を変更したら、発注候補一覧をクリアする。
+     * ちょっと直感的でないが、発注元 部門診療科を選択 (変更) しても、
+     * その時点では発注元 部門診療科 (department) を確定しない。
+     * 以下の onSearchCandidates を見ると分かるように、
+     * 検索ペインで検索ボタンが押されて始めて確定するようになっている。
+     * 
+     * その一方で、発注元 部門診療科を変更 (選択) したら、
+     * 発注候補一覧をクリアする。
      * そうでないと、発注候補にその部門診療科では扱えない物品が表示された
      * ままになる可能性がある、即ち本来発注できない物品が発注確定一覧に入
      * る可能性がある。
      */
-    setDepartment: function(payload) {
-        this.department = payload;
+    onSelectDepartment: function() {
         this.candidates = [];
         this.emit('change');
     },
 
     onSearchCandidates: function(payload) {
-        this.candidates = payload;
+        this.department = payload.department;
+        this.candidates = payload.candidates;
         this.emit('change');
     },
 
@@ -293,6 +299,7 @@ var StoreForEditOrder = Fluxxor.createStore({
     resetState: function() {
         this.order_code      = '';
         this.order_remark    = '';
+        this.department      = { code: '', name: '' };
         this.candidates      = [];
         this.trader          = { code: '', name: '未確定' };
         this.finalists       = [];
@@ -327,12 +334,21 @@ var actions = {
         this.dispatch(messages.SET_ORDER_REMARK, payload);
     },
 
-    setDepartment: function(payload) {
-        this.dispatch(messages.SET_DEPARTMENT, payload);
+    clearCandidates: function() {
+        this.dispatch(messages.CLEAR_CANDIDATES);
     },
 
     updateCandidates: function(payload) {
-        XHR.post('searchCandidates').send(payload).end(function(err, res) {
+        var condition = {
+            order_type:      payload.order_type,
+            department_code: payload.department.code,
+            category_code:   payload.category_code,
+            trader_code:     payload.trader_code,
+            search_text:     payload.search_text
+        };
+
+        // XHR.post('searchCandidates').send(payload).end(function(err, res) {
+        XHR.post('searchCandidates').send(condition).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.ORDER_SEARCH_CANDIDATES);
                 throw 'ajax_searchCandidates';
@@ -343,7 +359,13 @@ var actions = {
                 throw 'server_searchCandidates';
             }
 
-            this.dispatch(messages.UPDATE_CANDIDATES, res.body.candidates);
+            this.dispatch(
+                messages.UPDATE_CANDIDATES,
+                {
+                    department: payload.department,
+                    candidates: res.body.candidates
+                }
+            );
         }.bind(this) );
     },
 

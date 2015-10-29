@@ -236,7 +236,7 @@ var FinalPane = React.createClass({
             }.bind(this) );
         } else {
             /*
-             * 登録済みの若しくは既存の発注を更新
+             * 登録済み若しくは既存の発注を更新
              */
             XHR.post('updateOrder').send({
                 order_code:      this.props.orderCode,
