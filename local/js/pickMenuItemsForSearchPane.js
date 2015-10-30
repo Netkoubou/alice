@@ -103,16 +103,21 @@ function pick_all(db, res) {
  * のような実装をしてみた。
  */
 function pick_step_by_step(user, db, res) {
-    var categories     = [];
-    var traders        = [];
-    var departments    = [];
-    var count_products = 0; // 最後の product かを判定するためのカウンタ
+    var categories      = [];
+    var traders         = [];
+    var departments     = [];
+    var count_products  = 0; // 最後の product かを判定するためのカウンタ
+    var is_already_sent = false;
 
     function pick_traders(product, num_of_products) {
         var id     = new ObjectID(product.trader);
         var cursor = db.collection('traders').find({ _id: id }).limit(1);
 
         cursor.next(function(err, trader) {
+            if (is_already_sent) {
+                return;
+            }
+
             if (err == null && trader != null) {
                 traders.push({
                     code: trader._id,
@@ -155,11 +160,13 @@ function pick_step_by_step(user, db, res) {
                         traders:     traders
                     });
 
+                    is_already_sent = true;
                     db.close();
                 }
             } else {
                 db.close();
                 res.json({ status: 255 });
+                is_already_sent = true;
 
                 if (err != null) {
                     log_warn.warn(err);
@@ -178,6 +185,10 @@ function pick_step_by_step(user, db, res) {
         var cursor = db.collection('categories').find({ _id: id }).limit(1);
 
         cursor.next(function(err, category) {
+            if (is_already_sent) {
+                return;
+            }
+
             if (err == null && category != null) {
                 categories.push({
                     code: category._id,
@@ -188,6 +199,7 @@ function pick_step_by_step(user, db, res) {
             } else {
                 db.close();
                 res.json({ status: 255 });
+                is_already_sent = true;
 
                 if (err != null) {
                     log_warn.warn(err);
@@ -203,10 +215,20 @@ function pick_step_by_step(user, db, res) {
 
     function pick_departments() {
         user.departments.forEach(function(d, i) {
+            if (is_already_sent) {
+                return;
+            }
+
             var id     = new ObjectID(d.code);
             var cursor = db.collection('departments').find({ _id: id });
 
             cursor.limit(1).next(function(err, department) {
+                if (is_already_sent) {
+                    return;
+                }
+
+                var msg;
+
                 if (err == null && department != null) {
                     departments.push({
                         code: department._id,
@@ -222,21 +244,44 @@ function pick_step_by_step(user, db, res) {
                         };
 
                         collection.find(sel).toArray(function(err, products) {
-                            products.forEach(function(p, i) {
-                                pick_categories(p, products.length);
-                            });
+                            if (is_already_sent) {
+                                return;
+                            }
+
+                            if (err != null && products.length > 0) {
+                                db.close();
+                                res.json({ status: 255 });
+                                is_already_sent = true;
+
+                                log_warn.warn(err);
+
+                                msg = '[pickMenuItemsForSearchPane] ' +
+                                      'failed to access ' +
+                                      '"products" collection.';
+
+                                log_warn.warn(msg);
+                            } else {
+                                products.forEach(function(p) {
+                                    if (is_already_sent) {
+                                        return;
+                                    }
+
+                                    pick_categories(p, products.length);
+                                });
+                            }
                         });
                     }
                 } else {
                     db.close();
                     res.json({ status: 255 });
+                    is_already_sent = true;
 
                     if (err != null) {
                         log_warn.warn(err);
                     }
 
-                    var msg = '[pickMenuItemsForSearchPane] ' +
-                              'failed to find department: "' + id + '".';
+                    msg = '[pickMenuItemsForSearchPane] ' +
+                          'failed to find department: "' + id + '".';
 
                     log_warn.warn(msg);
                 }

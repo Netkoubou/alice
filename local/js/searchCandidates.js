@@ -36,13 +36,22 @@ module.exports = function(req, res) {
                 if (products.length == 0) {
                     res.json({ status: 0, candidates: [] });
                 } else {
-                    var candidates       = [];
+                    var is_already_sent = false;
+                    var candidates      = [];
 
                     products.forEach(function(p) {
+                        if (is_already_sent) {
+                            return;
+                        }
+
                         var id     = new ObjectID(p.trader);
                         var cursor = db.collection('traders').find({ _id: id});
 
                         cursor.limit(1).next(function(err, trader) {
+                            if (is_already_sent) {
+                                return;
+                            }
+
                             if (err == null && trader != null) {
                                 candidates.push({
                                     product_code: p._id,
@@ -60,11 +69,14 @@ module.exports = function(req, res) {
                                         status: 0,
                                         candidates: candidates
                                     });
+
+                                    is_already_sent = true;
                                     db.close();
                                 }
                             } else {
                                 db.close();
                                 res.json({ status: 255 });
+                                is_already_sent = true;
 
                                 if (err != null) {
                                     log_warn.warn(err);
