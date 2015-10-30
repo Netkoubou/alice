@@ -19,7 +19,7 @@ module.exports = function(req, res) {
 
             if (err == null) {
                 if (user != null && compareSync(passphrase, user.hash) ) {
-                    req.session.user_id = user._id;
+                    req.session.user = user;
                     res.json({
                         status: 0,
                         user: { 

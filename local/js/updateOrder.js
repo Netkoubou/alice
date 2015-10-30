@@ -19,6 +19,12 @@ var log_crit = log4js.getLogger('ctitical');
  * 更新の保証は諦める。
  */
 module.exports = function(req, res) {
+    if (req.session.user == null) {
+        res.json({ status: 255 });
+        log_warn.warn('[changeOrderState] invalid session.');
+        return;
+    }
+
     util.query(function(db) {
         var now          = moment().format('YYYY/MM/DD');
         var prices       = [];  /* 単価更新用の配列 */
@@ -43,7 +49,7 @@ module.exports = function(req, res) {
                     trader_code:  req.body.trader_code,
                     products:     products,
                     last_modified_date: now,
-                    last_modifier_code: req.session.user_id
+                    last_modifier_code: req.session.user._id
                 }
             },
             function update(err, result) {
@@ -58,7 +64,7 @@ module.exports = function(req, res) {
                     res.json({ status: 0 });
                     msg = '[updateOrder] updated order: "' +
                           req.body.order_code + '" ' +
-                          'by "' + req.session.user_id + '".';
+                          'by "' + req.session.user.account + '".';
     
                     log_info.info(msg);
     
@@ -76,8 +82,8 @@ module.exports = function(req, res) {
                                 if (result.ok != 1) {
                                     msg = '[updateOrder] ' +
                                           'failed to update products: "' +
-                                          p.product_code + '" ' +
-                                          'by "' + req.session.user_id + '".';
+                                          p.product_code + '" by "' +
+                                          req.session.user.account + '".';
     
                                     log_warn.warn(msg);
                                 }
@@ -97,7 +103,7 @@ module.exports = function(req, res) {
     
                     msg = '[updateOrder] failed to update order: "' +
                           req.body.order_code + '" ' +
-                          'by "' + req.session.user_id + '".';
+                          'by "' + req.session.user.account + '".';
     
                     log_warn.warn(msg);
                 }

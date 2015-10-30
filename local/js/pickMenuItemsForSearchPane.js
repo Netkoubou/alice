@@ -248,40 +248,27 @@ function pick_step_by_step(user, db, res) {
 }
 
 module.exports = function(req, res) {
+    if (req.session.user == null) {
+        res.json({ status: 255 });
+        log_warn.warn('[changeOrderState] invalid session.');
+        return;
+    }
+
     util.query(function(db) {
-        var users   = db.collection('users');
-        var user_id = new ObjectID(req.session.user_id);
+        var draft_ordinarily = req.session.user.privileged.draft_ordinarily;
+        var draft_urgently   = req.session.user.privileged.draft_urgently;
 
-        users.find({ _id: user_id }).next(function(err, user) {
-            if (err == null && user != null) {
-                var draft_ordinarily = user.privileged.draft_ordinarily;
-                var draft_urgently   = user.privileged.draft_urgently;
-
-                if (draft_ordinarily || draft_urgently) {
-                    /*
-                     * 全部門診療科に跨って通常発注 and/or 緊急発注を起案できる
-                     */
-                    pick_all(db, res);
-                } else {
-                    /*
-                     * 自分の所属する部門診療科の通常発注 and/or 緊急発注しか
-                     * 起案できない
-                     */
-                    pick_step_by_step(user, db, res);
-                }
-            } else {
-                db.close();
-                res.json({ status: 255 });
-
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find user: "' + user_id + '".';
-
-                log_warn.warn(msg);
-            }
-        });
+        if (draft_ordinarily || draft_urgently) {
+            /*
+             * 全部門診療科に跨って通常発注 and/or 緊急発注を起案できる
+             */
+            pick_all(db, res);
+        } else {
+            /*
+             * 自分の所属する部門診療科の通常発注 and/or 緊急発注しか
+             * 起案できない
+             */
+            pick_step_by_step(req.session.user, db, res);
+        }
     });
 };

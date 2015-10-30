@@ -9,6 +9,12 @@ var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
+    if (req.session.user == null) {
+        res.json({ status: 255 });
+        log_warn.warn('[changeOrderState] invalid session.');
+        return;
+    }
+
     util.query(function(db) {    
         /*
          * 発注を登録する前に、まず発注番号を作る。
@@ -33,7 +39,7 @@ module.exports = function(req, res) {
                 order_remark: req.body.order_remark,
 
                 drafting_date:   now,
-                drafter_code:    req.session.user_id,
+                drafter_code:    req.session.user._id,
                 department_code: req.body.department_code,
                 trader_code:     req.body.trader_code,
 
@@ -47,7 +53,7 @@ module.exports = function(req, res) {
                 }),
 
                 last_modified_date: now,
-                last_modifier_code: req.session.user_id
+                last_modifier_code: req.session.user._id
             };
 
             var msg;
@@ -80,7 +86,7 @@ module.exports = function(req, res) {
                                 msg = '[registerOrder] ' + 
                                       'registered order: "' +
                                       order.order_code + '" ' +
-                                      'by "' + req.session.user_id + '".';
+                                      'by "' + req.session.user.account + '".';
 
                                 log_info.info(msg);
                                 db.close();
@@ -92,7 +98,7 @@ module.exports = function(req, res) {
                                 msg = '[registerOrder] ' +
                                       'failed to register order: "' +
                                       order.order_code + '" ' +
-                                      'by "' + req.session.user_id + '".';
+                                      'by "' + req.session.user.account + '".';
 
                                log_warn.warn(msg);
                             }

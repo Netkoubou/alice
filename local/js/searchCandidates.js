@@ -8,6 +8,12 @@ var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
+    if (req.session.user == null) {
+        res.json({ status: 255 });
+        log_warn.warn('[changeOrderState] invalid session.');
+        return;
+    }
+
     util.query(function(db) {
         var sel = { departments: new ObjectID(req.body.department_code) };
 
