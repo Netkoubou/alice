@@ -56,7 +56,8 @@ var ButtonForNextAction = React.createClass({
         onPrint:   React.PropTypes.func.isRequired,
         needSave:  React.PropTypes.bool.isRequired,
         orderCode: React.PropTypes.string.isRequired,
-        trader:    React.PropTypes.object.isRequired
+        trader:    React.PropTypes.object.isRequired,
+        goBack:    React.PropTypes.func
     },
 
     eraseOrder: function() {
@@ -75,7 +76,12 @@ var ButtonForNextAction = React.createClass({
                 }
 
                 alert('消去しました');
-                this.getFlux().actions.resetOrder();
+
+                if (this.props.goBack == null) {
+                    this.getFlux().actions.resetOrder();
+                } else {
+                    this.props.goBack();
+                }
             }.bind(this) );
         }
     },
@@ -476,7 +482,8 @@ var FinalPane = React.createClass({
                                      onPrint={this.onPrint}
                                      needSave={this.props.needSave}
                                      orderCode={this.props.orderCode}
-                                     trader={this.props.trader} />
+                                     trader={this.props.trader}
+                                     goBack={this.props.goBack} />
               </div>
             </fieldset>
         );

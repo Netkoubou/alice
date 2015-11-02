@@ -291,7 +291,10 @@ var SearchPane = React.createClass({
              * しまう可能性がある訳で、そうなると最悪発注できないはずの商品
              * を発注確定することができてしまう。
              */
-            this.setState({ trader_code: new_props.finalTrader.code });
+            this.setState({
+                trader_code: new_props.finalTrader.code,
+                department:  new_props.department
+            });
         } else if (this.props.finalTrader.code != '') {
             /*
              * 新たに受け取った finalTrader.code 空文字列で、

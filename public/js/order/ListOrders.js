@@ -58,7 +58,7 @@ var OrderCode = React.createClass({
             if (can_edit_order) {
                 on_click = function() {
                     this.props.onSelect(
-                        <EditOrder account={this.props.user.account}
+                        <EditOrder user={this.props.user}
                                    order={this.props.order}
                                    goBack={this.props.goBack} />
                     );

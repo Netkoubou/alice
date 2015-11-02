@@ -410,7 +410,6 @@ var SubeditOrder = React.createClass({
         orderType: React.PropTypes.oneOf([
             'ORDINARY_ORDER',
             'URGENCY_ORDER',
-            'MEDS_ORDER'
         ]).isRequired,
         order:  React.PropTypes.object,
         goBack: React.PropTypes.func
@@ -487,7 +486,6 @@ var EditOrder = React.createClass({
         action: React.PropTypes.oneOf([
             'DRAFT_ORDINARY_ORDER',
             'DRAFT_URGENCY_ORDER',
-            'DRAFT_MEDS_ORDER'
         ]),
 
         order: React.PropTypes.shape({
@@ -496,7 +494,6 @@ var EditOrder = React.createClass({
             order_type: React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
                 'URGENCY_ORDER',
-                'MEDS_ORDER'
             ]),
 
             order_state: React.PropTypes.oneOf([
@@ -533,9 +530,6 @@ var EditOrder = React.createClass({
                 ]).isRequired,
 
                 billing_amount:      React.PropTypes.number.isRequired,
-                last_edited_date:    React.PropTypes.string.isRequired,
-                last_editor_code:    React.PropTypes.string.isRequired,
-                last_editor_account: React.PropTypes.string.isRequired,
             }) ).isRequired,
 
             last_modified_date:    React.PropTypes.string.isRequired,
@@ -562,9 +556,6 @@ var EditOrder = React.createClass({
                 break;
             case 'DRAFT_URGENCY_ORDER':
                 order_type = 'URGENCY_ORDER';
-                break;
-            case 'DRAFT_MEDS_ORDER':
-                order_type = 'MEDS_ORDER';
                 break;
             default:
                 alert(Messages.internal.UNEXPECTED_ACTION);
