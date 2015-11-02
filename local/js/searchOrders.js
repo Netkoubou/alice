@@ -7,6 +7,12 @@ var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('critical');
 
+
+/*
+ * 'orders' コレクションから、当該ユーザが参照できる発注を引っこ抜くための
+ * セレクタを作る。
+ * 別に難しいことはないのだが、やたらと煩雑。
+ */
 function generateSelector(user, args) {
     var sel = { '$and': [
         {
@@ -90,6 +96,15 @@ function generateSelector(user, args) {
     return sel;
 }
 
+
+/*
+ * 引っこ抜いた発注から、クライアントへ返す情報を生成する。
+ * DB に登録されている発注は、検索のためのユニークな ID を保持している
+ * (例えば物品コード) ものの、その名前を含んでいない。
+ * そのため、それらをいちいち DB に問い合わせて補填していく必要がある。
+ * これも難しいことはしていないのだが、非同期 ID であるが故のコールバックの
+ * 嵐によってひどく煩雑に見える。
+ */
 function construct_response(orders, db, res) {
     var response        = [];
     var order_count     = 0;
