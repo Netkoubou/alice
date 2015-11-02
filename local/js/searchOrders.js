@@ -144,16 +144,49 @@ function construct_response(orders, db, res) {
         });
     }
 
-    function pick_trader_name(order, index) {
-        var id     = new ObjectID(order.trader_code);
-        var cursor = db.collection('traders').find({ _id: id }).limit(1);
+    function pick_infos(mode, order, index) {
+        var id, cursor, next_action, err_msg;
 
-        cursor.next(function(err, trader) {
-            if (is_already_sent) {
-                return;
-            }
+        switch (mode) {
+        case 0:
+            id     = new ObjectID(order.drafter_code);
+            cursor = db.collection('users').find({ _id: id }).limit(1);
 
-            if (err == null && trader != null) {
+            next_action = function(user) {
+                response[index].drafter_account = user.account;
+                pick_infos(mode + 1, order, index);
+            };
+
+            err_msg = '[searchOrders] ' + 'failed to find user: "' + id + '".';
+            break;
+        case 1:
+            id     = new ObjectID(order.last_modifier_code);
+            cursor = db.collection('users').find({ _id: id }).limit(1);
+
+            next_action = function(user) {
+                response[index].last_modifier_account = user.account;
+                pick_infos(mode + 1, order, index);
+            };
+
+            err_msg = '[searchOrders] ' + 'failed to find user: "' + id + '".';
+            break;
+        case 2:
+            id     = new ObjectID(order.department_code);
+            cursor = db.collection('departments').find({ _id: id }).limit(1);
+
+            next_action = function(department) {
+                response[index].department_name = department.name;
+                pick_infos(mode + 1, order, index);
+            };
+
+            err_msg = '[searchOrders] ' +
+                      'failed to find department: "' + id + '".';
+            break;
+        default:
+            id     = new ObjectID(order.trader_code);
+            cursor = db.collection('traders').find({ _id: id }).limit(1);
+
+            next_action = function(trader) {
                 response[index].trader_name = trader.name;
 
                 order_count++;
@@ -178,36 +211,19 @@ function construct_response(orders, db, res) {
 
                     pick_product_infos(index, i, p.code);
                 });
-            } else {
-                db.close();
-                res.json({ status: 255 });
-                is_already_sent = true;
-
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                var msg = '[searchOrders] ' +
-                          'failed to find trader: "' + id + '".';
-
-                log_warn.warn(msg);
             }
-        });
-    }
 
-    function pick_department_name(order, index) {
-        var id     = new ObjectID(order.department_code);
-        var cursor = db.collection('departments').find({ _id: id }).limit(1);
+            err_msg = '[searchOrders] ' +
+                      'failed to find trader: "' + id + '".';
+        }
 
-        cursor.next(function(err, department) {
+        cursor.next(function(err, doc) {
             if (is_already_sent) {
                 return;
             }
 
-            if (err == null && department != null) {
-                response[index].department_name = department.name;
-
-                pick_trader_name(order, index);
+            if (err == null && doc != null) {
+                next_action(doc);
             } else {
                 db.close();
                 res.json({ status: 255 });
@@ -217,70 +233,7 @@ function construct_response(orders, db, res) {
                     log_warn.warn(err);
                 }
 
-                var msg = '[searchOrders] ' +
-                          'failed to find department: "' + id + '".';
-
-                log_warn.warn(msg);
-            }
-        });
-    }
-
-    function pick_last_modifier_account(order, index) {
-        var id     = new ObjectID(order.last_modifier_code);
-        var cursor = db.collection('users').find({ _id: id }).limit(1);
-
-        cursor.next(function(err, user) {
-            if (is_already_sent) {
-                return;
-            }
-
-            if (err == null && user != null) {
-                response[index].last_modifier_account = user.account;
-
-                pick_department_name(order, index);
-            } else {
-                db.close();
-                res.json({ status: 255 });
-                is_already_sent = true;
-
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                var msg = '[searchOrders] ' +
-                          'failed to find user: "' + id + '".';
-
-                log_warn.warn(msg);
-            }
-        });
-    }
-
-    function pick_drafter_account(order, index) {
-        var id     = new ObjectID(order.drafter_code);
-        var cursor = db.collection('users').find({ _id: id }).limit(1);
-
-        cursor.next(function(err, user) {
-            if (is_already_sent) {
-                return;
-            }
-
-            if (err == null && user != null) {
-                response[index].drafter_account = user.account;
-
-                pick_last_modifier_account(order, index);
-            } else {
-                db.close();
-                res.json({ status: 255 });
-                is_already_sent = true;
-
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                var msg = '[searchOrders] ' +
-                          'failed to find user: "' + id + '".';
-
-                log_warn.warn(msg);
+                log_war.warn(msg);
             }
         });
     }
@@ -311,7 +264,7 @@ function construct_response(orders, db, res) {
             last_modifier_account: ''   // これから埋める
         };
             
-        pick_drafter_account(order, index);
+        pick_infos(0, order, index);
     });
 }
 
