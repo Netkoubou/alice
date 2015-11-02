@@ -233,7 +233,7 @@ function construct_response(orders, db, res) {
                     log_warn.warn(err);
                 }
 
-                log_war.warn(msg);
+                log_war.warn(err_msg);
             }
         });
     }
