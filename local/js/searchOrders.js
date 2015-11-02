@@ -124,20 +124,26 @@ function construct_response(orders, db, res) {
                 var p = response[order_index].products[product_index];
 
                 p.name      = product.name;
-                p.min_price = p.min_price;
-                p.cur_price = p.cur_price;
-                p.max_price = p.max_price;
+                p.maker     = product.maker;
+                p.min_price = product.min_price;
+                p.cur_price = product.cur_price;
+                p.max_price = product.max_price;
 
                 products_count[order_index]++;
 
-                var num_of_orders   = orders.length;
-                var num_of_products = orders[order_index].products.length;
-                var product_count   = products_count[order_index];
+                var is_finished = false;
 
-                var is_final_order   = order_count   >= num_of_orders;
-                var is_final_product = product_count >= num_of_products;
+                if (order_count >= orders.length) {
+                    is_finished = true;
 
-                if (is_final_order && is_final_product) {
+                    products_count.forEach(function(c, i) {
+                        if (c == null || c < orders[i].products.length) {
+                            is_finished = false;
+                        }
+                    });
+                }
+
+                if (is_finished) {
                     res.json({ status: 0, orders: response });
                     is_already_sent = true;
                     db.close();
@@ -214,11 +220,11 @@ function construct_response(orders, db, res) {
 
                     response[index].products[i] = {
                         code:           p.code,
-                        name:           '',  //  これから埋める
-                        maker:          p.maker,
-                        min_price:      0,   //  これから埋める
-                        cur_price:      0,   //  これから埋める
-                        max_price:      0,   //  これから埋める
+                        name:           '', // これから埋める
+                        maker:          '', // これから埋める    
+                        min_price:      0,  // これから埋める
+                        cur_price:      0,  // これから埋める
+                        max_price:      0,  // これから埋める
                         quantity:       p.quantity,
                         state:          p.state,
                         billing_amount: p.billing_amount

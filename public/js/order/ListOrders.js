@@ -41,10 +41,21 @@ var OrderCode = React.createClass({
         }.bind(this);
 
         if (this.props.order.order_state === 'REQUESTING') {
-            if (!this.props.user.is_approval) {
-                /*
-                 * 承認権限を持たない人だけが発注を編集できる
-                 */
+            var can_edit_order = false;
+
+            if (this.props.user.privileged.process_order) {
+                can_edit_order = true;
+            } else {
+                this.props.user.departments.forEach(function(d) {
+                    if (d.code === this.props.order.department_code) {
+                        if (d.process_order) {
+                            can_edit_order = true;
+                        }
+                    }
+                }.bind(this) );
+            }
+
+            if (can_edit_order) {
                 on_click = function() {
                     this.props.onSelect(
                         <EditOrder account={this.props.user.account}
