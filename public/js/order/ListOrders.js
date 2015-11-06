@@ -83,13 +83,34 @@ var ListOrders = React.createClass({
     propTypes: { user: React.PropTypes.object.isRequired },
 
     getInitialState: function() {
+        var can_approve       = false;
+        var can_process_order = false;
+
+        if (this.props.user.privileged.approve) {
+            can_approve = true;
+        }
+        
+        if (this.props.user.privileged.process_order) {
+            can_process_order = true;
+        }
+
+        this.props.user.departments.forEach(function(d) {
+            if (d.approve) {
+                can_approve = true;
+            }
+
+            if (d.process_order) {
+                can_process_order = true;
+            }
+        });
+
         return {
             next_ope:      null,
             start_date:    moment(),
             end_date:      moment(),
-            is_requesting: !this.props.user.is_approval,
-            is_approving:   this.props.user.is_approval,
-            is_approved:   !this.props.user.is_approval,
+            is_requesting: can_process_order,
+            is_approving:  can_approve,
+            is_approved:   can_process_order,
             is_nullified:  false,
             is_completed:  false,
             orders:     []
