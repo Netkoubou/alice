@@ -298,11 +298,13 @@ var FinalPane = React.createClass({
 
             alert('承認待ちになりました');
             window.info = {
+                purpose:       'APPROVAL',
                 order_code:    this.props.orderCode,
                 department:    this.props.department.name,
                 trader:        this.props.trader.name,
                 drafting_date: this.props.draftingDate,
-                finalists:     this.props.finalists
+                order_date:    '',
+                products:      this.props.finalists
             };
 
             var w = window.open('preview-order.html', '発注書 印刷プレビュー');

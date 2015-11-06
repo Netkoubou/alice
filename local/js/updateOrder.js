@@ -9,6 +9,64 @@ var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('ctitical');
 
 
+function update_prices(db, req, prices) {
+    var count_products = 0;
+
+    prices.forEach(function(p) {
+        var id     = new ObjectID(p.product_code);
+        var cursor = db.collection('products').find({ _id: id }).limit(1);
+        var msg;
+
+        cursor.next(function(err, prd) {
+            if (err == null && prd != null) {
+                var min = (prd.min_price > p.price)? p.price: prd.min_price;
+                var max = (prd.max_price < p.price)? p.price: prd.max_price;
+
+                db.collection('products').updateOne(
+                    { _id: id },
+                    {
+                        '$set': {
+                            min_price: min,
+                            cur_price: p.price,
+                            max_price: max
+                        }
+                    },
+                    function(err, result) {
+                        if (err != null) {
+                            log_warn.warn(err);
+                        }
+
+                        if (result.result.ok != 1) {
+                            msg = '[updateOrder] ' +
+                                'failed to update products: "' +
+                                p.product_code + '" by "' +
+                                req.session.user.account + '".';
+
+                            log_warn.warn(msg);
+                        }
+    
+                        count_products++;
+
+                        if (count_products == prices.length) {
+                            db.close();
+                        }
+                    }
+                );
+            } else {
+                if (err != null) {
+                    log_warn.warn(err);
+                }
+
+                msg = '[updateOrder] ' +
+                      'failed to find product: "' + id + '".';
+
+                log_warn.warn(msg);
+            }
+        });
+    });
+}
+
+
 /*
  * 発注の更新が主な目的だが、orders コレクションだけではなく、
  * products コレクションも更新しなくてはならないことに注意。
@@ -39,7 +97,6 @@ module.exports = function(req, res) {
             };
         });
 
-
         db.collection('orders').updateOne(
             { order_code: req.body.order_code },
             {
@@ -67,35 +124,7 @@ module.exports = function(req, res) {
                           'by "' + req.session.user.account + '".';
     
                     log_info.info(msg);
-    
-                    var count_products = 0;
-    
-                    prices.forEach(function(p) {
-                        db.collection('products').updateOne(
-                            { _id: new ObjectID(p.product_code) },
-                            { '$set': { cur_price: p.price } },
-                            function(err, result) {
-                                if (err != null) {
-                                    log_warn.warn(err);
-                                }
-    
-                                if (result.ok != 1) {
-                                    msg = '[updateOrder] ' +
-                                          'failed to update products: "' +
-                                          p.product_code + '" by "' +
-                                          req.session.user.account + '".';
-    
-                                    log_warn.warn(msg);
-                                }
-    
-                                count_products++;
-    
-                                if (count_products == prices.length) {
-                                    db.close();
-                                }
-                            }
-                        );
-                    });
+                    update_prices(db, req, prices);
                 } else {
                     db.close();
                     res.json({ status: 255 });

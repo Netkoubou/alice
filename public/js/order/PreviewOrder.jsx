@@ -3,8 +3,31 @@ var React  = require('react');
 
 var PreviewOrder = React.createClass({
     render: function() {
+        var stamp_row = null;
+
+        if (window.opener.info.purpose === 'APPROVAL') {
+            stamp_row = (
+                <table id="stamp">
+                  <tr>
+                    <th>病院長</th>
+                    <th>部長</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </table>
+            );
+        }
+
         var total    = 0.0;
-        var products = window.opener.info.finalists.map(function(p, i) {
+        var products = window.opener.info.products.map(function(p, i) {
             var subtotal = p.price * p.quantity;
 
             total += subtotal;
@@ -51,23 +74,7 @@ var PreviewOrder = React.createClass({
             <div id="preview-order">
               <fieldset>
                 <h1>神奈川歯科大学 附属病院 発注書</h1>
-                <table id="stamp">
-                  <tr>
-                    <th>病院長</th>
-                    <th>部長</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </table>
-  
+                {stamp_row} 
                 <div id="infos">
                   <table id="left-infos">
                     <tr>
@@ -99,7 +106,9 @@ var PreviewOrder = React.createClass({
                     </tr>
                     <tr>
                       <td className="info-name">発注日</td>
-                      <td className="info-data"></td>
+                      <td className="info-data">
+                        {window.opener.info.order_date}
+                      </td>
                     </tr>
                     <tr>
                       <td className="info-name">連絡先</td>

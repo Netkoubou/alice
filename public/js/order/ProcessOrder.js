@@ -3,6 +3,7 @@ var React      = require('react');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
 var XHR        = require('superagent');
+var moment     = require('moment');
 var TableFrame = require('../components/TableFrame');
 var Notice     = require('../components/Notice');
 var Messages   = require('../lib/Messages');
@@ -112,6 +113,27 @@ var ProcessOrder = React.createClass({
         }
     },
 
+    onPrint: function() {
+        window.info = {
+            purpose:       'FAX',
+            order_code:    this.props.order.order_code,
+            department:    this.props.order.department_name,
+            trader:        this.props.order.trader_name,
+            drafting_date: this.props.order.drafting_date,
+            order_date:    moment().format('YYYY/MM/DD'),
+            products:      this.props.order.products.map(function(p) {
+                return {
+                    name:     p.name,
+                    maker:    p.maker,
+                    quantity: p.quantity,
+                    price:    p.cur_price
+                };
+            })
+        };
+
+        var w = window.open('preview-order.html', '発注書 印刷プレビュー');
+    },
+
     onFix: function() {
         for (var i = 0; i < this.state.products.length; i++) {
             var p = this.state.products[i];
@@ -180,6 +202,7 @@ var ProcessOrder = React.createClass({
                 }
 
                 alert('確定しました');
+                this.props.goBack();
             }.bind(this) );
         }
     },
@@ -214,22 +237,53 @@ var ProcessOrder = React.createClass({
     },
 
     render: function() {
-        var order_state = this.props.order.order_state;
-        var is_approval = this.props.user.is_approval;
-        var permission  = 'REFER_ONLY';
+        var can_approve       = false;
+        var can_process_order = false;
 
-        if (order_state === 'APPROVING') {
-            if (is_approval) {
-                permission = 'APPROVE';
-            } else {
-                permission = 'BACK_TO_REQUESTING';
+        if (this.props.user.privileged.approve) {
+            can_approve = true;
+        }
+
+        if (this.props.user.privileged.process_order) {
+            can_process_order = true;
+        }
+
+        this.props.user.departments.forEach(function(d) {
+            if (d.code === this.props.order.order_code) {
+                if (d.approve) {
+                    can_approve = true;
+                }
+
+                if (d.process_order) {
+                    can_process_order = true;
+                }
             }
-        } else if (!is_approval) {
-            if (order_state === 'NULLIFIED' || order_state === 'COMPLETED') {
+        });
+
+        var permission  = 'REFER_ONLY';
+        var order_state = this.props.order.order_state;
+
+
+        /*
+         * 承認可能で、かつ発注処理可能なユーザの場合、
+         * 以下のコードでは発注処理可能の方が強いことになる。
+         * 但し、そんなユーザは存在しないはず。
+         */
+        if (can_process_order) {
+            switch (order_state) {
+            case 'APPROVING':
+                permission = 'BACK_TO_REQUESTING';
+                break;
+            case 'NULLIFIED':
+            case 'COMPLETED':
                 permission = 'BACK_TO_APPROVED';
-            } else if (order_state === 'APPROVED') {
+                break;
+            case 'APPROVED':
                 permission = 'PROCESS';
-            } 
+                break;
+            }
+        } else if (can_approve && order_state === 'APPROVING') {
+            permission = 'APPROVE';
         }
 
         var table_title = [
@@ -287,7 +341,7 @@ var ProcessOrder = React.createClass({
                                         onSelect={this.onChangeState(index)} />
                 );
 
-                if (this.props.order.products[index].state === 'ORDERED') {
+                // if (this.props.order.products[index].state === 'ORDERED') {
                     if (product.state === 'DELIVERED') {
                         cur_price_view = (
                             <TableFrame.Input
@@ -307,7 +361,7 @@ var ProcessOrder = React.createClass({
                               ref={"billing_amount" + index.toString()} />
                         );
                     }
-                }
+                // }
             }
 
             return [
@@ -378,7 +432,12 @@ var ProcessOrder = React.createClass({
                 </Button>
             );
             buttons.push(
-                <Button key="5" bsSize="small" onClick={this.onFix}>
+                <Button key="5" bsSize="small" onClick={this.onPrint}>
+                  印刷
+                </Button>
+            );
+            buttons.push(
+                <Button key="6" bsSize="small" onClick={this.onFix}>
                   確定
                 </Button>
             );
@@ -387,7 +446,7 @@ var ProcessOrder = React.createClass({
         case 'BACK_TO_APPROVED':
             legend = '要訂正?';
             buttons.push(
-                <Button key="6"
+                <Button key="7"
                         bsSize="small"
                         onClick={this.onRevertToApproved}>
                   承認済みへ戻す
