@@ -49,7 +49,8 @@
   height: 100%;
 }
 
-#login {
-  margin:     128px 256px 0 256px;
+#login, #change-password {
+  margin:      0 256px 0 256px;
+  padding-top: 128px;
   text-align: right;
 }

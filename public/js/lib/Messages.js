@@ -59,6 +59,12 @@ module.exports = {
             'ネットワークの問題で発注の状態変更に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        CHANGE_PASSWORD_CHANGE_PASSWORD:
+            'AJAX error: changePassword in ChangePassword.js\n\n' +
+            'ネットワークの問題で発注の状態変更に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -110,6 +116,11 @@ module.exports = {
         APPROVE_CHANGE_ORDER_STATE:
             'Server error: changeOrderState in Approve.js\n\n' +
             '発注の状態変更でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        CHANGE_PASSWORD_CHANGE_PASSWORD:
+            'Server error: changePassword in ChangePassword.js\n\n' +
+            'パスワードの変更でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

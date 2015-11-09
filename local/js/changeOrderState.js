@@ -33,6 +33,7 @@ module.exports = function(req, res) {
                     msg = '[changeOrderState] ' +
                           'updated order: "' + req.body.order_code + '" ' +
                           'by "' + req.session.user.account + '".';
+
                     log_info.info(msg);
                 } else {
                     res.json({ status: 255 });

@@ -16,6 +16,7 @@ var updateOrder      = require('./updateOrder');
 var eraseOrder       = require('./eraseOrder');
 var changeOrderState = require('./changeOrderState');
 var searchOrders     = require('./searchOrders');
+var changePassword   = require('./changePassword');
 
 var $ = express();
 
@@ -105,3 +106,4 @@ $.post('/updateOrder',      updateOrder);
 $.post('/eraseOrder',       eraseOrder);
 $.post('/changeOrderState', changeOrderState);
 $.post('/searchOrders',     searchOrders);
+$.post('/changePassword',   changePassword);

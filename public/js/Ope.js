@@ -6,6 +6,8 @@ var React      = require('react');
 var EditOrder  = require('./order/EditOrder');
 var ListOrders = require('./order/ListOrders');
 
+var ChangePassword = require('./others/ChangePassword');
+
 
 /*
  * 上位要素である Nav から属性として user を貰って来るが、
@@ -46,7 +48,10 @@ var Ope = React.createClass({
             break;
         case 'LIST_ORDERS':
             contents = <ListOrders key={Math.random()}
-                                   user={this.props.user} />
+                                   user={this.props.user} />;
+            break;
+        case 'CHANGE_PASSWORD':
+            contents = <ChangePassword />;
             break;
         default:
             contents = null;

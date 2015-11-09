@@ -278,7 +278,7 @@ var Nav = React.createClass({
               {etc}
               <NavItemTitle name="その他" />
               <NavItem name="パスワード変更"
-                       onClick={this.dummy}
+                       onClick={this.onSelect('CHANGE_PASSWORD')}
                        isSelected={selected === 'CHANGE_PASSWORD'} />
               <NavItem name="ログアウト"
                        onClick={this.props.logout}
