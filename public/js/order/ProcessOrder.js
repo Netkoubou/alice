@@ -141,14 +141,16 @@ var ProcessOrder = React.createClass({
             if (p.state === 'DELIVERED') {
                 var e;
 
-                if (p.cur_price <= 0.0) {
-                    alert('現在単価に 0 以下の値を指定することはできません。');
+                if (p.cur_price <= 0.0 || p.cur_price != p.cur_price) {
+                    alert('現在単価には 0 より大きな値を指定して下さい。');
                     var e = this.refs['cur_price' + i.toString()];
                     React.findDOMNode(e).focus();
                     return;
                 }
 
-                if (p.billing_amount == 0) {
+                var ba = p.billing_amount;
+
+                if (ba == 0 || ba != ba) {
                     alert('請求額を指定して下さい。');
                     var e = this.refs['billing_amount' + i.toString()];
                     React.findDOMNode(e).focus();
