@@ -21,24 +21,37 @@ module.exports = function(req, res) {
          * 発注番号は、
          * 
          *   - 部門診療科の略称
-         *   - 部門診療科の通し番号
+         *   - 西暦の年度 4 桁
+         *   - 部門診療科のその年度の通し番号
          *
          * を '-' で繋げたユニークな文字列。
-         * 通し番号は、その部門診療科で登録された発注の数を利用する。
-         * ということで、まずその部門診療科が幾つ発注を登録したかを数える。
+         * 通し番号は、その部門診療科でその年度に登録された発注の数を利用する。
+         * ということで、まずその部門診療科がその年度に幾つ発注を登録したかを
+         * 数える。
          */
+        var now = moment();
+        var fiscal_year;
+
+        if (now.month() < 4) {
+            fiscal_year = (now.year() - 1).toString();
+        } else {
+            fiscal_year = now.year().toString();
+        }
+
         var orders = db.collection('orders');
-        var sel    = { department_code: req.body.department_code };
+        var sel = {
+            drafting_date:   { '$gte': fiscal_year + '/04/01' },
+            department_code: req.body.department_code
+        };
 
         orders.count(sel, function(err, count) {
-            var now   = moment().format('YYYY/MM/DD');
             var order = {
                 order_code:   '',
                 order_type:   req.body.order_type,
                 order_state:  'REQUESTING',
                 order_remark: req.body.order_remark,
 
-                drafting_date:   now,
+                drafting_date:   now.format('YYYY/MM/DD'),
                 drafter_code:    req.session.user._id,
                 department_code: req.body.department_code,
                 trader_code:     req.body.trader_code,
@@ -52,7 +65,7 @@ module.exports = function(req, res) {
                     };
                 }),
 
-                last_modified_date: now,
+                last_modified_date: now.format('YYYY/MM/DD'),
                 last_modifier_code: req.session.user._id
             };
 
@@ -69,8 +82,8 @@ module.exports = function(req, res) {
 
                 cursor.limit(1).next(function(err, department) {
                     if (err == null && department != null) {
-                        var pfx = department.abbr + '-';
-                        var num = ('0000' + count).slice(-4);
+                        var pfx = department.abbr + '-' + fiscal_year + '-';
+                        var num = ('0000' + (count + 1).toString() ).slice(-4);
 
                         order.order_code = pfx + num;
                         orders.insertOne(order, function(err, result) {
