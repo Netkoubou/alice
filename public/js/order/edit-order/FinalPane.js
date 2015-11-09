@@ -176,6 +176,17 @@ var FinalPane = React.createClass({
      * 確定ボタンがクリックされたら
      */
     onFix: function() {
+        for (var i = 0; i < this.props.finalists.length; i++) {
+            var q = this.props.finalists[i].quantity;
+
+            if (q == 0 || q != q) {
+                alert('数量を指定して下さい。');
+                var e = this.refs['quantity' + i.toString()];
+                React.findDOMNode(e).focus();
+                return;
+            }
+        }
+
         var can_process_order = false;
 
         if (this.props.user.privileged.process_order) {
@@ -403,6 +414,7 @@ var FinalPane = React.createClass({
                              key={Math.random()}
                              type='int'
                              placeholder={finalist.quantity.toLocaleString()}
+                             ref={'quantity' + i.toString()}
                              onChange={this.onChangeQuantity(i)} />
                 },
                 {
