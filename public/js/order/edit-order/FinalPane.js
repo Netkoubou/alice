@@ -179,6 +179,17 @@ var FinalPane = React.createClass({
         for (var i = 0; i < this.props.finalists.length; i++) {
             var q = this.props.finalists[i].quantity;
 
+
+            /*
+             * 以下の q != q は、q が NaN か否かを判定している。
+             * NaN はあらゆる値と等しくない (NaN 自身とすら等しくない) ため、
+             * q != q が真となるのは q が NaN の場合だけ。
+             *
+             * 数値入力欄では負数を指定できるよう '-' の入力を許している訳
+             * だが、'-' だけ入力した場合、parseInt() / parseFloat() で NaN
+             * となってしまう。
+             * q != q はそれを検知するための条件判定。
+             */
             if (q == 0 || q != q) {
                 alert('数量を指定して下さい。');
                 var e = this.refs['quantity' + i.toString()];

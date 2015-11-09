@@ -141,6 +141,11 @@ var ProcessOrder = React.createClass({
             if (p.state === 'DELIVERED') {
                 var e;
 
+
+                /*
+                 * p.cur_price != p.cur_price は NaN 検知するための条件判定
+                 * 詳しくは edit-order/FinalPane.js 内のコメント参照。
+                 */
                 if (p.cur_price <= 0.0 || p.cur_price != p.cur_price) {
                     alert('現在単価には 0 より大きな値を指定して下さい。');
                     var e = this.refs['cur_price' + i.toString()];
@@ -150,7 +155,7 @@ var ProcessOrder = React.createClass({
 
                 var ba = p.billing_amount;
 
-                if (ba == 0 || ba != ba) {
+                if (ba == 0 || ba != ba) {  // ba != ba も同様
                     alert('請求額を指定して下さい。');
                     var e = this.refs['billing_amount' + i.toString()];
                     React.findDOMNode(e).focus();
