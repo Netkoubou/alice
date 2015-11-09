@@ -31,5 +31,5 @@ openssl req -x509 -newkey rsa:2048 -keyout temp.pem -out cert.pem -days 3650
 # remove password from key
 #
 openssl rsa -in temp.pem -out key.pem
-Enter pass phrase for temp.pem:
-writing RSA key
+# Enter pass phrase for temp.pem:
+# writing RSA key
