@@ -27,18 +27,18 @@ alice/public 以下が Web サーバで公開するドキュメントになる�
 
 ### テスト用のサーバまでまるっと構築する場合
 
-1. MongoDB と OpenSSL をインストールしておき、それぞれ利用可能なようにしておく。
-2. サーバを別途自前で用意する場合の手順を踏む。
-3. MongoDB にテストデータを流し込む
+##### MongoDB と OpenSSL をインストールしておき、それぞれ利用可能なようにしておく。
+##### サーバを別途自前で用意する場合の手順を踏む。
+##### MongoDB にテストデータを流し込む
 
     # mongo localhost/alice --quiet local/utils/insert-dummy-data.js
 
-4. オレオレ証明書を作成 (質問に何と答えるかは、スクリプト内のコメント参照)
+##### オレオレ証明書を作成 (質問に何と答えるかは、スクリプト内のコメント参照)
 
     # cd local/certs
     # sh ../utils/gen-dummy-certs.sh
 
-5. テスト用サーバを起動
+##### テスト用サーバを起動
 
     # cd ../
     # npm run http-server
