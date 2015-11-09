@@ -33,8 +33,10 @@ module.exports = function(req, res) {
         var fiscal_year;
 
         if (now.month() < 4) {
+            // 4 月より前 (1 - 3 月) なら前の年の年度
             fiscal_year = (now.year() - 1).toString();
         } else {
+            // 4 月以降なら今年の年度
             fiscal_year = now.year().toString();
         }
 
