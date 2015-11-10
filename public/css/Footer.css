@@ -19,8 +19,11 @@
   right:       -1024px;
   color:       #ff0000;
   white-space: nowrap;
-  animation: flow 24s linear infinite;
+  animation:   flow 24s linear infinite;
 }
+
+.footer-ordinary { color: #ffffff; }
+.footer-urgency  { color: #ff0000; }
 
 @keyframes flow {
   from { right: -1024px; }

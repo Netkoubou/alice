@@ -8,15 +8,17 @@ var log4js     = require('log4js');
 
 var logout                     = require('./logout');
 var pickMenuItemsForSearchPane = require('./pickMenuItemsForSearchPane');
+var getFooterMessage           = require('./getFooterMessage');
 
-var authenticateUser = require('./authenticateUser');
-var searchCandidates = require('./searchCandidates');
-var registerOrder    = require('./registerOrder');
-var updateOrder      = require('./updateOrder');
-var eraseOrder       = require('./eraseOrder');
-var changeOrderState = require('./changeOrderState');
-var searchOrders     = require('./searchOrders');
-var changePassword   = require('./changePassword');
+var authenticateUser      = require('./authenticateUser');
+var searchCandidates      = require('./searchCandidates');
+var registerOrder         = require('./registerOrder');
+var updateOrder           = require('./updateOrder');
+var eraseOrder            = require('./eraseOrder');
+var changeOrderState      = require('./changeOrderState');
+var searchOrders          = require('./searchOrders');
+var changePassword        = require('./changePassword');
+var registerFooterMessage = require('./registerFooterMessage');
 
 var $ = express();
 
@@ -98,12 +100,14 @@ $.use(bodyParser.urlencoded({ extended: true }) );
  */
 $.get('/logout',                     logout);
 $.get('/pickMenuItemsForSearchPane', pickMenuItemsForSearchPane);
+$.get('/getFooterMessage',           getFooterMessage);
 
-$.post('/authenticateUser', authenticateUser);
-$.post('/searchCandidates', searchCandidates);
-$.post('/registerOrder',    registerOrder);
-$.post('/updateOrder',      updateOrder);
-$.post('/eraseOrder',       eraseOrder);
-$.post('/changeOrderState', changeOrderState);
-$.post('/searchOrders',     searchOrders);
-$.post('/changePassword',   changePassword);
+$.post('/authenticateUser',      authenticateUser);
+$.post('/searchCandidates',      searchCandidates);
+$.post('/registerOrder',         registerOrder);
+$.post('/updateOrder',           updateOrder);
+$.post('/eraseOrder',            eraseOrder);
+$.post('/changeOrderState',      changeOrderState);
+$.post('/searchOrders',          searchOrders);
+$.post('/changePassword',        changePassword);
+$.post('/registerFooterMessage', registerFooterMessage);

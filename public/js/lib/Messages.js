@@ -65,6 +65,12 @@ module.exports = {
             'ネットワークの問題で発注の状態変更に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        REGISTER_MESSAGE_REGISTER_FOOTER_MESSAGE:
+            'AJAX error: registerFooterMessage in RegisterMessage.js\n\n' +
+            'ネットワークの問題でメッセージの登録に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -121,6 +127,11 @@ module.exports = {
         CHANGE_PASSWORD_CHANGE_PASSWORD:
             'Server error: changePassword in ChangePassword.js\n\n' +
             'パスワードの変更でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        REGISTER_MESSAGE_REGISTER_FOOTER_MESSAGE:
+            'Server error: registerFooterMessage in RegisterMessage.js\n\n' +
+            'メッセージの登録でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

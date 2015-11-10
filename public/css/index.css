@@ -33,7 +33,7 @@
 
 #ope { height: 100%; }
 
-#login, #change-password {
+#login, #change-password, #register-message {
   margin:      0 256px 0 256px;
   padding-top: 128px;
   text-align: right;

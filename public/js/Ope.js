@@ -6,30 +6,17 @@ var React      = require('react');
 var EditOrder  = require('./order/EditOrder');
 var ListOrders = require('./order/ListOrders');
 
-var ChangePassword = require('./others/ChangePassword');
-
+var ChangePassword  = require('./others/ChangePassword');
+var RegisterMessage = require('./others/RegisterMessage');
 
 /*
- * 上位要素である Nav から属性として user を貰って来るが、
- * Nav でその検証は済んでいるため、以降は細かい検証をスルー。
+ * 上位要素である Nav から属性として user と action を貰って来るが、
+ * Nav でそれらの検証は済んでいるため、以降は細かい検証をスルー。
  */
 var Ope = React.createClass({
     propTypes: {
         user:   React.PropTypes.object.isRequired,
-        action: React.PropTypes.oneOf([
-            'NONE',
-            'DRAFT_ORDINARY_ORDER',
-            'DRAFT_URGENCY_ORDER',
-            'LIST_ORDERS',
-            'COUNT_COST',
-            'VIEW_BUDGET',
-            'MANAGE_BUDGET',
-            'MANAGE_USERS',
-            'MANAGE_TRADERS',
-            'MANAGE_PRODUCTS',
-            'CHANGE_PASSWORD',
-            'LOGOUT'
-        ]).isRequired
+        action: React.PropTypes.string.isRequired
     },
 
     render: function() {
@@ -52,6 +39,9 @@ var Ope = React.createClass({
             break;
         case 'CHANGE_PASSWORD':
             contents = <ChangePassword />;
+            break;
+        case 'REGISTER_MESSAGE':
+            contents = <RegisterMessage />;
             break;
         default:
             contents = null;

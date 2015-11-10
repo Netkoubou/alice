@@ -89,7 +89,7 @@ var Nav = React.createClass({
             'MANAGE_DEPARTMENTS',       // 部門診療科管理
             'MANAGE_TRADERS',           // 販売元管理
             'NAMAGE_PRODUCTS',          // 物品管理
-            'MANAGE_MESSAGE',           // フッタに表示するメッセージの管理
+            'REGISTER_MESSAGE',         // フッタに表示するメッセージの登録
             'CHANGE_PASSWORD',          // パスワード変更
             'LOGOUT'
         ]).isRequired
@@ -263,9 +263,9 @@ var Nav = React.createClass({
                   <NavItem name="物品管理"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_PRODUCTS'} />
-                  <NavItem name="メッセージ管理"
-                           onClick={this.dummy}
-                           isSelected={selected === 'MANAGE_MESSAGE'} />
+                  <NavItem name="メッセージ登録"
+                           onClick={this.onSelect('REGISTER_MESSAGE')}
+                           isSelected={selected === 'REGISTER_MESSAGE'} />
                 </div>
             );
         }
