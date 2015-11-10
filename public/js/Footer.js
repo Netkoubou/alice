@@ -2,6 +2,7 @@
 var React  = require('react');
 var XHR    = require('superagent');
 
+var timer  = null;
 var Footer = React.createClass({
     getInitialState: function() {
         return ({
@@ -32,7 +33,13 @@ var Footer = React.createClass({
 
     componentDidMount: function() {
         this.getMessage();
-        setInterval(this.getMessage, 240000);
+        timer = setInterval(this.getMessage, 240000);
+    },
+
+    componentWillUnmount: function() {
+        if (timer != null) {
+            clearInterval(timer);
+        }
     },
 
     render: function() {
