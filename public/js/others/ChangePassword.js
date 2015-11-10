@@ -7,10 +7,10 @@ var XHR    = require('superagent');
 var ChangePassword = React.createClass({
     changePassword: function() {
         var expiring       = this.refs.expiring.getValue();
-        var reconfirmation = this.refs.reconfirmation.getValue();
         var fresh          = this.refs.fresh.getValue();
+        var reconfirmation = this.refs.reconfirmation.getValue();
 
-        if (expiring === reconfirmation) {
+        if (fresh === reconfirmation) {
             XHR.post('changePassword').send({
                 old: expiring,
                 new: fresh
@@ -44,11 +44,11 @@ var ChangePassword = React.createClass({
                      ref="expiring"
                      placeholder="旧パスワード" />
               <Input type="password"
-                     ref="reconfirmation"
-                     placeholder="旧パスワード (確認用)" />
-              <Input type="password"
                      ref="fresh"
                      placeholder="新パスワード" />
+              <Input type="password"
+                     ref="reconfirmation"
+                     placeholder="新パスワード (確認用)" />
               <Button onClick={this.changePassword}>変更</Button>
             </fieldset>
         );
