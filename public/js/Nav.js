@@ -82,13 +82,14 @@ var Nav = React.createClass({
             'DRAFT_ORDINARY_ORDER',     // 通常発注起案
             'DRAFT_URGENCY_ORDER',      // 緊急発注起案
             'LIST_ORDERS',              // 発注一覧
-            'COUNT_COST',               // 経費・精算
-            'VIEW_BUDGET',              // 予算一覧
-            'MANAGE_BUDGET',            // 予算管理
-            'MANAGE_USERS',             // ユーザ管理
-            'MANAGE_DEPARTMENTS',       // 部門診療科管理
-            'MANAGE_TRADERS',           // 販売元管理
-            'NAMAGE_PRODUCTS',          // 物品管理
+            'APPLY_COST',               // 経費精算申請起案
+            'LIST_COSTS',               // 経費精算申請一覧
+            'LIST_BUDGET',              // 予算一覧
+            'ADMIN_BUDGET',             // 予算管理
+            'MANAGE_USERS',             // ユーザ情報管理
+            'MANAGE_DEPARTMENTS',       // 部門診療科情報管理
+            'MANAGE_TRADERS',           // 販売元情報管理
+            'NAMAGE_PRODUCTS',          // 物品情報管理
             'REGISTER_MESSAGE',         // フッタに表示するメッセージの登録
             'CHANGE_PASSWORD',          // パスワード変更
             'LOGOUT'
@@ -158,7 +159,6 @@ var Nav = React.createClass({
                  */
                 can_list_order = true;
             }
-
         });
 
 
@@ -201,7 +201,7 @@ var Nav = React.createClass({
         if (is_ordinary_drafter) {
             draft_order.push(
                 <NavItem key="1"
-                         name="通常発注起案"
+                         name="通常起案"
                          onClick={this.onSelect('DRAFT_ORDINARY_ORDER')}
                          isSelected={selected === 'DRAFT_ORDINARY_ORDER'} />
             );
@@ -210,7 +210,7 @@ var Nav = React.createClass({
         if (is_urgency_drafter) {
             draft_order.push(
                 <NavItem key="2"
-                         name="緊急発注起案"
+                         name="緊急起案"
                          onClick={this.onSelect('DRAFT_URGENCY_ORDER')}
                          isSelected={selected === 'DRAFT_URGENCY_ORDER'} />
             );
@@ -219,7 +219,7 @@ var Nav = React.createClass({
         if (can_list_order) {
             draft_order.push(
                 <NavItem key="3"
-                         name="発注一覧"
+                         name="一覧"
                          onClick={this.onSelect('LIST_ORDERS')}
                          isSelected={selected === 'LIST_ORDERS'} />
             );
@@ -233,37 +233,37 @@ var Nav = React.createClass({
             budget.push(<NavItemTitle key="0" name="予算" />);
             budget.push(
                 <NavItem key="1"
-                         name="予算一覧"
+                         name="一覧"
                          onClick={this.dummy}
-                         isSelected={selected === 'VIEW_BUDGET'} />
+                         isSelected={selected === 'LIST_BUDGET'} />
             );
         }
 
         if (this.props.user.privileged.administrate) {
             budget.push(<NavItem key="2"
-                                 name="予算管理"
+                                 name="管理"
                                  onClick={this.dummy}
-                                 isSelected={selected === 'MANAGE_BUDGET'} />
+                                 isSelected={selected === 'ADMIN_BUDGET'} />
             );
         }
 
         if (is_admin) {
             etc = (
                 <div>
-                  <NavItemTitle name="情報管理" />
-                  <NavItem name="ユーザ管理"
+                  <NavItemTitle name="システム管理" />
+                  <NavItem name="ユーザ情報"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_USERS'} />
-                  <NavItem name="部門診療科管理"
+                  <NavItem name="部門診療科情報"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_DEPARTMENTS'} />
-                  <NavItem name="販売元管理"
+                  <NavItem name="販売元情報"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_TRADERS'} />
-                  <NavItem name="物品管理"
+                  <NavItem name="物品情報"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_PRODUCTS'} />
-                  <NavItem name="メッセージ登録"
+                  <NavItem name="メッセージ"
                            onClick={this.onSelect('REGISTER_MESSAGE')}
                            isSelected={selected === 'REGISTER_MESSAGE'} />
                 </div>
@@ -278,10 +278,13 @@ var Nav = React.createClass({
         return (
             <div id={this.state.nav_id}>
               {draft_order}
-              <NavItemTitle name="経費" />
-              <NavItem name="経費・精算"
+              <NavItemTitle name="経費精算申請" />
+              <NavItem name="起案"
                        onClick={this.dummy}
-                       isSelected={selected === 'COUNT_COST'} />
+                       isSelected={selected === 'APPLY_COST'} />
+              <NavItem name="一覧"
+                       onClick={this.dummy}
+                       isSelected={selected === 'LIST_COSTS'} />
               {budget}
               {etc}
               <NavItemTitle name="その他" />
