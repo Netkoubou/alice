@@ -1,27 +1,15 @@
 @media (max-height: 768px) {
-  html, body {
-    height: 768px;
-  }
-
-  body > div {
-    height: 100%;
-  }
+  html, body { height: 768px; }
+  body > div { height: 100%; }
 }
 
 @media (max-width: 1024px) {
-  html, body {
-    width: 1024px;
-  }
-
-  body > div {
-    width: 100%;
-  }
+  html, body { width: 1024px; }
+  body > div { width:  100%; }
 }
 
 @media (min-height: 768px) {
-  html, body {
-    height: 100%;
-  }
+  html, body { height: 100%; }
 
   body > div {
     height:     100%;
@@ -30,9 +18,7 @@
 }
 
 @media (min-width: 1024px) {
-  html, body {
-    width: 100%;
-  }
+  html, body { width: 100%; }
 
   body > div {
     width:      100%;
@@ -45,9 +31,7 @@
   position: relative;
 }
 
-#ope {
-  height: 100%;
-}
+#ope { height: 100%; }
 
 #login, #change-password {
   margin:      0 256px 0 256px;

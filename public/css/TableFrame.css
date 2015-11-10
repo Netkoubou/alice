@@ -1,6 +1,6 @@
 .table-frame {
-    margin-left: 32px;
-    width:       100%;
+  margin-left: 32px;
+  width:      100%;
 }
 
 .table-frame-title {
@@ -32,9 +32,7 @@
   margin-bottom: 10px;
 }
 
-.table-frame tbody td:first-child {
-  padding-left: 0;
-}
+.table-frame tbody td:first-child { padding-left: 0; }
 
 .table-frame tbody td {
   border-right:  1px solid #cccccc;
@@ -42,9 +40,7 @@
   padding-right: 4px;
 }
 
-.table-frame tbody td:last-child {
-  border-right: 0px;
-}
+.table-frame tbody td:last-child { border-right: 0px; }
 
 .table-frame input {
   color:  #2196f3;
@@ -54,14 +50,10 @@
   transition-duration: 250ms;
 }
 
-.table-frame input.number {
-  text-align: right;
-}
+.table-frame input.number { text-align: right; }
 
 .table-frame input:focus {
   box-shadow: inset #2196f3 1px -1px 1px 1px, inset #2196f3 -1px 1px 1px 1px;
 }
 
-.table-frame select {
-  border: none;
-}
+.table-frame select { border: none; }

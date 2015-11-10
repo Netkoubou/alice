@@ -1,7 +1,28 @@
 #footer {
   margin-top: 1px;
   clear:      both;
-  padding:    16px 16px 16px 16px;
-  color:      #ff0000;
+  width:      100%;
+  padding:    16px 0 16px 0;
   background: #2196f3;
+}
+
+#footer-telop {
+  position: relative;
+  width:    100%;
+  height:   32px;
+  overflow: hidden;
+  background: #2196f3;
+}
+
+#footer-text {
+  position:    absolute;
+  right:       -1024px;
+  color:       #ff0000;
+  white-space: nowrap;
+  animation: flow 24s linear infinite;
+}
+
+@keyframes flow {
+  from { right: -1024px; }
+  to   { right:  2048px; }
 }
