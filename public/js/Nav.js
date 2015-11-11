@@ -280,7 +280,7 @@ var Nav = React.createClass({
               {draft_order}
               <NavItemTitle name="経費精算申請" />
               <NavItem name="起案"
-                       onClick={this.dummy}
+                       onClick={this.onSelect('APPLY_COST')}
                        isSelected={selected === 'APPLY_COST'} />
               <NavItem name="一覧"
                        onClick={this.dummy}

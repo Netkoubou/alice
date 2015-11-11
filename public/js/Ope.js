@@ -3,11 +3,15 @@
  */
 'use strict';
 var React      = require('react');
+
 var EditOrder  = require('./order/EditOrder');
 var ListOrders = require('./order/ListOrders');
 
 var ChangePassword  = require('./others/ChangePassword');
 var RegisterMessage = require('./others/RegisterMessage');
+
+var ApplyCost = require('./cost/ApplyCost');
+
 
 /*
  * 上位要素である Nav から属性として user と action を貰って来るが、
@@ -42,6 +46,9 @@ var Ope = React.createClass({
             break;
         case 'REGISTER_MESSAGE':
             contents = <RegisterMessage />;
+            break;
+        case 'APPLY_COST':
+            contents = <ApplyCost />;
             break;
         default:
             contents = null;

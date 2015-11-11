@@ -1,0 +1,32 @@
+#apply-cost {
+  width:     100%;
+  height:    100%;
+  font-size: small;
+  position:  relative;
+}
+
+#apply-cost-selects {
+  padding-top:   16px;
+  margin-left:   32px;
+  margin-bottom: 32px;
+}
+
+.apply-cost-select { margin-right: 8px; }
+
+#apply-cost-breakdowns {
+  width:  calc(100% -  48px);
+  height: calc(100% - 168px);
+}
+
+#apply-cost-total {
+  position: absolute;
+  width:    192px;
+  left:      38px;
+  bottom:     4px;
+}
+
+#apply-cost-buttons {
+  position: absolute;
+  right:    16px;
+  bottom:   4px;
+}
