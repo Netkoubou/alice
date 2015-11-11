@@ -84,7 +84,7 @@ var ProcessOrder = React.createClass({
                 throw 'server_changeOrderState';
             }
 
-            alert('完了しました');
+            alert('完了しました。');
             this.props.goBack();
         }.bind(this) );
     },
@@ -208,7 +208,7 @@ var ProcessOrder = React.createClass({
                     throw 'server_updateOrder';
                 }
 
-                alert('確定しました');
+                alert('確定しました。');
                 this.props.goBack();
             }.bind(this) );
         }
@@ -265,7 +265,7 @@ var ProcessOrder = React.createClass({
                     can_process_order = true;
                 }
             }
-        });
+        }.bind(this) );
 
         var permission  = 'REFER_ONLY';
         var order_state = this.props.order.order_state;
