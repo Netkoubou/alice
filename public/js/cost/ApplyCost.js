@@ -7,6 +7,31 @@ var TableFrame = require('../components/TableFrame');
 var Notice     = require('../components/Notice');
 var Messages   = require('../lib/Messages');
 
+var AddItem = React.createClass({
+    propTypes: { onClick: React.PropTypes.func.isRequired },
+
+    render: function() {
+        return (
+            <div className="apply-cost-add-item" onClick={this.props.onClick}>
+              +
+            </div>
+        );
+    }
+});
+
+var RemoveItem = React.createClass({
+    propTypes: { onClick: React.PropTypes.func.isRequired },
+
+    render: function() {
+        return (
+            <div className="apply-cost-remove-item"
+                 onClick={this.props.onClick}>
+              -
+            </div>
+        );
+    }
+});
+
 var ApplyCost = React.createClass({
     getInitialState: function() {
         return {
@@ -21,6 +46,35 @@ var ApplyCost = React.createClass({
     onSelectDepartment:   function(e) { this.setState({ department: e }); },
     onSelectAccountTitle: function(e) { this.setState({ account_title: e }); },
     onClear:              function()  { this.setState({ breakdowns: [] }); },
+
+    onAdd: function() {
+        this.state.breakdowns.push({
+            date:    '',
+            article: '',
+            quantity: 0,
+            price:    0,
+            note:    ''
+        });
+
+        this.setState({ breakdowns: this.state.breakdowns });
+    },
+
+    onRemove: function(index) {
+        return function() {
+            var a = this.state.breakdowns;
+        
+            this.setState({
+                breakdowns: a.slice(0, index).concat(a.slice(index + 1) )
+            });
+        }.bind(this);
+    },
+
+    onChange: function(index, attribute) {
+        return function(value) {
+            this.state.breakdowns[index][attribute] = value;
+            this.setState({ breakdowns: this.state.breakdowns });
+        }.bind(this);
+    },
 
     onRegister: function() {
         XHR.post('applyCost').send({
@@ -49,13 +103,77 @@ var ApplyCost = React.createClass({
         }
 
         var title = [
-            { name: '日付',        type: 'string' },
-            { name: '品名',        type: 'string' },
-            { name: '数量',        type: 'number' },
-            { name: '単価',        type: 'number' },
-            { name: '小計',        type: 'number' },
-            { name: '摘要 / 備考', type: 'string' }
+            { name: '+/-',         type: 'void' },
+            { name: '日付',        type: 'void' },
+            { name: '品名',        type: 'void' },
+            { name: '数量',        type: 'void' },
+            { name: '単価',        type: 'void' },
+            { name: '小計',        type: 'void' },
+            { name: '摘要 / 備考', type: 'void' }
         ];
+
+        var data = this.state.breakdowns.map(function(b, i) {
+            return [
+                {
+                    value: '',
+                    view:  <RemoveItem onClick={this.onRemove(i)} />
+                },
+                {
+                    value: b.date,
+                    view:  <TableFrame.Input key={Math.random()}
+                             type="string"
+                             placeholder={b.date}
+                             ref={'date' + i.toString()}
+                             onChange={this.onChange(i, 'date')} />
+                },
+                {
+                    value: b.article,
+                    view:  <TableFrame.Input key={Math.random()}
+                             type="string"
+                             placeholder={b.article}
+                             ref={'article' + i.toString()}
+                             onChange={this.onChange(i, 'article')} />
+                },
+                {
+                    value: b.quantity,
+                    view:  <TableFrame.Input key={Math.random()}
+                             type="int"
+                             placeholder={b.quantity.toLocaleString()}
+                             ref={'quantity' + i.toString()}
+                             onChange={this.onChange(i, 'quantity')} />
+                },
+                {
+                    value: b.price,
+                    view:  <TableFrame.Input key={Math.random()}
+                             type="int"
+                             placeholder={b.price.toLocaleString()}
+                             ref={'price' + i.toString()}
+                             onChange={this.onChange(i, 'price')} />
+                },
+                {
+                    value:  b.price * b.quantity,
+                    view:  (b.price * b.quantity).toLocaleString()
+                },
+                {
+                    value: b.note,
+                    view:  <TableFrame.Input key={Math.random()}
+                             type="string"
+                             placeholder={b.note}
+                             ref={'note' + i.toString()}
+                             onChange={this.onChange(i, 'note')} />
+                },
+            ];
+        }.bind(this) );
+
+        data.push([
+            { value: '', view: <AddItem onClick={this.onAdd} /> },
+            { value: '', view: '' },
+            { value: '', view: '' },
+            { value: '', view: '' },
+            { value: '', view: '' },
+            { value: '', view: '' },
+            { value: '', view: '' },
+        ]);
 
         return (
             <div id="apply-cost">
@@ -74,7 +192,7 @@ var ApplyCost = React.createClass({
                 </span>
               </div>
               <TableFrame id="apply-cost-breakdowns"
-                          title={title} data={this.state.breakdowns} />
+                          title={title} data={data} />
               <div id="apply-cost-total">
                 <Notice title="合計">100</Notice>
               </div>

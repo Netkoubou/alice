@@ -79,7 +79,7 @@ var TFh = React.createClass({
         }
 
         return (
-            <th key={this.props.colNum}>
+            <th key={this.props.colNum} className="table-frame-header">
               <span onClick={this.onClick}
                     onMouseOver={this.onMouseOver}
                     onMouseLeave={this.onMouseLeave}> 
@@ -96,7 +96,11 @@ var TableFrame = React.createClass({
         id:    React.PropTypes.string.isRequired,
         title: React.PropTypes.arrayOf(React.PropTypes.shape({
             name: React.PropTypes.string.isRequired,
-            type: React.PropTypes.oneOf(['string', 'number']).isRequired
+            type: React.PropTypes.oneOf([
+                'void',
+                'string',
+                'number'
+            ]).isRequired
         }) ).isRequired,
         data: React.PropTypes.oneOfType([
             React.PropTypes.array,
@@ -136,14 +140,18 @@ var TableFrame = React.createClass({
          * 表のタイトル
          */
         var title = this.props.title.map(function(cell, col_num) {
-            return (
-                <TFh onClick={this.onSort(col_num)}
-                     key={col_num}
-                     colNum={col_num}
-                     isLastSortTarget={col_num == this.state.col_num}>
-                  {cell.name}
-                </TFh>
-            );
+            if (cell.type === 'void') {
+                return (<th key={col_num}>{cell.name}</th>);
+            } else {
+                return (
+                    <TFh onClick={this.onSort(col_num)}
+                        key={col_num}
+                        colNum={col_num}
+                        isLastSortTarget={col_num == this.state.col_num}>
+                      {cell.name}
+                    </TFh>
+                );
+            }
         }.bind(this) );
 
 

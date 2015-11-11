@@ -34,7 +34,7 @@ var Page = React.createClass({
         var passphrase = this.refs.passphrase.getValue();
 
         XHR.post('authenticateUser').send({
-            account: account,
+            account:    account,
             passphrase: passphrase
         }).end(function(err, res) {
             if (err) {
@@ -104,7 +104,7 @@ var Page = React.createClass({
 
         return (
             <div>
-              <Header account={this.state.user.account} />
+              <Header user={this.state.user} />
               <div id="content">
                 <Nav user={this.state.user}
                      onSelect={this.setAction}
@@ -112,7 +112,7 @@ var Page = React.createClass({
                      selected={this.state.action} />
                 <Ope user={this.state.user} action={this.state.action} />
               </div>
-              <Footer user={this.state.user} />
+              <Footer />
             </div>
         );
     }

@@ -10,9 +10,9 @@
   width:          calc(100% - 16px);
 }
 
-.table-frame-title table { width: 100%; }
-.table-frame th       { text-align: center; }
-.table-frame th:hover { cursor: pointer; }
+.table-frame-title  table { width: 100%; }
+.table-frame        th    { text-align: center; }
+.table-frame-header:hover { cursor: pointer; }
 
 .table-frame-caret {
   font-size:   75%;

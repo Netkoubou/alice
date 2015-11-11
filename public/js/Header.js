@@ -1,9 +1,8 @@
 'use strict';
-var React  = require('react');
+var React = require('react');
+
 var Header = React.createClass({
-    propTypes: {
-        account: React.PropTypes.string.isRequired
-    },
+    propTypes: { user: React.PropTypes.object.isRequired },
 
     render: function() {
         var selector = Math.random();
@@ -36,7 +35,10 @@ var Header = React.createClass({
             </div>
             <div id="header-petname">Perry</div>
             <div id="header-welcome">
-              ようこそ<span id="header-account">{this.props.account}</span>様
+              ようこそ
+              <span id="header-account">
+                {this.props.user.name + ' (' + this.props.user.account + ')'}
+              </span>様
             </div>
           </div>
         );

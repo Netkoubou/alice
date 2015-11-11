@@ -57,6 +57,7 @@ var Nav = React.createClass({
     propTypes: {
         user: React.PropTypes.shape({
             account:    React.PropTypes.string.isRequired,
+            name:       React.PropTypes.string.isRequired,
             privileged: React.PropTypes.shape({
                 administrate:     React.PropTypes.bool.isRequired,
                 draft_ordinarily: React.PropTypes.bool.isRequired,
