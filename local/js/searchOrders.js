@@ -270,6 +270,7 @@ function construct_response(orders, db, res) {
             order_type:      order.order_type,
             order_state:     order.order_state,
             order_remark:    order.order_remark,
+            order_version:   order.order_version,
             drafting_date:   order.drafting_date,
             drafter_code:    order.drafter_code,
             drafter_account: '',    // これから埋める

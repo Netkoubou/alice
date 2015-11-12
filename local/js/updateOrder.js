@@ -98,13 +98,17 @@ module.exports = function(req, res) {
         });
 
         db.collection('orders').updateOne(
-            { order_code: req.body.order_code },
+            {
+                order_code:    req.body.order_code,
+                order_version: req.body.order_version
+            },
             {
                 '$set': {
-                    order_state:  req.body.order_state,
-                    order_remark: req.body.order_remark,
-                    trader_code:  req.body.trader_code,
-                    products:     products,
+                    order_state:   req.body.order_state,
+                    order_remark:  req.body.order_remark,
+                    order_version: req.body.order_version + 1,
+                    trader_code:   req.body.trader_code,
+                    products:      products,
                     last_modified_date: now,
                     last_modifier_code: req.session.user._id
                 }
@@ -113,18 +117,35 @@ module.exports = function(req, res) {
                 var msg;
     
                 if (err == null) {
-                    /*
-                     * ここで orders コレクションの更新が完了。
-                     * 一旦、DB の更新完了をクライアントに通知してから、
-                     * products コレクションに新単価を登録する。
-                     */
-                    res.json({ status: 0 });
-                    msg = '[updateOrder] updated order: "' +
-                          req.body.order_code + '" ' +
-                          'by "' + req.session.user.account + '".';
+                    if (result.matchedCount == 0) {
+                        /*
+                         * order_version が不一致。
+                         * つまり、他のユーザが既にドキュメントを更新した、
+                         * ということであり、この更新は古い情報に基づいている
+                         * ため、このまま更新してしまうと先の更新が無かったこ
+                         * とになってしまう。
+                         */
+                        db.close();
+                        res.json({ status: 1 });
+                        msg = '[updateOrder] unmatched version of order: "' +
+                              req.body.order_code + '" ' +
+                              'by "' + req.session.user.account + '".';
+
+                        log_info.info(msg);
+                    } else {
+                        /*
+                         * ここで orders コレクションの更新が完了。
+                         * 一旦、DB の更新完了をクライアントに通知してから、
+                         * products コレクションに新単価を登録する。
+                         */
+                        res.json({ status: 0 });
+                        msg = '[updateOrder] updated order: "' +
+                              req.body.order_code + '" ' +
+                              'by "' + req.session.user.account + '".';
     
-                    log_info.info(msg);
-                    update_prices(db, req, prices);
+                        log_info.info(msg);
+                        update_prices(db, req, prices);
+                    }
                 } else {
                     db.close();
                     res.json({ status: 255 });

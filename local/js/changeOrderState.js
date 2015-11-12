@@ -15,11 +15,15 @@ module.exports = function(req, res) {
 
     util.query(function(db) {
         db.collection('orders').updateOne(
-            { order_code: req.body.order_code },
+            {
+                order_code:    req.body.order_code,
+                order_version: req.body.order_version
+            },
             {
                 '$set': {
-                    order_state:  req.body.order_state,
-                    order_remark: req.body.order_remark
+                    order_state:   req.body.order_state,
+                    order_remark:  req.body.order_remark,
+                    order_version: req.body.order_version + 1
                 }
             },
             function(err, result) {
@@ -28,22 +32,31 @@ module.exports = function(req, res) {
                 db.close();
 
                 if (err == null) {
-                    res.json({ status: 0 });
+                    if (result.matchedCount == 0) {
+                        res.json({ status: 1 });
 
-                    msg = '[changeOrderState] ' +
-                          'updated order: "' + req.body.order_code + '" ' +
-                          'by "' + req.session.user.account + '".';
+                        msg = '[changeOrderState] ' +
+                              'unmatched version of order: "' +
+                              req.body.order_code + '" ' +
+                              'by "' + req.session.user.account + '".';
 
-                    log_info.info(msg);
+                        log_info.info(msg);
+                    } else {
+                        res.json({ status: 0 });
+
+                        msg = '[changeOrderState] ' +
+                              'updated order: "' + req.body.order_code + '" ' +
+                              'by "' + req.session.user.account + '".';
+
+                        log_info.info(msg);
+                    } 
                 } else {
                     res.json({ status: 255 });
                     log_warn.warn(err);
-
                     msg = '[changeOrderState] ' +
                           'failed to update order: "' +
                           req.body.order_code + '" ' +
                           'by "' + req.session.user.account + '".';
-
                     log_warn.warn(msg);
                 }
             }

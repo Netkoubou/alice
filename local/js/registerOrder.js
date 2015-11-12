@@ -48,10 +48,11 @@ module.exports = function(req, res) {
 
         orders.count(sel, function(err, count) {
             var order = {
-                order_code:   '',
-                order_type:   req.body.order_type,
-                order_state:  'REQUESTING',
-                order_remark: req.body.order_remark,
+                order_code:    '',
+                order_type:    req.body.order_type,
+                order_state:   'REQUESTING',
+                order_remark:  req.body.order_remark,
+                order_version: 0,
 
                 drafting_date:   now.format('YYYY/MM/DD'),
                 drafter_code:    req.session.user._id,
