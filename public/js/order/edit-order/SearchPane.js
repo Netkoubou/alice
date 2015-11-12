@@ -234,7 +234,7 @@ var SearchPane = React.createClass({
      */
     onSearch: function(e) {
         if (this.state.department.code === '') {
-            alert('部門診療科を選択して下さい');
+            alert('部門診療科を選択して下さい。');
             e.preventDefault();
             return;
         }

@@ -70,21 +70,27 @@ var ProcessOrder = React.createClass({
 
     changeOrderState: function(order_state) {
         XHR.post('changeOrderState').send({
-            order_code:   this.props.order.order_code,
-            order_state:  order_state,
-            order_remark: this.state.order_remark
+            order_code:    this.props.order.order_code,
+            order_state:   order_state,
+            order_remark:  this.state.order_remark,
+            order_version: this.props.order.order_version
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.APPROVE_CHANGE_ORDER_STATE);
                 throw 'ajax_changeOrderState';
             }
 
-            if (res.body.status != 0) {
+            if (res.body.status > 1) {
                 alert(Messages.server.APPROVE_CHANGE_ORDER_STATE);
                 throw 'server_changeOrderState';
             }
 
-            alert('完了しました。');
+            if (res.body.status == 0) {
+                alert('完了しました。');
+            } else {
+                alert(Messages.information.UPDATE_CONFLICT);
+            }
+
             this.props.goBack();
         }.bind(this) );
     },
@@ -186,6 +192,7 @@ var ProcessOrder = React.createClass({
                 order_code:      this.props.order.order_code,
                 order_state:     order_state,
                 order_remark:    this.state.order_remark,
+                order_version:   this.props.order.order_version,
                 department_code: this.props.order.department_code,
                 trader_code:     this.props.order.trader_code,
                 products:        this.state.products.map(function(p) {
@@ -203,12 +210,17 @@ var ProcessOrder = React.createClass({
                     throw 'ajax_updateOrder';
                 }
 
-                if (res.body.status != 0) {
+                if (res.body.status > 1) {
                     alert(Messages.server.PROCESS_ORDER_UPDATE_ORDER);
                     throw 'server_updateOrder';
                 }
 
-                alert('確定しました。');
+                if (res.body.status == 0) {
+                    alert('確定しました。');
+                } else {
+                    alert(Messages.information.UPDATE_CONFLICT);
+                }
+
                 this.props.goBack();
             }.bind(this) );
         }

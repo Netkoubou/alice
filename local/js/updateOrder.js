@@ -138,7 +138,10 @@ module.exports = function(req, res) {
                          * 一旦、DB の更新完了をクライアントに通知してから、
                          * products コレクションに新単価を登録する。
                          */
-                        res.json({ status: 0 });
+                        res.json({
+                            status:        0,
+                            order_version: req.body.order_version + 1
+                        });
                         msg = '[updateOrder] updated order: "' +
                               req.body.order_code + '" ' +
                               'by "' + req.session.user.account + '".';

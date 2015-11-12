@@ -31,16 +31,16 @@ var Util          = require('../lib/Util');
  * Flux 定数
  */
 var messages = {
-    SET_ORDER_CODE:    'SET_ORDER_CODE',
-    SET_ORDER_REMARK:  'SET_ORDER_REMARK',
-    CLEAR_CANDIDATES:  'CLEAR_CANDIDATES',
-    UPDATE_CANDIDATES: 'UPDATE_CANDIDATES',
-    ADD_FINALIST:      'ADD_FINALIST',
-    REMOVE_FINALIST:   'REMOVE_FINALIST',
-    CLEAR_FINALISTS:   'CLEAR_FINALISTS',
-    CHANGE_QUANTITY:   'CHANGE_QUANTITY',
-    FIX_FINALISTS:     'FIX_FINALISTS',
-    RESET_ORDER:       'RESET_ORDER'
+    SET_ORDER_CODE_AND_VERSION: 'SET_ORDER_CODE_AND_VERSION',
+    SET_ORDER_REMARK:           'SET_ORDER_REMARK',
+    CLEAR_CANDIDATES:           'CLEAR_CANDIDATES',
+    UPDATE_CANDIDATES:          'UPDATE_CANDIDATES',
+    ADD_FINALIST:               'ADD_FINALIST',
+    REMOVE_FINALIST:            'REMOVE_FINALIST',
+    CLEAR_FINALISTS:            'CLEAR_FINALISTS',
+    CHANGE_QUANTITY:            'CHANGE_QUANTITY',
+    FIX_FINALISTS:              'FIX_FINALISTS',
+    RESET_ORDER:                'RESET_ORDER'
 };
 
 
@@ -49,11 +49,12 @@ var messages = {
  */
 var StoreForEditOrder = Fluxxor.createStore({
     initialize: function() {
-        this.order_code   = '';     // 起案番号
-        this.order_remark = '';     // 備考
-        this.candidates   = [];     // 物品の発注候補一覧
-        this.finalists    = [];     // 物品の発注確定一覧
-        this.need_save    = true;   // 発注確定一覧を DB に登録必要か?
+        this.order_code    = '';    // 起案番号
+        this.order_remark  = '';    // 備考
+        this.order_version = 0;     // 発注のバージョン番号
+        this.candidates    = [];    // 物品の発注候補一覧
+        this.finalists     = [];    // 物品の発注確定一覧
+        this.need_save     = true;  // 発注確定一覧を DB に登録必要か?
 
         this.department = {
             code: '',
@@ -66,8 +67,8 @@ var StoreForEditOrder = Fluxxor.createStore({
         };
 
         this.bindActions(
-            messages.SET_ORDER_CODE,
-            this.setOrderCode
+            messages.SET_ORDER_CODE_AND_VERSION,
+            this.setOrderCodeAndVersion
         );
         this.bindActions(
             messages.SET_ORDER_REMARK,
@@ -114,9 +115,10 @@ var StoreForEditOrder = Fluxxor.createStore({
      * 最新の発注が DB に登録済みである、ということである。
      * と言うことで、need_save フラグを false にしている。
      */
-    setOrderCode: function(payload) {
-        this.order_code = payload.code;
-        this.need_save  = false;
+    setOrderCodeAndVersion: function(payload) {
+        this.order_code    = payload.code;
+        this.order_version = payload.version;
+        this.need_save     = false;
         this.emit('change');
     },
 
@@ -246,8 +248,9 @@ var StoreForEditOrder = Fluxxor.createStore({
     /*
      * 新規若しくは変更した既存の発注確定一覧を DB に登録したら
      */
-    onFixFinalists: function() {
-        this.need_save = false;
+    onFixFinalists: function(payload) {
+        this.order_version = payload.version;
+        this.need_save     = false;
         this.emit('change');
     },
 
@@ -263,6 +266,7 @@ var StoreForEditOrder = Fluxxor.createStore({
 
         this.order_code    = order.order_code;
         this.order_remark  = order.order_remark;
+        this.order_version = order.order_version;
         this.drafting_date = order.drafting_date;
 
 
@@ -299,6 +303,7 @@ var StoreForEditOrder = Fluxxor.createStore({
     resetState: function() {
         this.order_code      = '';
         this.order_remark    = '';
+        this.order_version   = 0;
         this.department      = { code: '', name: '' };
         this.candidates      = [];
         this.trader          = { code: '', name: '未確定' };
@@ -312,6 +317,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             department:    this.department,
             order_code:    this.order_code,
             order_remark:  this.order_remark,
+            order_version: this.order_version,
             drafting_date: this.drafting_date,
             candidates:    this.candidates,
             trader:        this.trader,
@@ -326,8 +332,8 @@ var StoreForEditOrder = Fluxxor.createStore({
  * Flux Action
  */
 var actions = {
-    setOrderCode: function(payload) {
-        this.dispatch(messages.SET_ORDER_CODE, payload);
+    setOrderCodeAndVersion: function(payload) {
+        this.dispatch(messages.SET_ORDER_CODE_AND_VERSION, payload);
     },
 
     setOrderRemark: function(payload) {
@@ -385,8 +391,8 @@ var actions = {
         this.dispatch(messages.CHANGE_QUANTITY, payload);
     },
 
-    fixFinalists: function() {
-        this.dispatch(messages.FIX_FINALISTS);
+    fixFinalists: function(payload) {
+        this.dispatch(messages.FIX_FINALISTS, payload);
     },
 
     resetOrder: function() {
@@ -454,6 +460,7 @@ var SubeditOrder = React.createClass({
                 <FinalPane user={this.props.user}
                            orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}
+                           orderVersion={this.state.order_version}
                            draftingDate={drafting_date}
                            orderType={this.props.orderType}
                            drafter={drafter}
@@ -505,6 +512,7 @@ var EditOrder = React.createClass({
             ]).isRequired,
 
             order_remark:    React.PropTypes.string.isRequired,
+            order_version:   React.PropTypes.number.isRequired,
             drafting_date:   React.PropTypes.string.isRequired,
             drafter_code:    React.PropTypes.string.isRequired,
             drafter_account: React.PropTypes.string.isRequired,

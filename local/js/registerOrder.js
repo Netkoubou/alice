@@ -95,8 +95,9 @@ module.exports = function(req, res) {
                              */
                             if (err == null) {
                                 res.json({
-                                    status: 0,
-                                    order_code: order.order_code
+                                    status:        0,
+                                    order_code:    order.order_code,
+                                    order_version: 0
                                 });
 
                                 msg = '[registerOrder] ' + 

@@ -75,7 +75,7 @@ var ButtonForNextAction = React.createClass({
                     throw 'server_eraseOrder';
                 }
 
-                alert('消去しました');
+                alert('消去しました。');
 
                 if (this.props.goBack == null) {
                     this.getFlux().actions.resetOrder();
@@ -128,12 +128,13 @@ var FinalPane = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        user:           React.PropTypes.object.isRequired,
-        orderCode:      React.PropTypes.string.isRequired,
-        orderRemark:    React.PropTypes.string.isRequired,
-        draftingDate:   React.PropTypes.string.isRequired,
-        orderType:      React.PropTypes.string.isRequired,
-        drafter:        React.PropTypes.string.isRequired,
+        user:         React.PropTypes.object.isRequired,
+        orderCode:    React.PropTypes.string.isRequired,
+        orderRemark:  React.PropTypes.string.isRequired,
+        orderVersion: React.PropTypes.number.isRequired,
+        draftingDate: React.PropTypes.string.isRequired,
+        orderType:    React.PropTypes.string.isRequired,
+        drafter:      React.PropTypes.string.isRequired,
 
         department: React.PropTypes.shape({
             code: React.PropTypes.string.isRequired,
@@ -236,9 +237,10 @@ var FinalPane = React.createClass({
                     throw 'server_registerOrder';
                 }
 
-                alert('登録しました');
-                this.getFlux().actions.setOrderCode({
-                    code: res.body.order_code
+                alert('登録しました。');
+                this.getFlux().actions.setOrderCodeAndVersion({
+                    code:    res.body.order_code,
+                    version: res.body.order_version
                 });
 
 
@@ -270,6 +272,7 @@ var FinalPane = React.createClass({
                 order_code:      this.props.orderCode,
                 order_state:     'REQUESTING',
                 order_remark:    this.props.orderRemark,
+                order_version:   this.props.orderVersion,
                 department_code: this.props.department.code,
                 trader_code:     this.props.trader.code,
                 products:        this.props.finalists.map(function(p) {
@@ -287,13 +290,25 @@ var FinalPane = React.createClass({
                     throw 'ajax_updateOrder';
                 }
 
-                if (res.body.status != 0) {
+                if (res.body.status > 1) {
                     alert(Messages.server.FINAL_PANE_UPDATE_ORDER);
                     throw 'server_updateOrder';
                 }
 
-                alert('更新しました');
-                this.getFlux().actions.fixFinalists();
+                if (res.body.status == 0) {
+                    alert('更新しました。');
+                    this.getFlux().actions.fixFinalists({
+                        version: res.body.order_version
+                    });
+                } else {
+                    alert(Messages.information.UPDATE_CONFLICT);
+
+                    if (this.props.goBack === undefined) {
+                        this.getFlux().actions.resetOrder();
+                    } else {
+                        this.props.goBack();
+                    }
+                }
             }.bind(this) );
         }
     },
@@ -304,44 +319,41 @@ var FinalPane = React.createClass({
      */
     onPrint: function() {
         XHR.post('changeOrderState').send({
-            order_code:   this.props.orderCode,
-            order_state:  'APPROVING',
-            order_remark: this.props.orderRemark
+            order_code:    this.props.orderCode,
+            order_state:   'APPROVING',
+            order_remark:  this.props.orderRemark,
+            order_version: this.props.orderVersion
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.FINAL_PANE_CHANGE_ORDER_STATE);
                 throw 'ajax_changeOrderState';
             }
 
-            if (res.body.status != 0) {
+            if (res.body.status > 1) {
                 alert(Messages.server.FINAL_PANE_CHANGE_ORDER_STATE);
                 throw 'server_changeOrderState';
             }
 
-            alert('承認待ちになりました');
-            window.info = {
-                purpose:       'APPROVAL',
-                order_code:    this.props.orderCode,
-                department:    this.props.department.name,
-                trader:        this.props.trader.name,
-                drafting_date: this.props.draftingDate,
-                order_date:    '',
-                products:      this.props.finalists
-            };
+            if (res.body.status == 0) {
+                alert('承認待ちになりました。');
+                window.info = {
+                    purpose:       'APPROVAL',
+                    order_code:    this.props.orderCode,
+                    department:    this.props.department.name,
+                    trader:        this.props.trader.name,
+                    drafting_date: this.props.draftingDate,
+                    order_date:    '',
+                    products:      this.props.finalists
+                };
 
-            var w = window.open('preview-order.html', '発注書 印刷プレビュー');
+                window.open('preview-order.html', '発注書 印刷プレビュー');
+            } else {
+                alert(Messages.information.UPDATE_CONFLICT);
+            }
 
             if (this.props.goBack === undefined) {
-                /*
-                 * ナビゲーションバーの *発注起案から飛んで来た場合、
-                 * 戻り先ページは無いので、連続で発注を起案できるよう
-                 * ページを初期化する。
-                 */
                 this.getFlux().actions.resetOrder();
             } else {
-                /*
-                 * 発注一覧から飛んで来た場合は、発注一覧へ戻る。
-                 */
                 this.props.goBack();
             }
         }.bind(this) );
