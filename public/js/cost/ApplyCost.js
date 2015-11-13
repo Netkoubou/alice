@@ -1,7 +1,9 @@
 'use strict';
 var React      = require('react');
 var Button     = require('react-bootstrap').Button;
+var DatePicker = require('react-datepicker');
 var XHR        = require('superagent');
+var moment     = require('moment');
 var Select     = require('../components/Select');
 var TableFrame = require('../components/TableFrame');
 var Notice     = require('../components/Notice');
@@ -113,6 +115,8 @@ var ApplyCost = React.createClass({
         ];
 
         var data = this.state.breakdowns.map(function(b, i) {
+            var weekdays = [ '日', '月', '火', '水', '木', '金', '土' ];
+
             return [
                 {
                     value: '',
@@ -120,11 +124,11 @@ var ApplyCost = React.createClass({
                 },
                 {
                     value: b.date,
-                    view:  <TableFrame.Input key={Math.random()}
-                             type="string"
-                             placeholder={b.date}
-                             ref={'date' + i.toString()}
-                             onChange={this.onChange(i, 'date')} />
+                    view:  <DatePicker className="apply-cost-date"
+                                       dateFormat="YYYY/MM/DD"
+                                       selected={moment()}
+                                       weekdays={weekdays}
+                                       onChange={function() {} } />
                 },
                 {
                     value: b.article,

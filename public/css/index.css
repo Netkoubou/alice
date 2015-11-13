@@ -1,33 +1,33 @@
 @media (max-height: 768px) {
-  html, body { height: 768px; }
-  body > div { height: 100%; }
+  html, body, #contents-area { height: 768px; }
+  #contents-area > div { height: 100%; }
 }
 
 @media (max-width: 1024px) {
-  html, body { width: 1024px; }
-  body > div { width:  100%; }
+  html, body, #contents-area { width: 1024px; }
+  #contents-area > div { width:  100%; }
 }
 
 @media (min-height: 768px) {
-  html, body { height: 100%; }
+  html, body, #contents-area { height: 100%; }
 
-  body > div {
+  #contents-area > div {
     height:     100%;
     overflow-y: hidden;
   }
 }
 
 @media (min-width: 1024px) {
-  html, body { width: 100%; }
+  html, body, #contents-area { width: 100%; }
 
-  body > div {
+  #contents-area > div {
     width:      100%;
     overflow-x: hidden;
   }
 }
 
 #content {
-  height: calc(100% - 148px);
+  height: calc(100% - 160px);
   position: relative;
 }
 

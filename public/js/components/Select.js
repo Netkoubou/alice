@@ -22,13 +22,15 @@ var Select = React.createClass({
         }) ).isRequired
     },
 
-    onSelect: function(e) { this.props.onSelect(e); },
+    onSelect: function(e, index) {
+        this.props.onSelect(this.props.options[index]);
+    },
 
     render: function() {
         var title   = this.props.placeholder;
-        var options = this.props.options.map(function(o) {
+        var options = this.props.options.map(function(o, i) {
             return (
-                <MenuItem eventKey={o}
+                <MenuItem eventKey={i}
                           key={o.code}
                           onSelect={this.onSelect}>
                   {o.name}
@@ -43,7 +45,10 @@ var Select = React.createClass({
         }
 
         return (
-            <SplitButton bsSize="small" bsStyle="default" title={title}>
+            <SplitButton id={this.props.placeholder}
+                         bsSize="small"
+                         bsStyle="default"
+                         title={title}>
               {options}
             </SplitButton>
         );

@@ -236,13 +236,13 @@ var TableFrame = React.createClass({
             <div id={this.props.id} className="table-frame">
               <div className="table-frame-title">
                 <table>
-                  {cols}
+                  <colgroup>{cols}</colgroup>
                   <thead><tr>{title}</tr></thead>
                 </table>
               </div>
               <div className="table-frame-body">
                 <table>
-                  {cols}
+                  <colgroup>{cols}</colgroup>
                   <tbody>{tbody}</tbody>
                 </table>
               </div>

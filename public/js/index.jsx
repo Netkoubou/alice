@@ -1,5 +1,6 @@
 'use strict';
 var React    = require('react');
+var ReactDOM = require('react-dom');
 var Input    = require('react-bootstrap').Input;
 var Button   = require('react-bootstrap').Button;
 var XHR      = require('superagent');
@@ -118,4 +119,4 @@ var Page = React.createClass({
     }
 });
 
-React.render(<Page />, document.body);
+ReactDOM.render(<Page />, document.getElementById('contents-area') );

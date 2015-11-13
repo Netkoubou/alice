@@ -1,5 +1,6 @@
 'use strict';
-var React  = require('react');
+var React    = require('react');
+var ReactDOM = require('react-dom');
 
 var PreviewOrder = React.createClass({
     render: function() {
@@ -136,4 +137,4 @@ var PreviewOrder = React.createClass({
     }
 });
 
-React.render(<PreviewOrder />, document.body);
+ReactDOM.render(<PreviewOrder />, document.getElementById('contents-area') );
