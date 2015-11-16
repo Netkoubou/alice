@@ -35,8 +35,6 @@ var RemoveItem = React.createClass({
 });
 
 var ApplyCost = React.createClass({
-    propTypes: { user: React.PropTypes.object.isRequired },
-
     getInitialState: function() {
         return {
             departments:    [],
