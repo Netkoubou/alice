@@ -3,6 +3,7 @@
  */
 'use strict';
 var React      = require('react');
+var ReactDOM   = require('react-dom');
 var Button     = require('react-bootstrap').Button;
 var Input      = require('react-bootstrap').Input;
 var Fluxxor    = require('fluxxor');
@@ -194,7 +195,7 @@ var FinalPane = React.createClass({
             if (q == 0 || q != q) {
                 alert('数量を指定して下さい。');
                 var e = this.refs['quantity' + i.toString()];
-                React.findDOMNode(e).focus();
+                ReactDOM.findDOMNode(e).focus();
                 return;
             }
         }
