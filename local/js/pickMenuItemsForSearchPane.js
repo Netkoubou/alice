@@ -295,7 +295,7 @@ function pick_step_by_step(user, db, res) {
 module.exports = function(req, res) {
     if (req.session.user == null) {
         res.json({ status: 255 });
-        log_warn.warn('[changeOrderState] invalid session.');
+        log_warn.warn('[pickMenuItemsForSearchPane] invalid session.');
         return;
     }
 

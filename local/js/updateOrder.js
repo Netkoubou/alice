@@ -79,7 +79,7 @@ function update_prices(db, req, prices) {
 module.exports = function(req, res) {
     if (req.session.user == null) {
         res.json({ status: 255 });
-        log_warn.warn('[changeOrderState] invalid session.');
+        log_warn.warn('[updateOrder] invalid session.');
         return;
     }
 
