@@ -10,6 +10,25 @@ var Fluxxor  = require('fluxxor');
 var Select   = require('../../components/Select');
 var Messages = require('../../lib/Messages');
 
+
+/*
+ * 以下の部門診療科を選択するコードは、厳密にはバグっている。
+ * 何故なら、
+ *
+ *   - users.privileged.draft_ordinarily
+ *   - users.privileged.draft_urgently
+ * 
+ * のどちらかが真で、もう一方が偽の場合に対応できていないからである。
+ * 例えば、前者が真で後者が偽の場合、全部門診療科の通常発注を起案できるが、
+ * 緊急発注は自分の所属する部門診療科分しか起案できないはずである。
+ * しかし、以下のコードは pickMenuItemsForSearchPane でサーバから通知された
+ * 部門診療科をバカチョンで表示しているだけのため、全部門診療科の緊急発注を
+ * 起案できてしまう。
+ *
+ * 但し、現実には両者のどちらか一方が真でもう一方が偽となるようなユーザは存
+ * 在しない (SPD に所属するユーザはこのビットが立つが、必ず両方のビットが立つ)
+ * ため、事実上問題とはならない (はず ... だと良いな)。
+ */
 var SelectDepartment = React.createClass({
     propTypes: {
         orderCode:   React.PropTypes.string.isRequired,

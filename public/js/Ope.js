@@ -48,7 +48,7 @@ var Ope = React.createClass({
             contents = <RegisterMessage />;
             break;
         case 'APPLY_COST':
-            contents = <ApplyCost />;
+            contents = <ApplyCost user={this.props.user} />;
             break;
         default:
             contents = null;

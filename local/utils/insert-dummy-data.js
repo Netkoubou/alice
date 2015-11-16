@@ -632,3 +632,13 @@ db.users.insert({
         approve:          false
     }],
 });
+
+db.account_titles.insert({ name: '旅費・交通費' });
+db.account_titles.insert({ name: '消耗品費' });
+db.account_titles.insert({ name: '検査などの業務委託費' });
+db.account_titles.insert({ name: '修理費' });
+db.account_titles.insert({ name: '医薬品材料費' });
+db.account_titles.insert({ name: '消耗備品費' });
+db.account_titles.insert({ name: '休職材料費' });
+db.account_titles.insert({ name: '備品費' });
+db.account_titles.insert({ name: 'その他' });

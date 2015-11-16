@@ -35,6 +35,8 @@ var RemoveItem = React.createClass({
 });
 
 var ApplyCost = React.createClass({
+    propTypes: { user: React.PropTypes.object.isRequired },
+
     getInitialState: function() {
         return {
             departments:    [],
@@ -93,8 +95,35 @@ var ApplyCost = React.createClass({
             }
 
             alert('申請しました。')
-
         });
+    },
+
+    componentDidMount: function() {
+        XHR.get('pickMenuItemsToApplyCost').end(function(err, res) {
+            var errmsg_index = 'APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST';
+            if (err) {
+                alert(Messages.ajax[errmsg_index]);
+                throw 'ajax_pickMenuItemsToApplyCost';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server[errmsg_index]);
+                throw 'server_pickMenuItemsToApplyCost';
+            }
+
+            if (res.body.departments.length == 1) {
+                this.state.department = {
+                    code: res.body.departments[0].code,
+                    name: res.body.departments[0].name
+                }
+            }
+
+            this.setState({
+                departments:    res.body.departments,
+                account_titles: res.body.account_titles,
+                department:     this.state.department
+            });
+        }.bind(this) );
     },
 
     render: function() {
