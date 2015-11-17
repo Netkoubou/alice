@@ -71,6 +71,18 @@ module.exports = {
             'ネットワークの問題でメッセージの登録に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        APPLY_COST_BOOK_COST:
+            'AJAX error: bookCost in ApplyCost.js.js\n\n' +
+            'ネットワークの問題で経費精算の申請に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:
+            'AJAX error: bookCost in ApplyCost.js.js\n\n' +
+            'ネットワークの問題でメニュー項目の獲得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -132,6 +144,16 @@ module.exports = {
         REGISTER_MESSAGE_REGISTER_FOOTER_MESSAGE:
             'Server error: registerFooterMessage in RegisterMessage.js\n\n' +
             'メッセージの登録でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        APPLY_COST_BOOK_COST:
+            'Server error: bookCost in ApplyCost.js\n\n' +
+            '経費精算の申請でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:
+            'Server error: pickMenuItemsToApplyCost in ApplyCost.js\n\n' +
+            'メニュー項目の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

@@ -20,6 +20,7 @@ var changeOrderState      = require('./changeOrderState');
 var searchOrders          = require('./searchOrders');
 var changePassword        = require('./changePassword');
 var registerFooterMessage = require('./registerFooterMessage');
+var bookCost              = require('./bookCost');
 
 var $ = express();
 
@@ -113,3 +114,4 @@ $.post('/changeOrderState',      changeOrderState);
 $.post('/searchOrders',          searchOrders);
 $.post('/changePassword',        changePassword);
 $.post('/registerFooterMessage', registerFooterMessage);
+$.post('/bookCost',              bookCost);

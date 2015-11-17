@@ -93,6 +93,8 @@ module.exports = function(req, res) {
                             /*
                              * ここでやっとこさ登録
                              */
+                            db.close();
+
                             if (err == null) {
                                 res.json({
                                     status:        0,
@@ -106,9 +108,7 @@ module.exports = function(req, res) {
                                       'by "' + req.session.user.account + '".';
 
                                 log_info.info(msg);
-                                db.close();
                             } else {
-                                db.close();
                                 res.json({ status: 255 });
                                 log_warn.warn(err);
 

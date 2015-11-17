@@ -1,5 +1,6 @@
 'use strict';
 var React      = require('react');
+var ReactDOM   = require('react-dom');
 var Button     = require('react-bootstrap').Button;
 var DatePicker = require('react-datepicker');
 var XHR        = require('superagent');
@@ -51,11 +52,11 @@ var ApplyCost = React.createClass({
 
     onAdd: function() {
         this.state.breakdowns.push({
-            date:    '',
-            article: '',
+            date:     moment().format('YYYY/MM/DD'),
+            article:  '',
             quantity: 0,
             price:    0,
-            note:    ''
+            note:     ''
         });
 
         this.setState({ breakdowns: this.state.breakdowns });
@@ -71,6 +72,13 @@ var ApplyCost = React.createClass({
         }.bind(this);
     },
 
+    onChangeDate: function(index) {
+        return function(date) {
+            this.state.breakdowns[index].date = date.format('YYYY/MM/DD');
+            this.setState({ breakdowns: this.state.breakdowns });
+        }.bind(this);
+    },
+
     onChange: function(index, attribute) {
         return function(value) {
             this.state.breakdowns[index][attribute] = value;
@@ -79,21 +87,79 @@ var ApplyCost = React.createClass({
     },
 
     onRegister: function() {
-        XHR.post('applyCost').send({
-            breakdowns: breakdowns
+        if (this.state.department.code === '') {
+            alert('部門診療科を選択して下さい。');
+            return;
+        }
+
+        if (this.state.account_title.code === '') {
+            alert('勘定科目を選択して下さい。');
+            return;
+        }
+
+        if (this.state.breakdowns.length == 0) {
+            alert('経費の詳細を入力して下さい。');
+            return;
+        }
+
+        for (var i = 0; i < this.state.breakdowns.length; i++) {
+            var row = this.state.breakdowns[i];
+            var e;
+
+            if (row.article === '') {
+                alert('品名を入力して下さい。');
+                e = this.refs["article" + i.toString()];
+                ReactDOM.findDOMNode(e).focus();
+                return;
+            }
+
+            if (row.quantity <= 0) {
+                alert('数量には 0 より大きな値を指定して下さい。');
+                e = this.refs["quantity" + i.toString()];
+                ReactDOM.findDOMNode(e).focus();
+                return;
+            }
+
+            if (row.price <= 0) {
+                alert('単価には 0 より大きな値を指定して下さい。');
+                e = this.refs["price" + i.toString()];
+                ReactDOM.findDOMNode(e).focus();
+                return;
+            }
+
+            if (row.note === '') {
+                alert('摘要 / 備考を入力して下さい。');
+                e = this.refs["article" + i.toString()];
+                ReactDOM.findDOMNode(e).focus();
+                return;
+            }
+        }
+
+        XHR.post('bookCost').send({
+            department:    this.state.department.code,
+            account_title: this.state.account_title.code,
+            breakdowns:    this.state.breakdowns
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.APPLY_COST_APPLY_COST);
+                alert(Messages.ajax.APPLY_COST_BOOK_COST);
                 throw 'ajax_applyCost';
             }
 
             if (res.body.status != 0) {
-                alert(Messages.server.APPLY_COST_APPLY_COST);
+                alert(Messages.server.APPLY_COST_BOOK_COST);
                 throw 'server_applyCost';
             }
 
             alert('申請しました。')
-        });
+
+            this.setState({
+                departments:    [],
+                account_titles: [],
+                department:     { code: '', name: '' },
+                account_title:  { code: '', name: '' },
+                breakdowns:     []
+            });
+        }.bind(this) );
     },
 
     componentDidMount: function() {
@@ -141,8 +207,10 @@ var ApplyCost = React.createClass({
             { name: '摘要 / 備考', type: 'void' }
         ];
 
-        var data = this.state.breakdowns.map(function(b, i) {
-            var weekdays = [ '日', '月', '火', '水', '木', '金', '土' ];
+        var weekdays = [ '日', '月', '火', '水', '木', '金', '土' ];
+        var total    = 0;
+        var data     = this.state.breakdowns.map(function(b, i) {
+            total += b.price * b.quantity;
 
             return [
                 {
@@ -153,13 +221,16 @@ var ApplyCost = React.createClass({
                     value: b.date,
                     view:  <DatePicker className="apply-cost-date"
                                        dateFormat="YYYY/MM/DD"
-                                       selected={moment()}
+                                       dateFormatCalendar="YYYY/MM/DD"
+                                       selected={moment(b.date, 'YYYY/MM/DD')}
                                        weekdays={weekdays}
-                                       onChange={function() {} } />
+                                       weekStart='0'
+                                       onChange={this.onChangeDate(i)} />
                 },
                 {
                     value: b.article,
-                    view:  <TableFrame.Input key={Math.random()}
+                    view:  <TableFrame.Input
+                             key={Math.random()}
                              type="string"
                              placeholder={b.article}
                              ref={'article' + i.toString()}
@@ -167,7 +238,8 @@ var ApplyCost = React.createClass({
                 },
                 {
                     value: b.quantity,
-                    view:  <TableFrame.Input key={Math.random()}
+                    view:  <TableFrame.Input
+                             key={Math.random()}
                              type="int"
                              placeholder={b.quantity.toLocaleString()}
                              ref={'quantity' + i.toString()}
@@ -225,7 +297,7 @@ var ApplyCost = React.createClass({
               <TableFrame id="apply-cost-breakdowns"
                           title={title} data={data} />
               <div id="apply-cost-total">
-                <Notice title="合計">100</Notice>
+                <Notice title="合計">{total}</Notice>
               </div>
               <div id="apply-cost-buttons">
                 <Button bsSize="small" onClick={this.onClear}>クリア</Button>
