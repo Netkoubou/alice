@@ -19,8 +19,9 @@ module.exports = function(req, res) {
         var cost = {
             drafting_date:      moment().format('YYYY/MM/DD'),
             drafter_code:       req.session.user._id,
-            department_code:    req.body.department,
-            account_title_code: req.body.account_title,
+            department_code:    req.body.department_code,
+            account_title_code: req.body.account_title_code,
+            remark:             req.body.remark,
             breakdowns:         req.body.breakdowns
         };
 

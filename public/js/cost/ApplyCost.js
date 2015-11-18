@@ -2,6 +2,7 @@
 var React      = require('react');
 var ReactDOM   = require('react-dom');
 var Button     = require('react-bootstrap').Button;
+var Input      = require('react-bootstrap').Input;
 var DatePicker = require('react-datepicker');
 var XHR        = require('superagent');
 var moment     = require('moment');
@@ -42,6 +43,7 @@ var ApplyCost = React.createClass({
             account_titles: [],
             department:     { code: '', name: '' },
             account_title:  { code: '', name: '' },
+            remark:         '',
             breakdowns:     []
         };
     },
@@ -49,6 +51,10 @@ var ApplyCost = React.createClass({
     onSelectDepartment:   function(e) { this.setState({ department: e }); },
     onSelectAccountTitle: function(e) { this.setState({ account_title: e }); },
     onClear:              function()  { this.setState({ breakdowns: [] }); },
+
+    onChangeRemark: function (e) {
+        this.setState({ remark: e.target.value })
+    },
 
     onAdd: function() {
         this.state.breakdowns.push({
@@ -136,9 +142,10 @@ var ApplyCost = React.createClass({
         }
 
         XHR.post('bookCost').send({
-            department:    this.state.department.code,
-            account_title: this.state.account_title.code,
-            breakdowns:    this.state.breakdowns
+            department_code:    this.state.department.code,
+            account_title_code: this.state.account_title.code,
+            remark:             this.state.remark,
+            breakdowns:         this.state.breakdowns
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.APPLY_COST_BOOK_COST);
@@ -152,11 +159,16 @@ var ApplyCost = React.createClass({
 
             alert('申請しました。')
 
+            var department = { code: '', name: '' };
+
+            if (this.state.departments.length == 1) {
+                department = this.state.department;
+            }
+
             this.setState({
-                departments:    [],
-                account_titles: [],
-                department:     { code: '', name: '' },
+                department:     department,
                 account_title:  { code: '', name: '' },
+                remark:         '',
                 breakdowns:     []
             });
         }.bind(this) );
@@ -294,10 +306,16 @@ var ApplyCost = React.createClass({
                           options={this.state.account_titles} />
                 </span>
               </div>
+              <Input id="apply-cost-remark"
+                     type="text"
+                     bsSize="small"
+                     placeholder="備考・連絡"
+                     value={this.state.remark}
+                     onChange={this.onChangeRemark} />
               <TableFrame id="apply-cost-breakdowns"
                           title={title} data={data} />
               <div id="apply-cost-total">
-                <Notice title="合計">{total}</Notice>
+                <Notice title="合計">{total.toLocaleString()}</Notice>
               </div>
               <div id="apply-cost-buttons">
                 <Button bsSize="small" onClick={this.onClear}>クリア</Button>

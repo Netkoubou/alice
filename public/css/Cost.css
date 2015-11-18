@@ -13,9 +13,15 @@
 
 .apply-cost-select { margin-right: 8px; }
 
+#apply-cost-remark {
+  width:         calc(100% - 48px);
+  margin-left:   32px;
+  margin-bottom: 32px;
+}
+
 #apply-cost-breakdowns {
   width:  calc(100% -  48px);
-  height: calc(100% - 168px);
+  height: calc(100% - 216px);
 }
 
 #apply-cost-breakdowns col:nth-child(1) { width: 24px; }
