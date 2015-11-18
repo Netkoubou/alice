@@ -479,31 +479,31 @@ var ProcessOrder = React.createClass({
         }
 
         return (
-            <div id="order-process">
+            <div id="process-order">
               <fieldset>
                 <legend>{legend}</legend>
-                  <div id="order-process-notices">
-                    <Notice className="order-process-notice" title="起案番号">
+                  <div id="process-order-notices">
+                    <Notice className="process-order-notice" title="起案番号">
                       {this.props.order.order_code}
                     </Notice>
-                    <Notice className="order-process-notice" title="起案日">
+                    <Notice className="process-order-notice" title="起案日">
                       {this.props.order.drafting_date}
                     </Notice>
-                    <Notice className="order-process-notice" title="起案者">
+                    <Notice className="process-order-notice" title="起案者">
                       {this.props.order.drafter_account}
                     </Notice>
-                    <Notice className="order-process-notice" title="発注区分">
+                    <Notice className="process-order-notice" title="発注区分">
                       {Util.toOrderTypeName(this.props.order.order_type)}
                     </Notice>
-                    <Notice className="order-process-notice"
+                    <Notice className="process-order-notice"
                             title="発注元 部門診療科">
                       {this.props.order.department_name}
                    </Notice>
-                   <Notice id="order-process-trader" title="発注先 販売元">
+                   <Notice id="process-order-trader" title="発注先 販売元">
                      {this.props.order.trader_name}
                    </Notice>
                  </div>
-                 <Input id="order-process-remark"
+                 <Input id="process-order-remark"
                         type="text"
                         bsSize="small"
                         placeholder="備考・連絡"
@@ -511,18 +511,18 @@ var ProcessOrder = React.createClass({
                         onChange={this.onChangeRemark} />
               </fieldset>
               <TableFrame key={Math.random()}
-                          id="order-process-products"
+                          id="process-order-products"
                           title={table_title}
                           data={table_data} />
-              <div id="order-process-totals">
-                <Notice className="order-process-total" title="発注総計">
+              <div id="process-order-totals">
+                <Notice className="process-order-total" title="発注総計">
                   {Math.round(order_total).toLocaleString()}
                 </Notice>
-                <Notice className="order-process-total" title="請求総計">
+                <Notice className="process-order-total" title="請求総計">
                   {Math.round(billing_total).toLocaleString()}
                 </Notice>
               </div>
-              <div id="order-process-buttons">
+              <div id="process-order-buttons">
                 {buttons}
               </div>
             </div>

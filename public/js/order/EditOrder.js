@@ -447,8 +447,8 @@ var SubeditOrder = React.createClass({
         }
 
         return (
-            <div id="ope">
-              <div id="order-edit-left-side">
+            <div id="edit-order">
+              <div id="edit-order-left-side">
                 <SearchPane orderType={this.props.orderType}  
                             orderCode={this.state.order_code}
                             department={this.state.department}
@@ -456,7 +456,7 @@ var SubeditOrder = React.createClass({
                 <CandidatePane key={Math.random()}
                                candidates={this.state.candidates} />
               </div>
-              <div id="order-edit-right-side">
+              <div id="edit-order-right-side">
                 <FinalPane user={this.props.user}
                            orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}

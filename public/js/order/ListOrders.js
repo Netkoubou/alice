@@ -68,7 +68,7 @@ var OrderCode = React.createClass({
                 
         return (
             <div onClick={on_click}
-                 className="order-list-code">
+                 className="list-orders-order-code">
               {this.props.order.order_code}
             </div>
         );
@@ -162,7 +162,7 @@ var ListOrders = React.createClass({
                 if (order.order_type === 'URGENCY_ORDER') {
                     if (order.order_state != 'COMPLETED') {
                         if (order.order_state != 'NULLIFIED') {
-                            order_type = <span className="order-list-urgency">
+                            order_type = <span className="list-orders-urgency">
                                            {order_type}
                                          </span>
                         }
@@ -187,10 +187,10 @@ var ListOrders = React.createClass({
                                   </Popover>;
 
                     order_remark = (
-                        <OverlayTrigger container={this.refs.orderList}
+                        <OverlayTrigger container={this.refs.listOrders}
                                         placement="left"
                                         overlay={popover}>
-                          <span className="order-list-remark">!</span>
+                          <span className="list-orders-remark">!</span>
                         </OverlayTrigger>
                     );
                 }
@@ -276,56 +276,56 @@ var ListOrders = React.createClass({
         ];
 
         return (
-            <div id="order-list" ref="orderList">
-              <fieldset id="order-list-search">
+            <div id="list-orders" ref="listOrders">
+              <fieldset id="list-orders-search">
                 <legend>検索</legend>
-                <div id="order-list-calendar-marker">
+                <div id="list-orders-calendar-marker">
                   <CalendarMarker startDate={this.state.start_date}
                                   endDate={this.state.end_date}
                                   onMark={this.onMark} />
                 </div>
-                <div className="order-list-checkbox">
+                <div className="list-orders-checkbox">
                   <Input type="checkbox"
                          label="依頼中"
                          checked={this.state.is_requesting}
                          onChange={this.onChangeCheckbox}
                          ref="requesting" />
                 </div>
-                <div className="order-list-checkbox">
+                <div className="list-orders-checkbox">
                   <Input type="checkbox"
                          label="承認待ち"
                          checked={this.state.is_approving}
                          onChange={this.onChangeCheckbox}
                          ref="approving" />
                 </div>
-                <div className="order-list-checkbox">
+                <div className="list-orders-checkbox">
                   <Input type="checkbox"
                          label="承認済み"
                          checked={this.state.is_approved}
                          onChange={this.onChangeCheckbox}
                          ref="approved" />
                 </div>
-                <div className="order-list-checkbox">
+                <div className="list-orders-checkbox">
                   <Input type="checkbox"
                          label="無効"
                          checked={this.state.is_nullified}
                          onChange={this.onChangeCheckbox}
                          ref="nullified" />
                 </div>
-                <div className="order-list-checkbox">
+                <div className="list-orders-checkbox">
                   <Input type="checkbox"
                          label="完了"
                          checked={this.state.is_completed}
                          onChange={this.onChangeCheckbox}
                          ref="completed" />
                 </div>
-                <div id="order-list-buttons">
+                <div id="list-orders-buttons">
                   <Button bsSize="small" onClick={this.onSearch}>検索</Button>
                 </div>
               </fieldset>
-              <fieldset id="order-list-table-field">
+              <fieldset id="list-orders-table-frame">
                 <legend>発注一覧</legend>
-                <TableFrame id="order-list-table"
+                <TableFrame id="list-orders-orders"
                             title={title}
                             data={this.state.orders} />
               </fieldset>

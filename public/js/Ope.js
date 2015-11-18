@@ -52,7 +52,7 @@ var Ope = React.createClass({
             contents = <ApplyCost />;
             break;
         case 'LIST_COSTS':
-            contents = <ListCosts />
+            contents = <ListCosts user={this.props.user} />
             break;
         default:
             contents = null;

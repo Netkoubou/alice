@@ -22,7 +22,7 @@ var CandidateName = React.createClass({
 
     render: function() {
         return (
-            <div className='order-edit-candidate-name'
+            <div className='candidate-pane-candidate-name'
                  onClick={this.onSelectCandidate}>
               {this.props.children}
             </div>
@@ -107,10 +107,9 @@ var CandidatePane = React.createClass({
         });
 
         return (
-            <fieldset id="order-edit-candidate-pane"
-                      className="order-edit-pane">
+            <fieldset id="candidate-pane" className="edit-order-pane">
               <legend>候補</legend>
-              <TableFrame id="order-edit-candidates"
+              <TableFrame id="candidate-pane-candidates"
                           title={title} data={data} />
             </fieldset>
         );
