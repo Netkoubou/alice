@@ -22,6 +22,7 @@ module.exports = function(req, res) {
             department_code:    req.body.department_code,
             account_title_code: req.body.account_title_code,
             remark:             req.body.remark,
+            state:              'APPROVING',
             breakdowns:         req.body.breakdowns
         };
 

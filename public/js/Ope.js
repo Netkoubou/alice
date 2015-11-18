@@ -11,6 +11,7 @@ var ChangePassword  = require('./others/ChangePassword');
 var RegisterMessage = require('./others/RegisterMessage');
 
 var ApplyCost = require('./cost/ApplyCost');
+var ListCosts = require('./cost/ListCosts');
 
 
 /*
@@ -49,6 +50,9 @@ var Ope = React.createClass({
             break;
         case 'APPLY_COST':
             contents = <ApplyCost />;
+            break;
+        case 'LIST_COSTS':
+            contents = <ListCosts />
             break;
         default:
             contents = null;

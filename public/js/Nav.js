@@ -284,7 +284,7 @@ var Nav = React.createClass({
                        onClick={this.onSelect('APPLY_COST')}
                        isSelected={selected === 'APPLY_COST'} />
               <NavItem name="一覧"
-                       onClick={this.dummy}
+                       onClick={this.onSelect('LIST_COSTS')}
                        isSelected={selected === 'LIST_COSTS'} />
               {budget}
               {etc}

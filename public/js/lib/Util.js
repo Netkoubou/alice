@@ -1,11 +1,10 @@
 module.exports = {
     toOrderTypeName: function(type) {
-        switch (type) {
-        case 'ORDINARY_ORDER': return '通常発注';
-        case 'URGENCY_ORDER':  return '緊急発注';
+        if (type === 'ORDINARY_ORDER') {
+            return '通常発注';
         }
 
-        return '薬剤発注';  // MEDS_ORDER
+        return '緊急発注';  // URGENCY_ORDER
     },
 
     toOrderStateName: function(state) {
@@ -29,21 +28,12 @@ module.exports = {
         return '納品済み';  // DELIVERED
     },
 
-    toCanonicalizedDate: function(date) {
-        var yyyy  = date.getFullYear().toString();
-        var month = date.getMonth() + 1;
-        var day   = date.getDate();
-        var mm    = month.toString();
-        var dd    = day.toString();
-
-        if (month < 10) {
-            mm = '0' + mm;
+    toCostStateName: function(state) {
+        switch (state) {
+        case 'APPROVING': return '承認待ち';
+        case 'APPROVED':  return '承認済み';
         }
 
-        if (day < 10) {
-            dd = '0' + dd;
-        }
-
-        return yyyy + '/' + mm + '/' + dd;
+        return '却下';      // REJECTED
     }
 };

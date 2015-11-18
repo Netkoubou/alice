@@ -20,11 +20,11 @@
 var React         = require('react');
 var Fluxxor       = require('fluxxor');
 var XHR           = require('superagent');
+var moment        = require('moment');
 var SearchPane    = require('./edit-order/SearchPane');
 var CandidatePane = require('./edit-order/CandidatePane');
 var FinalPane     = require('./edit-order/FinalPane');
 var Messages      = require('../lib/Messages');
-var Util          = require('../lib/Util');
 
 
 /*
@@ -438,7 +438,7 @@ var SubeditOrder = React.createClass({
     },
 
     render: function() {
-        var drafting_date = Util.toCanonicalizedDate(new Date() ); // 起案日
+        var drafting_date = moment().format('YYYY/MM/DD'); // 起案日
         var drafter       = this.props.user.account;
 
         if (this.props.order != null) {
