@@ -14,12 +14,14 @@ module.exports = function(req, res) {
         return;
     }
 
-    util.query(function(db) {
-        var msg;
+    var department_code = req.body.department_code;
+
+    util.build_sfx(res, 'costs', department_code, function(db, sfx) {
         var cost = {
+            code:               'C-' + sfx,
             drafting_date:      moment().format('YYYY/MM/DD'),
             drafter_code:       req.session.user._id,
-            department_code:    req.body.department_code,
+            department_code:    department_code,
             account_title_code: req.body.account_title_code,
             remark:             req.body.remark,
             state:              'APPROVING',
@@ -27,13 +29,14 @@ module.exports = function(req, res) {
         };
 
         db.collection('costs').insertOne(cost, function(err, result) {
+            var msg;
             db.close();
 
             if (err == null) {
                 res.json({ status: 0 });
 
-                msg = '[bookCost] booked cost by ' +
-                      req.session.user.account + '".';
+                msg = '[bookCost] booked cost: "' + cost.code + '" ' +
+                      'by ' + req.session.user.account + '".';
 
                 log_info.info(msg);
             } else {
