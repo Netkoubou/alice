@@ -67,3 +67,49 @@
   right:    16px;
   bottom:   4px;
 }
+
+#list-costs {
+  width:      calc(100% - 8px);
+  height:     100%;
+  padding-top:  8px;
+  font-size:  small;
+}
+
+#list-costs fieldset {
+  width:       calc(100% - 16px);
+  margin-left: 16px;
+}
+
+#list-costs-search { height: 128px; }
+
+#list-costs-calendar-marker {
+  float:      left;
+  width:      256px;
+  margin-left: 32px
+}
+
+.list-costs-checkbox {
+  float: left;
+  width: 80px;
+}
+
+#list-costs-buttons { float: right; }
+#list-costs-table-frame { height: calc(100% - 128px); }
+
+#list-costs-costs {
+  width:  calc(100% - 32px);
+  height: calc(100% - 56px);
+}
+
+#list-costs-costs col:nth-child(1)  { width: 130px; }
+#list-costs-costs col:nth-child(2)  { width:  80px; }
+#list-costs-costs col:nth-child(3)  { width: calc(45% - 305px); }
+#list-costs-costs col:nth-child(4)  { width:  15%; }
+#list-costs-costs col:nth-child(5)  { width:  10%; }
+#list-costs-costs col:nth-child(6)  { width:  30%; }
+#list-costs-costs col:nth-child(7)  { width:  80px; }
+#list-costs-costs col:nth-child(8)  { width:  15px; }
+#list-costs-costs td:nth-child(1) { text-align: center; }
+#list-costs-costs td:nth-child(2) { text-align: center; }
+#list-costs-costs td:nth-child(7) { text-align: right; }
+#list-costs-costs td:nth-child(8) { text-align: center; }

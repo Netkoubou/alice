@@ -40,7 +40,7 @@ var ListCosts = React.createClass({
             { name: '勘定科目',          type: 'string' },
             { name: '品目',              type: 'string' },
             { name: '総計',              type: 'number' },
-            { name: '!',                 type: 'string' }
+            { name: '!',                 type: 'void' }
         ];
 
         return (
@@ -77,9 +77,9 @@ var ListCosts = React.createClass({
                   <Button bsSize="small" onClick={this.onSearch}>検索</Button>
                 </div>
               </fieldset>
-              <fieldset id="list-costs-table-fieldset">
+              <fieldset id="list-costs-table-frame">
                 <legend>経費精算申請一覧</legend>
-                <TableFrame id="list-costs-table"
+                <TableFrame id="list-costs-costs"
                             title={title}
                             data={this.state.costs} />
               </fieldset>
