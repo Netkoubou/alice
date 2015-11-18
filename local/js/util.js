@@ -52,6 +52,7 @@ module.exports = {
     build_sfx: function(res, collection_name, department_code, callback) {
         /*
          * 起案番号の接尾辞を作成するユーティリティ。
+         * 作成したら接尾辞を callback に渡す。
          * 接尾辞は、
          *
          *   - 部門診療科の略称
