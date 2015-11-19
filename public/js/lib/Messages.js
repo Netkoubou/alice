@@ -12,7 +12,7 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        ORDER_SEARCH_CANDIDATES:
+        EDIT_ORDER_SEARCH_CANDIDATES:
             'AJAX error: searchCandidates in Order.js\n\n' +
             'ネットワークの問題で発注候補の検索に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
@@ -48,7 +48,7 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        ORDER_LIST_SEARCH_ORDERS:
+        LIST_ORDERS_SEARCH_ORDERS:
             'AJAX error: searchOrders in OrderList.js\n\n' +
             'ネットワークの問題で発注の検索に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
@@ -83,6 +83,12 @@ module.exports = {
             'ネットワークの問題でメニュー項目の獲得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        LIST_COSTS_LOOKUP_COSTS:
+            'AJAX error: lookupCosts in ListCosts.js.js\n\n' +
+            'ネットワークの問題で経費精算の検索に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -96,7 +102,7 @@ module.exports = {
             'ログアウトでサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-        ORDER_SEARCH_CANDIDATES:
+        EDIT_ORDER_SEARCH_CANDIDATES:
             'Server error: searchCandidates in Order.js\n\n' +
             '発注候補の検索でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
@@ -126,7 +132,7 @@ module.exports = {
             'メニューの項目の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-        ORDER_LIST_SEARCH_ORDERS:
+        LIST_ORDERS_SEARCH_ORDERS:
             'Server error: searchOrders in OrderList.js\n\n' +
             '発注の検索でサーバにエラーが発生しました。\n' +
             'システム管理者に問い合わせて下さい。',
@@ -154,6 +160,11 @@ module.exports = {
         APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:
             'Server error: pickMenuItemsToApplyCost in ApplyCost.js\n\n' +
             'メニュー項目の獲得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        LIST_COSTS_LOOKUP_COSTS:
+            'Server error: lookupCosts in ListCosts.js\n\n' +
+            '経費精算の検索でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

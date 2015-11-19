@@ -356,12 +356,12 @@ var actions = {
         // XHR.post('searchCandidates').send(payload).end(function(err, res) {
         XHR.post('searchCandidates').send(condition).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.ORDER_SEARCH_CANDIDATES);
+                alert(Messages.ajax.EDIT_ORDER_SEARCH_CANDIDATES);
                 throw 'ajax_searchCandidates';
             }
 
             if (res.body.status != 0) {
-                alert(Messages.server.ORDER_SEARCH_CANDIDATES);
+                alert(Messages.server.EDIT_ORDER_SEARCH_CANDIDATES);
                 throw 'server_searchCandidates';
             }
 

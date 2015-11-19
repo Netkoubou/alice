@@ -146,18 +146,18 @@ var ListOrders = React.createClass({
             }
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.ORDER_LIST_SEARCH_ORDERS);
+                alert(Messages.ajax.LIST_ORDERS_SEARCH_ORDERS);
                 throw 'ajax_searchOrders';
             }
 
             if (res.body.status != 0) {
-                alert(Messages.server.ORDER_LIST_SEARCH_ORDERS);
+                alert(Messages.server.LIST_ORDERS_SEARCH_ORDERS);
                 throw 'server_searchOrders';
             }
 
             var orders = res.body.orders.map(function(order) {
                 var order_state = Util.toOrderStateName(order.order_state);
-                var order_type = Util.toOrderTypeName(order.order_type);
+                var order_type  = Util.toOrderTypeName(order.order_type);
 
                 if (order.order_type === 'URGENCY_ORDER') {
                     if (order.order_state != 'COMPLETED') {
@@ -272,7 +272,7 @@ var ListOrders = React.createClass({
             { name: '発注総計',          type: 'number' },
             { name: '請求総計',          type: 'number' },
             { name: '状態',              type: 'string' },
-            { name: '!',                 type: 'string' }
+            { name: '!',                 type: 'void' }
         ];
 
         return (
