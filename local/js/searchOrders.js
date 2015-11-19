@@ -254,7 +254,7 @@ function construct_response(orders, db, res) {
                     log_warn.warn(err);
                 }
 
-                log_war.warn(err_msg);
+                log_warn.warn(err_msg);
             }
         });
     }
@@ -265,7 +265,6 @@ function construct_response(orders, db, res) {
         }
 
         response[index] = {
-            order_id:        order.order_id,
             order_code:      order.order_code,
             order_type:      order.order_type,
             order_state:     order.order_state,
@@ -301,8 +300,6 @@ module.exports = function(req, res) {
         var sel = generateSelector(req.session.user, req.body);
 
         db.collection('orders').find(sel).toArray(function(err, orders) {
-            var msg;
-
             if (err == null) {
                 if (orders.length == 0) {
                     res.json({ status: 0, orders: [] });
@@ -312,12 +309,10 @@ module.exports = function(req, res) {
             } else {
                 db.close();
                 res.json({ status: 255 });
+                log_warn.warn(err);
 
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                msg = '[searchOrders] failed to find in "orders" collection.';
+                var msg = '[searchOrders] ' +
+                          'failed to find at "orders" collection.';
 
                 log_warn.warn(msg);
             }
