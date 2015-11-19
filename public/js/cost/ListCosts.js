@@ -60,7 +60,7 @@ var ListCosts = React.createClass({
                 throw 'server_lookupCosts';
             }
 
-            var costs = res.body.costs.map(function(cost) {
+            var costs = res.body.costs.map(function(cost, index) {
                 var total = 0;
                 var remark = '';
 
@@ -69,7 +69,8 @@ var ListCosts = React.createClass({
                 });
 
                 if (cost.remark != '') {
-                    var popover = <Popover title="備考・連絡">
+                    var id      = 'list-costs-popover' + index.toString();
+                    var popover = <Popover id={id} title="備考・連絡">
                                     {cost.remark}
                                   </Popover>;
 

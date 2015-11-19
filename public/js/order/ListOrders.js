@@ -155,7 +155,7 @@ var ListOrders = React.createClass({
                 throw 'server_searchOrders';
             }
 
-            var orders = res.body.orders.map(function(order) {
+            var orders = res.body.orders.map(function(order, index) {
                 var order_state = Util.toOrderStateName(order.order_state);
                 var order_type  = Util.toOrderTypeName(order.order_type);
 
@@ -182,7 +182,8 @@ var ListOrders = React.createClass({
                 var order_remark = '';
 
                 if (order.order_remark != '') {
-                    var popover = <Popover title="備考・連絡">
+                    var id      = 'list-orders-popover' + index.toString();
+                    var popover = <Popover id={id} title="備考・連絡">
                                     {order.order_remark}
                                   </Popover>;
 
