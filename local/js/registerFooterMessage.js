@@ -2,7 +2,7 @@
 var fs = require('fs');
 
 module.exports = function(req, res) {
-    fs.writeFile('local/etc/message.txt', req.body.message, function(err) {
+    fs.writeFile('local/data/message.txt', req.body.message, function(err) {
         if (err == null) {
             res.json({ status: 0 });
         } else {
