@@ -6,6 +6,7 @@ var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Popover        = require('react-bootstrap').Popover;
 var XHR            = require('superagent');
 var moment         = require('moment');
+var ProcessCost    = require('./ProcessCost');
 var TableFrame     = require('../components/TableFrame');
 var CalendarMarker = require('../components/CalendarMarker');
 var Messages       = require('../lib/Messages');
@@ -39,9 +40,19 @@ var CostCode = React.createClass({
         onSelect: React.PropTypes.func.isRequired
     },
 
+    onClick: function() {
+        this.props.onSelect(
+            <ProcessCost user={this.props.user}
+                         cost={this.props.cost}
+                         goBack={this.props.goBack} />
+        );
+    },
+
     render: function() {
         return (
-            <div>{this.props.cost.code}</div>
+            <div className="list-costs-cost-code" onClick={this.onClick}>
+              {this.props.cost.code}
+            </div>
         );
     }
 });
@@ -51,6 +62,7 @@ var ListCosts = React.createClass({
 
     getInitialState: function() {
         return {
+            next_op:      null,
             start_date:   moment(),
             end_date:     moment(),
             is_approving: false,
@@ -67,18 +79,22 @@ var ListCosts = React.createClass({
         });
     },
 
-    onChangeCheckbox: function() {
-        this.setState({
-            is_approving: this.refs.approving.getChecked(),
-            is_approved:  this.refs.approved.getChecked(),
-            is_rejected:  this.refs.rejected.getChecked()
-        });
+    onSelect: function(next_ope) {
+        console.log('-1-');
+        console.log(next_ope);
+        console.log('=1=');
+        console.log('-2-');
+        console.log(this.state.next_ope);
+        console.log('=2=');
+        this.setState({ next_ope: next_ope });
+        console.log('-3-');
+        console.log(this.state.next_ope);
+        console.log('=3=');
     },
 
     backToHere: function() {
-    },
-
-    onSelect: function() {
+        this.setState({ next_ope: null });
+        this.onSearch();
     },
 
     onSearch: function() {
@@ -161,7 +177,23 @@ var ListCosts = React.createClass({
         }.bind(this) );
     },
 
+    onChangeCheckbox: function() {
+        this.setState({
+            is_approving: this.refs.approving.getChecked(),
+            is_approved:  this.refs.approved.getChecked(),
+            is_rejected:  this.refs.rejected.getChecked()
+        });
+    },
+
     render: function() {
+        console.log('-4-');
+        console.log(this.state.next_op);
+        console.log('=4=');
+
+        if (this.state.next_op != null) {
+            return this.state.next_ope;
+        }
+
         var title = [
             { name: '起案番号',          type: 'string' },
             { name: '起案日',            type: 'string' },

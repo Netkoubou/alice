@@ -67,8 +67,7 @@ var OrderCode = React.createClass({
         }
                 
         return (
-            <div onClick={on_click}
-                 className="list-orders-order-code">
+            <div className="list-orders-order-code" onClick={on_click}>
               {this.props.order.order_code}
             </div>
         );
@@ -114,7 +113,7 @@ var ListOrders = React.createClass({
             is_nullified:  false,
             is_completed:  false,
             orders:     []
-        }
+        };
     },
 
     onMark: function(start_date, end_date) {
@@ -125,7 +124,16 @@ var ListOrders = React.createClass({
     },
 
     onSelect: function(next_ope) {
+        console.log('--1--');
+        console.log(next_ope);
+        console.log('==1==');
+        console.log('--2--');
+        console.log(this.state.next_ope);
+        console.log('==2==');
         this.setState({ next_ope: next_ope });
+        console.log('--3--');
+        console.log(this.state.next_ope);
+        console.log('==3==');
     },
 
     backToHere: function() {
@@ -258,6 +266,10 @@ var ListOrders = React.createClass({
     },
 
     render: function() {
+        console.log('--4--');
+        console.log(this.state.next_ope);
+        console.log('==4==');
+
         if (this.state.next_ope != null) {
             return this.state.next_ope;
         }
