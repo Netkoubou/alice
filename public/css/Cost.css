@@ -113,6 +113,7 @@
 #list-costs-costs td:nth-child(1) { text-align: center; }
 #list-costs-costs td:nth-child(2) { text-align: center; }
 #list-costs-costs td:nth-child(7) { text-align: right; }
+#list-costs-costs td:nth-child(8) { text-align: center; }
 #list-costs-costs td:nth-child(9) { text-align: center; }
 
 .list-costs-remark {
