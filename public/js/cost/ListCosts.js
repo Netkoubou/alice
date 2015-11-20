@@ -62,7 +62,7 @@ var ListCosts = React.createClass({
 
     getInitialState: function() {
         return {
-            next_op:      null,
+            next_ope:     null,
             start_date:   moment(),
             end_date:     moment(),
             is_approving: false,
@@ -79,18 +79,7 @@ var ListCosts = React.createClass({
         });
     },
 
-    onSelect: function(next_ope) {
-        console.log('-1-');
-        console.log(next_ope);
-        console.log('=1=');
-        console.log('-2-');
-        console.log(this.state.next_ope);
-        console.log('=2=');
-        this.setState({ next_ope: next_ope });
-        console.log('-3-');
-        console.log(this.state.next_ope);
-        console.log('=3=');
-    },
+    onSelect: function(next_ope) { this.setState({ next_ope: next_ope }); },
 
     backToHere: function() {
         this.setState({ next_ope: null });
@@ -186,11 +175,7 @@ var ListCosts = React.createClass({
     },
 
     render: function() {
-        console.log('-4-');
-        console.log(this.state.next_op);
-        console.log('=4=');
-
-        if (this.state.next_op != null) {
+        if (this.state.next_ope != null) {
             return this.state.next_ope;
         }
 
