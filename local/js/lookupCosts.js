@@ -1,7 +1,7 @@
 'use strict';
 var ObjectID = require('mongodb').ObjectID;
 var log4js   = require('log4js');
-var util     = require('util');
+var util     = require('./util');
 
 var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');
@@ -92,9 +92,9 @@ function construct_response(costs, db, res) {
             
             next_action = function(account_title) {
                 response[index].account_title_name = account_title.name;
-                order_count++;
+                cost_count++;
 
-                if (order_count >= costs.length) {
+                if (cost_count >= costs.length) {
                     res.json({ status: 0, costs: response });
                     is_already_sent = true;
                     db.close();
@@ -133,6 +133,7 @@ function construct_response(costs, db, res) {
 
         response[index] = {
             code:               cost.code,
+            drafting_date:      cost.drafting_date,
             department_code:    cost.department_code,
             department_name:    '',    // これから埋める
             drafter_code:       cost.drafter_code,
@@ -140,7 +141,6 @@ function construct_response(costs, db, res) {
             drafter_name:       '', // これから埋める
             account_title_code: cost.account_title_code,
             account_title_name: '', // これから埋める
-            article:            cost.article,
             remark:             cost.remark,
             state:              cost.state,
             breakdowns:         cost.breakdowns
@@ -160,7 +160,7 @@ module.exports = function(req, res) {
     util.query(function(db) {
         var sel = generateSelector(req.session.user, req.body);
 
-        db.collection('costs').find(sel).toAttay(function(err, costs) {
+        db.collection('costs').find(sel).toArray(function(err, costs) {
             var msg;
 
             if (err == null) {

@@ -11,6 +11,41 @@ var CalendarMarker = require('../components/CalendarMarker');
 var Messages       = require('../lib/Messages');
 var Util           = require('../lib/Util');
 
+var CostCode = React.createClass({
+    propTypes: {
+        user: React.PropTypes.object.isRequired,
+
+        cost: React.PropTypes.shape({
+            code:               React.PropTypes.string.isRequired,
+            department_code:    React.PropTypes.string.isRequired,
+            department_name:    React.PropTypes.string.isRequired,
+            drafting_date:      React.PropTypes.string.isRequired,
+            drafter_code:       React.PropTypes.string.isRequired,
+            drafter_account:    React.PropTypes.string.isRequired,
+            drafter_name:       React.PropTypes.string.isRequired,
+            account_title_code: React.PropTypes.string.isRequired,
+            account_title_name: React.PropTypes.string.isRequired,
+            state:              React.PropTypes.string.isRequired,
+            breakdowns:         React.PropTypes.arrayOf(React.PropTypes.shape({
+                date:     React.PropTypes.string.isRequired,
+                article:  React.PropTypes.string.isRequired,
+                quantity: React.PropTypes.number.isRequired,
+                price:    React.PropTypes.number.isRequired,
+                note:     React.PropTypes.string.isRequired
+            }) ).isRequired
+        }).isRequired,
+
+        goBack:   React.PropTypes.func.isRequired,
+        onSelect: React.PropTypes.func.isRequired
+    },
+
+    render: function() {
+        return (
+            <div>{this.props.cost.code}</div>
+        );
+    }
+});
+
 var ListCosts = React.createClass({
     propTypes: { user: React.PropTypes.object.isRequired },
 
@@ -40,6 +75,12 @@ var ListCosts = React.createClass({
         });
     },
 
+    backToHere: function() {
+    },
+
+    onSelect: function() {
+    },
+
     onSearch: function() {
         XHR.post('lookupCosts').send({
             start_date: this.state.start_date.format('YYYY/MM/DD'),
@@ -61,7 +102,8 @@ var ListCosts = React.createClass({
             }
 
             var costs = res.body.costs.map(function(cost, index) {
-                var total = 0;
+                var state  = Util.toCostStateName(cost.state);
+                var total  = 0;
                 var remark = '';
 
                 cost.breakdowns.forEach(function(b) {
@@ -94,8 +136,8 @@ var ListCosts = React.createClass({
                         view:  cost.drafting_date
                     },
                     {
-                        value: cost.drafter_account,
-                        view:  cost.drafter_account
+                        value: cost.drafter_name,
+                        view:  cost.drafter_name
                     },
                     {
                         value: cost.department_name,
@@ -109,19 +151,14 @@ var ListCosts = React.createClass({
                         value: cost.breakdowns[0].article,
                         view:  cost.breakdowns[0].article
                     },
-                    {
-                        value: total,
-                        view:  total.toLocaleString()
-                    },
-                    {
-                        value: '',
-                        view:  remark,
-                    }
+                    { value: total, view:  total.toLocaleString() },
+                    { value: state, view:  state },
+                    { value: '',    view:  remark, }
                 ];
             }.bind(this) );
 
             this.setState({ costs: costs });
-        });
+        }.bind(this) );
     },
 
     render: function() {
@@ -133,6 +170,7 @@ var ListCosts = React.createClass({
             { name: '勘定科目',          type: 'string' },
             { name: '品目',              type: 'string' },
             { name: '総計',              type: 'number' },
+            { name: '状態',              type: 'string' },
             { name: '!',                 type: 'void' }
         ];
 
