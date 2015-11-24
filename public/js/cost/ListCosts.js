@@ -52,7 +52,7 @@ var CostCode = React.createClass({
     render: function() {
         return (
             <div className="list-costs-cost-code" onClick={this.onClick}>
-              {this.props.cost.code}
+              {this.props.cost.cost_code}
             </div>
         );
     }
@@ -119,7 +119,7 @@ var ListCosts = React.createClass({
                 if (cost.cost_remark != '') {
                     var id      = 'list-costs-popover' + index.toString();
                     var popover = <Popover id={id} title="備考・連絡">
-                                    {cost.remark}
+                                    {cost.cost_remark}
                                   </Popover>;
 
                     remark = <OverlayTrigger contaner={this.refs.listCosts}
@@ -131,7 +131,7 @@ var ListCosts = React.createClass({
 
                 return [
                     {
-                        value: cost.code,
+                        value: cost.cost_code,
                         view:  <CostCode user={this.props.user}
                                          cost={cost}
                                          goBack={this.backToHere}
