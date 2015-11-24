@@ -132,7 +132,9 @@ function construct_response(costs, db, res) {
         }
 
         response[index] = {
-            code:               cost.code,
+            cost_code:          cost.cost_code,
+            cost_remark:        cost.cost_remark,
+            cost_state:         cost.cost_state,
             drafting_date:      cost.drafting_date,
             department_code:    cost.department_code,
             department_name:    '',    // これから埋める
@@ -141,8 +143,6 @@ function construct_response(costs, db, res) {
             drafter_name:       '', // これから埋める
             account_title_code: cost.account_title_code,
             account_title_name: '', // これから埋める
-            remark:             cost.remark,
-            state:              cost.state,
             breakdowns:         cost.breakdowns
         };
 

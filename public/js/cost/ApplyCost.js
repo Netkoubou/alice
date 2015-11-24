@@ -144,7 +144,7 @@ var ApplyCost = React.createClass({
         XHR.post('bookCost').send({
             department_code:    this.state.department.code,
             account_title_code: this.state.account_title.code,
-            remark:             this.state.remark,
+            cost_remark:        this.state.remark,
             breakdowns:         this.state.breakdowns
         }).end(function(err, res) {
             if (err) {

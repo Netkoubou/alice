@@ -15,9 +15,11 @@ var ProcessCost = React.createClass({
     },
 
     render: function() {
+        var permission = 'REFER_ONLY';
+
         return (
             <div id="process-cost">
-              {user.name}
+              {this.props.user.name}
             </div>
         );
     }

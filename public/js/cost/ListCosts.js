@@ -17,7 +17,9 @@ var CostCode = React.createClass({
         user: React.PropTypes.object.isRequired,
 
         cost: React.PropTypes.shape({
-            code:               React.PropTypes.string.isRequired,
+            cost_code:          React.PropTypes.string.isRequired,
+            cost_remark:        React.PropTypes.string.isRequired,
+            cost_state:         React.PropTypes.string.isRequired,
             department_code:    React.PropTypes.string.isRequired,
             department_name:    React.PropTypes.string.isRequired,
             drafting_date:      React.PropTypes.string.isRequired,
@@ -26,7 +28,6 @@ var CostCode = React.createClass({
             drafter_name:       React.PropTypes.string.isRequired,
             account_title_code: React.PropTypes.string.isRequired,
             account_title_name: React.PropTypes.string.isRequired,
-            state:              React.PropTypes.string.isRequired,
             breakdowns:         React.PropTypes.arrayOf(React.PropTypes.shape({
                 date:     React.PropTypes.string.isRequired,
                 article:  React.PropTypes.string.isRequired,
@@ -107,7 +108,7 @@ var ListCosts = React.createClass({
             }
 
             var costs = res.body.costs.map(function(cost, index) {
-                var state  = Util.toCostStateName(cost.state);
+                var state  = Util.toCostStateName(cost.cost_state);
                 var total  = 0;
                 var remark = '';
 
@@ -115,7 +116,7 @@ var ListCosts = React.createClass({
                     total += b.price * b.quantity;
                 });
 
-                if (cost.remark != '') {
+                if (cost.cost_remark != '') {
                     var id      = 'list-costs-popover' + index.toString();
                     var popover = <Popover id={id} title="備考・連絡">
                                     {cost.remark}

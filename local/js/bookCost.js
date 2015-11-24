@@ -18,13 +18,13 @@ module.exports = function(req, res) {
 
     util.build_sfx(res, 'costs', department_code, function(db, sfx) {
         var cost = {
-            code:               'C-' + sfx,
+            cost_code:          'C-' + sfx,
+            cost_remark:        req.body.cost_remark,
+            cost_state:         'APPROVING',
             drafting_date:      moment().format('YYYY/MM/DD'),
             drafter_code:       req.session.user._id,
             department_code:    department_code,
             account_title_code: req.body.account_title_code,
-            remark:             req.body.remark,
-            state:              'APPROVING',
             breakdowns:         req.body.breakdowns
         };
 
