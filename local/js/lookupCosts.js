@@ -43,10 +43,10 @@ function generateSelector(user, args) {
         });
 
         if (complex_sel.length > 0) {
-            complex_sel.push({ drafter_code: user._id });
+            complex_sel.push({ drafter_account: user.account });
             sel['$and'].push({ '$or': complex_sel });
         } else {
-            sel['$and'].push({ drafter_code: user._id });
+            sel['$and'].push({ drafter_account: user.account });
         }
     }
 
@@ -64,16 +64,17 @@ function construct_response(costs, db, res) {
 
         switch (mode) {
         case 0:
-            id     = new ObjectID(cost.drafter_code);
-            cursor = db.collection('users').find({ _id: id });
+            cursor = db.collection('users').find({
+                account: cost.drafter_account
+            });
 
             next_action = function(user) {
-                response[index].drafter_account = user.account;
+                response[index].drafter_account = cost.drafter_account;
                 response[index].drafter_name    = user.name;
                 pick_infos(1, cost, index);
             }
 
-            err_msg += 'user: "' + id + '".';
+            err_msg += 'user: "' + cost.drafter_account + '".';
             break;
         case 1:
             id     = new ObjectID(cost.department_code);
@@ -138,7 +139,6 @@ function construct_response(costs, db, res) {
             drafting_date:      cost.drafting_date,
             department_code:    cost.department_code,
             department_name:    '',    // これから埋める
-            drafter_code:       cost.drafter_code,
             drafter_account:    '', // これから埋める
             drafter_name:       '', // これから埋める
             account_title_code: cost.account_title_code,

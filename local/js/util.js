@@ -23,8 +23,8 @@ module.exports = {
     },
 
     uniq: function(array, eq) {
-        function exists(x, a) {             
-            a.filter(function(y) { return eq(x, y); }).length != 0;
+        function exists(x, a) {
+            return a.filter(function(y) { return eq(x, y); }).length != 0;
         }
                                                                  
         function iter(rest, ans) {

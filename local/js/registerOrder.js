@@ -27,7 +27,7 @@ module.exports = function(req, res) {
             order_version: 0,
 
             drafting_date:   today,
-            drafter_code:    req.session.user._id,
+            drafter_account: req.session.user.account,
             department_code: department_code,
             trader_code:     req.body.trader_code,
 

@@ -170,15 +170,17 @@ function construct_response(orders, db, res) {
 
         switch (mode) {
         case 0:
-            id     = new ObjectID(order.drafter_code);
-            cursor = db.collection('users').find({ _id: id }).limit(1);
+            cursor = db.collection('users').find({
+                account: order.drafter.account
+            }).limit(1);
 
             next_action = function(user) {
                 response[index].drafter_account = user.account;
                 pick_infos(mode + 1, order, index);
             };
 
-            err_msg = '[searchOrders] ' + 'failed to find user: "' + id + '".';
+            err_msg = '[searchOrders] ' + 'failed to find user: "' +
+                      order.drafter.account + '".';
             break;
         case 1:
             id     = new ObjectID(order.last_modifier_code);
@@ -271,7 +273,6 @@ function construct_response(orders, db, res) {
             order_remark:    order.order_remark,
             order_version:   order.order_version,
             drafting_date:   order.drafting_date,
-            drafter_code:    order.drafter_code,
             drafter_account: '',    // これから埋める
             department_code: order.department_code,
             department_name: '',    // これから埋める

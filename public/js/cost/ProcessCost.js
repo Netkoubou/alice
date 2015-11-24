@@ -17,6 +17,18 @@ var ProcessCost = React.createClass({
     render: function() {
         var permission = 'REFER_ONLY';
 
+        if (user.account != cost.drafter_account) {
+            if (user.privileged.approve) {
+                permission = 'APPROVE';
+            } else {
+                user.departments.forEach(function(d) {
+                    if (d.code === cost.department_code && d.approve) {
+                        permission = 'APPROVE';
+                    }
+                });
+            }
+        }
+
         return (
             <div id="process-cost">
               {this.props.user.name}

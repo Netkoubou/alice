@@ -514,7 +514,6 @@ var EditOrder = React.createClass({
             order_remark:    React.PropTypes.string.isRequired,
             order_version:   React.PropTypes.number.isRequired,
             drafting_date:   React.PropTypes.string.isRequired,
-            drafter_code:    React.PropTypes.string.isRequired,
             drafter_account: React.PropTypes.string.isRequired,
             department_code: React.PropTypes.string.isRequired,
             department_name: React.PropTypes.string.isRequired,

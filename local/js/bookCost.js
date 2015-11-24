@@ -22,7 +22,7 @@ module.exports = function(req, res) {
             cost_remark:        req.body.cost_remark,
             cost_state:         'APPROVING',
             drafting_date:      moment().format('YYYY/MM/DD'),
-            drafter_code:       req.session.user._id,
+            drafter_account:    req.session.user.account,
             department_code:    department_code,
             account_title_code: req.body.account_title_code,
             breakdowns:         req.body.breakdowns

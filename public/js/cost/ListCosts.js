@@ -23,7 +23,6 @@ var CostCode = React.createClass({
             department_code:    React.PropTypes.string.isRequired,
             department_name:    React.PropTypes.string.isRequired,
             drafting_date:      React.PropTypes.string.isRequired,
-            drafter_code:       React.PropTypes.string.isRequired,
             drafter_account:    React.PropTypes.string.isRequired,
             drafter_name:       React.PropTypes.string.isRequired,
             account_title_code: React.PropTypes.string.isRequired,

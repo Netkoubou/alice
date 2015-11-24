@@ -148,16 +148,15 @@ function pick_step_by_step(user, db, res) {
                     * 但し、categories と traders は重複する可能性があるため、
                     * uniq する。
                     */
-                    var eq = function(x, y) { return x.code === y.code };
-
-                    categories = util.uniq(categories, eq);
-                    traders    = util.uniq(traders,    eq);
+                    var eq = function(x, y) {
+                        return x.code.toString() === y.code.toString()
+                    };
 
                     res.json({
                         status:      0,
                         departments: departments,
-                        categories:  categories,
-                        traders:     traders
+                        categories:  util.uniq(categories, eq),
+                        traders:     util.uniq(traders,    eq)
                     });
 
                     is_already_sent = true;
