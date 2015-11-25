@@ -172,12 +172,12 @@ var ProcessOrder = React.createClass({
             order_version: this.props.order.order_version
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.APPROVE_CHANGE_ORDER_STATE);
+                alert(Messages.ajax.PROCESS_ORDER_CHANGE_ORDER_STATE);
                 throw 'ajax_changeOrderState';
             }
 
             if (res.body.status > 1) {
-                alert(Messages.server.APPROVE_CHANGE_ORDER_STATE);
+                alert(Messages.server.PROCESS_ORDER_CHANGE_ORDER_STATE);
                 throw 'server_changeOrderState';
             }
 

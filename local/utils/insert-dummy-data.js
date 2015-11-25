@@ -53,7 +53,17 @@ db.departments.insert({
     tel:  '3216'
 });
 
+db.departments.insert({
+    name: 'お偉い職',
+    abbr: 'GOD',
+    tel:  '1225'
+});
 
+db.departments.insert({
+    name: 'SPD',
+    abbr: 'SPD',
+    tel:  '3217'
+});
 
 // 販売元
 db.traders.insert({
@@ -325,7 +335,14 @@ db.users.insert({
         process_order:    true,
         approve:          false
     },
-    departments: []
+    departments: [{
+        code: db.departments.find({ name: 'SPD' })[0]._id,
+        administrate:     false,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
+        approve:          false
+    }]
 });
 
 db.users.insert({
@@ -341,7 +358,14 @@ db.users.insert({
         process_order:    true,
         approve:          false
     },
-    departments: []
+    departments: [{
+        code: db.departments.find({ name: 'SPD' })[0]._id,
+        administrate:     false,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
+        approve:          true
+    }]
 });
 
 db.users.insert({
@@ -357,7 +381,14 @@ db.users.insert({
         process_order:    false,
         approve:          true
     },
-    departments: []
+    departments: [{
+        code: db.departments.find({ name: 'お偉い職' })[0]._id,
+        administrate:     false,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
+        approve:          false
+    }]
 });
 
 db.users.insert({

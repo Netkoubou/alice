@@ -25,7 +25,8 @@ module.exports = function(req, res) {
             drafter_account:    req.session.user.account,
             department_code:    department_code,
             account_title_code: req.body.account_title_code,
-            breakdowns:         req.body.breakdowns
+            breakdowns:         req.body.breakdowns,
+            fixed_date:         ''
         };
 
         db.collection('costs').insertOne(cost, function(err, result) {
@@ -35,7 +36,7 @@ module.exports = function(req, res) {
             if (err == null) {
                 res.json({ status: 0 });
 
-                msg = '[bookCost] booked cost: "' + cost.code + '" ' +
+                msg = '[bookCost] booked cost: "' + cost.cost_code + '" ' +
                       'by ' + req.session.user.account + '".';
 
                 log_info.info(msg);

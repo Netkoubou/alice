@@ -28,7 +28,6 @@ module.exports = function(req, res) {
             },
             function(err, result) {
                 var msg;
-
                 db.close();
 
                 if (err == null) {

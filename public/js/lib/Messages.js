@@ -54,8 +54,8 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        APPROVE_CHANGE_ORDER_STATE:
-            'AJAX error: changeOrderState in Approve.js\n\n' +
+        PROCESS_ORDER_CHANGE_ORDER_STATE:
+            'AJAX error: changeOrderState in ProcessOrder.js\n\n' +
             'ネットワークの問題で発注の状態変更に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
@@ -87,6 +87,12 @@ module.exports = {
         LIST_COSTS_LOOKUP_COSTS:
             'AJAX error: lookupCosts in ListCosts.js.js\n\n' +
             'ネットワークの問題で経費精算の検索に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        PROCESS_COST_FIX_COST:
+            'AJAX error: fixCost in ProcessCost.js.js\n\n' +
+            'ネットワークの問題で経費精算の承認 / 却下に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
@@ -137,8 +143,8 @@ module.exports = {
             '発注の検索でサーバにエラーが発生しました。\n' +
             'システム管理者に問い合わせて下さい。',
 
-        APPROVE_CHANGE_ORDER_STATE:
-            'Server error: changeOrderState in Approve.js\n\n' +
+        PROCESS_ORDER_CHANGE_ORDER_STATE:
+            'Server error: changeOrderState in ProcessOrder.js\n\n' +
             '発注の状態変更でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
@@ -165,6 +171,11 @@ module.exports = {
         LIST_COSTS_LOOKUP_COSTS:
             'Server error: lookupCosts in ListCosts.js\n\n' +
             '経費精算の検索でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        PROCESS_COST_FIX_COST:
+            'Server error: fixCost in ProcessCost.js.js\n\n' +
+            '経費精算の承認 / 却下でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

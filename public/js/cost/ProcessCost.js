@@ -2,7 +2,7 @@
 var React      = require('react');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
-var XHR        = require('superagent').Button;
+var XHR        = require('superagent');
 var Notice     = require('../components/Notice');
 var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
@@ -19,20 +19,42 @@ var ProcessCost = React.createClass({
         return { remark: this.props.cost.cost_remark }
     },
 
-    onApprove: function() {
+    onFix: function(final_state) {
+        XHR.post('fixCost').send({
+            cost_code:   this.props.cost.cost_code,
+            cost_remark: this.state.remark,
+            cost_state:  final_state
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.PROCESS_COST_FIX_COST);
+                throw 'ajax_fixCost';
+            }
+
+            if (res.body.status > 0) {
+                alert(Messages.server.PROCESS_COST_FIX_COST);
+                throw 'server_fixCost';
+            }
+
+            alert('更新しました');
+            this.props.goBack();
+        }.bind(this) );
     },
 
-    onReject: function() {
-    },
+    onApprove: function() { this.onFix('APPROVED'); },
+    onReject:  function() { this.onFix('REJECTED'); },
 
     onChangeRemark: function(e) {
         this.setState({ remark: e.target.value });
     },
 
     render: function() {
-        var permission = 'REFER_ONLY';
+        var user         = this.props.user;
+        var cost         = this.props.cost;
+        var permission   = 'REFER_ONLY';
+        var is_approving = (cost.cost_state === 'APPROVING');
+        var is_mine      = (user.account === cost.drafter_account);
 
-        if (this.props.user.account != this.props.cost.drafter_account) {
+        if (is_approving && !is_mine) {
             if (user.privileged.approve) {
                 permission = 'APPROVE';
             } else {
@@ -60,10 +82,7 @@ var ProcessCost = React.createClass({
         }
 
 
-        var drafter_name    = this.props.cost.drafter_name;
-        var drafter_account = this.props.cost.drafter_account;
-        var total = 0;
-
+        var total       = 0;
         var table_title = [
             { name: '購入日',      type: 'string' },
             { name: '品名',        type: 'string' },
@@ -94,20 +113,20 @@ var ProcessCost = React.createClass({
                 <legend>{legend}</legend>
                 <div id="process-cost-notices">
                   <Notice className="process-cost-notice" title="起案番号">
-                    {this.props.cost.cost_code}
+                    {cost.cost_code}
                   </Notice>
                   <Notice className="process-cost-notice" title="起案日">
-                    {this.props.cost.drafting_date}
+                    {cost.drafting_date}
                   </Notice>
                   <Notice className="process-cost-notice"
                           title="申請元 部門診療科">
-                    {this.props.cost.department_name}
+                    {cost.department_name}
                   </Notice>
                   <Notice className="process-cost-notice" title="起案者">
-                    {drafter_name + '(' + drafter_account + ')'}
+                    {cost.drafter_name + '(' + cost.drafter_account + ')'}
                   </Notice>
                   <Notice id="process-cost-account-title" title="勘定科目">
-                    {this.props.cost.account_title_name}
+                    {cost.account_title_name}
                   </Notice>
                 </div>
                 <Input id="process-cost-remark"
