@@ -211,7 +211,7 @@ var ApplyCost = React.createClass({
 
         var title = [
             { name: '+/-',         type: 'void' },
-            { name: '日付',        type: 'void' },
+            { name: '購入日',      type: 'void' },
             { name: '品名',        type: 'void' },
             { name: '数量',        type: 'void' },
             { name: '単価',        type: 'void' },
