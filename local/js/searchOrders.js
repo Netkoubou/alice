@@ -171,7 +171,7 @@ function construct_response(orders, db, res) {
         switch (mode) {
         case 0:
             cursor = db.collection('users').find({
-                account: order.drafter.account
+                account: order.drafter_account
             }).limit(1);
 
             next_action = function(user) {
@@ -180,7 +180,7 @@ function construct_response(orders, db, res) {
             };
 
             err_msg = '[searchOrders] ' + 'failed to find user: "' +
-                      order.drafter.account + '".';
+                      order.drafter_account + '".';
             break;
         case 1:
             id     = new ObjectID(order.last_modifier_code);
