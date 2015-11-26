@@ -2,7 +2,7 @@
 var fs = require('fs');
 
 module.exports = function(req, res) {
-    fs.readFile('local/etc/message.txt', 'utf8', function(err, message) {
+    fs.readFile('local/data/message.txt', 'utf8', function(err, message) {
         if (err == null) {
             res.json({
                 status:  0,
