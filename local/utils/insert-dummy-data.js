@@ -353,9 +353,9 @@ db.users.insert({
     email:   'spdadm@example.jp',
     privileged: {
         administrate:     true,
-        draft_ordinarily: true,
-        draft_urgently:   true,
-        process_order:    true,
+        draft_ordinarily: false,
+        draft_urgently:   false,
+        process_order:    false,
         approve:          false
     },
     departments: [{

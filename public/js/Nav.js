@@ -87,8 +87,7 @@ var Nav = React.createClass({
             'LIST_COSTS',               // 経費精算申請一覧
             'LIST_BUDGET',              // 予算一覧
             'ADMIN_BUDGET',             // 予算管理
-            'ADD_USER',                 // ユーザ追加
-            'LIST_USERS',               // ユーザ一覧
+            'MANAGE_USERS',             // ユーザ管理
             'MANAGE_DEPARTMENTS',       // 部門診療科情報管理
             'MANAGE_TRADERS',           // 販売元情報管理
             'NAMAGE_PRODUCTS',          // 物品情報管理
@@ -197,7 +196,7 @@ var Nav = React.createClass({
          */
         var draft_order = [];
         var budget      = [];
-        var etc         = null;
+        var admin       = null;
         var selected    = this.props.selected;
 
         if (is_ordinary_drafter) {
@@ -250,22 +249,19 @@ var Nav = React.createClass({
         }
 
         if (is_admin) {
-            etc = (
+            admin = (
                 <div>
                   <NavItemTitle name="システム管理" />
-                  <NavItem name="ユーザ追加"
+                  <NavItem name="ユーザ"
                            onClick={this.dummy}
-                           isSelected={selected === 'ADD_USER'} />
-                  <NavItem name="ユーザ一覧"
-                           onClick={this.dummy}
-                           isSelected={selected === 'LIST_USERS'} />
-                  <NavItem name="部門診療科情報"
+                           isSelected={selected === 'MANAGE_USERS'} />
+                  <NavItem name="部門診療科"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_DEPARTMENTS'} />
-                  <NavItem name="販売元情報"
+                  <NavItem name="販売元"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_TRADERS'} />
-                  <NavItem name="物品情報"
+                  <NavItem name="物品"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_PRODUCTS'} />
                   <NavItem name="メッセージ"
@@ -291,7 +287,7 @@ var Nav = React.createClass({
                        onClick={this.onSelect('LIST_COSTS')}
                        isSelected={selected === 'LIST_COSTS'} />
               {budget}
-              {etc}
+              {admin}
               <NavItemTitle name="その他" />
               <NavItem name="パスワード変更"
                        onClick={this.onSelect('CHANGE_PASSWORD')}
