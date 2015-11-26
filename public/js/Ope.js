@@ -8,7 +8,7 @@ var EditOrder  = require('./order/EditOrder');
 var ListOrders = require('./order/ListOrders');
 
 var ChangePassword  = require('./others/ChangePassword');
-var RegisterMessage = require('./others/RegisterMessage');
+var RegisterMessage = require('./adm/RegisterMessage');
 
 var ApplyCost = require('./cost/ApplyCost');
 var ListCosts = require('./cost/ListCosts');
