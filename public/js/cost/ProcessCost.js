@@ -21,6 +21,7 @@ var ProcessCost = React.createClass({
 
     onFix: function(final_state) {
         XHR.post('fixCost').send({
+            cost_id:     this.props.cost.cost_id,   // 不要
             cost_code:   this.props.cost.cost_code,
             cost_remark: this.state.remark,
             cost_state:  final_state

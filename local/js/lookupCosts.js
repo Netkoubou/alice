@@ -139,7 +139,7 @@ function construct_response(costs, db, res) {
             cost_state:         cost.cost_state,
             drafting_date:      cost.drafting_date,
             department_code:    cost.department_code,
-            department_name:    '',    // これから埋める
+            department_name:    '', // これから埋める
             drafter_account:    '', // これから埋める
             drafter_name:       '', // これから埋める
             account_title_code: cost.account_title_code,
