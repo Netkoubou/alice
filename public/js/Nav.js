@@ -87,7 +87,8 @@ var Nav = React.createClass({
             'LIST_COSTS',               // 経費精算申請一覧
             'LIST_BUDGET',              // 予算一覧
             'ADMIN_BUDGET',             // 予算管理
-            'MANAGE_USERS',             // ユーザ情報管理
+            'ADD_USER',                 // ユーザ追加
+            'LIST_USERS',               // ユーザ一覧
             'MANAGE_DEPARTMENTS',       // 部門診療科情報管理
             'MANAGE_TRADERS',           // 販売元情報管理
             'NAMAGE_PRODUCTS',          // 物品情報管理
@@ -252,9 +253,12 @@ var Nav = React.createClass({
             etc = (
                 <div>
                   <NavItemTitle name="システム管理" />
-                  <NavItem name="ユーザ情報"
+                  <NavItem name="ユーザ追加"
                            onClick={this.dummy}
-                           isSelected={selected === 'MANAGE_USERS'} />
+                           isSelected={selected === 'ADD_USER'} />
+                  <NavItem name="ユーザ一覧"
+                           onClick={this.dummy}
+                           isSelected={selected === 'LIST_USERS'} />
                   <NavItem name="部門診療科情報"
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_DEPARTMENTS'} />
