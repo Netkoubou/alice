@@ -166,6 +166,7 @@ var ProcessOrder = React.createClass({
 
     changeOrderState: function(order_state) {
         XHR.post('changeOrderState').send({
+            order_id:      this.props.order.order_id,   // 不要
             order_code:    this.props.order.order_code,
             order_state:   order_state,
             order_remark:  this.state.order_remark,
@@ -285,6 +286,7 @@ var ProcessOrder = React.createClass({
             }
 
             XHR.post('updateOrder').send({
+                order_id:        this.props.order.order_id, // 不要
                 order_code:      this.props.order.order_code,
                 order_state:     order_state,
                 order_remark:    this.state.order_remark,
@@ -373,7 +375,7 @@ var ProcessOrder = React.createClass({
         }
 
         this.props.user.departments.forEach(function(d) {
-            if (d.code === this.props.order.order_code) {
+            if (d.code === this.props.order.department_code) {
                 if (d.approve) {
                     can_approve = true;
                 }

@@ -133,6 +133,7 @@ function construct_response(costs, db, res) {
         }
 
         response[index] = {
+            cost_id:            0,  // 不要 (DBMS に MySQL を用いる場合に必要)
             cost_code:          cost.cost_code,
             cost_remark:        cost.cost_remark,
             cost_state:         cost.cost_state,

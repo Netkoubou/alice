@@ -267,6 +267,7 @@ function construct_response(orders, db, res) {
         }
 
         response[index] = {
+            order_id:        0,     // 不要 (DBMS に MySQL を用いる場合に必要)
             order_code:      order.order_code,
             order_type:      order.order_type,
             order_state:     order.order_state,

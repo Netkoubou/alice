@@ -20,6 +20,7 @@ module.exports = function(req, res) {
 
     util.build_sfx(res, 'orders', department_code, function(db, sfx) {
         var order = {
+            order_id:      0,   // 不要 (DBMS に MySQL を用いる場合に必要)
             order_code:    'O-' + sfx,
             order_type:    req.body.order_type,
             order_state:   'REQUESTING',

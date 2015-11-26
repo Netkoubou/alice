@@ -64,6 +64,7 @@ var ButtonForNextAction = React.createClass({
     eraseOrder: function() {
         if (confirm("この発注を消去します。よろしいですか?") ) {
             XHR.post('eraseOrder').send({
+                order_id:   this.props.orderId, // 不要 (MySQL の場合のみ必要)
                 order_code: this.props.orderCode
             }).end(function(err, res) {
                 if (err) {
@@ -240,6 +241,7 @@ var FinalPane = React.createClass({
 
                 alert('登録しました。');
                 this.getFlux().actions.setOrderCodeAndVersion({
+                    id:      res.body.order_id, // 不要 (MySQL の場合のみ必要)
                     code:    res.body.order_code,
                     version: res.body.order_version
                 });
@@ -270,6 +272,7 @@ var FinalPane = React.createClass({
              * 登録済み若しくは既存の発注を更新
              */
             XHR.post('updateOrder').send({
+                order_id:        this.props.orderId,    // 不要
                 order_code:      this.props.orderCode,
                 order_state:     'REQUESTING',
                 order_remark:    this.props.orderRemark,
@@ -320,6 +323,7 @@ var FinalPane = React.createClass({
      */
     onPrint: function() {
         XHR.post('changeOrderState').send({
+            order_id:      this.props.orderId,  // 不要 (MySQL の場合のみ必要)
             order_code:    this.props.orderCode,
             order_state:   'APPROVING',
             order_remark:  this.props.orderRemark,
@@ -519,6 +523,7 @@ var FinalPane = React.createClass({
                 <ButtonForNextAction onFix={this.onFix}
                                      onPrint={this.onPrint}
                                      needSave={this.props.needSave}
+                                     orderId={this.props.orderId}   // 不要
                                      orderCode={this.props.orderCode}
                                      trader={this.props.trader}
                                      goBack={this.props.goBack} />

@@ -49,6 +49,7 @@ var messages = {
  */
 var StoreForEditOrder = Fluxxor.createStore({
     initialize: function() {
+        this.order_id      = 0;     // 不要 (DBMS に MySQL を用いる場合に必要)
         this.order_code    = '';    // 起案番号
         this.order_remark  = '';    // 備考
         this.order_version = 0;     // 発注のバージョン番号
@@ -116,6 +117,7 @@ var StoreForEditOrder = Fluxxor.createStore({
      * と言うことで、need_save フラグを false にしている。
      */
     setOrderCodeAndVersion: function(payload) {
+        this.order_id      = payload.id;    // 不要 (MySQL の場合のみ必要)
         this.order_code    = payload.code;
         this.order_version = payload.version;
         this.need_save     = false;
@@ -264,6 +266,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             name: order.department_name
         };
 
+        this.order_id      = order.order_id;    // 不要 (MySQL の場合のみ必要)
         this.order_code    = order.order_code;
         this.order_remark  = order.order_remark;
         this.order_version = order.order_version;
@@ -301,6 +304,7 @@ var StoreForEditOrder = Fluxxor.createStore({
     },
 
     resetState: function() {
+        this.order_id        = 0;   // 不要 (DBMS に MySQL を用いる場合に必要)
         this.order_code      = '';
         this.order_remark    = '';
         this.order_version   = 0;
@@ -315,6 +319,7 @@ var StoreForEditOrder = Fluxxor.createStore({
     getState: function() {
         return {
             department:    this.department,
+            order_id:      this.order_id,   // 不要 (MySQL の場合のみ必要)
             order_code:    this.order_code,
             order_remark:  this.order_remark,
             order_version: this.order_version,
@@ -353,7 +358,6 @@ var actions = {
             search_text:     payload.search_text
         };
 
-        // XHR.post('searchCandidates').send(payload).end(function(err, res) {
         XHR.post('searchCandidates').send(condition).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.EDIT_ORDER_SEARCH_CANDIDATES);
@@ -458,6 +462,7 @@ var SubeditOrder = React.createClass({
               </div>
               <div id="edit-order-right-side">
                 <FinalPane user={this.props.user}
+                           orderId={this.state.order_id}    // 不要
                            orderCode={this.state.order_code}
                            orderRemark={this.state.order_remark}
                            orderVersion={this.state.order_version}
@@ -496,7 +501,7 @@ var EditOrder = React.createClass({
         ]),
 
         order: React.PropTypes.shape({
-            order_code:   React.PropTypes.string.isRequired,
+            order_code: React.PropTypes.string.isRequired,
 
             order_type: React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
