@@ -253,7 +253,7 @@ var Nav = React.createClass({
                 <div>
                   <NavItemTitle name="システム管理" />
                   <NavItem name="ユーザ"
-                           onClick={this.dummy}
+                           onClick={this.onSelect('MANAGE_USERS')}
                            isSelected={selected === 'MANAGE_USERS'} />
                   <NavItem name="部門診療科"
                            onClick={this.dummy}

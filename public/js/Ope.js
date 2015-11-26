@@ -2,16 +2,14 @@
  * 操作領域
  */
 'use strict';
-var React      = require('react');
-
-var EditOrder  = require('./order/EditOrder');
-var ListOrders = require('./order/ListOrders');
-
-var ChangePassword  = require('./others/ChangePassword');
+var React           = require('react');
+var EditOrder       = require('./order/EditOrder');
+var ListOrders      = require('./order/ListOrders');
+var ApplyCost       = require('./cost/ApplyCost');
+var ListCosts       = require('./cost/ListCosts');
 var RegisterMessage = require('./adm/RegisterMessage');
-
-var ApplyCost = require('./cost/ApplyCost');
-var ListCosts = require('./cost/ListCosts');
+var ManageUsers     = require('./adm/ManageUsers');
+var ChangePassword  = require('./others/ChangePassword');
 
 
 /*
@@ -54,6 +52,9 @@ var Ope = React.createClass({
         case 'LIST_COSTS':
             contents = <ListCosts key={Math.random()}
                                   user={this.props.user} />;
+            break;
+        case 'MANAGE_USERS':
+            contents = <ManageUsers />;
             break;
         default:
             contents = null;
