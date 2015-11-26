@@ -27,12 +27,12 @@
 }
 
 #content {
-  height: calc(100% - 160px);
+  height:   calc(100% - 160px);
   position: relative;
 }
 
 #login, #change-password, #register-message {
   margin:      0 256px 0 256px;
   padding-top: 128px;
-  text-align: right;
+  text-align:  right;
 }
