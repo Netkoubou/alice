@@ -15,6 +15,7 @@ var log_crit = log4js.getLogger('critical');
  */
 function generateSelector(user, args) {
     var sel = { '$and': [
+        { is_alive: true },
         {
             drafting_date: {
                 '$gte': args.start_date,

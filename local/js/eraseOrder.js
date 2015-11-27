@@ -14,19 +14,32 @@ module.exports = function(req, res) {
     }
 
     util.query(function(db) {
-        db.collection('orders').deleteOne(
-            { order_code: req.body.order_code },
+        db.collection('orders').updateOne(
+            {
+                order_code:    req.body.order_code,
+                order_version: req.body.order_version,
+            },
+            { '$set': {
+                    is_alive:      false,
+                    order_version: req.body.order_version + 1
+                }
+            },
             function(err, result) {
                 var msg;
 
                 db.close();
 
                 if (err == null) {
-                    res.json({ status: 0 });
+                    if (result.matchedCount == 0) {
+                        res.json({ status: 1 });
+                        msg = '[eraseOrder] unmatched version of order: "';
+                    } else {
+                        res.json({ status: 0 });
+                        msg = '[eraseOrder] erased order: "';
+                    }
 
-                    msg = '[eraseOrder] ' +
-                          'erased order: "' + req.body.order_code + '" ' +
-                          'by "' + req.session.user.account + '".';
+                    msg += req.body.order_code + '" by ' +
+                           req.session.user.account + '".';
 
                     log_info.info(msg);
                 } else {

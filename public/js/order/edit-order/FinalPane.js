@@ -53,31 +53,37 @@ var ButtonForNextAction = React.createClass({
     mixins: [ Fluxxor.FluxMixin(React) ],
 
     propTypes: {
-        onFix:     React.PropTypes.func.isRequired,
-        onPrint:   React.PropTypes.func.isRequired,
-        needSave:  React.PropTypes.bool.isRequired,
-        orderCode: React.PropTypes.string.isRequired,
-        trader:    React.PropTypes.object.isRequired,
-        goBack:    React.PropTypes.func
+        onFix:        React.PropTypes.func.isRequired,
+        onPrint:      React.PropTypes.func.isRequired,
+        needSave:     React.PropTypes.bool.isRequired,
+        orderCode:    React.PropTypes.string.isRequired,
+        orderVersion: React.PropTypes.number.isRequired,
+        trader:       React.PropTypes.object.isRequired,
+        goBack:       React.PropTypes.func
     },
 
     eraseOrder: function() {
         if (confirm("この発注を消去します。よろしいですか?") ) {
             XHR.post('eraseOrder').send({
-                order_id:   this.props.orderId, // 不要 (MySQL の場合のみ必要)
-                order_code: this.props.orderCode
+                order_id:      this.props.orderId,  // 不要
+                order_code:    this.props.orderCode,
+                order_version: this.props.orderVersion
             }).end(function(err, res) {
                 if (err) {
                     alert(Messages.ajax.FINAL_PANE_ERASE_ORDER);
                     throw 'ajax_eraseOrder';
                 }
 
-                if (res.body.status != 0) {
+                if (res.body.status > 1) {
                     alert(Messages.server.FINAL_PANE_ERASE_ORDER);
                     throw 'server_eraseOrder';
                 }
 
-                alert('消去しました。');
+                if (res.body.status == 0) {
+                    alert('消去しました。');
+                } else {
+                    alert(Messages.information.UPDATE_CONFLICT);
+                }
 
                 if (this.props.goBack == null) {
                     this.getFlux().actions.resetOrder();
@@ -525,6 +531,7 @@ var FinalPane = React.createClass({
                                      needSave={this.props.needSave}
                                      orderId={this.props.orderId}   // 不要
                                      orderCode={this.props.orderCode}
+                                     orderVersion={this.props.orderVersion}
                                      trader={this.props.trader}
                                      goBack={this.props.goBack} />
               </div>

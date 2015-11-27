@@ -42,7 +42,8 @@ module.exports = function(req, res) {
             }),
 
             last_modified_date: today,
-            last_modifier_code: req.session.user._id
+            last_modifier_code: req.session.user._id,
+            is_alive:           true
         };
 
         db.collection('orders').insertOne(order, function(err, result) {

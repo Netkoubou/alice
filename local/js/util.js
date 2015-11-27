@@ -49,7 +49,7 @@ module.exports = {
         }
     },
 
-    build_sfx: function(res, collection_name, department_code, callback) {
+    build_sfx: function(res, target_name, department_code, callback) {
         /*
          * 起案番号の接尾辞を作成するユーティリティ。
          * 作成したら接尾辞を callback に渡す。
@@ -62,8 +62,69 @@ module.exports = {
          * を '-' で繋げた文字列。
          * 通し番号は、その部門診療科でその年度に、名前が collection_name
          * であるコレクションに登録した起案の数を利用する。
-         * ということで、まずその部門診療科がその年度に幾つ起案したかを数える。
+         * その起案の数は、当該部門診療科の
+         *
+         *   全起案数 - 前年度以前の起案数
+         *
+         * で求める。
+         * 全起案数の獲得とその increment を atomic にするために、
+         * 各部門診療科の全起案数用のコレクション、 num_of_orders (発注用) と
+         * num_of_costs (経費申請用) を利用する。
          */
+        function pick_department_abbr(db, fiscal_year, total) {
+            var id     = new ObjectID(department_code);
+            var cursor = db.collection('departments').find({ _id: id });
+
+            cursor.limit(1).next(function(err, d) {
+                if (err == null && d != null) {
+                    var pfx = d.abbr + '-' + fiscal_year + '-';
+                    var num = '0000' + (total + 1).toString();
+                    var sfx = pfx + num.slice(-4);
+                    callback(db, sfx);
+                } else {
+                    db.close();
+                    res.json({ status: 255 });
+
+                    if (err != null) {
+                        log_warn.warn(err);
+                    }
+
+                    var msg = '[util.build_sfx]' +
+                              'failed to find department: "' + id + '".';
+
+                    log_warn.warn(msg);
+                }
+            });
+        }
+
+        function handle_current_total(db, fiscal_year, last_total) {
+            db.collection('num_of_' + target_name).findOneAndUpdate(
+                { department_code: department_code },
+                { '$inc': { total: 1 } },
+                { upsert: true },
+                function(err, result) {
+                    if (err == null) {
+                        var total = 0;
+
+                        if (result.value != null) {
+                            total = result.value.total - last_total;
+                        }
+
+                        pick_department_abbr(db, fiscal_year, total);
+                    } else {
+                        db.close();
+                        res.json({ status: 255 });
+                        log_warn.warn(err);
+
+                        var msg = '[util.build_sfx] failed to access ' +
+                                  '"num_of_' + target_name + '" collection.';
+
+                        log_warn.warn(msg);
+                    }
+                }
+            );
+        }
+
         this.query(function(db) {
             var now = moment();
             var fiscal_year;
@@ -80,44 +141,14 @@ module.exports = {
                 fiscal_year = now.year().toString();
             }
 
-            var collection = db.collection(collection_name);
-            var sel        = {
-                drafting_date:   { '$gte': fiscal_year + '/04/01' },
+            var sel = {
+                drafting_date: { '$lte': fiscal_year + '/03/31' },
                 department_code: department_code
-            }
+            };
 
-            collection.count(sel, function(err, count) {
-                var msg;
-
-                if (err == null && count != null) {
-                    /*
-                     * 部門診療科の略称を引く。
-                     * コールバックの嵐でネストが深く読み辛いが、
-                     * その実大したことはしていない。
-                     */
-                    var id     = new ObjectID(department_code);
-                    var cursor = db.collection('departments');
-
-                    cursor.find({ _id: id }).limit(1).next(function(err, d) {
-                        if (err == null && d != null) {
-                            var pfx = d.abbr + '-' + fiscal_year + '-';
-                            var num = '0000' + (count + 1).toString();
-                            var sfx = pfx + num.slice(-4);
-                            callback(db, sfx);
-                        } else {
-                            db.close();
-                            res.json({ status: 255 });
-
-                            if (err != null) {
-                                log_warn.warn(err);
-                            }
-
-                            msg = '[util.build_sfx]' +
-                                  'failed to find department: "' + id + '".';
-
-                            log_warn.warn(msg);
-                        }
-                    });
+            db.collection(target_name).count(sel, function(err, last_total) {
+                if (err == null && last_total != null) {
+                    handle_current_total(db, fiscal_year, last_total);
                 } else {
                     db.close();
                     res.json({ status: 255 });
@@ -126,9 +157,8 @@ module.exports = {
                         log_warn.warn(err);
                     }
 
-                    msg = '[util.build_sfx] ' +
-                          'failed to access "' + collection_name +
-                          '" collection.';
+                    var msg = '[util.build_sfx] failed to access "' +
+                              collection_name + '" collection.';
 
                     log_warn.warn(msg);
                 }
