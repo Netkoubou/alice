@@ -25,6 +25,6 @@
 .footer-urgency  { color: #ff0000; }
 
 @keyframes flow {
-  from { right: -1024px; }
-  to   { right:  2048px; }
+  from { right: -2048px; }
+  to   { right:  1024px; }
 }
