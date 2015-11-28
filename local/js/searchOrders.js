@@ -103,7 +103,7 @@ function generateSelector(user, args) {
  * DB に登録されている発注は、検索のためのユニークな ID を保持している
  * (例えば物品コード) ものの、その名前を含んでいない。
  * そのため、それらをいちいち DB に問い合わせて補填していく必要がある。
- * これも難しいことはしていないのだが、非同期 ID であるが故のコールバックの
+ * これも難しいことはしていないのだが、非同期 I/O であるが故のコールバックの
  * 嵐によってひどく煩雑に見える。
  */
 function construct_response(orders, db, res) {
@@ -159,7 +159,7 @@ function construct_response(orders, db, res) {
                 }
 
                 var msg = '[searchOrders] ' +
-                          'failed to find product: "' + id + '".';
+                          'failed to find product: "' + product_code + '".';
 
                 log_warn.warn(msg);
             }
@@ -238,7 +238,7 @@ function construct_response(orders, db, res) {
             }
 
             err_msg = '[searchOrders] ' +
-                      'failed to find trader: "' + id + '".';
+                      'failed to find trader: "' + order.trader_code + '".';
         }
 
         cursor.next(function(err, doc) {

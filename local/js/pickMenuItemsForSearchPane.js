@@ -19,7 +19,7 @@ function pick_all(db, res) {
     var ct = db.collection('traders');
     var msg;
     
-    cd.find().toArray(function(err, ds) {
+    cd.find({ is_alive: true }).toArray(function(err, ds) {
         if (err != null) {
             db.close();
             res.json({ status: 255 });
@@ -29,7 +29,7 @@ function pick_all(db, res) {
                   'failed to access "departments" collection.';
             log_warn.warn(msg);
         } else {
-            cc.find().toArray(function(err, cs) {
+            cc.find({ is_alive: true }).toArray(function(err, cs) {
                 if (err != null) {
                     db.close();
                     res.json({ status: 255 });
@@ -41,7 +41,7 @@ function pick_all(db, res) {
 
                     log_warn.warn(msg);
                 } else {
-                    ct.find().toArray(function(err, ts) {
+                    ct.find({ is_alive: true }).toArray(function(err, ts) {
                         db.close();
 
                         if (err != null) {
@@ -88,8 +88,8 @@ function pick_all(db, res) {
  *      departments コレクションから割り出す。
  *   2. ユーザが所属する部門診療科が発注可能な物品を products コレクション
  *      から割り出す
- *   3. その検索に引っかかった物品から、品目 (product.category) と販売元
- *      (product.trader) のコードを割り出す
+ *   3. その検索に引っかかった物品から、品目 (product.category_code) と販売元
+ *      (product.trader_code) のコードを割り出す
  *   4. 更に品目と販売元の名前を categories コレクションと traders コレク
  *      ションから割り出す。
  *
@@ -110,10 +110,10 @@ function pick_step_by_step(user, db, res) {
     var is_already_sent = false;
 
     function pick_traders(product, num_of_products) {
-        var id     = new ObjectID(product.trader);
-        var cursor = db.collection('traders').find({ _id: id }).limit(1);
-
-        cursor.next(function(err, trader) {
+        db.collection('traders').find({
+            is_alive: true,
+            _id:      new ObjectID(product.trader_code)
+        }).limit(1).next(function(err, trader) {
             if (is_already_sent) {
                 return;
             }
@@ -172,7 +172,8 @@ function pick_step_by_step(user, db, res) {
                 }
 
                 var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find trader: "' + id + '".';
+                          'failed to find trader: "' +
+                          product.trader_code + '".';
 
                 log_warn.warn(msg);
             }
@@ -180,10 +181,10 @@ function pick_step_by_step(user, db, res) {
     }
 
     function pick_categories(product, num_of_products) {
-        var id     = new ObjectID(product.category);
-        var cursor = db.collection('categories').find({ _id: id }).limit(1);
-
-        cursor.next(function(err, category) {
+        db.collection('categories').find({
+            is_alive: true,
+            _id:      new ObjectID(product.category_code)
+        }).limit(1).next(function(err, category) {
             if (is_already_sent) {
                 return;
             }
@@ -205,7 +206,8 @@ function pick_step_by_step(user, db, res) {
                 }
 
                 var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find category: "' + id + '".';
+                          'failed to find category: "' +
+                          product.category_code + '".';
 
                 log_warn.warn(msg);
             }
@@ -218,10 +220,10 @@ function pick_step_by_step(user, db, res) {
                 return;
             }
 
-            var id     = new ObjectID(d.code);
-            var cursor = db.collection('departments').find({ _id: id });
-
-            cursor.limit(1).next(function(err, department) {
+            db.collection('departments').find({
+                is_alive: true,
+                _id:      new ObjectID(d.code)
+            }).limit(1).next(function(err, department) {
                 if (is_already_sent) {
                     return;
                 }
@@ -237,8 +239,11 @@ function pick_step_by_step(user, db, res) {
                     if (user.departments.length == i + 1) {
                         var collection = db.collection('products');
                         var sel = {
-                            '$or': user.departments.map(function(d) {
-                                return { departments: new ObjectID(d.code) }
+                            is_alive: true,
+                            '$or':    user.departments.map(function(d) {
+                                return {
+                                    department_codes: new ObjectID(d.code)
+                                };
                             })
                         };
 
@@ -280,7 +285,7 @@ function pick_step_by_step(user, db, res) {
                     }
 
                     msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to find department: "' + id + '".';
+                          'failed to find department: "' + d.code + '".';
 
                     log_warn.warn(msg);
                 }

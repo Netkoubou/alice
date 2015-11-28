@@ -15,14 +15,17 @@ module.exports = function(req, res) {
     }
 
     util.query(function(db) {
-        var sel = { departments: new ObjectID(req.body.department_code) };
+        var sel = {
+            is_alive:    true,
+            department_codes: new ObjectID(req.body.department_code)
+        };
 
         if (req.body.category_code != '') {
-            sel.category = new ObjectID(req.body.category_code);
+            sel.category_code = new ObjectID(req.body.category_code);
         }
 
         if (req.body.trader_code != '') {
-            sel.trader = new ObjectID(req.body.trader_code);
+            sel.trader_code = new ObjectID(req.body.trader_code);
         }
 
         if (req.body.search_text != '') {
@@ -44,7 +47,7 @@ module.exports = function(req, res) {
                             return;
                         }
 
-                        var id     = new ObjectID(p.trader);
+                        var id     = new ObjectID(p.trader_code);
                         var cursor = db.collection('traders').find({ _id: id});
 
                         cursor.limit(1).next(function(err, trader) {
@@ -84,7 +87,7 @@ module.exports = function(req, res) {
 
                                 msg = '[searchCandidates] ' +
                                       'failed to find trader: "' +
-                                      trader._id + '".';
+                                      p.trader + '".';
 
                                log_warn.warn(msg);
                             }

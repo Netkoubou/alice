@@ -18,9 +18,9 @@ module.exports = function(req, res) {
         var departments = [];
 
         function pick_account_titles() {
-            var cursor = db.collection('account_titles').find();
-
-            cursor.toArray(function(err, account_titles) {
+            db.collection('account_titles').find({
+                is_alive: true
+            }).toArray(function(err, account_titles) {
                 db.close();
 
                 if (err == null && account_titles.length > 0) {
@@ -56,10 +56,10 @@ module.exports = function(req, res) {
                     return;
                 }
 
-                var id     = new ObjectID(d.code);
-                var cursor = db.collection('departments').find({ _id: id });
-
-                cursor.limit(1).next(function(err, department) {
+                db.collection('departments').find({
+                    is_alive: true,
+                    _id:      new ObjectID(d.code)
+                }).limit(1).next(function(err, department) {
                     if (is_already_sent) {
                         return;
                     }

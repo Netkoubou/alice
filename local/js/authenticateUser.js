@@ -12,9 +12,10 @@ module.exports = function(req, res) {
     var passphrase = req.body.passphrase;
     
     util.query(function(db) {
-        var cursor = db.collection('users').find({ account: account });
-
-        cursor.limit(1).next(function(err, user) {
+        db.collection('users').find({
+            is_alive: true,
+            account:  account
+        }).limit(1).next(function(err, user) {
             db.close();
 
             if (err == null) {

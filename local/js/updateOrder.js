@@ -10,7 +10,7 @@ var log_crit = log4js.getLogger('ctitical');
 
 
 function update_prices(db, req, prices) {
-    var count_products = 0;
+    var product_counter = 0;
 
     prices.forEach(function(p) {
         var id     = new ObjectID(p.product_code);
@@ -45,9 +45,9 @@ function update_prices(db, req, prices) {
                             log_warn.warn(msg);
                         }
     
-                        count_products++;
+                        product_counter++;
 
-                        if (count_products == prices.length) {
+                        if (product_counter == prices.length) {
                             db.close();
                         }
                     }
@@ -58,9 +58,15 @@ function update_prices(db, req, prices) {
                 }
 
                 msg = '[updateOrder] ' +
-                      'failed to find product: "' + id + '".';
+                      'failed to find product: "' + p.product_code + '".';
 
                 log_warn.warn(msg);
+    
+                product_counter++;
+
+                if (product_counter == prices.length) {
+                    db.close();
+                }
             }
         });
     });
@@ -121,9 +127,10 @@ module.exports = function(req, res) {
                         /*
                          * order_version が不一致。
                          * つまり、他のユーザが既にドキュメントを更新した、
-                         * ということであり、この更新は古い情報に基づいている
-                         * ため、このまま更新してしまうと先の更新が無かったこ
-                         * とになってしまう。
+                         * ということを示す。即ち、この更新は古い情報に基づ
+                         * いている訳で、このまま進むと先の更新が無かった
+                         * ことになってしまう。
+                         * ということで、更新を諦め、ユーザにその旨を通知する。
                          */
                         db.close();
                         res.json({ status: 1 });

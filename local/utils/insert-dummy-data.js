@@ -1,126 +1,146 @@
 // 部門診療科
 db.departments.insert({
-    name: '外科',
-    abbr: 'SUR',
-    tel:  '3210'
+    name:     '外科',
+    abbr:     'SUR',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '中科',
-    abbr: 'MID',
-    tel:  '3211'
+    name:     '中科',
+    abbr:     'MID',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '内科',
-    abbr: 'IM',
-    tel:  '3212'
+    name:     '内科',
+    abbr:     'IM',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '歯科',
-    abbr: 'DENT',
-    tel:  '3213'
+    name:     '歯科',
+    abbr:     'DENT',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '小児科',
-    abbr: 'PED',
-    tel:  '3213'
+    name:     '小児科',
+    abbr:     'PED',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '眼科',
-    abbr: 'OPH',
-    tel:  '3214'
+    name:     '眼科',
+    abbr:     'OPH',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科',
-    abbr: 'OK',
-    tel:  '3215'
+    name:     'べつに減るもんじゃなし、ちょっとくらいええじゃない科',
+    abbr:     'OK',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '薬剤科',
-    abbr: 'MED',
-    tel:  '3216'
+    name:     '薬剤科',
+    abbr:     'MED',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: '薬剤科 (薬剤発注専用)',
-    abbr: 'MED',
-    tel:  '3216'
+    name:     '薬剤科 (薬剤発注専用)',
+    abbr:     'MED',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: 'お偉い職',
-    abbr: 'GOD',
-    tel:  '1225'
+    name:     'お偉い職',
+    abbr:     'GOD',
+    is_alive: true
 });
 
 db.departments.insert({
-    name: 'SPD',
-    abbr: 'SPD',
-    tel:  '3217'
+    name:     'SPD',
+    abbr:     'SPD',
+    is_alive: true
 });
+
 
 // 販売元
 db.traders.insert({
-    name:  '阿漕商会',
-    tel:   '0120-4126',
-    fax:   '0120-4126',
-    email: 'dummy-firm@example.com',
+    name:          '阿漕商会',
+    tel:           '0120-4126',
+    fax:           '0120-4126',
+    email:         'dummy-firm@example.com',
     communication: 'tel',
+    is_alive:      true
 });
 
 db.traders.insert({
-    name:  'バッタモン市場',
-    tel:   '0120-1818',
-    fax:   '0120-1919',
-    email: 'imitation-bazaar@example.net',
+    name:          'バッタモン市場',
+    tel:           '0120-1818',
+    fax:           '0120-1919',
+    email:         'imitation-bazaar@example.net',
     communication: 'fax',
+    is_alive:      true
 });
 
 db.traders.insert({
-    name:  '贋物マーケット',
-    tel:   '0120-4219',
-    fax:   '0120-4219',
-    email: 'fake-market@example.org',
+    name:          '贋物マーケット',
+    tel:           '0120-4219',
+    fax:           '0120-4219',
+    email:         'fake-market@example.org',
     communication: 'email',
+    is_alive:      true
 });
 
 db.traders.insert({
-    name:  'エセショップ',
-    tel:   '0120-8818',
-    fax:   '0120-15',
-    email: 'cheat-shop@example.jp',
+    name:          'エセショップ',
+    tel:           '0120-8818',
+    fax:           '0120-15',
+    email:         'cheat-shop@example.jp',
     communication: 'email',
+    is_alive:      true
 });
 
 db.traders.insert({
-    name:  'あっとおどろくためごろうのお店',
-    tel:   '0120-794-1192',
-    fax:   '0120-1333-1336',
-    email: 'suprising-donkey@example.co.jp',
+    name:          'あっとおどろくためごろうのお店',
+    tel:           '0120-794-1192',
+    fax:           '0120-1333-1336',
+    email:         'suprising-donkey@example.co.jp',
     communication: 'email',
+    is_alive:      true
 });
-
 
 
 // 品目
-db.categories.insert({ name: 'すごいアレ' });
-db.categories.insert({ name: 'しょぼいナニ' });
-db.categories.insert({ name: 'とても想像できないくらいアレでナニなソレ' });
-db.categories.insert({ name: 'まぁまぁなコレ' });
+db.categories.insert({
+    name:     'すごいアレ',
+    is_alive: true
+});
+
+db.categories.insert({
+    name:     'しょぼいナニ',
+    is_alive: true
+});
+
+db.categories.insert({
+    name:     'とても想像できないくらいアレでナニなソレ',
+    is_alive: true
+});
+
+db.categories.insert({
+    name:     'まぁまぁなコレ',
+    is_alive: true
+});
 
 
 // 物品
 db.products.insert({
-    name:     'タイガーマスク',
-    category: db.categories.find({ name: 'すごいアレ' })[0]._id,
-    maker:    '虎の穴',
-    departments: [
+    name:          'タイガーマスク',
+    category_code: db.categories.find({ name: 'すごいアレ' })[0]._id,
+    maker:         '虎の穴',
+    department_codes: [
         db.departments.find({ name: '外科' })[0]._id,
         db.departments.find({ name: '中科' })[0]._id,
         db.departments.find({ name: '歯科' })[0]._id,
@@ -129,18 +149,19 @@ db.products.insert({
         db.departments.find({ name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科' })[0]._id,
         db.departments.find({ name: '薬剤科' })[0]._id
     ],
-    trader:    db.traders.find({ name: '阿漕商会' })[0]._id,
-    min_price: 6.04,
-    cur_price: 6.45,
-    max_price: 7.10,
-    note:      '誰なのかはヒ ミ ツ'
+    trader_code: db.traders.find({ name: '阿漕商会' })[0]._id,
+    min_price:   6.04,
+    cur_price:   6.45,
+    max_price:   7.10,
+    note:        '誰なのかはヒ ミ ツ',
+    is_alive:    true
 });
 
 db.products.insert({
-    name:     'マングローブ',
-    category: db.categories.find({ name: 'しょぼいナニ' })[0]._id,
-    maker:    '熱帯/亜熱帯地域の河口気水域の塩性湿地',
-    departments: [
+    name:          'マングローブ',
+    category_code: db.categories.find({ name: 'しょぼいナニ' })[0]._id,
+    maker:         '熱帯/亜熱帯地域の河口気水域の塩性湿地',
+    department_codes: [
         db.departments.find({ name: '外科' })[0]._id,
         db.departments.find({ name: '中科' })[0]._id,
         db.departments.find({ name: '歯科' })[0]._id,
@@ -149,55 +170,58 @@ db.products.insert({
         db.departments.find({ name: 'べつに減るもんじゃなし、ちょっとくらいええじゃない科' })[0]._id,
         db.departments.find({ name: '薬剤科' })[0]._id
     ],
-    trader: db.traders.find({ name: '贋物マーケット' })[0]._id,
-    min_price:  7.94,
-    cur_price: 11.92,
-    max_price: 13.33,
-    note: '紅樹林または海漂林とも言うらしいよ'
+    trader_code: db.traders.find({ name: '贋物マーケット' })[0]._id,
+    min_price:    7.94,
+    cur_price:   11.92,
+    max_price:   13.33,
+    note:        '紅樹林または海漂林とも言うらしいよ',
+    is_alive:    true
 });
 
 db.products.insert({
-    name:     'おすメス',
-    category: db.categories.find({ name: 'とても想像できないくらいアレでナニなソレ' })[0]._id,
-    maker:    '大自然?',
-    departments: [
+    name:          'おすメス',
+    category_code: db.categories.find({ name: 'とても想像できないくらいアレでナニなソレ' })[0]._id,
+    maker:         '大自然?',
+    department_codes: [
         db.departments.find({ name: '外科' })[0]._id
     ],
-    trader: db.traders.find({ name: 'エセショップ' })[0]._id,
-    min_price: 15.43,
-    cur_price: 16.03,
-    max_price: 18.53,
-    note: 'かたつむりは雌雄同体'
+    trader_code: db.traders.find({ name: 'エセショップ' })[0]._id,
+    min_price:   15.43,
+    cur_price:   16.03,
+    max_price:   18.53,
+    note:        'かたつむりは雌雄同体',
+    is_alive:    true
 });
 
 db.products.insert({
-    name:     'デンジャー薬',
-    category: db.categories.find({ name: 'まぁまぁなコレ' })[0]._id,
-    maker:    'ちょっとイっちゃった人々',
-    departments: [
+    name:          'デンジャー薬',
+    category_code: db.categories.find({ name: 'まぁまぁなコレ' })[0]._id,
+    maker:         'ちょっとイっちゃった人々',
+    department_codes: [
         db.departments.find({ name: '薬剤科 (薬剤発注専用)' })[0]._id
     ],
-    trader: db.traders.find({ name: 'あっとおどろくためごろうのお店' })[0]._id,
-    min_price: 18.18,
-    cur_price: 18.19,
-    max_price: 19.19,
-    note: '用法容量を守って正しくお使い下さい'
+    trader_code: db.traders.find({ name: 'あっとおどろくためごろうのお店' })[0]._id,
+    min_price:   18.18,
+    cur_price:   18.19,
+    max_price:   19.19,
+    note:        '用法容量を守って正しくお使い下さい',
+    is_alive:    true
 });
 
 db.products.insert({
-    name:     '鉄人2?号',
-    category: db.categories.find({ name: 'すごいアレ' })[0]._id,
-    maker:    '敷島博士と愉快な仲間達',
-    departments: [
+    name:          '鉄人2?号',
+    category_code: db.categories.find({ name: 'すごいアレ' })[0]._id,
+    maker:         '敷島博士と愉快な仲間達',
+    department_codes: [
         db.departments.find({ name: '歯科' })[0]._id
     ],
-    trader: db.traders.find({ name: '阿漕商会' })[0]._id,
-    min_price: 9999999.99,
-    cur_price: 9999999.99,
-    max_price: 9999999.99,
-    note: '別途正太郎君を雇うこと (車付きで)'
+    trader_code: db.traders.find({ name: '阿漕商会' })[0]._id,
+    min_price:   9999999.99,
+    cur_price:   9999999.99,
+    max_price:   9999999.99,
+    note:        '別途正太郎君を雇うこと (車付きで)',
+    is_alive:    true
 });
-
 
 
 // ユーザ
@@ -221,7 +245,8 @@ db.users.insert({
         draft_urgently:   false,
         process_order:    false,
         approve:          false
-    }]
+    }],
+    is_alive: true
 });
 
 db.users.insert({
@@ -286,7 +311,8 @@ db.users.insert({
             process_order:    false,
             approve:          false
         }
-    ]
+    ],
+    is_alive: true
 });
 
 db.users.insert({
@@ -319,7 +345,8 @@ db.users.insert({
             process_order:    false,
             approve:          false
         }
-    ]
+    ],
+    is_alive: true
 });
 
 db.users.insert({
@@ -342,7 +369,8 @@ db.users.insert({
         draft_urgently:   false,
         process_order:    false,
         approve:          false
-    }]
+    }],
+    is_alive: true
 });
 
 db.users.insert({
@@ -365,7 +393,8 @@ db.users.insert({
         draft_urgently:   false,
         process_order:    false,
         approve:          true
-    }]
+    }],
+    is_alive: true
 });
 
 db.users.insert({
@@ -388,7 +417,8 @@ db.users.insert({
         draft_urgently:   false,
         process_order:    false,
         approve:          false
-    }]
+    }],
+    is_alive: true
 });
 
 db.users.insert({
@@ -411,7 +441,8 @@ db.users.insert({
         draft_urgently:   false,
         process_order:    false,
         approve:          true
-    }]
+    }],
+    is_alive: true
 });
 
 db.users.insert({
@@ -476,7 +507,8 @@ db.users.insert({
             process_order:    false,
             approve:          true
         }
-    ]
+    ],
+    is_alive: true
 });
 
 db.users.insert({
@@ -517,7 +549,8 @@ db.users.insert({
             process_order:    false,
             approve:          true
         },
-    ]
+    ],
+    is_alive: true
 });
 
 db.users.insert({
@@ -540,7 +573,8 @@ db.users.insert({
         draft_urgently:   true,
         process_order:    false,
         approve:          false
-    }]
+    }],
+    is_alive: true
 });
 
 db.users.insert({
@@ -605,7 +639,8 @@ db.users.insert({
             process_order:    false,
             approve:          false
         }
-    ]
+    ],
+    is_alive: true
 });
 
 db.users.insert({
@@ -638,7 +673,8 @@ db.users.insert({
             process_order:    false,
             approve:          true
         }
-    ]
+    ],
+    is_alive: true
 });
 
 db.users.insert({
@@ -662,14 +698,51 @@ db.users.insert({
         process_order:    false,
         approve:          false
     }],
+    is_alive: true
 });
 
-db.account_titles.insert({ name: '旅費・交通費' });
-db.account_titles.insert({ name: '消耗品費' });
-db.account_titles.insert({ name: '検査などの業務委託費' });
-db.account_titles.insert({ name: '修理費' });
-db.account_titles.insert({ name: '医薬品材料費' });
-db.account_titles.insert({ name: '消耗備品費' });
-db.account_titles.insert({ name: '休職材料費' });
-db.account_titles.insert({ name: '備品費' });
-db.account_titles.insert({ name: 'その他' });
+
+// 勘定科目
+db.account_titles.insert({
+    name:     '旅費・交通費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '消耗品費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '検査などの業務委託費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '修理費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '医薬品材料費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '消耗備品費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '休職材料費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name:     '備品費',
+    is_alive: true
+});
+
+db.account_titles.insert({
+    name: 'その他'
+});
