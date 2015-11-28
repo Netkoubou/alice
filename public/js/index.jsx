@@ -94,9 +94,11 @@ var Page = React.createClass({
                 <fieldset id="login">
                   <Input type="text" 
                          ref="account"
+                         maxLength="32"
                          placeholder="アカウント" />
                   <Input type="password"
                          ref="passphrase"
+                         maxLength="32"
                          placeholder="パスワード" />
                   <Button onClick={this.login}>ログイン</Button>
                 </fieldset>

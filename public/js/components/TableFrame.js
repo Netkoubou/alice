@@ -262,6 +262,7 @@ TableFrame.Input = React.createClass({
         placeholder: React.PropTypes.string.isRequired,
         onChange:    React.PropTypes.func.isRequired,
         ref:         React.PropTypes.string,
+        maxLength:   React.PropTypes.number,
         type:        React.PropTypes.oneOf([
             'string',
             'int',
@@ -339,6 +340,7 @@ TableFrame.Input = React.createClass({
                    value={this.state.value}
                    className={class_name}
                    onBlur={this.onBlur}
+                   maxLength={this.props.maxLength}
                    onChange={this.onChange} />
         );
     }

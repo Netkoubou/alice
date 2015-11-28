@@ -42,12 +42,15 @@ var ChangePassword = React.createClass({
             <fieldset id="change-password">
               <Input type="password"
                      ref="expiring"
+                     maxLength="32"
                      placeholder="旧パスワード" />
               <Input type="password"
                      ref="fresh"
+                     maxLength="32"
                      placeholder="新パスワード" />
               <Input type="password"
                      ref="reconfirmation"
+                     maxLength="32"
                      placeholder="新パスワード (確認用)" />
               <Button onClick={this.changePassword}>変更</Button>
             </fieldset>

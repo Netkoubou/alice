@@ -28,7 +28,10 @@ var RegisterMessage = React.createClass({
     render: function() {
         return (
             <fieldset id="register-message">
-              <Input type="text" ref="message" placeholder="メッセージ" />
+              <Input type="text"
+                     ref="message"
+                     maxLength="128"
+                     placeholder="メッセージ" />
               <Button onClick={this.registerMessage}>登録</Button>
             </fieldset>
         );
