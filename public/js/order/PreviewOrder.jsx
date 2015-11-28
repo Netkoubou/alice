@@ -9,20 +9,24 @@ var PreviewOrder = React.createClass({
         if (window.opener.info.purpose === 'APPROVAL') {
             stamp_row = (
                 <table id="stamp">
-                  <tr>
-                    <th>病院長</th>
-                    <th>部長</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th>病院長</th>
+                      <th>部長</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
                 </table>
             );
         }
@@ -78,57 +82,65 @@ var PreviewOrder = React.createClass({
                 {stamp_row} 
                 <div id="infos">
                   <table id="left-infos">
-                    <tr>
-                      <td className="info-name">発注先 販売元</td>
-                      <td className="info-data">
-                        {window.opener.info.trader} 様
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="info-name">発注元 部門診療科</td>
-                      <td className="info-data">
-                        {window.opener.info.department}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="info-name">起案番号</td>
-                      <td className="info-data">
-                        {window.opener.info.order_code}
-                      </td>
-                    </tr>
+                    <tbody>
+                      <tr>
+                        <td className="info-name">発注先 販売元</td>
+                        <td className="info-data">
+                          {window.opener.info.trader} 様
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="info-name">発注元 部門診療科</td>
+                        <td className="info-data">
+                          {window.opener.info.department}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="info-name">起案番号</td>
+                        <td className="info-data">
+                          {window.opener.info.order_code}
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
   
                   <table id="right-infos">
-                    <tr>
-                      <td className="info-name">起案日</td>
-                      <td className="info-data">
-                        {window.opener.info.drafting_date}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="info-name">発注日</td>
-                      <td className="info-data">
-                        {window.opener.info.order_date}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="info-name">連絡先</td>
-                      <td className="info-data">TEL & FAX: 046-822-9640</td>
-                    </tr>
+                    <tbody>
+                      <tr>
+                        <td className="info-name">起案日</td>
+                        <td className="info-data">
+                          {window.opener.info.drafting_date}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="info-name">発注日</td>
+                        <td className="info-data">
+                          {window.opener.info.order_date}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="info-name">連絡先</td>
+                        <td className="info-data">TEL & FAX: 046-822-9640</td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
   
                 <table id="products">
-                  <tr>
-                    <td className="products-header">No.</td>
-                    <td className="products-header">品名</td>
-                    <td className="products-header">製造元</td>
-                    <td className="products-header">単価</td>
-                    <td className="products-header">数量</td>
-                    <td className="products-header">小計</td>
-                    <td className="products-header">済み</td>
-                  </tr>
-                  {products}
+                  <thead>
+                    <tr>
+                      <td className="products-header">No.</td>
+                      <td className="products-header">品名</td>
+                      <td className="products-header">製造元</td>
+                      <td className="products-header">単価</td>
+                      <td className="products-header">数量</td>
+                      <td className="products-header">小計</td>
+                      <td className="products-header">済み</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products}
+                  </tbody>
                 </table>
               </fieldset>
               <button onClick={window.print}>印刷</button>
