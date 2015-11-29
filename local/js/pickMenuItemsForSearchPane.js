@@ -252,7 +252,15 @@ function pick_step_by_step(user, db, res) {
                                 return;
                             }
 
-                            if (err != null && products.length > 0) {
+                            if (err == null && products.length > 0) {
+                                products.forEach(function(p) {
+                                    if (is_already_sent) {
+                                        return;
+                                    }
+
+                                    pick_categories(p, products.length);
+                                });
+                            } else {
                                 db.close();
                                 res.json({ status: 255 });
                                 is_already_sent = true;
@@ -264,14 +272,6 @@ function pick_step_by_step(user, db, res) {
                                       '"products" collection.';
 
                                 log_warn.warn(msg);
-                            } else {
-                                products.forEach(function(p) {
-                                    if (is_already_sent) {
-                                        return;
-                                    }
-
-                                    pick_categories(p, products.length);
-                                });
                             }
                         });
                     }

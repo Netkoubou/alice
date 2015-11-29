@@ -9,6 +9,7 @@ var log4js     = require('log4js');
 var logout                     = require('./logout');
 var pickMenuItemsForSearchPane = require('./pickMenuItemsForSearchPane');
 var pickMenuItemsToApplyCost   = require('./pickMenuItemsToApplyCost');
+var tellAvailableDepartments   = require('./tellAvailableDepartments');
 var getFooterMessage           = require('./getFooterMessage');
 
 var authenticateUser      = require('./authenticateUser');
@@ -105,6 +106,7 @@ $.use(bodyParser.urlencoded({ extended: true }) );
 $.get('/logout',                     logout);
 $.get('/pickMenuItemsForSearchPane', pickMenuItemsForSearchPane);
 $.get('/pickMenuItemsToApplyCost',   pickMenuItemsToApplyCost);
+$.get('/tellAvailableDepartments',   tellAvailableDepartments);
 $.get('/getFooterMessage',           getFooterMessage);
 
 $.post('/authenticateUser',      authenticateUser);
