@@ -41,7 +41,7 @@ var Ope = React.createClass({
                                    user={this.props.user} />;
             break;
         case 'CHANGE_PASSWORD':
-            contents = <ChangePassword />;
+            contents = <ChangePassword user={this.props.user} />;
             break;
         case 'REGISTER_MESSAGE':
             contents = <RegisterMessage />;
