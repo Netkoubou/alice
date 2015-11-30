@@ -24,6 +24,7 @@ var registerFooterMessage = require('./registerFooterMessage');
 var bookCost              = require('./bookCost');
 var lookupCosts           = require('./lookupCosts');
 var fixCost               = require('./fixCost');
+var listUsers             = require('./listUsers');
 
 var $ = express();
 
@@ -121,3 +122,4 @@ $.post('/registerFooterMessage', registerFooterMessage);
 $.post('/bookCost',              bookCost);
 $.post('/lookupCosts',           lookupCosts);
 $.post('/fixCost',               fixCost);
+$.post('/listUsers',             listUsers);
