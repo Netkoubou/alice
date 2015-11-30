@@ -1,35 +1,10 @@
 'use strict';
 var React      = require('react');
 var XHR        = require('superagent');
+var EditUser   = require('./EditUser');
 var Select     = require('../components/Select');
 var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
-
-var AddUser = React.createClass({
-    propTypes: { onClick: React.PropTypes.func.isRequired },
-
-    render: function() {
-        return (
-            <div className="manage-users-add-user"
-                 onClick={this.props.onClick}>
-              +
-            </div>
-        );
-    }
-});
-
-var RemoveUser = React.createClass({
-    propTypes: { onClick: React.PropTypes.func.isRequired },
-
-    render: function() {
-        return (
-            <div className="manage-user-remove-user"
-                 onClick={this.props.onClick}>
-              -
-            </div>
-        );
-    }
-});
 
 var ManageUsers = React.createClass({
     getInitialState: function() {
@@ -46,12 +21,12 @@ var ManageUsers = React.createClass({
             department_code: department_code
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.MANAGE_USERS_SELECT_USERS);
+                alert(Messages.ajax.MANAGE_USERS_LIST_USERS);
                 throw 'ajax_selectUsers';
             }
 
             if (res.body.status != 0) {
-                alert(Messages.server.MANAGE_USERS_SELECT_USERS);
+                alert(Messages.server.MANAGE_USERS_LIST_USERS);
                 throw 'server_selectUsers';
             }
 
@@ -61,12 +36,12 @@ var ManageUsers = React.createClass({
 
     backToHere: function() {
         this.setState({ next_ope: null });
-        listUsers(e.code);
+        this.listUsers(e.code);
     },
 
     onSelectDepartment: function(e) {
         this.setState({ department_code: e.code });
-        listUsers(e.code);
+        this.listUsers(e.code);
     },
 
     onSelectUser: function(index) {
@@ -74,10 +49,11 @@ var ManageUsers = React.createClass({
         };
     },
 
-    onAdd: function() {
-        return (
-            <div></div>
-        );
+    onAddUser: function() {
+        setState({
+            next_ope: <EditUser departments={this.state.departments}
+                                goBack={this.backToHere} />
+        });
     },
 
     onRemove: function() {
@@ -86,16 +62,25 @@ var ManageUsers = React.createClass({
     componentDidMount: function() {
         XHR.get('tellAvailableDepartments').end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.MANAGE_USERS_TELL_ALL_DEPARTMENTS);
+                alert(Messages.ajax.MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS);
                 throw 'ajax_tellAllDepartments';
             }
 
             if (res.body.status != 0) {
-                alert(Messages.server.MANAGE_USERS_TELL_ALL_DEPARTMENTS);
+                alert(Messages.server.MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS);
                 throw 'server_tellAllDepartments';
             }
-                
-            this.setState({ departments: res.body.departments });
+
+            if (res.body.departments.length == 1) {
+                this.setState({
+                    department_code: res.body.departments[0].code,
+                    departments:     res.body.departments
+                });
+
+                this.listUsers(res.body.departments[0].code);
+            } else {
+                this.setState({ departments: res.body.departments });
+            }
         }.bind(this) );
     },
 
@@ -116,23 +101,32 @@ var ManageUsers = React.createClass({
             return [
                 {
                     value: '',
-                    view:  <RemoveUser onClick={this.onRemove} />
+                    view:  <div className="manage-users-remove-user"
+                                onClick={this.props.onClick}>
+                             -
+                           </div>
                 },
                 { 
                     value: u.account,
-                    view:  <div id="manage-users-account"
+                    view:  <div className="manage-users-account"
                                 onClick={this.onSelectUser(i)}>
-                             u.account
+                             {u.account}
                            </div>
                 },
                 { value: u.name,    view: u.name    },
                 { value: u.tel,     view: u.tel     },
                 { value: u.email,   view: u.email   }
             ];
-        });
+        }.bind(this) );
 
         data.push([
-            { value: '', view: <AddUser onClick={this.onAdd} /> },
+            {
+                value: '',
+                view: <div className="manage-users-add-user"
+                           onClick={this.onAddUser}>
+                        +
+                      </div>
+            },
             { value: '', view: '' },
             { value: '', view: '' },
             { value: '', view: '' },

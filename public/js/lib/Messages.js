@@ -95,6 +95,18 @@ module.exports = {
             'ネットワークの問題で経費精算の承認 / 却下に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
+            'AJAX error: tellAvailableDepartments in ManageUsers.js.js\n\n' +
+            'ネットワークの問題で部門診療科情報の獲得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        MANAGE_USERS_LIST_USERS:
+            'AJAX error: listUsers in ManageUsers.js.js\n\n' +
+            'ネットワークの問題でユーザ情報の獲得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -177,6 +189,16 @@ module.exports = {
             'Server error: fixCost in ProcessCost.js.js\n\n' +
             '経費精算の承認 / 却下でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
+
+        MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
+            'Server error: tellAvailableDepartments in ManageUsers.js.js\n\n' +
+            '部門診療科情報の獲得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        MANAGE_USERS_LIST_USERS:
+            'Server error: listUsers in ManageUsers.js.js\n\n' +
+            'ネットワークの問題でユーザ情報の獲得に失敗しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
     },
 
     internal: {
@@ -188,7 +210,8 @@ module.exports = {
 
     information: {
         UPDATE_CONFLICT:
-            '既に他のユーザが更新した古いデータを更新しようとしたため、\n' +
+            '先に他のユーザが更新したデータを上書きしようとしています。\n' +
+            'このまま処理を進めると、データに不整合が生じるため、\n' +
             '処理を中断しました。\n' +
             'お手数ですが、再度最初からやり直してく下さい。',
     },

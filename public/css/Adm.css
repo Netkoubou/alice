@@ -22,3 +22,25 @@
 #manage-users-list col:nth-child(5) { width: 35%; }
 #manage-users-list td:nth-child(1) { text-align: center; }
 #manage-users-list td:nth-child(4) { text-align: center; }
+
+.manage-users-add-user {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
+.manage-users-remove-user {
+  color:  #ff0000;
+  cursor: pointer;
+}
+
+.manage-users-account {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
+.manage-users-add-user:hover,
+.manage-users-remove-user:hover,
+.manage-users-account:hover {
+  text-decoration: underline;
+}
+
