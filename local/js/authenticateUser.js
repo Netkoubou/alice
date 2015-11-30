@@ -36,6 +36,7 @@ module.exports = function(req, res) {
                     log_info.info(account + ' login failed.');
                 }
             } else {
+                res.json({ status: 255 });
                 log_warn.warn(err);
 
                 var msg = '[authenticateUser] ' +
