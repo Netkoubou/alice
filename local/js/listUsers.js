@@ -30,7 +30,6 @@ module.exports = function(req, res) {
                     status: 0,
                     users:  users.map(function(u) {
                         return {
-                            code:        u._id,
                             account:     u.account,
                             name:        u.name,
                             tel:         u.tel,
