@@ -50,7 +50,7 @@ var ManageUsers = React.createClass({
     },
 
     onAddUser: function() {
-        setState({
+        this.setState({
             next_ope: <EditUser departments={this.state.departments}
                                 goBack={this.backToHere} />
         });

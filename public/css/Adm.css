@@ -44,3 +44,67 @@
   text-decoration: underline;
 }
 
+#edit-user {
+  width:     100%;
+  height:    100%;
+  font-size: small;
+  padding-top: 8px;
+  position:  relative;
+}
+
+#edit-user fieldset {
+  width:         calc(100% - 32px);
+  margin-left:   16px;
+  margin-bottom: 24px;
+}
+
+#edit-user-inputs {
+  width:       calc(100% - 32px);
+  margin-left: 32px;
+  display:     flex;
+}
+
+.edit-user-input {
+  width:        calc(28% - 16px);
+  margin-right: 16px;
+}
+
+#edit-user-name {
+  width:        calc(34% - 16px);
+  margin-right: 16px;
+}
+
+#edit-user-tel { width: 10%; }
+
+#edit-user-checkboxes {
+  margin-left: 32px;
+  display:     flex;
+}
+
+.edit-user-checkbox {
+  margin-right: 24px;
+}
+
+#edit-user-table-frame {
+  width:  100%;
+  height: calc(100% - 354px);
+}
+
+#edit-user-departments {
+  width:  calc(100% -  32px);
+  height: 100%;
+}
+
+#edit-user-departments col:nth-child(1) { width: 24px; }
+#edit-user-departments col:nth-child(2) { width: calc(100% - 664px); }
+#edit-user-departments col:nth-child(3) { width: 128px; }
+#edit-user-departments col:nth-child(4) { width: 128px; }
+#edit-user-departments col:nth-child(5) { width: 128px; }
+#edit-user-departments col:nth-child(6) { width: 128px; }
+#edit-user-departments col:nth-child(7) { width: 128px; }
+
+#edit-user-buttons {
+  position: absolute;
+  right:    16px;
+  bottom:    8px;
+}
