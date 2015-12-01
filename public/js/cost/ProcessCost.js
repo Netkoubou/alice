@@ -135,6 +135,7 @@ var ProcessCost = React.createClass({
                        bsSize="small"
                        placeholder="備考・連絡"
                        value={this.state.remark}
+                       disabled={permission === 'REFER_ONLY'}
                        onChange={this.onChangeRemark} />
               </fieldset>
               <TableFrame id="process-cost-breakdowns"

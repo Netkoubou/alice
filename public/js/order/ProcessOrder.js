@@ -562,6 +562,7 @@ var ProcessOrder = React.createClass({
                         bsSize="small"
                         placeholder="備考・連絡"
                         value={this.state.order_remark}
+                        disabled={permission === 'REFER_ONLY'}
                         onChange={this.onChangeRemark} />
               </fieldset>
               <TableFrame key={Math.random()}
