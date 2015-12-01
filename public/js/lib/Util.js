@@ -35,5 +35,24 @@ module.exports = {
         }
 
         return '却下';      // REJECTED
+    },
+
+    exists: function(x, array, eq) {
+        return array.filter(function (y) { return eq(x, y) }).length != 0;
+    },
+
+    hasDuplication: function(array, eq) {
+        if (array.length < 1) {
+            return false;
+        }
+
+        var car = array[0];
+        var cdr = array.slice(1);
+
+        if (this.exists(car, cdr, eq) ) {
+            return true;
+        }
+
+        return this.hasDuplication(cdr, eq);
     }
 };

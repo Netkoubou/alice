@@ -107,6 +107,18 @@ module.exports = {
             'ネットワークの問題でユーザ情報の獲得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        EDIT_USER_ADD_USER:
+            'AJAX error: addUser in EditUser.js.js\n\n' +
+            'ネットワークの問題でユーザの追加に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        EDIT_USER_UPDATE_USER:
+            'AJAX error: updateUser in EditUser.js.js\n\n' +
+            'ネットワークの問題でユーザの更新に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -197,7 +209,17 @@ module.exports = {
 
         MANAGE_USERS_LIST_USERS:
             'Server error: listUsers in ManageUsers.js.js\n\n' +
-            'ネットワークの問題でユーザ情報の獲得に失敗しました。\n' +
+            'ユーザ情報の獲得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        EDIT_USER_ADD_USER:
+            'Server error: addUser in EditUser.js.js\n\n' +
+            'ユーザの追加でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        EDIT_USER_UPDATE_USER:
+            'Server error: updateUser in EditUser.js.js\n\n' +
+            'ユーザの更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

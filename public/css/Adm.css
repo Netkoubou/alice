@@ -102,6 +102,26 @@
 #edit-user-departments col:nth-child(5) { width: 128px; }
 #edit-user-departments col:nth-child(6) { width: 128px; }
 #edit-user-departments col:nth-child(7) { width: 128px; }
+#edit-user-departments td:nth-child(1) { text-align: center }
+#edit-user-departments td:nth-child(3) { text-align: center }
+#edit-user-departments td:nth-child(4) { text-align: center }
+#edit-user-departments td:nth-child(5) { text-align: center }
+#edit-user-departments td:nth-child(6) { text-align: center }
+#edit-user-departments td:nth-child(7) { text-align: center }
+
+.edit-user-add-department {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
+.edit-user-remove-department {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
+.edit-user-add-department:hover, .edit-user-remove-department:hover {
+  text-decoration: underline;
+}
 
 #edit-user-buttons {
   position: absolute;
