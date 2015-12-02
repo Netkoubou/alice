@@ -127,19 +127,8 @@ var TableFrame = React.createClass({
         }.bind(this);
     },
 
-    render: function() {
-        /*
-         * 表の列の幅を指定するための col を作成
-         */
-        var cols = this.props.title.map(function(_, i) {
-            return <col key={i} />;
-        });
-
-
-        /*
-         * 表のタイトル
-         */
-        var title = this.props.title.map(function(cell, col_num) {
+    makeTitle: function() {
+        return this.props.title.map(function(cell, col_num) {
             if (cell.type === 'void') {
                 return (<th key={col_num}>{cell.name}</th>);
             } else {
@@ -153,6 +142,24 @@ var TableFrame = React.createClass({
                 );
             }
         }.bind(this) );
+    },
+
+    composeData: function() {
+        /*
+         * this.props.data を表のデータ用に加工する。
+         * コピーしたりソートしたりと、いろいろ面倒。
+         */
+        /*
+         * ここで、ソート対象の配列をコピーしている。
+         * これは、ソートに sort 関数を用いているためで、sort 関数は対象の
+         * 配列を直接更新してしまう。
+         * ソート対象は上位要素から属性値として渡された表の生データなわけだが、
+         * 属性値を変更することは許されていない。
+         * ということで (無駄に思えるが) 一旦ここでコピーしている。
+         */
+        var data = this.props.data.map(function(row) {
+            return row;
+        });
 
 
         /*
@@ -170,23 +177,6 @@ var TableFrame = React.createClass({
          * value はソート用で、view は表示 (render) 用。
          * つまり、上位要素で表の各セルの view を予め構成して TableFrame に
          * 渡す必要がある。
-         */
-
-        /*
-         * ここで、ソート対象の配列をコピーしている。
-         * これは、ソートに sort 関数を用いているためで、sort 関数は対象の
-         * 配列を直接更新してしまう。
-         * ソート対象は上位要素から属性値として渡された表の生データなわけだが、
-         * 属性値を変更することは許されていない。
-         * ということで (無駄に思えるが) 一旦ここでコピーしている。
-         */
-        var data = this.props.data.map(function(row) {
-            return row;
-        });
-        
-
-        /*
-         * ここでコピーした配列をソート
          */
         if (this.state.col_num != null) {
             data.sort(function(a, b) {
@@ -219,6 +209,20 @@ var TableFrame = React.createClass({
                 return 0;
             }.bind(this) );
         }
+
+        return data;
+    },
+
+    render: function() {
+        /*
+         * 表の列の幅を指定するための col を作成
+         */
+        var cols = this.props.title.map(function(_, i) {
+            return <col key={i} />;
+        });
+
+        var title = this.makeTitle();
+        var data  = this.composeData();
 
 
         /*

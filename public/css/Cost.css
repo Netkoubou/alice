@@ -103,10 +103,10 @@
 
 #list-costs-costs col:nth-child(1)  { width: 130px; }
 #list-costs-costs col:nth-child(2)  { width:  80px; }
-#list-costs-costs col:nth-child(3)  { width: calc(45% - 385px); }
+#list-costs-costs col:nth-child(3)  { width: calc(50% - 385px); }
 #list-costs-costs col:nth-child(4)  { width:  15%; }
 #list-costs-costs col:nth-child(5)  { width:  10%; }
-#list-costs-costs col:nth-child(6)  { width:  30%; }
+#list-costs-costs col:nth-child(6)  { width:  25%; }
 #list-costs-costs col:nth-child(7)  { width:  80px; }
 #list-costs-costs col:nth-child(8)  { width:  80px; }
 #list-costs-costs col:nth-child(9)  { width:  15px; }
