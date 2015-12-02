@@ -8,6 +8,36 @@ var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 
+var CostNotices = React.createClass({
+    propTypes: { cost: React.PropTypes.object.isRequired },
+
+    render: function() {
+        var drafter_name    = this.props.cost.drafter_name;
+        var drafter_account = this.props.cost.drafter_account;
+
+        return (
+            <div id="process-cost-notices">
+              <Notice className="process-cost-notice" title="起案番号">
+                {this.props.cost.cost_code}
+              </Notice>
+              <Notice className="process-cost-notice" title="起案日">
+                {this.props.cost.drafting_date}
+              </Notice>
+              <Notice className="process-cost-notice"
+                      title="申請元 部門診療科">
+                {this.props.cost.department_name}
+              </Notice>
+              <Notice className="process-cost-notice" title="起案者">
+                {drafter_name + '(' + drafter_account + ')'}
+              </Notice>
+              <Notice id="process-cost-account-title" title="勘定科目">
+                {this.props.cost.account_title_name}
+              </Notice>
+            </div>
+        );
+    }
+});
+
 var ProcessCost = React.createClass({
     propTypes: {
         user:   React.PropTypes.object.isRequired,
@@ -20,7 +50,7 @@ var ProcessCost = React.createClass({
     },
 
     onFix: function(final_state) {
-        XHR.post('fixCost').send({
+        XHR.post('/fixCost').send({
             cost_id:     this.props.cost.cost_id,   // 不要
             cost_code:   this.props.cost.cost_code,
             cost_remark: this.state.remark,
@@ -48,10 +78,52 @@ var ProcessCost = React.createClass({
         this.setState({ remark: e.target.value });
     },
 
-    render: function() {
+    makeTableFrameTitle: function() {
+        return [
+            { name: '購入日',      type: 'string' },
+            { name: '品名',        type: 'string' },
+            { name: '数量',        type: 'number' },
+            { name: '単価',        type: 'number' },
+            { name: '小計',        type: 'number' },
+            { name: '摘要 / 備考', type: 'string' }
+        ];
+    },
+
+    composeTableFrameDataRow: function(breakdown) {
+        var subtotal = breakdown.quantity * breakdown.price;
+
+        return [
+            {
+                view:  breakdown.date,
+                value: breakdown.date
+            },
+            {
+                view:  breakdown.article,
+                value: breakdown.article
+            },
+            {
+                view:  breakdown.quantity.toLocaleString(),
+                value: breakdown.quantity
+            },
+            {
+                view:  breakdown.price.toLocaleString(),
+                value: breakdown.price
+            },
+            {
+                view:  subtotal.toLocaleString(),
+                value: subtotal
+            },
+            {
+                view:  breakdown.note,
+                value: breakdown.note
+            }
+        ];
+    },
+
+    decidePermission: function() {
+        var permission   = 'REFER_ONLY';
         var user         = this.props.user;
         var cost         = this.props.cost;
-        var permission   = 'REFER_ONLY';
         var is_approving = (cost.cost_state === 'APPROVING');
         var is_mine      = (user.account === cost.drafter_account);
 
@@ -67,8 +139,13 @@ var ProcessCost = React.createClass({
             }
         }
 
-        var legend  = '参照';
-        var buttons = null;
+        return permission;
+    },
+
+    render: function() {
+        var permission = this.decidePermission();
+        var legend     = '参照';
+        var buttons    = null;
 
         if (permission === 'APPROVE') {
             legend  = '承認';
@@ -82,54 +159,18 @@ var ProcessCost = React.createClass({
             ]
         }
 
-
         var total       = 0;
-        var table_title = [
-            { name: '購入日',      type: 'string' },
-            { name: '品名',        type: 'string' },
-            { name: '数量',        type: 'number' },
-            { name: '単価',        type: 'number' },
-            { name: '小計',        type: 'number' },
-            { name: '摘要 / 備考', type: 'string' }
-        ];
-
-        var table_data = this.props.cost.breakdowns.map(function(b) {
-            var subtotal = b.quantity * b.price;
-
-            total += subtotal;
-
-            return [
-                { view: b.date,                      value: b.date },
-                { view: b.article,                   value: b.article },
-                { view: b.quantity.toLocaleString(), value: b.quantity },
-                { view: b.price.toLocaleString(),    value: b.price },
-                { view: subtotal.toLocaleString(),   value: subtotal },
-                { view: b.note,                      value: b.note }
-            ];
-        });
+        var table_title = this.makeTableFrameTitle();
+        var table_data  = this.props.cost.breakdowns.map(function(b) {
+            total += b.quantity * b.price;
+            return this.composeTableFrameDataRow(b);
+        }.bind(this) );
 
         return (
             <div id="process-cost">
               <fieldset>
                 <legend>{legend}</legend>
-                <div id="process-cost-notices">
-                  <Notice className="process-cost-notice" title="起案番号">
-                    {cost.cost_code}
-                  </Notice>
-                  <Notice className="process-cost-notice" title="起案日">
-                    {cost.drafting_date}
-                  </Notice>
-                  <Notice className="process-cost-notice"
-                          title="申請元 部門診療科">
-                    {cost.department_name}
-                  </Notice>
-                  <Notice className="process-cost-notice" title="起案者">
-                    {cost.drafter_name + '(' + cost.drafter_account + ')'}
-                  </Notice>
-                  <Notice id="process-cost-account-title" title="勘定科目">
-                    {cost.account_title_name}
-                  </Notice>
-                </div>
+                <CostNotices cost={this.props.cost} />
                 <Input id="process-cost-remark"
                        type="text"
                        bsSize="small"
