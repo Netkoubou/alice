@@ -94,7 +94,7 @@ var ManageUsers = React.createClass({
         ];
     },
 
-    makeTableFrameData: function() {
+    composeTableFrameData: function() {
         var data = this.state.users.map(function(u, i) {
             return [
                 {
@@ -140,7 +140,7 @@ var ManageUsers = React.createClass({
         }
 
         var title = this.makeTableFrameTitle();
-        var data  = this.makeTableFrameData();
+        var data  = this.composeTableFrameData();
 
         return (
             <div id="manage-users">

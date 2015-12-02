@@ -237,7 +237,7 @@ var EditUser = React.createClass({
         ];
     },
 
-    makeTableFrameData: function() {
+    composeTableFrameData: function() {
         var data = this.state.departments.map(function(d, i) {
             return [
                 {
@@ -403,7 +403,7 @@ var EditUser = React.createClass({
 
     render: function() {
         var title = this.makeTableFrameTitle();
-        var data  = this.makeTableFrameData();
+        var data  = this.composeTableFrameData();
 
         return (
             <div id="edit-user">

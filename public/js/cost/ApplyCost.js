@@ -202,14 +202,8 @@ var ApplyCost = React.createClass({
         }.bind(this) );
     },
 
-    render: function() {
-        var department_placeholder = '申請元 部門診療科';
-
-        if (this.state.departments.length == 1) {
-            department_placeholder = this.state.departments[0].name;
-        }
-
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '+/-',         type: 'void' },
             { name: '購入日',      type: 'void' },
             { name: '品名',        type: 'void' },
@@ -218,66 +212,80 @@ var ApplyCost = React.createClass({
             { name: '小計',        type: 'void' },
             { name: '摘要 / 備考', type: 'void' }
         ];
+    },
 
+    composeTableFrameDataRow: function(breakdown, index) {
         var weekdays = [ '日', '月', '火', '水', '木', '金', '土' ];
-        var total    = 0;
-        var data     = this.state.breakdowns.map(function(b, i) {
-            total += b.price * b.quantity;
 
-            return [
-                {
-                    value: '',
-                    view:  <RemoveItem onClick={this.onRemove(i)} />
-                },
-                {
-                    value: b.date,
-                    view:  <DatePicker className="apply-cost-date"
-                                       dateFormat="YYYY/MM/DD"
-                                       dateFormatCalendar="YYYY/MM/DD"
-                                       selected={moment(b.date, 'YYYY/MM/DD')}
-                                       weekdays={weekdays}
-                                       weekStart='0'
-                                       onChange={this.onChangeDate(i)} />
-                },
-                {
-                    value: b.article,
-                    view:  <TableFrame.Input
-                             key={Math.random()}
-                             type="string"
-                             placeholder={b.article}
-                             ref={'article' + i.toString()}
-                             onChange={this.onChange(i, 'article')} />
-                },
-                {
-                    value: b.quantity,
-                    view:  <TableFrame.Input
-                             key={Math.random()}
-                             type="int"
-                             placeholder={b.quantity.toLocaleString()}
-                             ref={'quantity' + i.toString()}
-                             onChange={this.onChange(i, 'quantity')} />
-                },
-                {
-                    value: b.price,
-                    view:  <TableFrame.Input key={Math.random()}
-                             type="int"
-                             placeholder={b.price.toLocaleString()}
-                             ref={'price' + i.toString()}
-                             onChange={this.onChange(i, 'price')} />
-                },
-                {
-                    value:  b.price * b.quantity,
-                    view:  (b.price * b.quantity).toLocaleString()
-                },
-                {
-                    value: b.note,
-                    view:  <TableFrame.Input key={Math.random()}
-                             type="string"
-                             placeholder={b.note}
-                             ref={'note' + i.toString()}
-                             onChange={this.onChange(i, 'note')} />
-                },
-            ];
+        return [
+            {
+                value: '',
+                view:  <RemoveItem onClick={this.onRemove(index)} />
+            },
+            {
+                value: breakdown.date,
+                view:  <DatePicker
+                         className="apply-cost-date"
+                         dateFormat="YYYY/MM/DD"
+                         dateFormatCalendar="YYYY/MM/DD"
+                         selected={moment(breakdown.date, 'YYYY/MM/DD')}
+                         weekdays={weekdays}
+                         weekStart='0'
+                         onChange={this.onChangeDate(index)} />
+            },
+            {
+                value: breakdown.article,
+                view:  <TableFrame.Input
+                         key={Math.random()}
+                         type="string"
+                         placeholder={breakdown.article}
+                         ref={'article' + index.toString()}
+                         onChange={this.onChange(index, 'article')} />
+            },
+            {
+                value: breakdown.quantity,
+                view:  <TableFrame.Input
+                         key={Math.random()}
+                         type="int"
+                         placeholder={breakdown.quantity.toLocaleString()}
+                         ref={'quantity' + index.toString()}
+                         onChange={this.onChange(index, 'quantity')} />
+            },
+            {
+                value: breakdown.price,
+                view:  <TableFrame.Input key={Math.random()}
+                         type="int"
+                         placeholder={breakdown.price.toLocaleString()}
+                         ref={'price' + index.toString()}
+                         onChange={this.onChange(index, 'price')} />
+            },
+            {
+                value:  breakdown.price * breakdown.quantity,
+                view:  (breakdown.price * breakdown.quantity).toLocaleString()
+            },
+            {
+                value: breakdown.note,
+                view:  <TableFrame.Input key={Math.random()}
+                         type="string"
+                         placeholder={breakdown.note}
+                         ref={'note' + index.toString()}
+                         onChange={this.onChange(index, 'note')} />
+            },
+        ];
+    },
+
+    render: function() {
+        var department_placeholder = '申請元 部門診療科';
+
+        if (this.state.departments.length == 1) {
+            department_placeholder = this.state.departments[0].name;
+        }
+
+        var total = 0;
+        var title = this.makeTableFrameTitle();
+        var data  = this.state.breakdowns.map(function(b, i) {
+            total += b.price * b.quantity;
+            return this.composeTableFrameDataRow(b, i);
         }.bind(this) );
 
         data.push([
