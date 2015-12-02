@@ -82,7 +82,7 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
 
     # mongo
     > use alice
-    > db.dropDatabase
+    > db.dropDatabase()
     > exit
     # mongo localhost/alice --quiet local/utils/insert-dummy-data.js
 
