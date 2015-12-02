@@ -225,8 +225,8 @@ var EditUser = React.createClass({
         }.bind(this);
     },
 
-    render: function() {
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '+/-',             type: 'void' },
             { name: '所属 部門診療科', type: 'string' },
             { name: 'システム管理',    type: 'void' },
@@ -235,7 +235,9 @@ var EditUser = React.createClass({
             { name: '発注処理',        type: 'void' },
             { name: '承認',            type: 'void' },
         ];
+    },
 
+    makeTableFrameData: function() {
         var data = this.state.departments.map(function(d, i) {
             return [
                 {
@@ -316,72 +318,97 @@ var EditUser = React.createClass({
             { value: '', view: '' }
         ]);
 
+        return data;
+    },
+
+
+    /*
+     * 本当は component として定義したかったのだけれど、
+     * ref を使っているため、断念。
+     * メソッドで代用することに。
+     */
+    generatePrivilegedPermissions: function() {
+        return (
+            <fieldset>
+              <legend>全部門診療科に跨がる権限</legend>
+              <div id="edit-user-checkboxes">
+                <div className="edit-user-checkbox">
+                  <Input type="checkbox"
+                         label="システム管理"
+                         ref="administrate" />
+                </div>
+                <div className="edit-user-checkbox">
+                  <Input type="checkbox"
+                         label="通常発注起案"
+                         ref="draft-ordinarily" />
+                </div>
+                <div className="edit-user-checkbox">
+                  <Input type="checkbox"
+                         label="緊急発注起案"
+                         ref="draft-urgently" />
+                </div>
+                <div className="edit-user-checkbox">
+                  <Input type="checkbox"
+                         label="発注処理"
+                         ref="process-order" />
+                </div>
+                <div className="edit-user-checkbox">
+                  <Input type="checkbox"
+                         label="承認"
+                         ref="approve" />
+                </div>
+              </div>
+            </fieldset>
+        );
+    },
+
+    generateBasicInfos: function() {
+        return (
+            <fieldset>
+              <legend>基本情報</legend>
+              <div id="edit-user-inputs">
+                <div className="edit-user-input">
+                  <Input type="text"
+                         bsSize="small"
+                         maxLength="32"
+                         ref="account"
+                         disabled={this.props.user != null}
+                         placeholder="アカウント"/>
+                </div>
+                <div id="edit-user-name">
+                  <Input type="text"
+                         bsSize="small"
+                         maxLength="32"
+                         ref="name"
+                         placeholder="氏名"/>
+                </div>
+                <div className="edit-user-input">
+                  <Input type="text"
+                         bsSize="small"
+                         maxLength="32"
+                         ref="passphrase"
+                         placeholder="暫定パスワード"/>
+                </div>
+                <div id="edit-user-tel">
+                  <Input type="text"
+                         bsSize="small"
+                         maxLength="8"
+                         ref="tel"
+                         placeholder="内線番号"/>
+                </div>
+              </div>
+            </fieldset>
+        );
+    },
+
+    render: function() {
+        var title = this.makeTableFrameTitle();
+        var data  = this.makeTableFrameData();
+
         return (
             <div id="edit-user">
-              <fieldset>
-                <legend>基本情報</legend>
-                <div id="edit-user-inputs">
-                  <div className="edit-user-input">
-                    <Input type="text"
-                           bsSize="small"
-                           maxLength="32"
-                           ref="account"
-                           disabled={this.props.user != null}
-                           placeholder="アカウント"/>
-                  </div>
-                  <div id="edit-user-name">
-                    <Input type="text"
-                           bsSize="small"
-                           maxLength="32"
-                           ref="name"
-                           placeholder="氏名"/>
-                  </div>
-                  <div className="edit-user-input">
-                    <Input type="text"
-                           bsSize="small"
-                           maxLength="32"
-                           ref="passphrase"
-                           placeholder="暫定パスワード"/>
-                  </div>
-                  <div id="edit-user-tel">
-                    <Input type="text"
-                           bsSize="small"
-                           maxLength="8"
-                           ref="tel"
-                           placeholder="内線番号"/>
-                  </div>
-                </div>
-              </fieldset>
-              <fieldset>
-                <legend>全部門診療科に跨がる権限</legend>
-                <div id="edit-user-checkboxes">
-                  <div className="edit-user-checkbox">
-                    <Input type="checkbox"
-                           label="システム管理"
-                           ref="administrate" />
-                  </div>
-                  <div className="edit-user-checkbox">
-                    <Input type="checkbox"
-                           label="通常発注起案"
-                           ref="draft-ordinarily" />
-                  </div>
-                  <div className="edit-user-checkbox">
-                    <Input type="checkbox"
-                           label="緊急発注起案"
-                           ref="draft-urgently" />
-                  </div>
-                  <div className="edit-user-checkbox">
-                    <Input type="checkbox"
-                           label="発注処理"
-                           ref="process-order" />
-                  </div>
-                  <div className="edit-user-checkbox">
-                    <Input type="checkbox"
-                           label="承認"
-                           ref="approve" />
-                  </div>
-                </div>
-              </fieldset>
+              {this.generateBasicInfos()}
+              {this.generatePrivilegedPermissions()}
               <fieldset id="edit-user-table-frame">
                 <legend>所属する部門診療科とそれに対する権限</legend>
                 <TableFrame id="edit-user-departments"
