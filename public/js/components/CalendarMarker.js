@@ -16,8 +16,8 @@ var CalendarMarker = React.createClass({
         this.props.onMark(picker.startDate, picker.endDate);
     },
 
-    render: function() {
-        var locale = {
+    makeLocale: function() {
+        return {
             format:           'YYYY/MM/DD',
             applyLabel:       '確定',
             cancelLabel:      'キャンセル',
@@ -39,8 +39,10 @@ var CalendarMarker = React.createClass({
             ],
             firstDay: 1
         };
+    },
 
-        var ranges = {
+    makeRanges: function() {
+        return {
             '今日': [ moment(), moment() ],
             '昨日': [
                 moment().subtract(1, 'days'),
@@ -71,10 +73,14 @@ var CalendarMarker = React.createClass({
                 moment().subtract(1, 'month').endOf('month')
             ]
         };
+    },
 
-        var start = this.props.startDate.format('YYYY/MM/DD');
-        var end   = this.props.endDate.format('YYYY/MM/DD');
-        var label = (start === end)? start: start + ' - ' + end;
+    render: function() {
+        var locale = this.makeLocale();
+        var ranges = this.makeRanges();
+        var start  = this.props.startDate.format('YYYY/MM/DD');
+        var end    = this.props.endDate.format('YYYY/MM/DD');
+        var label  = (start === end)? start: start + ' - ' + end;
 
         return (
             <DateRangePicker startDate={this.props.startDate}
