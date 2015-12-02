@@ -180,11 +180,7 @@ var FinalPane = React.createClass({
         return this.getFlux().actions.clearFinalists();
     },
 
-
-    /*
-     * 確定ボタンがクリックされたら
-     */
-    onFix: function() {
+    validateQuantities: function() {
         for (var i = 0; i < this.props.finalists.length; i++) {
             var q = this.props.finalists[i].quantity;
 
@@ -203,123 +199,151 @@ var FinalPane = React.createClass({
                 alert('数量を指定して下さい。');
                 var e = this.refs['quantity' + i.toString()];
                 ReactDOM.findDOMNode(e).focus();
-                return;
+                return false;
             }
         }
 
-        var can_process_order = false;
+        return true;
+    },
 
+    canProcessOrder: function() {
         if (this.props.user.privileged.process_order) {
-            can_process_order = true;
+            return true;
         } else {
-            this.props.user.departments.forEach(function(d) {
+            for (var i = 0; i < this.props.user.departments.length; i++) {
+                var d = this.props.user.departments[i];
+
                 if (d.code === this.props.department.code && d.process_order) {
-                    can_process_order = true;
+                    return true;
                 }
-            }.bind(this) );
+            }
+        }
+
+        return false;
+    },
+
+
+    /*
+     * 発注を新規登録
+     */
+    registerOrder: function() {
+        XHR.post('registerOrder').send({
+            order_type:      this.props.orderType,
+            order_remark:    this.props.orderRemark,
+            department_code: this.props.department.code,
+            trader_code:     this.props.trader.code,
+
+            products: this.props.finalists.map(function(p) {
+                return {
+                    code:     p.code,
+                    quantity: p.quantity
+                };
+            })
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.FINAL_PANE_REGISTER_ORDER);
+                throw 'ajax_registerOrder';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.FINAL_PANE_REGISTER_ORDER);
+                throw 'server_registerOrder';
+            }
+
+            alert('登録しました。');
+            this.getFlux().actions.setOrderCodeAndVersion({
+                id:      res.body.order_id, // 不要 (MySQL の場合のみ必要)
+                code:    res.body.order_code,
+                version: res.body.order_version
+            });
+
+
+            /*
+             * 発注の起案権限しかないユーザは、
+             * 以降発注を変更することはできない
+             */
+            if (!this.canProcessOrder() ) {
+                if (this.props.goBack === undefined) {
+                    /*
+                     * ナビゲーションバーの *発注起案から飛んで来た場合、
+                     * 戻り先ページは無いので、連続で発注を起案できるよう
+                     * ページを初期化する。
+                     */
+                    this.getFlux().actions.resetOrder();
+                } else {
+                    /*
+                     * 発注一覧から飛んで来た場合は、発注一覧へ戻る。
+                     */
+                    this.props.goBack();
+                }
+            }
+        }.bind(this) );
+    },
+
+
+    /*
+     * 登録済み若しくは既存の発注を更新
+     */
+    updateOrder: function() {
+        XHR.post('updateOrder').send({
+            order_id:        this.props.orderId,    // 不要
+            order_code:      this.props.orderCode,
+            order_state:     'REQUESTING',
+            order_remark:    this.props.orderRemark,
+            order_version:   this.props.orderVersion,
+            department_code: this.props.department.code,
+            trader_code:     this.props.trader.code,
+            
+            products: this.props.finalists.map(function(p) {
+                return {
+                    code:           p.code,
+                    price:          p.price,
+                    quantity:       p.quantity,
+                    state:          p.state,
+                    billing_amount: p.billing_amount
+                };
+            })
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.FINAL_PANE_UPDATE_ORDER);
+                throw 'ajax_updateOrder';
+            }
+
+            if (res.body.status > 1) {
+                alert(Messages.server.FINAL_PANE_UPDATE_ORDER);
+                throw 'server_updateOrder';
+            }
+
+            if (res.body.status == 0) {
+                alert('更新しました。');
+                this.getFlux().actions.fixFinalists({
+                    version: res.body.order_version
+                });
+            } else {
+                alert(Messages.information.UPDATE_CONFLICT);
+
+                if (this.props.goBack === undefined) {
+                    this.getFlux().actions.resetOrder();
+                } else {
+                    this.props.goBack();
+                }
+            }
+        }.bind(this) );
+    },
+
+
+    /*
+     * 確定ボタンがクリックされたら
+     */
+    onFix: function() {
+        if (!this.validateQuantities() ) {
+            return;
         }
 
         if (this.props.orderCode === '') {
-            /*
-             * 発注を新規登録
-             */
-            XHR.post('registerOrder').send({
-                order_type:      this.props.orderType,
-                order_remark:    this.props.orderRemark,
-                department_code: this.props.department.code,
-                trader_code:     this.props.trader.code,
-                products:        this.props.finalists.map(function(p) {
-                    return {
-                        code:     p.code,
-                        quantity: p.quantity
-                    };
-                })
-            }).end(function(err, res) {
-                if (err) {
-                    alert(Messages.ajax.FINAL_PANE_REGISTER_ORDER);
-                    throw 'ajax_registerOrder';
-                }
-
-                if (res.body.status != 0) {
-                    alert(Messages.server.FINAL_PANE_REGISTER_ORDER);
-                    throw 'server_registerOrder';
-                }
-
-                alert('登録しました。');
-                this.getFlux().actions.setOrderCodeAndVersion({
-                    id:      res.body.order_id, // 不要 (MySQL の場合のみ必要)
-                    code:    res.body.order_code,
-                    version: res.body.order_version
-                });
-
-
-                /*
-                 * 発注の起案権限しかないユーザは、
-                 * 以降発注を変更することはできない
-                 */
-                if (!can_process_order) {
-                    if (this.props.goBack === undefined) {
-                        /*
-                         * ナビゲーションバーの *発注起案から飛んで来た場合、
-                         * 戻り先ページは無いので、連続で発注を起案できるよう
-                         * ページを初期化する。
-                         */
-                        this.getFlux().actions.resetOrder();
-                    } else {
-                        /*
-                         * 発注一覧から飛んで来た場合は、発注一覧へ戻る。
-                         */
-                        this.props.goBack();
-                    }
-                }
-            }.bind(this) );
+            this.registerOrder();
         } else {
-            /*
-             * 登録済み若しくは既存の発注を更新
-             */
-            XHR.post('updateOrder').send({
-                order_id:        this.props.orderId,    // 不要
-                order_code:      this.props.orderCode,
-                order_state:     'REQUESTING',
-                order_remark:    this.props.orderRemark,
-                order_version:   this.props.orderVersion,
-                department_code: this.props.department.code,
-                trader_code:     this.props.trader.code,
-                products:        this.props.finalists.map(function(p) {
-                    return {
-                        code:           p.code,
-                        price:          p.price,
-                        quantity:       p.quantity,
-                        state:          p.state,
-                        billing_amount: p.billing_amount
-                    };
-                })
-            }).end(function(err, res) {
-                if (err) {
-                    alert(Messages.ajax.FINAL_PANE_UPDATE_ORDER);
-                    throw 'ajax_updateOrder';
-                }
-
-                if (res.body.status > 1) {
-                    alert(Messages.server.FINAL_PANE_UPDATE_ORDER);
-                    throw 'server_updateOrder';
-                }
-
-                if (res.body.status == 0) {
-                    alert('更新しました。');
-                    this.getFlux().actions.fixFinalists({
-                        version: res.body.order_version
-                    });
-                } else {
-                    alert(Messages.information.UPDATE_CONFLICT);
-
-                    if (this.props.goBack === undefined) {
-                        this.getFlux().actions.resetOrder();
-                    } else {
-                        this.props.goBack();
-                    }
-                }
-            }.bind(this) );
+            this.updateOrder();
         }
     },
 
@@ -393,14 +417,8 @@ var FinalPane = React.createClass({
         });
     },
 
-    render: function() {
-        var order_code = this.props.orderCode;
-
-        if (order_code === '') {
-            order_code = '未確定';
-        }
-
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
             { name: '現在単価', type: 'number' },
@@ -408,58 +426,108 @@ var FinalPane = React.createClass({
             { name: '発注小計', type: 'number' },
             { name: '状態',     type: 'string' }
         ];
+    },
 
+    makeTableFrameDataRow: function(finalist, index) {
+        var state    = Util.toProductStateName(finalist.state);
+        var subtotal = finalist.price * finalist.quantity;
+
+        var price_string = finalist.price.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+
+        var subtotal_string = subtotal.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+
+        return [
+            {
+                value: finalist.name,
+                view:  <FinalistName index={index}
+                                     state={finalist.state}>
+                         {finalist.name}
+                       </FinalistName>
+            },
+            {
+                value: finalist.maker,
+                view:  <span>{finalist.maker}</span>
+            },
+            {
+                value: finalist.price,
+                view:  <span>{price_string}</span>
+            },
+            {
+                value: finalist.quantity,
+                view:  <TableFrame.Input
+                         key={Math.random()}
+                         type='int'
+                         placeholder={finalist.quantity.toLocaleString()}
+                         ref={'quantity' + index.toString()}
+                         onChange={this.onChangeQuantity(index)} />
+            },
+            {
+                value: subtotal,
+                view:  <span>{subtotal_string}</span>
+            },
+            {
+                value: finalist.state,
+                view: <span>{state}</span>
+            }
+        ];
+    },
+
+
+    /*
+     * 別 component にすると prop の数が大変になって、
+     * 書くのも見るのも苦痛なのでメソッドで妥協。
+     */
+    makeFinalPaneNotices: function() {
+        return (
+            <div id="final-pane-notices">
+              <div>
+                <Notice id="final-pane-code"
+                        title="起案番号">
+                  {this.props.orderCode === ''? '未確定': this.props.orderCode}
+                </Notice>
+                <Notice id="final-pane-drafting-date"
+                        title="起案日">
+                  {this.props.draftingDate}
+                </Notice>
+                <Notice id="final-pane-order-type"
+                        title="発注区分">
+                  {Util.toOrderTypeName(this.props.orderType)}
+                </Notice>
+              </div>
+              <div>
+                <Notice id="final-pane-drafter"
+                        title='起案者'>
+                  {this.props.drafter}
+                </Notice>
+                <Notice id="final-pane-trader"
+                        title="発注先 販売元">
+                  {this.props.trader.name}
+                </Notice>
+              </div>
+              <div>
+                <Input id="final-pane-remark"
+                       type="text"
+                       bsSize="small"
+                       placeholder="備考・連絡"
+                       value={this.props.orderRemark}
+                       onChange={this.onChangeRemark} />
+              </div>
+            </div>
+        );
+    },
+
+    render: function() {
         var total = 0;
-        var data  = this.props.finalists.map(function(finalist, i) {
-            var state    = Util.toProductStateName(finalist.state);
-            var subtotal = finalist.price * finalist.quantity;
-
-            total += subtotal;
-
-            var price_string = finalist.price.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
-
-            var subtotal_string = subtotal.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
-
-            return [
-                {
-                    value: finalist.name,
-                    view:  <FinalistName index={i}
-                                         state={finalist.state}>
-                             {finalist.name}
-                           </FinalistName>
-                },
-                {
-                    value: finalist.maker,
-                    view:  <span>{finalist.maker}</span>
-                },
-                {
-                    value: finalist.price,
-                    view:  <span>{price_string}</span>
-                },
-                {
-                    value: finalist.quantity,
-                    view:  <TableFrame.Input
-                             key={Math.random()}
-                             type='int'
-                             placeholder={finalist.quantity.toLocaleString()}
-                             ref={'quantity' + i.toString()}
-                             onChange={this.onChangeQuantity(i)} />
-                },
-                {
-                    value: subtotal,
-                    view:  <span>{subtotal_string}</span>
-                },
-                {
-                    value: finalist.state,
-                    view: <span>{state}</span>
-                }
-            ];
+        var title = this.makeTableFrameTitle();
+        var data  = this.props.finalists.map(function(f, i) {
+            total += f.price * f.quantity;
+            return this.makeTableFrameDataRow(f, i);
         }.bind(this) );
 
 
@@ -479,40 +547,7 @@ var FinalPane = React.createClass({
         return (
             <fieldset id="final-pane" className="edit-order-pane">
               <legend>確定</legend>
-              <div id="final-pane-notices">
-                <div>
-                  <Notice id="final-pane-code"
-                          title="起案番号">
-                    {order_code}
-                  </Notice>
-                  <Notice id="final-pane-drafting-date"
-                          title="起案日">
-                    {this.props.draftingDate}
-                  </Notice>
-                  <Notice id="final-pane-order-type"
-                          title="発注区分">
-                    {Util.toOrderTypeName(this.props.orderType)}
-                  </Notice>
-                </div>
-                <div>
-                  <Notice id="final-pane-drafter"
-                          title='起案者'>
-                    {this.props.drafter}
-                  </Notice>
-                  <Notice id="final-pane-trader"
-                          title="発注先 販売元">
-                    {this.props.trader.name}
-                  </Notice>
-                </div>
-                <div>
-                  <Input id="final-pane-remark"
-                         type="text"
-                         bsSize="small"
-                         placeholder="備考・連絡"
-                         value={this.props.orderRemark}
-                         onChange={this.onChangeRemark} />
-                </div>
-              </div>
+              {this.makeFinalPaneNotices()}
               <TableFrame id="final-pane-finalists"
                           title={title}
                           data={data} />
