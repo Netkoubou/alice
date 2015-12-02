@@ -44,8 +44,8 @@ var CandidatePane = React.createClass({
         }) ).isRequired
     },
 
-    render: function() {
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
             { name: '販売元',   type: 'string' },
@@ -53,14 +53,14 @@ var CandidatePane = React.createClass({
             { name: '現在単価', type: 'number' },
             { name: '最高単価', type: 'number' }
         ];
+    },
 
-
+    composeTableFrameData: function() {
         /*
          * ここで、上位要素から貰った発注候補一覧用の生データを
          * TableFrame 用に変換する。
          */
-
-        var data  = this.props.candidates.map(function(candidate) {
+        return this.props.candidates.map(function(candidate) {
             var min_price = candidate.min_price.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
@@ -105,6 +105,11 @@ var CandidatePane = React.createClass({
                 },
             ];
         });
+    },
+
+    render: function() {
+        var title = this.makeTableFrameTitle();
+        var data  = this.composeTableFrameData();
 
         return (
             <fieldset id="candidate-pane" className="edit-order-pane">
