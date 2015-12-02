@@ -106,63 +106,7 @@ var ListCosts = React.createClass({
                 throw 'server_lookupCosts';
             }
 
-            var costs = res.body.costs.map(function(cost, index) {
-                var state  = Util.toCostStateName(cost.cost_state);
-                var total  = 0;
-                var remark = '';
-
-                cost.breakdowns.forEach(function(b) {
-                    total += b.price * b.quantity;
-                });
-
-                if (cost.cost_remark != '') {
-                    var id      = 'list-costs-popover' + index.toString();
-                    var popover = <Popover id={id} title="備考・連絡">
-                                    {cost.cost_remark}
-                                  </Popover>;
-
-                    remark = <OverlayTrigger contaner={this.refs.listCosts}
-                                             placement="left"
-                                             overlay={popover}>
-                               <span className="list-costs-remark">!</span>
-                             </OverlayTrigger>;
-                }
-
-                return [
-                    {
-                        value: cost.cost_code,
-                        view:  <CostCode user={this.props.user}
-                                         cost={cost}
-                                         goBack={this.backToHere}
-                                         onSelect={this.onSelect} />
-                    },
-                    {
-                        value: cost.drafting_date,
-                        view:  cost.drafting_date
-                    },
-                    {
-                        value: cost.drafter_name,
-                        view:  cost.drafter_name
-                    },
-                    {
-                        value: cost.department_name,
-                        view:  cost.department_name
-                    },
-                    {
-                        value: cost.account_title_name,
-                        view:  cost.account_title_name
-                    },
-                    {
-                        value: cost.breakdowns[0].article,
-                        view:  cost.breakdowns[0].article
-                    },
-                    { value: total, view:  total.toLocaleString() },
-                    { value: state, view:  state },
-                    { value: '',    view:  remark, }
-                ];
-            }.bind(this) );
-
-            this.setState({ costs: costs });
+            this.setState({ costs: res.body.costs });
         }.bind(this) );
     },
 
@@ -174,12 +118,8 @@ var ListCosts = React.createClass({
         });
     },
 
-    render: function() {
-        if (this.state.next_ope != null) {
-            return this.state.next_ope;
-        }
-
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '起案番号',          type: 'string' },
             { name: '起案日',            type: 'string' },
             { name: '起案者',            type: 'string' },
@@ -190,6 +130,75 @@ var ListCosts = React.createClass({
             { name: '状態',              type: 'string' },
             { name: '!',                 type: 'void' }
         ];
+    },
+
+    composeTableFrameData: function() {
+        var data = this.state.costs.map(function(cost, index) {
+            var state  = Util.toCostStateName(cost.cost_state);
+            var total  = 0;
+            var remark = '';
+
+            cost.breakdowns.forEach(function(b) {
+                total += b.price * b.quantity;
+            });
+
+            if (cost.cost_remark != '') {
+                var id      = 'list-costs-popover' + index.toString();
+                var popover = <Popover id={id} title="備考・連絡">
+                                {cost.cost_remark}
+                              </Popover>;
+
+                remark = <OverlayTrigger contaner={this.refs.listCosts}
+                                         placement="left"
+                                         overlay={popover}>
+                           <span className="list-costs-remark">!</span>
+                         </OverlayTrigger>;
+            }
+
+            return [
+                {
+                    value: cost.cost_code,
+                    view:  <CostCode user={this.props.user}
+                                     cost={cost}
+                                     goBack={this.backToHere}
+                                     onSelect={this.onSelect} />
+                },
+                {
+                    value: cost.drafting_date,
+                    view:  cost.drafting_date
+                },
+                {
+                    value: cost.drafter_name,
+                    view:  cost.drafter_name
+                },
+                {
+                    value: cost.department_name,
+                    view:  cost.department_name
+                },
+                {
+                    value: cost.account_title_name,
+                    view:  cost.account_title_name
+                },
+                {
+                    value: cost.breakdowns[0].article,
+                    view:  cost.breakdowns[0].article
+                },
+                { value: total, view:  total.toLocaleString() },
+                { value: state, view:  state },
+                { value: '',    view:  remark, }
+            ];
+        }.bind(this) );
+
+        return data;
+    },
+
+    render: function() {
+        if (this.state.next_ope != null) {
+            return this.state.next_ope;
+        }
+
+        var title = this.makeTableFrameTitle();
+        var data  = this.composeTableFrameData();
 
         return (
             <div id="list-costs" ref="listCosts">
@@ -229,7 +238,7 @@ var ListCosts = React.createClass({
                 <legend>経費精算申請一覧</legend>
                 <TableFrame id="list-costs-costs"
                             title={title}
-                            data={this.state.costs} />
+                            data={data} />
               </fieldset>
             </div>
         );
