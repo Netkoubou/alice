@@ -54,6 +54,37 @@ var ChangePassword = React.createClass({
     },
 
     changePassword: function() {
+        XHR.post('changePassword').send({
+            old: this.state.expiring,
+            new: this.state.fresh
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.CHANGE_PASSWORD_CHANGE_PASSWORD);
+                throw 'ajax_changePassword';
+            }
+
+            switch (res.body.status) {
+            case 0:
+                alert('変更しました。');
+                this.setState({
+                    expiring:       '',
+                    fresh:          '',
+                    reconfirmation: ''
+                });
+
+                break;
+            case 1:
+                alert('(旧) パスワードが違います。');
+                this.setState({ expiring: '' });
+                break;
+            default:
+                alert(Messages.server.CHANGE_PASSWORD_CHANGE_PASSWORD);
+                throw 'server_changePassword';
+            }
+        }.bind(this) );
+    },
+
+    onChangePassword: function() {
         if (this.state.expiring === this.state.fresh) {
             alert('旧パスワードと新パスワードが同じです。');
             this.setState({
@@ -72,34 +103,7 @@ var ChangePassword = React.createClass({
                 reconfirmation: ''
             });
         } else if (this.state.fresh === this.state.reconfirmation) {
-            XHR.post('changePassword').send({
-                old: this.state.expiring,
-                new: this.state.fresh
-            }).end(function(err, res) {
-                if (err) {
-                    alert(Messages.ajax.CHANGE_PASSWORD_CHANGE_PASSWORD);
-                    throw 'ajax_changePassword';
-                }
-
-                switch (res.body.status) {
-                case 0:
-                    alert('変更しました。');
-                    this.setState({
-                        expiring:       '',
-                        fresh:          '',
-                        reconfirmation: ''
-                    });
-
-                    break;
-                case 1:
-                    alert('(旧) パスワードが違います。');
-                    this.setState({ expiring: '' });
-                    break;
-                default:
-                    alert(Messages.server.CHANGE_PASSWORD_CHANGE_PASSWORD);
-                    throw 'server_changePassword';
-                }
-            }.bind(this) );
+            this.changePassword();
         } else {
             alert('確認用のパスワードが一致しません。');
             this.setState({
@@ -130,7 +134,7 @@ var ChangePassword = React.createClass({
                      value={this.state.reconfirmation}
                      onChange={this.onChangeReconfirmation}
                      placeholder="新パスワード (確認用)" />
-              <Button onClick={this.changePassword}>変更</Button>
+              <Button onClick={this.onChangePassword}>変更</Button>
             </fieldset>
         );
     }
