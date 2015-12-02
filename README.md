@@ -58,6 +58,8 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
 
 ### サーバを別途自前で用意する場合
 
+構築時に npm コマンドを実行したディレクトリに行き、
+
     # git pull
     # npm install
     # npm run build
