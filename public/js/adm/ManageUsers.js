@@ -84,19 +84,17 @@ var ManageUsers = React.createClass({
         }.bind(this) );
     },
 
-    render: function() {
-        if (this.state.next_ope != null) {
-            return this.state.next_ope;
-        }
-
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '+/-',        type: 'void'   },
             { name: 'アカウント', type: 'string' },
             { name: '氏名',       type: 'string' },
             { name: '内線番号',   type: 'string' },
             { name: 'E-Mail',     type: 'string' },
         ];
+    },
 
+    makeTableFrameData: function() {
         var data = this.state.users.map(function(u, i) {
             return [
                 {
@@ -132,6 +130,17 @@ var ManageUsers = React.createClass({
             { value: '', view: '' },
             { value: '', view: '' }
         ]);
+
+        return data;
+    },
+
+    render: function() {
+        if (this.state.next_ope != null) {
+            return this.state.next_ope;
+        }
+
+        var title = this.makeTableFrameTitle();
+        var data  = this.makeTableFrameData();
 
         return (
             <div id="manage-users">
