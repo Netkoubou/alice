@@ -37,6 +37,56 @@ var SelectProductState = React.createClass({
     }
 });
 
+var OrderNotices = React.createClass({
+    PropTypes: { order: React.PropTypes.object.isRequired },
+
+    render: function() {
+        return (
+          <div id="process-order-notices">
+            <Notice className="process-order-notice" title="起案番号">
+              {this.props.order.order_code}
+            </Notice>
+            <Notice className="process-order-notice" title="起案日">
+              {this.props.order.drafting_date}
+            </Notice>
+            <Notice className="process-order-notice" title="起案者">
+              {this.props.order.drafter_account}
+            </Notice>
+            <Notice className="process-order-notice" title="発注区分">
+              {Util.toOrderTypeName(this.props.order.order_type)}
+            </Notice>
+            <Notice className="process-order-notice"
+                    title="発注元 部門診療科">
+              {this.props.order.department_name}
+            </Notice>
+            <Notice id="process-order-trader" title="発注先 販売元">
+             {this.props.order.trader_name}
+            </Notice>
+          </div>
+        );
+    }
+});
+
+var OrderTotals = React.createClass({
+    propTypes: {
+        order_total:   React.PropTypes.number.isRequired,
+        billing_total: React.PropTypes.number.isRequired
+    },
+
+    render: function() {
+        return (
+            <div id="process-order-totals">
+              <Notice className="process-order-total" title="発注総計">
+                {Math.round(this.props.order_total).toLocaleString()}
+              </Notice>
+              <Notice className="process-order-total" title="請求総計">
+                {Math.round(this.props.billing_total).toLocaleString()}
+              </Notice>
+            </div>
+        );
+    }
+});
+
 var Buttons = React.createClass({
     propTypes: {
         permission: React.PropTypes.oneOf([
@@ -237,7 +287,7 @@ var ProcessOrder = React.createClass({
         var w = window.open('preview-order.html', '発注書 印刷プレビュー');
     },
 
-    onFix: function() {
+    validateProducts: function() {
         for (var i = 0; i < this.state.products.length; i++) {
             var p = this.state.products[i];
 
@@ -253,7 +303,7 @@ var ProcessOrder = React.createClass({
                     alert('現在単価には 0 より大きな値を指定して下さい。');
                     var e = this.refs['cur_price' + i.toString()];
                     ReactDOM.findDOMNode(e).focus();
-                    return;
+                    return false;
                 }
 
                 var ba = p.billing_amount;
@@ -262,47 +312,62 @@ var ProcessOrder = React.createClass({
                     alert('請求額を指定して下さい。');
                     var e = this.refs['billing_amount' + i.toString()];
                     ReactDOM.findDOMNode(e).focus();
-                    return;
+                    return false;
                 }
             }
         }
 
+        return true;
+    },
+
+    makePostDataOfOrder: function() {
+        var order_state     = this.props.order.order_state;
+        var num_of_products = this.state.products.length;
+
+        var num_of_canceled = this.state.products.filter(function(p) {
+            return p.state === 'CANCELED';
+        }).length;
+
+        var num_of_delivered = this.state.products.filter(function(p) {
+            return p.state === 'DELIVERED';
+        }).length;
+
+        if (num_of_products == num_of_canceled) {
+            order_state = 'NULLIFIED';
+        } else if (num_of_products == num_of_canceled + num_of_delivered) {
+            order_state = 'COMPLETED';
+        }
+
+        return {
+            order_id:        this.props.order.order_id, // 不要
+            order_code:      this.props.order.order_code,
+            order_state:     order_state,
+            order_remark:    this.state.order_remark,
+            order_version:   this.props.order.order_version,
+            department_code: this.props.order.department_code,
+            trader_code:     this.props.order.trader_code,
+
+            products: this.state.products.map(function(p) {
+                return {
+                    code:           p.code,
+                    price:          p.cur_price,
+                    quantity:       p.quantity,
+                    state:          p.state,
+                    billing_amount: p.billing_amount
+                };
+            })
+        };
+    },
+
+    onFix: function() {
+        if (!this.validateProducts() ) {
+            return;
+        }
+
         if (confirm('この発注を確定します。よろしいですか?') ) {
-            var order_state     = this.props.order.order_state;
-            var num_of_products = this.state.products.length;
+            var data = this.makePostDataOfOrder();
 
-            var num_of_canceled = this.state.products.filter(function(p) {
-                return p.state === 'CANCELED';
-            }).length;
-
-            var num_of_delivered = this.state.products.filter(function(p) {
-                return p.state === 'DELIVERED';
-            }).length;
-
-            if (num_of_products == num_of_canceled) {
-                order_state = 'NULLIFIED';
-            } else if (num_of_products == num_of_canceled + num_of_delivered) {
-                order_state = 'COMPLETED';
-            }
-
-            XHR.post('updateOrder').send({
-                order_id:        this.props.order.order_id, // 不要
-                order_code:      this.props.order.order_code,
-                order_state:     order_state,
-                order_remark:    this.state.order_remark,
-                order_version:   this.props.order.order_version,
-                department_code: this.props.order.department_code,
-                trader_code:     this.props.order.trader_code,
-                products:        this.state.products.map(function(p) {
-                    return {
-                        code:     p.code,
-                        price:    p.cur_price,
-                        quantity: p.quantity,
-                        state:    p.state,
-                        billing_amount: p.billing_amount
-                    };
-                })
-            }).end(function(err, res) {
+            XHR.post('updateOrder').send(data).end(function(err, res) {
                 if (err) {
                     alert(Messages.ajax.PROCESS_ORDER_UPDATE_ORDER);
                     throw 'ajax_updateOrder';
@@ -362,7 +427,7 @@ var ProcessOrder = React.createClass({
         }.bind(this);
     },
 
-    render: function() {
+    decidePermission: function() {
         var can_approve       = false;
         var can_process_order = false;
 
@@ -412,7 +477,11 @@ var ProcessOrder = React.createClass({
             permission = 'APPROVE';
         }
 
-        var table_title = [
+        return permission;
+    },
+
+    makeTableFrameTitle: function() {
+        return [
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
             { name: '最安単価', type: 'number' },
@@ -423,98 +492,89 @@ var ProcessOrder = React.createClass({
             { name: '請求額',   type: 'number' },
             { name: '状態',     type: 'string' }
         ];
+    },
 
-        var order_total   = 0.0;
-        var billing_total = 0.0;
+    composeTableFrameDataRow: function(permission, product, index) {
+        var subtotal = product.cur_price * product.quantity;
 
-        var table_data = this.state.products.map(function(product, index) {
-            var min_price_view = product.min_price.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
+        var min_price_view = product.min_price.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
 
-            var cur_price_view = product.cur_price.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
+        var cur_price_view = product.cur_price.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
 
-            var max_price_view = product.max_price.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
+        var max_price_view = product.max_price.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
 
-            var subtotal = product.cur_price * product.quantity;
+        var subtotal_view = subtotal.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
 
-            if (product.state != 'CANCELED') {
-                order_total += subtotal;
-            }
+        var billing_amount_view = product.billing_amount.toLocaleString();
+        var state_view          = Util.toProductStateName(product.state);
 
-            if (product.state === 'DELIVERED') {
-                billing_total += product.billing_amount;
-            }
+        if (permission === 'PROCESS') {
+            state_view = (
+                <SelectProductState initialSelected={product.state}
+                                    onSelect={this.onChangeState(index)} />
+            );
 
-            var subtotal_view = subtotal.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
+            // if (this.props.order.products[index].state === 'ORDERED') {
+                if (product.state === 'DELIVERED') {
+                    cur_price_view = (
+                        <TableFrame.Input
+                          key={Math.random()}
+                          type='real'
+                          placeholder={cur_price_view}
+                          onChange={this.onChangeCurPrice(index)}
+                          ref={"cur_price" + index.toString()} />
+                    );
 
-            var billing_amount_view = product.billing_amount.toLocaleString();
-            var state_view          = Util.toProductStateName(product.state);
-
-            if (permission === 'PROCESS') {
-                state_view = (
-                    <SelectProductState initialSelected={product.state}
-                                        onSelect={this.onChangeState(index)} />
-                );
-
-                // if (this.props.order.products[index].state === 'ORDERED') {
-                    if (product.state === 'DELIVERED') {
-                        cur_price_view = (
-                            <TableFrame.Input
-                              key={Math.random()}
-                              type='real'
-                              placeholder={cur_price_view}
-                              onChange={this.onChangeCurPrice(index)}
-                              ref={"cur_price" + index.toString()} />
-                        );
-
-                        billing_amount_view = (
-                            <TableFrame.Input
-                              key={Math.random()}
-                              type='int'
-                              placeholder={billing_amount_view}
-                              onChange={this.onChangeBillingAmount(index)}
-                              ref={"billing_amount" + index.toString()} />
-                        );
-                    }
-                // }
-            }
-
-            return [
-                { value: product.name,      view: product.name     },
-                { value: product.maker,     view: product.maker    },
-                { value: product.min_price, view: min_price_view },
-                {
-                    value: product.cur_price,
-                    view:  cur_price_view
-                },
-                { value: product.max_price, view: max_price_view },
-                {
-                    value: product.quantity, 
-                    view:  product.quantity.toLocaleString()
-                },
-                { value: subtotal, view: subtotal_view },
-                {
-                    value: product.billing_amount,
-                    view:  billing_amount_view
-                },
-                {
-                    value: product.state,
-                    view:  state_view
+                    billing_amount_view = (
+                        <TableFrame.Input
+                          key={Math.random()}
+                          type='int'
+                          placeholder={billing_amount_view}
+                          onChange={this.onChangeBillingAmount(index)}
+                          ref={"billing_amount" + index.toString()} />
+                    );
                 }
-            ];
-        }.bind(this) );
+            // }
+        }
 
+        return [
+            { value: product.name,      view: product.name     },
+            { value: product.maker,     view: product.maker    },
+            { value: product.min_price, view: min_price_view },
+            {
+                value: product.cur_price,
+                view:  cur_price_view
+            },
+            { value: product.max_price, view: max_price_view },
+            {
+                value: product.quantity, 
+                view:  product.quantity.toLocaleString()
+            },
+            { value: subtotal, view: subtotal_view },
+            {
+                value: product.billing_amount,
+                view:  billing_amount_view
+            },
+            {
+                value: product.state,
+                view:  state_view
+            }
+        ];
+    },
+
+    decideLegend: function(permission) {
         var legend = '参照';
 
         switch (permission) {
@@ -532,51 +592,47 @@ var ProcessOrder = React.createClass({
             break;
         }
 
+        return legend;
+    },
+
+    render: function() {
+        var permission  = this.decidePermission();
+        var table_title = this.makeTableFrameTitle();
+
+        var order_total   = 0.0;
+        var billing_total = 0.0;
+
+        var table_data = this.state.products.map(function(product, index) {
+            if (product.state != 'CANCELED') {
+                order_total += product.cur_price * product.quantity;
+            }
+
+            if (product.state === 'DELIVERED') {
+                billing_total += product.billing_amount;
+            }
+
+            return this.composeTableFrameDataRow(permission, product, index);
+        }.bind(this) );
+
         return (
             <div id="process-order">
               <fieldset>
-                <legend>{legend}</legend>
-                  <div id="process-order-notices">
-                    <Notice className="process-order-notice" title="起案番号">
-                      {this.props.order.order_code}
-                    </Notice>
-                    <Notice className="process-order-notice" title="起案日">
-                      {this.props.order.drafting_date}
-                    </Notice>
-                    <Notice className="process-order-notice" title="起案者">
-                      {this.props.order.drafter_account}
-                    </Notice>
-                    <Notice className="process-order-notice" title="発注区分">
-                      {Util.toOrderTypeName(this.props.order.order_type)}
-                    </Notice>
-                    <Notice className="process-order-notice"
-                            title="発注元 部門診療科">
-                      {this.props.order.department_name}
-                   </Notice>
-                   <Notice id="process-order-trader" title="発注先 販売元">
-                     {this.props.order.trader_name}
-                   </Notice>
-                 </div>
-                 <Input id="process-order-remark"
-                        type="text"
-                        bsSize="small"
-                        placeholder="備考・連絡"
-                        value={this.state.order_remark}
-                        disabled={permission === 'REFER_ONLY'}
-                        onChange={this.onChangeRemark} />
+                <legend>{this.decideLegend(permission)}</legend>
+                  <OrderNotices order={this.props.order} />
+                  <Input id="process-order-remark"
+                         type="text"
+                         bsSize="small"
+                         placeholder="備考・連絡"
+                         value={this.state.order_remark}
+                         disabled={permission === 'REFER_ONLY'}
+                         onChange={this.onChangeRemark} />
               </fieldset>
               <TableFrame key={Math.random()}
                           id="process-order-products"
                           title={table_title}
                           data={table_data} />
-              <div id="process-order-totals">
-                <Notice className="process-order-total" title="発注総計">
-                  {Math.round(order_total).toLocaleString()}
-                </Notice>
-                <Notice className="process-order-total" title="請求総計">
-                  {Math.round(billing_total).toLocaleString()}
-                </Notice>
-              </div>
+              <OrderTotals order_total={order_total}
+                           billing_total={billing_total} />
               <Buttons key={Math.random()}
                        permission={permission}
                        goBack={this.props.goBack}
@@ -587,7 +643,6 @@ var ProcessOrder = React.createClass({
                        onFix={this.onFix}
                        onRevertToApproved={this.onRevertToApproved}
                        need_save={this.state.need_save} />
-
             </div>
         );
     }
