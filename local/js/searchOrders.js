@@ -112,7 +112,7 @@ function construct_response(orders, db, res) {
     var products_count  = [];
     var is_already_sent = false;
 
-    function lookup_product(order_index, product_index, product_code) {
+    function retrieve_product(order_index, product_index, product_code) {
         var id     = new ObjectID(product_code);
         var cursor = db.collection('products').find({ _id: id }).limit(1);
 
@@ -232,7 +232,7 @@ function construct_response(orders, db, res) {
                         billing_amount: p.billing_amount
                     };
 
-                    lookup_product(index, i, p.code);
+                    retrieve_product(index, i, p.code);
                 });
             }
 

@@ -13,7 +13,7 @@ var log_crit = log4js.getLogger('ctitical');
  * 全ての部門診療科 (departments)、品目 (categories)、販売元 (traders) が
  * 選択対象となる。
  */
-function pick_all(res, db) {
+function retrieve_all(res, db) {
     var response = {
         status:      0,
         departments: [],
@@ -21,7 +21,7 @@ function pick_all(res, db) {
         traders:     []
     };
 
-    function pick_all_of(target) {
+    function retrieve_all_of(target) {
         var collection = db.collection(target);
         
         collection.find({ is_alive: true }).toArray(function(err, documents) {
@@ -32,10 +32,10 @@ function pick_all(res, db) {
 
                 switch (target) {
                 case 'departments':
-                    pick_all_of('categories');
+                    retrieve_all_of('categories');
                     break;
                 case 'categories':
-                    pick_all_of('traders');
+                    retrieve_all_of('traders');
                     break;
                 default:
                     db.close();
@@ -54,7 +54,7 @@ function pick_all(res, db) {
         });
     }
 
-    pick_all_of('departments');
+    retrieve_all_of('departments');
 }
 
 
@@ -75,12 +75,12 @@ function pick_all(res, db) {
  * したくなるレベル。
  * でも、これを読む方はもっと大変な気がする。
  *
- * とりあえず、販売元を割り出すコード (pick_traders)、品目を割り出すコード
- * (pick_categories)、部門診療科の名前を割り出すコード (pick_departments) を
- * function で分割、最後に pick_traders を呼び出す、というどこぞの教科書
- * のような実装をしてみた。
+ * とりあえず、販売元を割り出すコード (retrieve_traders)、
+ * 品目を割り出すコード (retrieve_categories)、部門診療科の名前を割り出す
+ * コード (retrieve_departments) を function で分割、最後に retrieve_traders
+ * を呼び出す、というどこぞの教科書のような実装をしてみた。
  */
-function pick_step_by_step(user, db, res) {
+function retrieve_step_by_step(user, db, res) {
     var categories      = [];
     var traders         = [];
     var departments     = [];
@@ -95,7 +95,7 @@ function pick_step_by_step(user, db, res) {
      * 全ての物品について、品目と販売元の割り出しが完了したら、
      * クライアントに結果を返す。
      */
-    function pick_traders(product, num_of_products) {
+    function retrieve_traders(product, num_of_products) {
         db.collection('traders').find({
             is_alive: true,
             _id:      new ObjectID(product.trader_code)
@@ -171,7 +171,7 @@ function pick_step_by_step(user, db, res) {
      * ユーザが所属する部門診療科が発注可能な物品 1 個の品目のコードと
      * 名前を割り出す。
      */
-    function pick_categories(product, num_of_products) {
+    function retrieve_categories(product, num_of_products) {
         db.collection('categories').find({
             is_alive: true,
             _id:      new ObjectID(product.category_code)
@@ -186,7 +186,7 @@ function pick_step_by_step(user, db, res) {
                     name: category.name
                 });
 
-                pick_traders(product, num_of_products);
+                retrieve_traders(product, num_of_products);
             } else {
                 db.close();
                 res.json({ status: 255 });
@@ -214,7 +214,7 @@ function pick_step_by_step(user, db, res) {
      * 物品情報はそれらを割り出すために利用するだけ。
      * クライアントには返さない。
      */
-    function refer_products() {
+    function retrieve_products() {
         var user_department_codes = user.departments.map(function(d) {
             return { department_codes: new ObjectID(d.code) };
         });
@@ -233,7 +233,7 @@ function pick_step_by_step(user, db, res) {
                         return;
                     }
 
-                    pick_categories(p, products.length);
+                    retrieve_categories(p, products.length);
                 });
             } else {
                 db.close();
@@ -258,7 +258,7 @@ function pick_step_by_step(user, db, res) {
      * そこで、departments コレクションから部門診療科のコードに対応する
      * 名前を引くようにしている。
      */
-    function pick_departments() {
+    function retrieve_departments() {
         user.departments.forEach(function(d, i) {
             if (is_already_sent) {
                 return;
@@ -281,7 +281,7 @@ function pick_step_by_step(user, db, res) {
                     });
 
                     if (user.departments.length == i + 1) {
-                        refer_products();
+                        retrieve_products();
                     }
                 } else {
                     db.close();
@@ -301,7 +301,7 @@ function pick_step_by_step(user, db, res) {
         });
     }
 
-    pick_departments();
+    retrieve_departments();
 }
 
 module.exports = function(req, res) {
@@ -319,13 +319,13 @@ module.exports = function(req, res) {
             /*
              * 全部門診療科に跨って通常発注 and/or 緊急発注を起案できる
              */
-            pick_all(res, db);
+            retrieve_all(res, db);
         } else {
             /*
              * 自分の所属する部門診療科の通常発注 and/or 緊急発注しか
              * 起案できない
              */
-            pick_step_by_step(req.session.user, db, res);
+            retrieve_step_by_step(req.session.user, db, res);
         }
     });
 };

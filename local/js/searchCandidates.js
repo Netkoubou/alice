@@ -18,7 +18,7 @@ module.exports = function(req, res) {
     var is_already_sent = false;
     var candidates      = [];
 
-    function lookup_trader_name(db, product, num_of_candidates) {
+    function retrieve_trader_name(db, product, num_of_candidates) {
         var id     = new ObjectID(product.trader_code);
         var cursor = db.collection('traders').find({ _id: id});
 
@@ -89,7 +89,7 @@ module.exports = function(req, res) {
                             return;
                         }
 
-                        lookup_trader_name(db, p, products.length);
+                        retrieve_trader_name(db, p, products.length);
                     });
                 }
             } else {

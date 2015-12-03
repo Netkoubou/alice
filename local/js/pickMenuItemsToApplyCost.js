@@ -17,7 +17,7 @@ module.exports = function(req, res) {
     util.query(function(db) {
         var departments = [];
 
-        function pick_account_titles() {
+        function retrieve_account_titles() {
             db.collection('account_titles').find({
                 is_alive: true
             }).toArray(function(err, account_titles) {
@@ -47,7 +47,7 @@ module.exports = function(req, res) {
             });
         }
 
-        function pick_departments() {
+        function retrieve_departments() {
             var is_already_sent = false;
             var count           = 0;
 
@@ -73,7 +73,7 @@ module.exports = function(req, res) {
                         count++;
 
                         if (count == req.session.user.departments.length) {
-                            pick_account_titles();
+                            retrieve_account_titles();
                         }
                     } else {
                         db.close();
@@ -93,6 +93,6 @@ module.exports = function(req, res) {
             });
         }
 
-        pick_departments();
+        retrieve_departments();
     });
 };

@@ -7,13 +7,13 @@ var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');
 var log_crit = log4js.getLogger('critical');
 
-function pick_departments(req, res, db) {
+function retrieve_departments(req, res, db) {
     var is_already_sent    = false;
     var department_counter = 0;
     var departments        = req.session.user.departments;
     var response           = [];
 
-    function pick_department_name(department_code) {
+    function retrieve_department_name(department_code) {
         db.collection('departments').find({
             is_alive: true,
             _id:      new ObjectID(department_code)
@@ -78,7 +78,7 @@ function pick_departments(req, res, db) {
             return;
         }
 
-        pick_department_name(d.code);
+        retrieve_department_name(d.code);
     });
 }
 
@@ -120,7 +120,7 @@ module.exports = function(req, res) {
              * ログインしているユーザの所属する部門診療科の中で、
              * administrate ビットが立っているもの
              */
-            pick_departments(req, res, db);
+            retrieve_departments(req, res, db);
         }
     });
 };
