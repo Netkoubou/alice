@@ -112,7 +112,7 @@ function construct_response(orders, db, res) {
     var products_count  = [];
     var is_already_sent = false;
 
-    function pick_product_infos(order_index, product_index, product_code) {
+    function lookup_product(order_index, product_index, product_code) {
         var id     = new ObjectID(product_code);
         var cursor = db.collection('products').find({ _id: id }).limit(1);
 
@@ -166,45 +166,44 @@ function construct_response(orders, db, res) {
         });
     }
 
-    function pick_infos(mode, order, index) {
-        var id, cursor, next_action, err_msg;
+    function lookup(target, order, index) {
+        var id, cursor, next_action;
+        var err_msg = '[searchOrders] ';
 
-        switch (mode) {
-        case 0:
+        switch (target) {
+        case 'drafter_account':
             cursor = db.collection('users').find({
                 account: order.drafter_account
             }).limit(1);
 
             next_action = function(user) {
                 response[index].drafter_account = user.account;
-                pick_infos(mode + 1, order, index);
+                lookup('last_modifier_account', order, index);
             };
 
-            err_msg = '[searchOrders] ' + 'failed to find user: "' +
-                      order.drafter_account + '".';
+            err_msg += 'failed to find user: "' + order.drafter_account + '".';
             break;
-        case 1:
+        case 'last_modifier_account':
             id     = new ObjectID(order.last_modifier_code);
             cursor = db.collection('users').find({ _id: id }).limit(1);
 
             next_action = function(user) {
                 response[index].last_modifier_account = user.account;
-                pick_infos(mode + 1, order, index);
+                lookup('department_name', order, index);
             };
 
-            err_msg = '[searchOrders] ' + 'failed to find user: "' + id + '".';
+            err_msg += 'failed to find user: "' + id + '".';
             break;
-        case 2:
+        case 'department_name':
             id     = new ObjectID(order.department_code);
             cursor = db.collection('departments').find({ _id: id }).limit(1);
 
             next_action = function(department) {
                 response[index].department_name = department.name;
-                pick_infos(mode + 1, order, index);
+                lookup('trader_name', order, index);
             };
 
-            err_msg = '[searchOrders] ' +
-                      'failed to find department: "' + id + '".';
+            err_msg += 'failed to find department: "' + id + '".';
             break;
         default:
             id     = new ObjectID(order.trader_code);
@@ -233,21 +232,20 @@ function construct_response(orders, db, res) {
                         billing_amount: p.billing_amount
                     };
 
-                    pick_product_infos(index, i, p.code);
+                    lookup_product(index, i, p.code);
                 });
             }
 
-            err_msg = '[searchOrders] ' +
-                      'failed to find trader: "' + order.trader_code + '".';
+            err_msg += 'failed to find trader: "' + order.trader_code + '".';
         }
 
-        cursor.next(function(err, doc) {
+        cursor.next(function(err, document) {
             if (is_already_sent) {
                 return;
             }
 
-            if (err == null && doc != null) {
-                next_action(doc);
+            if (err == null && document != null) {
+                next_action(document);
             } else {
                 db.close();
                 res.json({ status: 255 });
@@ -288,7 +286,7 @@ function construct_response(orders, db, res) {
             last_modifier_account: ''   // これから埋める
         };
             
-        pick_infos(0, order, index);
+        lookup('drafter_account', order, index);
     });
 }
 
