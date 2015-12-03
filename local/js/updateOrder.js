@@ -72,6 +72,58 @@ function update_prices(db, req, prices) {
     });
 }
 
+function callback_updateOne(req, res, db, prices) {
+    return function update(err, result) {
+        var msg;
+    
+        if (err == null) {
+            if (result.matchedCount == 0) {
+                /*
+                 * order_version が不一致。
+                 * つまり、他のユーザが既にドキュメントを更新した、
+                 * ということを示す。即ち、この更新は古い情報に基づ
+                 * いている訳で、このまま進むと先の更新が無かった
+                 * ことになってしまう。
+                 * ということで、更新を諦め、ユーザにその旨を通知する。
+                 */
+                db.close();
+                res.json({ status: 1 });
+                msg = '[updateOrder] unmatched version of order: "' +
+                      req.body.order_code + '" ' +
+                      'by "' + req.session.user.account + '".';
+
+                log_info.info(msg);
+            } else {
+                /*
+                 * ここで orders コレクションの更新が完了。
+                 * 一旦、DB の更新完了をクライアントに通知してから、
+                 * products コレクションに新単価を登録する。
+                 */
+                res.json({
+                    status:        0,
+                    order_version: req.body.order_version + 1
+                });
+                msg = '[updateOrder] updated order: "' +
+                      req.body.order_code + '" ' +
+                      'by "' + req.session.user.account + '".';
+
+                log_info.info(msg);
+                update_prices(db, req, prices);
+            }
+        } else {
+            db.close();
+            res.json({ status: 255 });
+            log_warn.warn(err);
+    
+            msg = '[updateOrder] failed to update order: "' +
+                  req.body.order_code + '" ' +
+                  'by "' + req.session.user.account + '".';
+    
+            log_warn.warn(msg);
+        }
+    }
+}
+
 
 /*
  * 発注の更新が主な目的だが、orders コレクションだけではなく、
@@ -90,9 +142,10 @@ module.exports = function(req, res) {
     }
 
     util.query(function(db) {
-        var now          = moment().format('YYYY/MM/DD');
-        var prices       = [];  /* 単価更新用の配列 */
-        var products     = req.body.products.map(function(p) {
+        var now    = moment().format('YYYY/MM/DD');
+        var prices = [];    // 単価更新用の配列
+
+        var products = req.body.products.map(function(p) {
             prices.push({ product_code: p.code, price: p.price });
 
             return {
@@ -119,55 +172,7 @@ module.exports = function(req, res) {
                     last_modifier_code: req.session.user._id
                 }
             },
-            function update(err, result) {
-                var msg;
-    
-                if (err == null) {
-                    if (result.matchedCount == 0) {
-                        /*
-                         * order_version が不一致。
-                         * つまり、他のユーザが既にドキュメントを更新した、
-                         * ということを示す。即ち、この更新は古い情報に基づ
-                         * いている訳で、このまま進むと先の更新が無かった
-                         * ことになってしまう。
-                         * ということで、更新を諦め、ユーザにその旨を通知する。
-                         */
-                        db.close();
-                        res.json({ status: 1 });
-                        msg = '[updateOrder] unmatched version of order: "' +
-                              req.body.order_code + '" ' +
-                              'by "' + req.session.user.account + '".';
-
-                        log_info.info(msg);
-                    } else {
-                        /*
-                         * ここで orders コレクションの更新が完了。
-                         * 一旦、DB の更新完了をクライアントに通知してから、
-                         * products コレクションに新単価を登録する。
-                         */
-                        res.json({
-                            status:        0,
-                            order_version: req.body.order_version + 1
-                        });
-                        msg = '[updateOrder] updated order: "' +
-                              req.body.order_code + '" ' +
-                              'by "' + req.session.user.account + '".';
-    
-                        log_info.info(msg);
-                        update_prices(db, req, prices);
-                    }
-                } else {
-                    db.close();
-                    res.json({ status: 255 });
-                    log_warn.warn(err);
-    
-                    msg = '[updateOrder] failed to update order: "' +
-                          req.body.order_code + '" ' +
-                          'by "' + req.session.user.account + '".';
-    
-                    log_warn.warn(msg);
-                }
-            }
+            callback_updateOne(req, res, db, prices)
         );
     });
 };
