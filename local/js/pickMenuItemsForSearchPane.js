@@ -13,70 +13,48 @@ var log_crit = log4js.getLogger('ctitical');
  * 全ての部門診療科 (departments)、品目 (categories)、販売元 (traders) が
  * 選択対象となる。
  */
-function pick_all(db, res) {
-    var cd = db.collection('departments');
-    var cc = db.collection('categories');
-    var ct = db.collection('traders');
-    var msg;
-    
-    cd.find({ is_alive: true }).toArray(function(err, ds) {
-        if (err != null) {
-            db.close();
-            res.json({ status: 255 });
-            
-            log_warn.warn(err);
-            msg = '[pickMenuItemsForSearchPane] ' +
-                  'failed to access "departments" collection.';
-            log_warn.warn(msg);
-        } else {
-            cc.find({ is_alive: true }).toArray(function(err, cs) {
-                if (err != null) {
+function pick_all(res, db) {
+    var response = {
+        status:      0,
+        departments: [],
+        categories:  [],
+        traders:     []
+    };
+
+    function pick_all_of(target) {
+        var collection = db.collection(target);
+        
+        collection.find({ is_alive: true }).toArray(function(err, documents) {
+            if (err == null) {
+                response[target] = documents.map(function(d) {
+                    return { code: d._id, name: d.name };
+                });
+
+                switch (target) {
+                case 'departments':
+                    pick_all_of('categories');
+                    break;
+                case 'categories':
+                    pick_all_of('traders');
+                    break;
+                default:
                     db.close();
-                    res.json({ status: 255 });
-
-                    log_warn.warn(err);
-
-                    msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to access "categories" collection.';
-
-                    log_warn.warn(msg);
-                } else {
-                    ct.find({ is_alive: true }).toArray(function(err, ts) {
-                        db.close();
-
-                        if (err != null) {
-                            res.json({ status: 255 });
-                            log_warn.warn(err);
-
-                            msg = '[pickMenuItemsForSearchPane] ' +
-                                  'failed to access "traders" collection.';
-
-                            log_warn.warn(msg);
-                        } else {
-                            var departments = ds.map(function(d) {
-                                return { code: d._id, name: d.name };
-                            });
-
-                            var categories = cs.map(function(c) {
-                                return { code: c._id, name: c.name };
-                            });
-
-                            var traders = ts.map(function(t) {
-                                return { code: t._id, name: t.name };
-                            });
-                            
-                            res.json({
-                                status:      0,
-                                departments: departments,
-                                categories:  categories,
-                                traders:     traders
-                            });
-                        }
-                    });
+                    res.json(response);
                 }
-            });
-        }
-    });
+            } else {
+                db.close();
+                res.json({ status: 255 });
+                log_warn.warn(err);
+
+                var msg = '[pickMenuItemsForSearchPane] ' +
+                          'failed to access ' + target +  ' collection.';
+
+                log_warn.warn(msg);
+            }
+        });
+    }
+
+    pick_all_of('departments');
 }
 
 
@@ -99,7 +77,7 @@ function pick_all(db, res) {
  *
  * とりあえず、販売元を割り出すコード (pick_traders)、品目を割り出すコード
  * (pick_categories)、部門診療科の名前を割り出すコード (pick_departments) を
- * function で分割、最後に pick_departments を呼び出す、というどこぞの教科書
+ * function で分割、最後に pick_traders を呼び出す、というどこぞの教科書
  * のような実装をしてみた。
  */
 function pick_step_by_step(user, db, res) {
@@ -109,6 +87,14 @@ function pick_step_by_step(user, db, res) {
     var count_products  = 0; // 最後の product かを判定するためのカウンタ
     var is_already_sent = false;
 
+
+    /*
+     * ユーザが所属する部門診療科が発注可能な物品 1 個の販売元のコードと
+     * 名前を割り出す。
+     *
+     * 全ての物品について、品目と販売元の割り出しが完了したら、
+     * クライアントに結果を返す。
+     */
     function pick_traders(product, num_of_products) {
         db.collection('traders').find({
             is_alive: true,
@@ -131,7 +117,7 @@ function pick_step_by_step(user, db, res) {
                  * そこで product の処理が 1 個終わるごとに count_products を
                  * インクリメントして、
                  *
-                 *   count_produc == num_of_products 
+                 *   count_products == num_of_products 
                  *
                  * で判定するようにした。
                  * シングルスレッドであるため、複数のコールバックが同時に
@@ -180,6 +166,11 @@ function pick_step_by_step(user, db, res) {
         });
     }
 
+
+    /*
+     * ユーザが所属する部門診療科が発注可能な物品 1 個の品目のコードと
+     * 名前を割り出す。
+     */
     function pick_categories(product, num_of_products) {
         db.collection('categories').find({
             is_alive: true,
@@ -214,6 +205,59 @@ function pick_step_by_step(user, db, res) {
         });
     }
 
+
+    /*
+     * ユーザの所属する部門診療科が発注可能な物品を products コレクション
+     * から割り出す。
+     * そして割り出した物品の情報から、更にその品目コード (category_code) と
+     * 販売元のコード (trader_code) を割り出すのだが、
+     * 物品情報はそれらを割り出すために利用するだけ。
+     * クライアントには返さない。
+     */
+    function refer_products() {
+        var user_department_codes = user.departments.map(function(d) {
+            return { department_codes: new ObjectID(d.code) };
+        });
+
+        db.collection('products').find({
+            is_alive: true,
+            '$or':    user_department_codes
+        }).toArray(function(err, products) {
+            if (is_already_sent) {
+                return;
+            }
+
+            if (err == null && products.length > 0) {
+                products.forEach(function(p) {
+                    if (is_already_sent) {
+                        return;
+                    }
+
+                    pick_categories(p, products.length);
+                });
+            } else {
+                db.close();
+                res.json({ status: 255 });
+                is_already_sent = true;
+
+                log_warn.warn(err);
+
+                var msg = '[pickMenuItemsForSearchPane] ' +
+                          'failed to access "products" collection.';
+
+                log_warn.warn(msg);
+            }
+        });
+    }
+
+
+    /*
+     * ユーザの情報から、所属する部門診療科のコードを引っこ抜く。
+     * クライアントにはそれぞれのコードに対応する名前のペアを返すのだが、
+     * ユーザの情報は診療科のコードしか持っていない。
+     * そこで、departments コレクションから部門診療科のコードに対応する
+     * 名前を引くようにしている。
+     */
     function pick_departments() {
         user.departments.forEach(function(d, i) {
             if (is_already_sent) {
@@ -237,43 +281,7 @@ function pick_step_by_step(user, db, res) {
                     });
 
                     if (user.departments.length == i + 1) {
-                        var collection = db.collection('products');
-                        var sel = {
-                            is_alive: true,
-                            '$or':    user.departments.map(function(d) {
-                                return {
-                                    department_codes: new ObjectID(d.code)
-                                };
-                            })
-                        };
-
-                        collection.find(sel).toArray(function(err, products) {
-                            if (is_already_sent) {
-                                return;
-                            }
-
-                            if (err == null && products.length > 0) {
-                                products.forEach(function(p) {
-                                    if (is_already_sent) {
-                                        return;
-                                    }
-
-                                    pick_categories(p, products.length);
-                                });
-                            } else {
-                                db.close();
-                                res.json({ status: 255 });
-                                is_already_sent = true;
-
-                                log_warn.warn(err);
-
-                                msg = '[pickMenuItemsForSearchPane] ' +
-                                      'failed to access ' +
-                                      '"products" collection.';
-
-                                log_warn.warn(msg);
-                            }
-                        });
+                        refer_products();
                     }
                 } else {
                     db.close();
@@ -311,7 +319,7 @@ module.exports = function(req, res) {
             /*
              * 全部門診療科に跨って通常発注 and/or 緊急発注を起案できる
              */
-            pick_all(db, res);
+            pick_all(res, db);
         } else {
             /*
              * 自分の所属する部門診療科の通常発注 and/or 緊急発注しか
