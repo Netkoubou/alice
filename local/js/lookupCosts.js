@@ -17,16 +17,16 @@ function generateSelector(user, args) {
 
     var state_sel = [];
 
-    if (args.is_approving) {
-        state_sel.push({ state: 'APPROVING' });
+    if (args.state.is_approving) {
+        state_sel.push({ cost_state: 'APPROVING' });
     }
 
-    if (args.is_approved) {
-        state_sel.push({ state: 'APPROVED' });
+    if (args.state.is_approved) {
+        state_sel.push({ cost_state: 'APPROVED' });
     }
 
-    if (args.is_rejected) {
-        state_sel.push({ state: 'REJECTED' });
+    if (args.state.is_rejected) {
+        state_sel.push({ cost_state: 'REJECTED' });
     }
 
     if (state_sel.length > 0) {
@@ -58,12 +58,12 @@ function construct_response(costs, db, res) {
     var cost_count      = 0;
     var is_already_sent = false;
 
-    function pick_infos(mode, cost, index) {
+    function retrieve(target, cost, index) {
         var id, cursor, next_action;
-        var err_msg = '[lookupCosts] failed to find ';
+        var err_msg = '[lookupCosts] failed to retrieve ';
 
-        switch (mode) {
-        case 0:
+        switch (target) {
+        case 'drafter':
             cursor = db.collection('users').find({
                 account: cost.drafter_account
             });
@@ -71,18 +71,18 @@ function construct_response(costs, db, res) {
             next_action = function(user) {
                 response[index].drafter_account = cost.drafter_account;
                 response[index].drafter_name    = user.name;
-                pick_infos(1, cost, index);
+                retrieve('department_name', cost, index);
             }
 
             err_msg += 'user: "' + cost.drafter_account + '".';
             break;
-        case 1:
+        case 'department_name':
             id     = new ObjectID(cost.department_code);
             cursor = db.collection('departments').find({ _id: id });
 
             next_action = function(department) {
                 response[index].department_name = department.name;
-                pick_infos(2, cost, index);
+                retrieve('account_title_name', cost, index);
             }
 
             err_msg += 'department: "' + id + '".';
@@ -147,7 +147,7 @@ function construct_response(costs, db, res) {
             breakdowns:         cost.breakdowns
         };
 
-        pick_infos(0, cost, index);
+        retrieve('drafter', cost, index);
     });
 }
 
