@@ -54,7 +54,7 @@ var Ope = React.createClass({
                                   user={this.props.user} />;
             break;
         case 'MANAGE_USERS':
-            contents = <ManageUsers />;
+            contents = <ManageUsers user={this.props.user} />;
             break;
         default:
             contents = null;

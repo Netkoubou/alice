@@ -69,21 +69,82 @@ var EditUser = React.createClass({
         goBack:  React.PropTypes.func.isRequired
     },
 
-    getInitialState: function() { return { departments: [] } },
+    getInitialState: function() {
+        var account    = '';
+        var name       = '';
+        var passphrase = '';
+        var tel        = '';
+        var email      = '';
+
+        var privileged_administrate     = false;
+        var privileged_draft_ordinarily = false;
+        var privileged_draft_urgently   = false;
+        var privileged_process_order    = false;
+        var privileged_approve          = false;
+
+        var departments = [];
+
+
+        /*
+         * props は変更不可なので、その値をシコシコとコピーしているのだが、
+         * もっと上手い手はないものか ...
+         */
+        if (this.props.user != null) {
+            var user = this.props.user;
+
+            account    = user.account;
+            name       = user.name;
+            tel        = user.tel;
+            email      = user.email;
+
+            privileged_administrate     = user.privileged.administrate;
+            privileged_draft_ordinarily = user.privileged.draft_ordinarily;
+            privileged_draft_urgently   = user.privileged.draft_urgently;
+            privileged_process_order    = user.privileged.process_order;
+            privileged_approve          = user.privileged.approve;
+
+            departments = user.departments.map(function(d) {
+                return {
+                    code:             d.code,
+                    administrate:     d.administrate,
+                    draft_ordinarily: d.draft_ordinarily,
+                    draft_urgently:   d.draft_urgently,
+                    process_order:    d.process_order,
+                    approve:          d.approve
+                };
+            });
+        }
+
+        return {
+            account:     account,
+            name:        name,
+            passphrase:  passphrase,
+            tel:         tel,
+            email:       email,
+
+            privileged_administrate:     privileged_administrate,
+            privileged_draft_ordinarily: privileged_draft_ordinarily,
+            privileged_draft_urgently:   privileged_draft_urgently,
+            privileged_process_order:    privileged_process_order,
+            privileged_approve:          privileged_approve,
+
+            departments: departments
+        }
+    },
 
     registerOrUpdateUser: function(action) {
         var post  = {
-            account:    this.refs.account.getValue(),
-            name:       this.refs.name.getValue(),
-            passphrase: this.refs.passphrase.getValue(),
-            tel:        this.refs.tel.getValue(),
-            email:      this.refs.email.getValue(),
+            account:    this.state.account,
+            name:       this.state.name,
+            passphrase: this.state.passphrase,
+            tel:        this.state.tel,
+            email:      this.state.email,
             privileged: {
-                administrate:     this.refs['administrate'].getChecked(),
-                draft_ordinarily: this.refs['draft-ordinarily'].getChecked(),
-                draft_urgently:   this.refs['draft-urgently'].getChecked(),
-                process_order:    this.refs['process-order'].getChecked(),
-                approve:          this.refs['approve'].getChecked()
+                administrate:     this.state.privileged_administrate,
+                draft_ordinarily: this.state.privileged_draft_ordinarily,
+                draft_urgently:   this.state.privileged_draft_urgently,
+                process_order:    this.state.privileged_process_order,
+                approve:          this.state.privileged_approve
             },
             departments: this.state.departments
         };
@@ -100,15 +161,21 @@ var EditUser = React.createClass({
             return;
         }
 
-        if (post.passphrase === '') {
+        if (this.props.user == null && post.passphrase === '') {
             alert('暫定パスワードを入力して下さい。');
             this.refs.passphrase.getInputDOMNode().focus();
             return;
         }
 
-        if (post.account === '') {
+        if (post.tel === '') {
             alert('内線番号を入力して下さい。');
             this.refs.tel.getInputDOMNode().focus();
+            return;
+        }
+
+        if (post.email === '') {
+            alert('E-mail (メールアカウント) を入力して下さい。');
+            this.refs.email.getInputDOMNode().focus();
             return;
         }
 
@@ -159,7 +226,52 @@ var EditUser = React.createClass({
     },
 
     onRegisterUser: function() { this.registerOrUpdateUser('REGISTER'); },
-    onUdateUser:    function() { this.registerOrUpdateUser('UPDATE'); },
+    onUpdateUser:   function() { this.registerOrUpdateUser('UPDATE'); },
+
+    onChangeAccount: function() {
+        this.setState({ account: this.refs.account.getValue() });
+    },
+
+    onChangeName: function() {
+        this.setState({ name: this.refs.name.getValue() });
+    },
+
+    onChangePassphrase: function() {
+        this.setState({ passphrase: this.refs.passphrase.getValue() });
+    },
+
+    onChangeTel: function() {
+        this.setState({ tel: this.refs.tel.getValue() });
+    },
+
+    onChangeEmail: function() {
+        this.setState({ email: this.refs.email.getValue() });
+    },
+
+    onChangePrivilegedAdministrate: function() {
+        var value = !this.state.privileged_administrate;
+        this.setState({ privileged_administrate: value });
+    },
+
+    onChangePrivilegedDraftOrdinarily: function() {
+        var value = !this.state.privileged_draft_ordinarily;
+        this.setState({ privileged_draft_ordinarily: value });
+    },
+
+    onChangePrivilegedDraftUrgently: function() {
+        var value = !this.state.privileged_draft_urgently;
+        this.setState({ privileged_draft_urgently: value });
+    },
+
+    onChangePrivilegedProcessOrder: function() {
+        var value = !this.state.privileged_process_order;
+        this.setState({ privileged_process_order: value });
+    },
+
+    onChangePrivilegedApprove: function() {
+        var value = !this.state.privileged_approve;
+        this.setState({ privileged_approve: value });
+    },
 
     onAddDepartment: function() {
         this.state.departments.push({
@@ -336,27 +448,32 @@ var EditUser = React.createClass({
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="システム管理"
-                         ref="administrate" />
+                         checked={this.state.privileged_administrate}
+                         onChange={this.onChangePrivilegedAdministrate} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="通常発注起案"
-                         ref="draft-ordinarily" />
+                         checked={this.state.privileged_draft_ordinarily}
+                         onChange={this.onChangePrivilegedDraftOrdinarily} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="緊急発注起案"
-                         ref="draft-urgently" />
+                         checked={this.state.privileged_draft_urgently}
+                         onChange={this.onChangePrivilegedDraftUrgently} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="発注処理"
-                         ref="process-order" />
+                         checked={this.state.privileged_process_order}
+                         onChange={this.onChangePrivilegedProcessOrder} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="承認"
-                         ref="approve" />
+                         checked={this.state.privileged_approve}
+                         onChange={this.onChangePrivilegedApprove} />
                 </div>
               </div>
             </fieldset>
@@ -374,6 +491,8 @@ var EditUser = React.createClass({
                          maxLength="32"
                          ref="account"
                          disabled={this.props.user != null}
+                         value={this.state.account}
+                         onChange={this.onChangeAccount}
                          placeholder="アカウント" />
                 </div>
                 <div id="edit-user-name">
@@ -381,6 +500,8 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="32"
                          ref="name"
+                         value={this.state.name}
+                         onChange={this.onChangeName}
                          placeholder="氏名" />
                 </div>
                 <div className="edit-user-input">
@@ -388,6 +509,8 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="32"
                          ref="passphrase"
+                         value={this.state.passphrase}
+                         onChange={this.onChangePassphrase}
                          placeholder="暫定パスワード"/>
                 </div>
                 <div id="edit-user-tel">
@@ -395,12 +518,16 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="8"
                          ref="tel"
+                         value={this.state.tel}
+                         onChange={this.onChangeTel}
                          placeholder="内線番号" />
                 </div>
                 <div id="edit-user-email">
                   <Input type="email"
                          bsSize="small"
                          ref="email"
+                         value={this.state.email}
+                         onChange={this.onChangeEmail}
                          placeholder="E-Mail" />
                 </div>
               </div>
@@ -409,8 +536,23 @@ var EditUser = React.createClass({
     },
 
     render: function() {
-        var title = this.makeTableFrameTitle();
-        var data  = this.composeTableFrameData();
+        var title  = this.makeTableFrameTitle();
+        var data   = this.composeTableFrameData();
+        var button;
+
+        if (this.props.user == null) {
+            button = (
+                <Button bsSize="small" onClick={this.onRegisterUser}>
+                  追加
+                </Button>
+            );
+        } else {
+            button = (
+                <Button bsSize="small" onClick={this.onUpdateUser}>
+                  更新
+                </Button>
+            );
+        }
 
         return (
             <div id="edit-user">
@@ -422,11 +564,7 @@ var EditUser = React.createClass({
                             title={title}
                             data={data} />
               </fieldset>
-              <div id="edit-user-buttons">
-                <Button bsSize="small" onClick={this.onRegisterUser}>
-                  追加
-                </Button>
-              </div>
+              <div id="edit-user-buttons">{button}</div>
             </div>
         );
     }

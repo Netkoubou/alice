@@ -47,7 +47,7 @@ var ManageUsers = React.createClass({
     },
 
     onSelectUser: function(index) {
-        var next_op;
+        var next_ope;
 
         return function() {
             if (this.props.user.account != this.state.users[index].account) {
