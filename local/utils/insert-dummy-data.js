@@ -702,6 +702,10 @@ db.users.insert({
 });
 
 
+// アカウントでユニークな index を作成する (重複アカウントが許可されなくなる)
+db.users.createIndex({ account: 1 }, { unique: true });
+
+
 // 勘定科目
 db.account_titles.insert({
     name:     '旅費・交通費',

@@ -25,6 +25,7 @@ var bookCost              = require('./bookCost');
 var lookupCosts           = require('./lookupCosts');
 var fixCost               = require('./fixCost');
 var listUsers             = require('./listUsers');
+var registerUser          = require('./registerUser');
 
 var $ = express();
 
@@ -123,3 +124,4 @@ $.post('/bookCost',              bookCost);
 $.post('/lookupCosts',           lookupCosts);
 $.post('/fixCost',               fixCost);
 $.post('/listUsers',             listUsers);
+$.post('/registerUser',          registerUser);

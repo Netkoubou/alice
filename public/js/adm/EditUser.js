@@ -71,12 +71,13 @@ var EditUser = React.createClass({
 
     getInitialState: function() { return { departments: [] } },
 
-    addOrUpdateUser: function(action) {
+    registerOrUpdateUser: function(action) {
         var post  = {
             account:    this.refs.account.getValue(),
             name:       this.refs.name.getValue(),
             passphrase: this.refs.passphrase.getValue(),
             tel:        this.refs.tel.getValue(),
+            email:      this.refs.email.getValue(),
             privileged: {
                 administrate:     this.refs['administrate'].getChecked(),
                 draft_ordinarily: this.refs['draft-ordinarily'].getChecked(),
@@ -123,12 +124,12 @@ var EditUser = React.createClass({
             return;
         }
 
-        var route = (action === 'ADD')? '/addUser': '/updateUser';
+        var route = (action === 'REGISTER')? '/registerUser': '/updateUser';
 
         XHR.post(route).send(post).end(function(err, res) {
             if (err) {
-                if (action === 'ADD') {
-                    alert(Messages.ajax.EDIT_USER_ADD_USER);
+                if (action === 'REGISTER') {
+                    alert(Messages.ajax.EDIT_USER_REGISTER_USER);
                     throw 'ajax_addOUser';
                 }
 
@@ -137,8 +138,8 @@ var EditUser = React.createClass({
             }
 
             if (res.body.status > 1) {
-                if (action === 'ADD') {
-                    alert(Messages.server.EDIT_USER_ADD_USER);
+                if (action === 'REGISTER') {
+                    alert(Messages.server.EDIT_USER_REGISTER_USER);
                     throw 'server_addOUser';
                 }
 
@@ -157,8 +158,8 @@ var EditUser = React.createClass({
         }.bind(this) );
     },
 
-    onAddUser:   function() { this.addOrUpdateUser('ADD'); },
-    onUdateUser: function() { this.addOrUpdateUser('UPDATE'); },
+    onRegisterUser: function() { this.registerOrUpdateUser('REGISTER'); },
+    onUdateUser:    function() { this.registerOrUpdateUser('UPDATE'); },
 
     onAddDepartment: function() {
         this.state.departments.push({
@@ -396,6 +397,12 @@ var EditUser = React.createClass({
                          ref="tel"
                          placeholder="内線番号"/>
                 </div>
+                <div id="edit-user-email">
+                  <Input type="email"
+                         bsSize="small"
+                         ref="email"
+                         placeholder="E-Mail"/>
+                </div>
               </div>
             </fieldset>
         );
@@ -416,7 +423,7 @@ var EditUser = React.createClass({
                             data={data} />
               </fieldset>
               <div id="edit-user-buttons">
-                <Button bsSize="small" onClick={this.onAddUser}>
+                <Button bsSize="small" onClick={this.onRegisterUser}>
                   追加
                 </Button>
               </div>

@@ -36,7 +36,7 @@ var ManageUsers = React.createClass({
 
     backToHere: function() {
         this.setState({ next_ope: null });
-        this.listUsers(e.code);
+        this.listUsers(this.state.department_code);
     },
 
     onSelectDepartment: function(e) {
@@ -56,7 +56,7 @@ var ManageUsers = React.createClass({
         });
     },
 
-    onRemove: function() {
+    onEraseUser: function(index) {
     },
 
     componentDidMount: function() {
@@ -100,7 +100,7 @@ var ManageUsers = React.createClass({
                 {
                     value: '',
                     view:  <div className="manage-users-remove-user"
-                                onClick={this.props.onClick}>
+                                onClick={this.onEraseUser(i)}>
                              -
                            </div>
                 },

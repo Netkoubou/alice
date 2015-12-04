@@ -37,7 +37,7 @@ module.exports = function(req, res) {
                 res.json({ status: 0 });
 
                 msg = '[bookCost] booked cost: "' + cost.cost_code + '" ' +
-                      'by ' + req.session.user.account + '".';
+                      'by "' + req.session.user.account + '".';
 
                 log_info.info(msg);
             } else {
