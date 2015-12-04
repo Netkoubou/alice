@@ -7,6 +7,8 @@ var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
 
 var ManageUsers = React.createClass({
+    propTypes: { user: React.PropTypes.object.isRequired },
+
     getInitialState: function() {
         return {
             users:           [],
@@ -17,7 +19,7 @@ var ManageUsers = React.createClass({
     },
 
     listUsers: function(department_code) {
-        XHR.post('listUsers').send({
+        XHR.post('/listUsers').send({
             department_code: department_code
         }).end(function(err, res) {
             if (err) {
@@ -45,11 +47,28 @@ var ManageUsers = React.createClass({
     },
 
     onSelectUser: function(index) {
+        var next_op;
+
         return function() {
-        };
+            if (this.props.user.account != this.state.users[index].account) {
+                next_ope = <EditUser user={this.state.users[index]}
+                                     departments={this.state.departments}
+                                     goBack={this.backToHere} />;
+            } else {
+                next_ope = <ReferUser user={this.state.users[index]}
+                                      goBack={this.backToHere} />;
+            }
+
+            this.setState({ next_ope: next_ope });
+        }.bind(this);
     },
 
     onAddUser: function() {
+        if (this.state.department_code === '') {
+            alert('部門診療科を選択して下さい。');
+            return;
+        }
+
         this.setState({
             next_ope: <EditUser departments={this.state.departments}
                                 goBack={this.backToHere} />
@@ -57,6 +76,29 @@ var ManageUsers = React.createClass({
     },
 
     onEraseUser: function(index) {
+        return function() {
+            var msg = 'アカウント "' + this.state.users[index].account + 
+                      '" のユーザを削除します。\n よろしいですか?';
+                      
+            if (confirm(msg) ) {
+                XHR.post('/eraseUser').send({
+                    account: this.state.users[index].account
+                }).end(function(err, res) {
+                    if (err) {
+                        alert(Messages.ajax.MANAGE_USERS_ERASE_USER);
+                        throw 'ajax_eraseUser';
+                    }
+
+                    if (res.body.status != 0) {
+                        alert(Messages.server.MANAGE_USERS_ERASE_USER);
+                        throw 'server_eraseUser';
+                    }
+
+                    alert('消去しました。');
+                    this.listUsers(this.state.department_code);
+                }.bind(this) );
+            }
+        }.bind(this);
     },
 
     componentDidMount: function() {
@@ -96,14 +138,19 @@ var ManageUsers = React.createClass({
 
     composeTableFrameData: function() {
         var data = this.state.users.map(function(u, i) {
+            var eraser  = '';
+
+            if (this.props.user.account != u.account) {
+                eraser = (
+                    <div className="manage-users-remove-user"
+                         onClick={this.onEraseUser(i)}>
+                      -
+                    </div>
+                );
+            }
+
             return [
-                {
-                    value: '',
-                    view:  <div className="manage-users-remove-user"
-                                onClick={this.onEraseUser(i)}>
-                             -
-                           </div>
-                },
+                { value: '', view:  eraser },
                 { 
                     value: u.account,
                     view:  <div className="manage-users-account"

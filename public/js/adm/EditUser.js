@@ -66,7 +66,7 @@ var EditUser = React.createClass({
             name: React.PropTypes.string.isRequired
         }) ).isRequired,
 
-        goBack: React.PropTypes.func.isRequired
+        goBack:  React.PropTypes.func.isRequired
     },
 
     getInitialState: function() { return { departments: [] } },
@@ -374,14 +374,14 @@ var EditUser = React.createClass({
                          maxLength="32"
                          ref="account"
                          disabled={this.props.user != null}
-                         placeholder="アカウント"/>
+                         placeholder="アカウント" />
                 </div>
                 <div id="edit-user-name">
                   <Input type="text"
                          bsSize="small"
                          maxLength="32"
                          ref="name"
-                         placeholder="氏名"/>
+                         placeholder="氏名" />
                 </div>
                 <div className="edit-user-input">
                   <Input type="text"
@@ -395,13 +395,13 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="8"
                          ref="tel"
-                         placeholder="内線番号"/>
+                         placeholder="内線番号" />
                 </div>
                 <div id="edit-user-email">
                   <Input type="email"
                          bsSize="small"
                          ref="email"
-                         placeholder="E-Mail"/>
+                         placeholder="E-Mail" />
                 </div>
               </div>
             </fieldset>

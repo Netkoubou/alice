@@ -26,6 +26,7 @@ var lookupCosts           = require('./lookupCosts');
 var fixCost               = require('./fixCost');
 var listUsers             = require('./listUsers');
 var registerUser          = require('./registerUser');
+var eraseUser             = require('./eraseUser');
 
 var $ = express();
 
@@ -125,3 +126,4 @@ $.post('/lookupCosts',           lookupCosts);
 $.post('/fixCost',               fixCost);
 $.post('/listUsers',             listUsers);
 $.post('/registerUser',          registerUser);
+$.post('/eraseUser',             eraseUser);

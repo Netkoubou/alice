@@ -108,7 +108,19 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        EDIT_USER_ADD_USER:
+        MANAGE_USERS_ERASE_USER:
+            'AJAX error: eraseUser in ManageUsers.js.js\n\n' +
+            'ネットワークの問題でユーザ情報の削除に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        EDIT_USER_REGISTER_USER:
+            'AJAX error: addUser in EditUser.js.js\n\n' +
+            'ネットワークの問題でユーザの追加に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        EDIT_USER_REGISTER_USER:
             'AJAX error: addUser in EditUser.js.js\n\n' +
             'ネットワークの問題でユーザの追加に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
@@ -212,7 +224,13 @@ module.exports = {
             'ユーザ情報の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-        EDIT_USER_ADD_USER:
+        MANAGE_USERS_ERASE_USER:
+            'Server error: eraseUser in ManageUsers.js.js\n\n' +
+            'ユーザ情報の削除でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+
+        EDIT_USER_REGISTER_USER:
             'Server error: addUser in EditUser.js.js\n\n' +
             'ユーザの追加でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',

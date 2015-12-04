@@ -26,6 +26,7 @@ module.exports = function(req, res) {
     util.query(function(db) {
         db.collection('users').insertOne(user, function(err, result) {
             var msg;
+
             db.close();
 
             if (err == null) {
