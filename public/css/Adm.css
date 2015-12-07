@@ -101,12 +101,12 @@
 }
 
 #edit-user-departments col:nth-child(1) { width: 24px; }
-#edit-user-departments col:nth-child(2) { width: calc(100% - 664px); }
+#edit-user-departments col:nth-child(2) { width: calc(100% - 600px); }
 #edit-user-departments col:nth-child(3) { width: 128px; }
 #edit-user-departments col:nth-child(4) { width: 128px; }
 #edit-user-departments col:nth-child(5) { width: 128px; }
-#edit-user-departments col:nth-child(6) { width: 128px; }
-#edit-user-departments col:nth-child(7) { width: 128px; }
+#edit-user-departments col:nth-child(6) { width:  96px; }
+#edit-user-departments col:nth-child(7) { width:  96px; }
 #edit-user-departments td:nth-child(1) { text-align: center }
 #edit-user-departments td:nth-child(3) { text-align: center }
 #edit-user-departments td:nth-child(4) { text-align: center }

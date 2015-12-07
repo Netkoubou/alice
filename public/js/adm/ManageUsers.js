@@ -50,15 +50,9 @@ var ManageUsers = React.createClass({
         var next_ope;
 
         return function() {
-            if (this.props.user.account != this.state.users[index].account) {
-                next_ope = <EditUser user={this.state.users[index]}
+            var next_ope = <EditUser user={this.state.users[index]}
                                      departments={this.state.departments}
                                      goBack={this.backToHere} />;
-            } else {
-                next_ope = <ReferUser user={this.state.users[index]}
-                                      goBack={this.backToHere} />;
-            }
-
             this.setState({ next_ope: next_ope });
         }.bind(this);
     },

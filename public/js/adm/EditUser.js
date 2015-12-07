@@ -70,19 +70,52 @@ var EditUser = React.createClass({
     },
 
     getInitialState: function() {
-        var account    = '';
-        var name       = '';
-        var passphrase = '';
-        var tel        = '';
-        var email      = '';
+        var post = {
+            account:    '',
+            name:       '',
+            passphrase: '',
+            tel:        '',
+            email:      '',
+            privileged: {
+                administrate:     false,
+                draft_ordinarily: false,
+                draft_urgently:   false,
+                process_order:    false,
+                approve:          false
+            },
+            departments: []
+        };
 
-        var privileged_administrate     = false;
-        var privileged_draft_ordinarily = false;
-        var privileged_draft_urgently   = false;
-        var privileged_process_order    = false;
-        var privileged_approve          = false;
 
-        var departments = [];
+        /*
+         * post.departments のそれぞれのフラグの、真であるものの個数。
+         * 例えば post.department.administrate == 3 の場合、
+         * post.departments の中で 3 個の administrate が真になっている
+         * ことになる。
+         * これらの値を各フラグの制御に用いる。
+         *
+         * 例えば、承認権限を持ったユーザは発注の起案がすることができない。
+         * そこで、
+         * 
+         *   - post.privileged.approve (== true) 若しくは
+         *   - post.department.approve > 0
+         *
+         * の場合、
+         *
+         *   - post.privileged.draft_ordinarily 及び
+         *   - post.privileged.draft_urgently 及び
+         *   - post.departments 内の draft_ordinarily 及び
+         *   - post.departments 内の draft_urgently
+         *
+         * を真にできないようにする、ってな感じの制御に利用する。
+         */
+        var department = {
+            administrate:     0,
+            draft_ordinarily: 0,
+            draft_urgently:   0,
+            process_order:    0,
+            approve:          0
+        };
 
 
         /*
@@ -90,110 +123,94 @@ var EditUser = React.createClass({
          * もっと上手い手はないものか ...
          */
         if (this.props.user != null) {
-            var user = this.props.user;
+            post.account = this.props.user.account;
+            post.name    = this.props.user.name;
+            post.tel     = this.props.user.tel;
+            post.email   = this.props.user.email;
 
-            account    = user.account;
-            name       = user.name;
-            tel        = user.tel;
-            email      = user.email;
+            for (var p in this.props.user.privileged) {
+                post.privileged[p] = this.props.user.privileged[p];
+            }
 
-            privileged_administrate     = user.privileged.administrate;
-            privileged_draft_ordinarily = user.privileged.draft_ordinarily;
-            privileged_draft_urgently   = user.privileged.draft_urgently;
-            privileged_process_order    = user.privileged.process_order;
-            privileged_approve          = user.privileged.approve;
+            post.departments = this.props.user.departments.map(function(d) {
+                var post_department = {};
 
-            departments = user.departments.map(function(d) {
-                return {
-                    code:             d.code,
-                    administrate:     d.administrate,
-                    draft_ordinarily: d.draft_ordinarily,
-                    draft_urgently:   d.draft_urgently,
-                    process_order:    d.process_order,
-                    approve:          d.approve
-                };
+                for (var p in d) {
+                    post_department[p] = d[p];
+
+                    if (d[p]) {
+                        department[p]++;
+                    }
+                }
+
+                return post_department;
             });
         }
 
         return {
-            account:     account,
-            name:        name,
-            passphrase:  passphrase,
-            tel:         tel,
-            email:       email,
-
-            privileged_administrate:     privileged_administrate,
-            privileged_draft_ordinarily: privileged_draft_ordinarily,
-            privileged_draft_urgently:   privileged_draft_urgently,
-            privileged_process_order:    privileged_process_order,
-            privileged_approve:          privileged_approve,
-
-            departments: departments
+            post:       post,
+            department: department
         }
     },
 
     registerOrUpdateUser: function(action) {
-        var post  = {
-            account:    this.state.account,
-            name:       this.state.name,
-            passphrase: this.state.passphrase,
-            tel:        this.state.tel,
-            email:      this.state.email,
-            privileged: {
-                administrate:     this.state.privileged_administrate,
-                draft_ordinarily: this.state.privileged_draft_ordinarily,
-                draft_urgently:   this.state.privileged_draft_urgently,
-                process_order:    this.state.privileged_process_order,
-                approve:          this.state.privileged_approve
-            },
-            departments: this.state.departments
-        };
-
-        if (post.account === '') {
+        if (this.state.post.account === '') {
             alert('アカウントを入力して下さい。');
             this.refs.account.getInputDOMNode().focus();
             return;
         }
 
-        if (post.name === '') {
+        if (this.state.post.name === '') {
             alert('氏名を入力して下さい。');
             this.refs.name.getInputDOMNode().focus();
             return;
         }
 
-        if (this.props.user == null && post.passphrase === '') {
+
+        /*
+         * this.props.user == null とは即ち、新規にユーザを作成している
+         * ことに他ならない。
+         * その場合、暫定パスワードの作成は必須。
+         *
+         * 既存のユーザを編集している場合 (即ち this.props.user != null)、
+         * 暫定パスワード欄が空と言うことは、そのユーザのパスワードを変更
+         * しないことを意味する。
+         * 暫定パスワードに文字列が入力されている場合、そのユーザのパスワー
+         * ドはその文字列で上書きされる。
+         */
+        if (this.props.user == null && this.state.post.passphrase === '') {
             alert('暫定パスワードを入力して下さい。');
             this.refs.passphrase.getInputDOMNode().focus();
             return;
         }
 
-        if (post.tel === '') {
+        if (this.state.post.tel === '') {
             alert('内線番号を入力して下さい。');
             this.refs.tel.getInputDOMNode().focus();
             return;
         }
 
-        if (post.email === '') {
+        if (this.state.post.email === '') {
             alert('E-mail (メールアカウント) を入力して下さい。');
             this.refs.email.getInputDOMNode().focus();
             return;
         }
 
-        if (post.departments.length == 0) {
+        if (this.state.post.departments.length == 0) {
             alert('所属する部門診療科を最低一つ設定して下さい。');
             return;
         }
 
         var eq = function(x, y) { return x.code === y.code };
 
-        if (Util.hasDuplication(this.state.departments, eq) ) {
+        if (Util.hasDuplication(this.state.post.departments, eq) ) {
             alert('所属する部門診療科の中に同じ部門診療科が複数あります。');
             return;
         }
 
         var route = (action === 'REGISTER')? '/registerUser': '/updateUser';
 
-        XHR.post(route).send(post).end(function(err, res) {
+        XHR.post(route).send(this.state.post).end(function(err, res) {
             if (err) {
                 if (action === 'REGISTER') {
                     alert(Messages.ajax.EDIT_USER_REGISTER_USER);
@@ -229,52 +246,58 @@ var EditUser = React.createClass({
     onUpdateUser:   function() { this.registerOrUpdateUser('UPDATE'); },
 
     onChangeAccount: function() {
-        this.setState({ account: this.refs.account.getValue() });
+        this.state.post.account = this.refs.account.getValue();
+        this.setState({ post: this.state.post });
     },
 
     onChangeName: function() {
-        this.setState({ name: this.refs.name.getValue() });
+        this.state.post.name = this.refs.name.getValue();
+        this.setState({ post: this.state.post });
     },
 
     onChangePassphrase: function() {
-        this.setState({ passphrase: this.refs.passphrase.getValue() });
+        this.state.post.passphrase = this.refs.passphrase.getValue();
+        this.setState({ post: this.state.post });
     },
 
     onChangeTel: function() {
-        this.setState({ tel: this.refs.tel.getValue() });
+        this.state.post.tel = this.refs.tel.getValue();
+        this.setState({ post: this.state.post });
     },
 
     onChangeEmail: function() {
-        this.setState({ email: this.refs.email.getValue() });
+        this.state.post.email = this.refs.email.getValue();
+        this.setState({ post: this.state.post });
+    },
+
+    changePrivileged: function(property) {
+        var post = this.state.post;
+        post.privileged[property] = !post.privileged[property];
+        this.setState({ post: post });
     },
 
     onChangePrivilegedAdministrate: function() {
-        var value = !this.state.privileged_administrate;
-        this.setState({ privileged_administrate: value });
+        this.changePrivileged('administrate');
     },
 
     onChangePrivilegedDraftOrdinarily: function() {
-        var value = !this.state.privileged_draft_ordinarily;
-        this.setState({ privileged_draft_ordinarily: value });
+        this.changePrivileged('draft_ordinarily');
     },
 
     onChangePrivilegedDraftUrgently: function() {
-        var value = !this.state.privileged_draft_urgently;
-        this.setState({ privileged_draft_urgently: value });
+        this.changePrivileged('draft_urgently');
     },
 
     onChangePrivilegedProcessOrder: function() {
-        var value = !this.state.privileged_process_order;
-        this.setState({ privileged_process_order: value });
+        this.changePrivileged('process_order');
     },
 
     onChangePrivilegedApprove: function() {
-        var value = !this.state.privileged_approve;
-        this.setState({ privileged_approve: value });
+        this.changePrivileged('approve');
     },
 
     onAddDepartment: function() {
-        this.state.departments.push({
+        this.state.post.departments.push({
             code:             this.props.departments[0].code,
             administrate:     false,
             draft_ordinarily: false,
@@ -283,29 +306,50 @@ var EditUser = React.createClass({
             approve:          false
         });
 
-        this.setState({ departments: this.state.departments });
+        this.setState({ post: this.state.post });
     },
 
     onRemoveDepartment: function(index) {
         return function() {
-            var a = this.state.departments;
+            for (var p in this.state.post.departments[index]) {
+                if (this.state.post.departments[index][p]) {
+                    this.state.department[p]--;
+                }
+            }
 
+            var head = this.state.post.departments.slice(0, index);
+            var tail = this.state.post.departments.slice(index + 1);
+
+            this.state.post.departments = head.concat(tail);
             this.setState({
-                departments: a.slice(0, index).concat(a.slice(index + 1) )
+                post:       this.state.post,
+                department: this.state.department
             });
         }.bind(this);
     },
 
     onSelectDepartment: function(index) {
         return function(e) {
-            this.state.departments[index].code = e.target.value;
-            this.setState({ departments: this.state.departments });
+            this.state.post.departments[index].code = e.target.value;
+            this.setState({ post: this.state.post });
         }.bind(this);
     },
 
     invertCheckbox: function(i, name) {
-        this.state.departments[i][name] = !this.state.departments[i][name];
-        this.setState({ departments: this.state.departments });
+        var departments = this.state.post.departments;
+
+        departments[i][name] = !departments[i][name];
+
+        if (departments[i][name]) {
+            this.state.department[name]++;
+        } else {
+            this.state.department[name]--;
+        }
+
+        this.setState({
+            post:       this.state.post,
+            department: this.state.department
+        });
     },
 
     onChangeDepartmentAdministrate: function(i) {
@@ -351,7 +395,48 @@ var EditUser = React.createClass({
     },
 
     composeTableFrameData: function() {
-        var data = this.state.departments.map(function(d, i) {
+        var data = this.state.post.departments.map(function(d, i) {
+            var disabled_administrate     = false;
+            var disabled_draft_ordinarily = false;
+            var disabled_draft_urgently   = false;
+            var disabled_process_order    = false;
+            var disabled_approve          = false;
+
+            var privileged = this.state.post.privileged;
+
+            if (privileged.administrate) {
+                disabled_administrate = true;
+            }
+
+            if (privileged.draft_ordinarily) {
+                disabled_draft_ordinarily = true;
+            }
+
+            if (privileged.draft_urgently) {
+                disabled_draft_urgently = true;
+            }
+
+            if (privileged.approve || d.approve) {
+                disabled_draft_ordinarily = true;
+                disabled_draft_urgently   = true;
+            }
+
+            if (privileged.process_order) {
+                disabled_process_order = true;
+            }
+
+            if (privileged.approve) {
+                disabled_approve = true;
+            }
+
+            if (privileged.draft_ordinarily || d.draft_ordinarily) {
+                disabled_approve = true;
+            }
+
+            if (privileged.draft_urgently || d.draft_urgently) {
+                disabled_approve = true;
+            }
+
             return [
                 {
                     value: '-',
@@ -373,6 +458,7 @@ var EditUser = React.createClass({
                         <input
                           type="checkbox"
                           onChange={this.onChangeDepartmentAdministrate(i)}
+                          disabled={disabled_administrate}
                           checked={d.administrate} />
                     )
                 },
@@ -382,6 +468,7 @@ var EditUser = React.createClass({
                         <input
                           type="checkbox"
                           onChange={this.onChangeDepartmentDraftOrdinarily(i)}
+                          disabled={disabled_draft_ordinarily}
                           checked={d.draft_ordinarily} />
                     )
                 },
@@ -391,6 +478,7 @@ var EditUser = React.createClass({
                         <input
                           type="checkbox"
                           onChange={this.onChangeDepartmentDraftUrgently(i)}
+                          disabled={disabled_draft_urgently}
                           checked={d.draft_urgently} />
                     )
                 },
@@ -400,6 +488,7 @@ var EditUser = React.createClass({
                         <input
                           type="checkbox"
                           onChange={this.onChangeDepartmentProcessOrder(i)}
+                          disabled={disabled_process_order}
                           checked={d.process_order} />
                     )
                 },
@@ -409,6 +498,7 @@ var EditUser = React.createClass({
                         <input
                           type="checkbox"
                           onChange={this.onChangeDepartmentApprove(i)}
+                          disabled={disabled_approve}
                           checked={d.approve} />
                     )
                 }
@@ -441,6 +531,48 @@ var EditUser = React.createClass({
      * メソッドで代用することに。
      */
     generatePrivilegedPermissions: function() {
+        var disabled_administrate     = false;
+        var disabled_draft_ordinarily = false;
+        var disabled_draft_urgently   = false;
+        var disabled_process_order    = false;
+        var disabled_approve          = false;
+
+        var privileged = this.state.post.privileged;
+        var department = this.state.department;
+
+        if (department.administrate > 0) {
+            disabled_administrate = true;
+        }
+
+        if (department.draft_ordinarily > 0) {
+            disabled_draft_ordinarily = true;
+        }
+
+        if (department.draft_urgently > 0) {
+            disabled_draft_urgently = true;
+        }
+
+        if (department.approve > 0 || privileged.approve) {
+            disabled_draft_ordinarily = true;
+            disabled_draft_urgently   = true;
+        }
+
+        if (department.process_order > 0) {
+            disabled_process_order = true;
+        }
+
+        if (department.approve > 0) {
+            disabled_approve = true;
+        }
+
+        if (department.draft_ordinarily > 0 || privileged.draft_ordinarily) {
+            disabled_approve = true;
+        }
+
+        if (department.draft_urgently > 0 || privileged.draft_urgently) {
+            disabled_approve = true;
+        }
+
         return (
             <fieldset>
               <legend>全部門診療科に跨がる権限</legend>
@@ -448,31 +580,36 @@ var EditUser = React.createClass({
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="システム管理"
-                         checked={this.state.privileged_administrate}
+                         checked={this.state.post.privileged.administrate}
+                         disabled={disabled_administrate}
                          onChange={this.onChangePrivilegedAdministrate} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="通常発注起案"
-                         checked={this.state.privileged_draft_ordinarily}
+                         checked={this.state.post.privileged.draft_ordinarily}
+                         disabled={disabled_draft_ordinarily}
                          onChange={this.onChangePrivilegedDraftOrdinarily} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="緊急発注起案"
-                         checked={this.state.privileged_draft_urgently}
+                         checked={this.state.post.privileged.draft_urgently}
+                         disabled={disabled_draft_urgently}
                          onChange={this.onChangePrivilegedDraftUrgently} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="発注処理"
-                         checked={this.state.privileged_process_order}
+                         checked={this.state.post.privileged.process_order}
+                         disabled={disabled_process_order}
                          onChange={this.onChangePrivilegedProcessOrder} />
                 </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="承認"
-                         checked={this.state.privileged_approve}
+                         checked={this.state.post.privileged.approve}
+                         disabled={disabled_approve}
                          onChange={this.onChangePrivilegedApprove} />
                 </div>
               </div>
@@ -491,7 +628,7 @@ var EditUser = React.createClass({
                          maxLength="32"
                          ref="account"
                          disabled={this.props.user != null}
-                         value={this.state.account}
+                         value={this.state.post.account}
                          onChange={this.onChangeAccount}
                          placeholder="アカウント" />
                 </div>
@@ -500,7 +637,7 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="32"
                          ref="name"
-                         value={this.state.name}
+                         value={this.state.post.name}
                          onChange={this.onChangeName}
                          placeholder="氏名" />
                 </div>
@@ -509,7 +646,7 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="32"
                          ref="passphrase"
-                         value={this.state.passphrase}
+                         value={this.state.post.passphrase}
                          onChange={this.onChangePassphrase}
                          placeholder="暫定パスワード"/>
                 </div>
@@ -518,7 +655,7 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="8"
                          ref="tel"
-                         value={this.state.tel}
+                         value={this.state.post.tel}
                          onChange={this.onChangeTel}
                          placeholder="内線番号" />
                 </div>
@@ -526,7 +663,7 @@ var EditUser = React.createClass({
                   <Input type="email"
                          bsSize="small"
                          ref="email"
-                         value={this.state.email}
+                         value={this.state.post.email}
                          onChange={this.onChangeEmail}
                          placeholder="E-Mail" />
                 </div>
