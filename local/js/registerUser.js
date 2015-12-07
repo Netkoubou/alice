@@ -1,6 +1,5 @@
 'use strict';
 var ObjectID = require('mongodb').ObjectID;
-var moment   = require('moment');
 var bcrypt   = require('bcrypt');
 var log4js   = require('log4js');
 var util     = require('./util');
@@ -61,4 +60,4 @@ module.exports = function(req, res) {
             }                
         });
     });
-}
+};
