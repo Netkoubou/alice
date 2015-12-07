@@ -15,38 +15,45 @@
 
 ### サーバを別途自前で用意する場合
 
-    # git clone https://github.com/Netkoubou/alice.git
-    # cd alice
-    # npm install
-    # npm run build
+以下は (root ではない) 一般ユーザで、且つそのユーザのホームディレクトリ内で
+実行すること。
+でないと、Node パッケージのインストールで失敗してしまう (原因は不明)。
+
+    % git clone https://github.com/Netkoubou/alice.git
+    % cd alice
+    % npm install
+    % npm run build
 
 以上で終わり。
-alice/public 以下が Web サーバで公開するドキュメントになる。
+alice/public 以下が Web サーバで公開するドキュメントになるので、
+それを適切なパスに配置して完了。
 後は、Web ブラウザで公開された URL にアクセスすれば OK。
 
 
 ### テスト用のサーバまでまるっと構築する場合
 
+テスト用の環境なので、root ではなく一般ユーザで作成することを推奨。
+
 ##### 0. MongoDB と OpenSSL をインストールしておき、それぞれ利用可能なようにしておく。
 
 mongodb の起動方法は以下。
 
-    # mongod -config /etc/mongodb.conf &
+    % mongod -config /etc/mongodb.conf &
 
 ##### 1. サーバを別途自前で用意する場合の手順を踏む。
 ##### 2. MongoDB にテストデータを流し込む
 
-    # mongo localhost/alice --quiet local/utils/insert-dummy-data.js
+    % mongo localhost/alice --quiet local/utils/insert-dummy-data.js
 
 ##### 3. オレオレ証明書を作成 (質問に何と答えるかは、スクリプト内のコメント参照)
 
-    # cd local/certs
-    # sh ../utils/gen-dummy-certs.sh
+    % cd local/certs
+    % sh ../utils/gen-dummy-certs.sh
 
 ##### 4. テスト用サーバを起動
 
-    # cd ../
-    # npm run http-server
+    % cd ../
+    % npm run http-server
 
 以上で終了。
 https://localhost:8080 にアクセスすれば使える (オレオレ証明書は危険です、と脅されるが、無視すれば使える)。
@@ -60,16 +67,16 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
 
 構築時に npm コマンドを実行したディレクトリに行き、
 
-    # git pull
-    # npm install
-    # npm run build
+    % git pull
+    % npm install
+    % npm run build
 
 これでエラーが出なければ完了。
 エラーが出た場合は、続けて以下を試す。
 
-    # rm -Rf node_modules
-    # npm update
-    # npm run build
+    % rm -Rf node_modules
+    % npm update
+    % npm run build
 
 
 ### テスト用のサーバまでまるっと更新する場合
@@ -80,12 +87,12 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
 (テスト用のデータも更新されているかもしれないので) てから、
 新しいデータを流し込む。
 
-    # mongo
+    % mongo
     > use alice
     > db.dropDatabase()
     > exit
-    # mongo localhost/alice --quiet local/utils/insert-dummy-data.js
+    % mongo localhost/alice --quiet local/utils/insert-dummy-data.js
 
 最後にテスト用サーバを起動する。
 
-    # npm run http-server
+    % npm run http-server
