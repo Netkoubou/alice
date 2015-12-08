@@ -22,12 +22,12 @@ function callback_updateOne(req, res, db) {
             log_info.info(msg);
         } else {
             res.json({ status: 255 });
-            log_warn(err);
+            log_warn.warn(err);
 
             msg = '[changePassword] failed to change password by "' +
                   req.session.user.account + '".';
 
-            log_info.info(msg);
+            log_warn.warn(msg);
         }
     };
 }

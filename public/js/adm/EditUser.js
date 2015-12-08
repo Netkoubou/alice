@@ -39,7 +39,8 @@ var SelectDepartment = React.createClass({
 
 var EditUser = React.createClass({
     propTypes: {
-        user: React.PropTypes.shape({
+        isMyself: React.PropTypes.bool,
+        target:   React.PropTypes.shape({
             account:    React.PropTypes.string.isRequired,
             name:       React.PropTypes.string.isRequired,
             tel:        React.PropTypes.string.isRequired,
@@ -122,17 +123,17 @@ var EditUser = React.createClass({
          * props は変更不可なので、その値をシコシコとコピーしているのだが、
          * もっと上手い手はないものか ...
          */
-        if (this.props.user != null) {
-            post.account = this.props.user.account;
-            post.name    = this.props.user.name;
-            post.tel     = this.props.user.tel;
-            post.email   = this.props.user.email;
+        if (this.props.target != null) {
+            post.account = this.props.target.account;
+            post.name    = this.props.target.name;
+            post.tel     = this.props.target.tel;
+            post.email   = this.props.target.email;
 
-            for (var p in this.props.user.privileged) {
-                post.privileged[p] = this.props.user.privileged[p];
+            for (var p in this.props.target.privileged) {
+                post.privileged[p] = this.props.target.privileged[p];
             }
 
-            post.departments = this.props.user.departments.map(function(d) {
+            post.departments = this.props.target.departments.map(function(d) {
                 var post_department = {};
 
                 for (var p in d) {
@@ -168,17 +169,17 @@ var EditUser = React.createClass({
 
 
         /*
-         * this.props.user == null とは即ち、新規にユーザを作成している
+         * this.props.target == null とは即ち、新規にユーザを作成している
          * ことに他ならない。
          * その場合、暫定パスワードの作成は必須。
          *
-         * 既存のユーザを編集している場合 (即ち this.props.user != null)、
+         * 既存のユーザを編集している場合 (即ち this.props.target != null)、
          * 暫定パスワード欄が空と言うことは、そのユーザのパスワードを変更
          * しないことを意味する。
          * 暫定パスワードに文字列が入力されている場合、そのユーザのパスワー
          * ドはその文字列で上書きされる。
          */
-        if (this.props.user == null && this.state.post.passphrase === '') {
+        if (this.props.target == null && this.state.post.passphrase === '') {
             alert('暫定パスワードを入力して下さい。');
             this.refs.passphrase.getInputDOMNode().focus();
             return;
@@ -237,13 +238,28 @@ var EditUser = React.createClass({
                 return;
             }
 
-            alert('完了しました。');
+            if (this.props.isMyself) {
+                alert('更新しました。できれば一度ログアウトして下さい。');
+            } else {
+                alert('完了しました。');
+            }
+
             this.props.goBack();
         }.bind(this) );
     },
 
     onRegisterUser: function() { this.registerOrUpdateUser('REGISTER'); },
-    onUpdateUser:   function() { this.registerOrUpdateUser('UPDATE'); },
+
+    onUpdateUser: function() {
+        if (this.props.isMyself) {
+            var msg = 'ご自分のユーザ情報を更新しようとしています。\n' +
+                      'よろしいですか?';
+            confirm(msg);
+            alert('更新後、できれば一旦ログアウトして下さい。');
+        }
+
+        this.registerOrUpdateUser('UPDATE');
+    },
 
     onChangeAccount: function() {
         this.state.post.account = this.refs.account.getValue();
@@ -627,7 +643,7 @@ var EditUser = React.createClass({
                          bsSize="small"
                          maxLength="32"
                          ref="account"
-                         disabled={this.props.user != null}
+                         disabled={this.props.target != null}
                          value={this.state.post.account}
                          onChange={this.onChangeAccount}
                          placeholder="アカウント" />
@@ -673,19 +689,23 @@ var EditUser = React.createClass({
     },
 
     render: function() {
-        var title  = this.makeTableFrameTitle();
-        var data   = this.composeTableFrameData();
-        var button;
+        var title   = this.makeTableFrameTitle();
+        var data    = this.composeTableFrameData();
+        var buttons = [
+            <Button key="0" bsSize="small" onClick={this.props.goBack}>
+              戻る
+            </Button>
+        ];
 
-        if (this.props.user == null) {
-            button = (
-                <Button bsSize="small" onClick={this.onRegisterUser}>
+        if (this.props.target == null) {
+            buttons.push(
+                <Button key="1" bsSize="small" onClick={this.onRegisterUser}>
                   追加
                 </Button>
             );
         } else {
-            button = (
-                <Button bsSize="small" onClick={this.onUpdateUser}>
+            buttons.push(
+                <Button key="1" bsSize="small" onClick={this.onUpdateUser}>
                   更新
                 </Button>
             );
@@ -701,7 +721,7 @@ var EditUser = React.createClass({
                             title={title}
                             data={data} />
               </fieldset>
-              <div id="edit-user-buttons">{button}</div>
+              <div id="edit-user-buttons">{buttons}</div>
             </div>
         );
     }
