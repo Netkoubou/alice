@@ -248,7 +248,7 @@ var Nav = React.createClass({
             );
         }
 
-        if (is_admin) {
+        if (this.props.user.privileged.administrate) {
             admin = (
                 <div>
                   <NavItemTitle name="システム管理" />
@@ -267,6 +267,15 @@ var Nav = React.createClass({
                   <NavItem name="メッセージ"
                            onClick={this.onSelect('REGISTER_MESSAGE')}
                            isSelected={selected === 'REGISTER_MESSAGE'} />
+                </div>
+            );
+        } else if (is_admin) {
+            admin = (
+                <div>
+                  <NavItemTitle name="システム管理" />
+                  <NavItem name="ユーザ"
+                           onClick={this.onSelect('MANAGE_USERS')}
+                           isSelected={selected === 'MANAGE_USERS'} />
                 </div>
             );
         }
