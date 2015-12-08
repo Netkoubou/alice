@@ -140,7 +140,7 @@
 }
 
 .manage-products-select {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   margin-right:  16px;
   float:         left;
 }
@@ -156,7 +156,7 @@
 }
 
 #manage-products-products {
-  margin-top: 48px;
+  margin-top: 80px;
   width:      calc(100% -  50px);
   height:     calc(100% - 208px);
 }

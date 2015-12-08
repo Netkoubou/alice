@@ -90,7 +90,7 @@ var Nav = React.createClass({
             'MANAGE_USERS',             // ユーザ管理
             'MANAGE_DEPARTMENTS',       // 部門診療科情報管理
             'MANAGE_TRADERS',           // 販売元情報管理
-            'NAMAGE_PRODUCTS',          // 物品情報管理
+            'MANAGE_PRODUCTS',          // 物品情報管理
             'REGISTER_MESSAGE',         // フッタに表示するメッセージの登録
             'CHANGE_PASSWORD',          // パスワード変更
             'LOGOUT'
