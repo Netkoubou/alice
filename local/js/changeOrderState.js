@@ -14,7 +14,7 @@ module.exports = function(req, res) {
     }
 
     util.query(function(db) {
-        db.collection('orders').updateOne(
+        db.collection('orders').findOneAndUpdate(
             {
                 order_code:    req.body.order_code,
                 order_version: req.body.order_version
@@ -31,7 +31,7 @@ module.exports = function(req, res) {
                 db.close();
 
                 if (err == null) {
-                    if (result.matchedCount == 0) {
+                    if (result.value == null) {
                         res.json({ status: 1 });
 
                         msg = '[changeOrderState] ' +

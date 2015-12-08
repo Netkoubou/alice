@@ -72,12 +72,12 @@ function update_prices(db, req, prices) {
     });
 }
 
-function callback_updateOne(req, res, db, prices) {
+function callback_findOneAndUpdate(req, res, db, prices) {
     return function update(err, result) {
         var msg;
     
         if (err == null) {
-            if (result.matchedCount == 0) {
+            if (result.value == null) {
                 /*
                  * order_version が不一致。
                  * つまり、他のユーザが既にドキュメントを更新した、
@@ -156,7 +156,7 @@ module.exports = function(req, res) {
             };
         });
 
-        db.collection('orders').updateOne(
+        db.collection('orders').findOneAndUpdate(
             {
                 order_code:    req.body.order_code,
                 order_version: req.body.order_version
@@ -172,7 +172,7 @@ module.exports = function(req, res) {
                     last_modifier_code: req.session.user._id
                 }
             },
-            callback_updateOne(req, res, db, prices)
+            callback_findOneAndUpdate(req, res, db, prices)
         );
     });
 };
