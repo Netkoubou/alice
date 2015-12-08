@@ -200,6 +200,7 @@ function construct_response(orders, db, res) {
 
             next_action = function(department) {
                 response[index].department_name = department.name;
+                response[index].department_tel  = department.tel;
                 lookup('trader_name', order, index);
             };
 
@@ -276,6 +277,7 @@ function construct_response(orders, db, res) {
             drafter_account: '',    // これから埋める
             department_code: order.department_code,
             department_name: '',    // これから埋める
+            department_tel:  '',    // これから埋める
             trader_code:     order.trader_code,
             trader_name:     '',    // これから埋める
 

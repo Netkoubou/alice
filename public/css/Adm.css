@@ -17,11 +17,9 @@
 
 #manage-users-list col:nth-child(1) { width: 24px; }
 #manage-users-list col:nth-child(2) { width: 20%; }
-#manage-users-list col:nth-child(3) { width: calc(45% - 104px); }
-#manage-users-list col:nth-child(4) { width: 80px; }
-#manage-users-list col:nth-child(5) { width: 35%; }
+#manage-users-list col:nth-child(3) { width: calc(45% - 24px); }
+#manage-users-list col:nth-child(4) { width: 35%; }
 #manage-users-list td:nth-child(1) { text-align: center; }
-#manage-users-list td:nth-child(4) { text-align: center; }
 
 .manage-users-add-user {
   color:  #1976d2;
@@ -70,12 +68,7 @@
 }
 
 #edit-user-name {
-  width:        calc(30% - 8px);
-  margin-right: 8px;
-}
-
-#edit-user-tel {
-  width:        10%;
+  width:        calc(40% - 8px);
   margin-right: 8px;
 }
 
@@ -132,4 +125,38 @@
   position: absolute;
   right:    16px;
   bottom:    8px;
+}
+
+#manage-products {
+  position:  relative;
+  font-size: small;
+  width:     100%;
+  height:    100%;
+}
+
+#manage-products-search {
+  padding-top:  8px;
+  margin-left: 32px;
+}
+
+.manage-products-select {
+  margin-bottom: 24px;
+  margin-right:  16px;
+  float:         left;
+}
+
+#manage-products-input {
+  clear: both;
+  width: calc(100% - 16px);
+}
+
+#manage-products-buttons {
+  position: absolute;
+  right:    16px;
+}
+
+#manage-products-products {
+  margin-top: 48px;
+  width:      calc(100% -  50px);
+  height:     calc(100% - 208px);
 }

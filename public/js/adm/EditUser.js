@@ -43,7 +43,6 @@ var EditUser = React.createClass({
         target:   React.PropTypes.shape({
             account:    React.PropTypes.string.isRequired,
             name:       React.PropTypes.string.isRequired,
-            tel:        React.PropTypes.string.isRequired,
             email:      React.PropTypes.string.isRequired,
             privileged: React.PropTypes.shape({
                 administrate:     React.PropTypes.bool.isRequired,
@@ -75,7 +74,6 @@ var EditUser = React.createClass({
             account:    '',
             name:       '',
             passphrase: '',
-            tel:        '',
             email:      '',
             privileged: {
                 administrate:     false,
@@ -126,7 +124,6 @@ var EditUser = React.createClass({
         if (this.props.target != null) {
             post.account = this.props.target.account;
             post.name    = this.props.target.name;
-            post.tel     = this.props.target.tel;
             post.email   = this.props.target.email;
 
             for (var p in this.props.target.privileged) {
@@ -182,12 +179,6 @@ var EditUser = React.createClass({
         if (this.props.target == null && this.state.post.passphrase === '') {
             alert('暫定パスワードを入力して下さい。');
             this.refs.passphrase.getInputDOMNode().focus();
-            return;
-        }
-
-        if (this.state.post.tel === '') {
-            alert('内線番号を入力して下さい。');
-            this.refs.tel.getInputDOMNode().focus();
             return;
         }
 
@@ -273,11 +264,6 @@ var EditUser = React.createClass({
 
     onChangePassphrase: function() {
         this.state.post.passphrase = this.refs.passphrase.getValue();
-        this.setState({ post: this.state.post });
-    },
-
-    onChangeTel: function() {
-        this.state.post.tel = this.refs.tel.getValue();
         this.setState({ post: this.state.post });
     },
 
@@ -665,15 +651,6 @@ var EditUser = React.createClass({
                          value={this.state.post.passphrase}
                          onChange={this.onChangePassphrase}
                          placeholder="暫定パスワード"/>
-                </div>
-                <div id="edit-user-tel">
-                  <Input type="text"
-                         bsSize="small"
-                         maxLength="8"
-                         ref="tel"
-                         value={this.state.post.tel}
-                         onChange={this.onChangeTel}
-                         placeholder="内線番号" />
                 </div>
                 <div id="edit-user-email">
                   <Input type="email"

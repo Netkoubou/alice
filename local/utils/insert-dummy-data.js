@@ -2,66 +2,77 @@
 db.departments.insert({
     name:     '外科',
     abbr:     'SUR',
+    tel:      '046-822-1192',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '中科',
     abbr:     'MID',
+    tel:      '046-822-1333',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '内科',
     abbr:     'IM',
+    tel:      '046-822-1543',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '歯科',
     abbr:     'DENT',
+    tel:      '046-822-1603',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '小児科',
     abbr:     'PED',
+    tel:      '046-822-1818',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '眼科',
     abbr:     'OPH',
+    tel:      '046-822-1853',
     is_alive: true
 });
 
 db.departments.insert({
     name:     'べつに減るもんじゃなし、ちょっとくらいええじゃない科',
     abbr:     'OK',
+    tel:      '046-822-1914',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '薬剤科',
     abbr:     'MED',
+    tel:      '046-822-1919',
     is_alive: true
 });
 
 db.departments.insert({
     name:     '薬剤科 (薬剤発注専用)',
     abbr:     'MED',
+    tel:      '046-822-1941',
     is_alive: true
 });
 
 db.departments.insert({
     name:     'お偉い職',
     abbr:     'GOD',
+    tel:      '046-822-4126',
     is_alive: true
 });
 
 db.departments.insert({
     name:     'SPD',
     abbr:     'SPD',
+    tel:      '046-822-4219',
     is_alive: true
 });
 
@@ -229,7 +240,6 @@ db.users.insert({
     account: 'ord0',
     hash:    '$2a$10$bhHirIDV1cu9nROVKG45z.DaaNOMDacUx8T7lMTAdd.gIcK9svcEu',
     name:    '普通 太郎',
-    tel:     '0000',
     email:   'ord0@example.jp',
     privileged: {
         administrate:     false,
@@ -253,7 +263,6 @@ db.users.insert({
     account: 'ord1',
     hash:    '$2a$10$bR0wrdlmYgAkB5y39AQkhui25dyOp1LG7WD58qILunT4h5StcVi6q',
     name:    '通常 花子',
-    tel:     '0001',
     email:   'ord1@example.jp',
     privileged: {
         administrate:     false,
@@ -319,7 +328,6 @@ db.users.insert({
     account: 'med',
     hash:    '$2a$10$yBKKtP1f9HZ40n5hgQRMn.Hds5a1.h2c.w1DydzIPioDDXfTXZfQC',
     name:    '薬剤 命実',
-    tel:     '0002',
     email:   'med@example.jp',
     privileged: {
         administrate:     false,
@@ -353,7 +361,6 @@ db.users.insert({
     account: 'spd',
     hash:    '$2a$10$uZ0GoMnUNGIeyhmFrmeFzOKDoYHz2LBa9ZI.T9/DPNHj.R5cbDUgK',
     name:    '何でも でき太',
-    tel:     '0003',
     email:   'spd@example.jp',
     privileged: {
         administrate:     false,
@@ -377,7 +384,6 @@ db.users.insert({
     account: 'spdadm',
     hash:    '$2a$10$UCVQuW3fwXjiVzIgfGi6P.HsyxjbtPEYX9fi6gMB30HTEy9jzwBWm',
     name:    'やれば できる夫',
-    tel:     '0004',
     email:   'spdadm@example.jp',
     privileged: {
         administrate:     true,
@@ -401,7 +407,6 @@ db.users.insert({
     account: 'dir',
     hash:    '$2a$10$oGmaZbxpIv4qnGvu/ou2h.bzfY3PaSEyyw5LNtQRbEKaec7iPWK4G',
     name:    '院長 です代',
-    tel:     '0005',
     email:   'dir@example.jp',
     privileged: {
         administrate:     true,
@@ -425,7 +430,6 @@ db.users.insert({
     account: 'chief0',
     hash:    '$2a$10$0IsbDoLZpIiwmeLLt32cW.EmlpAsxBbLDPPDsOASTTswr9EMxafAK',
     name:    '次長 課長',
-    tel:     '0006',
     email:   'chief0@example.jp',
     privileged: {
         administrate:     false,
@@ -449,7 +453,6 @@ db.users.insert({
     account: 'chief1',
     hash:    '$2a$10$MKWRHmZaQsHre.PTQx457.cNLnl29aL8hCOloOiV7ja.SfMDEgzXy',
     name:    '芋洗い坂 係長',
-    tel:     '0007',
     email:   'chief1@example.jp',
     privileged: {
         administrate:     false,
@@ -515,7 +518,6 @@ db.users.insert({
     account: 'irr',
     hash:    '$2a$10$6jDTHoY10z95J9jjS3PA6.A0X/iLT.t2FX/we3UkDbYYDGSFeDpSq',
     name:    '例外 ですね',
-    tel:     '0008',
     email:   'irr0@example.jp',
     privileged: {
         administrate:     false,
@@ -557,7 +559,6 @@ db.users.insert({
     account: 'urg0',
     hash:    '$2a$10$SWlN1Vf/jsxEOe3Q6ZEN5.Ca9OedtK6oiGWsdSYX2Y7zZBtHz1p1S',
     name:    '緊急 次郎',
-    tel:     '0009',
     email:   'urg0@example.jp',
     privileged: {
         administrate:     false,
@@ -581,7 +582,6 @@ db.users.insert({
     account: 'urg1',
     hash:    '$2a$10$q7bE.djIHz7JZjeO5Br/e.OO8zSlt6DAb0cvEKIPtxRITt2mV8Gq6',
     name:    '緊急 優子',
-    tel:     '0010',
     email:   'urg1@example.jp',
     privileged: {
         administrate:     false,
@@ -647,7 +647,6 @@ db.users.insert({
     account: 'appmed',
     hash:    '$2a$10$T6J/T0f8yTBD4iXFHJV96eRrL7Syq/ACVptdj5Xvm6S1Tx3cpgaoy',
     name:    '薬 漬雄',
-    tel:     '0011',
     email:   'appmed@example.jp',
     privileged: {
         administrate:     false,
@@ -681,7 +680,6 @@ db.users.insert({
     account: 'void',
     hash:    '$2a$10$2662AL.7FbIdD6.t9CrExuISX7kbdH.k7i8pT.5MPxibsqNwZJ3Vm',
     name:    '丸出 ダメ夫',
-    tel:     '0012',
     email:   'void@example.jp',
     privileged: {
         administrate:     false,

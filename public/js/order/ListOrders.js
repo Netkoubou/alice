@@ -112,7 +112,7 @@ var ListOrders = React.createClass({
             is_approved:   can_process_order,
             is_nullified:  false,
             is_completed:  false,
-            orders:     []
+            orders:        []
         };
     },
 

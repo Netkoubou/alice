@@ -267,14 +267,18 @@ var ProcessOrder = React.createClass({
     },
 
     onPrint: function() {
+        var order           = this.props.order;
+        var department_name = order.department_name;
+        var department_tel  = order.department_tel;
+
         window.info = {
             purpose:       'FAX',
-            order_code:    this.props.order.order_code,
-            department:    this.props.order.department_name,
-            trader:        this.props.order.trader_name,
-            drafting_date: this.props.order.drafting_date,
+            order_code:    order.order_code,
+            department:    department_name + ' (' + department_tel + ')',
+            trader:        order.trader_name,
+            drafting_date: order.drafting_date,
             order_date:    moment().format('YYYY/MM/DD'),
-            products:      this.props.order.products.map(function(p) {
+            products:      order.products.map(function(p) {
                 return {
                     name:     p.name,
                     maker:    p.maker,

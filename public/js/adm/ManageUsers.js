@@ -128,7 +128,6 @@ var ManageUsers = React.createClass({
             { name: '+/-',        type: 'void'   },
             { name: 'アカウント', type: 'string' },
             { name: '氏名',       type: 'string' },
-            { name: '内線番号',   type: 'string' },
             { name: 'E-Mail',     type: 'string' },
         ];
     },
@@ -155,9 +154,8 @@ var ManageUsers = React.createClass({
                              {u.account}
                            </div>
                 },
-                { value: u.name,    view: u.name    },
-                { value: u.tel,     view: u.tel     },
-                { value: u.email,   view: u.email   }
+                { value: u.name,  view: u.name  },
+                { value: u.email, view: u.email }
             ];
         }.bind(this) );
 
@@ -169,7 +167,6 @@ var ManageUsers = React.createClass({
                         +
                       </div>
             },
-            { value: '', view: '' },
             { value: '', view: '' },
             { value: '', view: '' },
             { value: '', view: '' }

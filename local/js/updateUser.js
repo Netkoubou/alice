@@ -16,7 +16,6 @@ function update_user(req, res, db, user) {
     }
 
     user.name        = req.body.name;
-    user.tel         = req.body.tel;
     user.email       = req.body.email;
     user.privileged  = req.body.privileged;
     user.departments = req.body.departments;

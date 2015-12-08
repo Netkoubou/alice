@@ -32,7 +32,6 @@ module.exports = function(req, res) {
                         return {
                             account:     u.account,
                             name:        u.name,
-                            tel:         u.tel,
                             email:       u.email,
                             privileged:  u.privileged,
                             departments: u.departments

@@ -208,6 +208,10 @@ var Nav = React.createClass({
             );
         }
 
+
+        /*
+         * 発注メニュー
+         */
         if (is_urgency_drafter) {
             draft_order.push(
                 <NavItem key="2"
@@ -230,6 +234,10 @@ var Nav = React.createClass({
             draft_order.unshift(<NavItemTitle key="0" name="発注" />);
         }
 
+
+        /*
+         * 予算メニュー
+         */
         if (is_admin) {
             budget.push(<NavItemTitle key="0" name="予算" />);
             budget.push(
@@ -248,6 +256,10 @@ var Nav = React.createClass({
             );
         }
 
+
+        /*
+         * システム管理メニュー
+         */
         if (this.props.user.privileged.administrate) {
             admin = (
                 <div>
@@ -262,7 +274,7 @@ var Nav = React.createClass({
                            onClick={this.dummy}
                            isSelected={selected === 'MANAGE_TRADERS'} />
                   <NavItem name="物品"
-                           onClick={this.dummy}
+                           onClick={this.onSelect('MANAGE_PRODUCTS')}
                            isSelected={selected === 'MANAGE_PRODUCTS'} />
                   <NavItem name="メッセージ"
                            onClick={this.onSelect('REGISTER_MESSAGE')}
