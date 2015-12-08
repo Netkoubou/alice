@@ -22,7 +22,7 @@
     % git clone https://github.com/Netkoubou/alice.git
     % cd alice
     % npm install
-    % npm run build
+    % npm run build-dist
 
 以上で終わり。
 alice/public 以下が Web サーバで公開するドキュメントになるので、
@@ -41,9 +41,23 @@ mongodb の起動方法は以下。
     % mongod -config /etc/mongodb.conf &
 
 ##### 1. サーバを別途自前で用意する場合の手順を踏む。
+
+上記のままでも動作には問題ないが、クライアント (Web ブラウザ側) のデバックを
+考慮するのならば、
+
+    % npm run build-dist
+
+の代わりに (或いはその後でも構わない)
+
+    % npm run build
+
+とすると、デバッグがし易くなる。
+
+
 ##### 2. MongoDB にテストデータを流し込む
 
     % mongo localhost/alice --quiet local/utils/insert-dummy-data.js
+
 
 ##### 3. SSL のオレオレ証明書と秘密鍵を作成 (質問に何と答えるかは、スクリプト内のコメント参照)
 
@@ -56,8 +70,8 @@ mongodb の起動方法は以下。
     % npm run http-server
 
 以上で終了。
-https://localhost:8080 にアクセスすれば使える (オレオレ証明書は危険です、
-と脅されるが、無視すれば使える)。
+Web ブラウザで https://localhost:8080 にアクセスすれば使える
+(オレオレ証明書は危険です、と脅されるが、無視すれば使える)。
 
 
 ### [番外] テスト用サーバがエラーを吐いて起動してくれない場合には
@@ -81,6 +95,7 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
 あたりまえだが、テスト用サーバが上記のファイルを読めるような
 パーミッションが必要。
 
+
 ##### 2. 8080 番ポートの利用状況
 
 テスト用サーバは 8080 番ポートを使うのだが、他で利用されていると
@@ -94,7 +109,7 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
                  ^^^^
 
 を直接書き変えても OK。
-その場合はブラウザでアクセスする際の URL のポート番号も変えること。
+その場合は Web ブラウザでアクセスする際の URL のポート番号も変えること。
 
 
 # 更新方法
@@ -107,14 +122,16 @@ https://localhost:8080 にアクセスすれば使える (オレオレ証明書�
 
     % git pull
     % npm install
-    % npm run build
+    % npm run build-dist
 
 これでエラーが出なければ完了。
 エラーが出た場合は、続けて以下を試す。
 
     % rm -Rf node_modules
     % npm update
-    % npm run build
+    % npm run build-dist
+
+デバックを考慮するのであれば、build-dist の代わりに build を使うこと。
 
 
 ### テスト用のサーバまでまるっと更新する場合
