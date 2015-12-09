@@ -25,7 +25,9 @@ var ManageProducts = React.createClass({
     },
 
     componentDidMount: function() {
-        XHR.get('/pickMenuItemsToManageProducts').end(function(err, res) {
+        XHR.get('/pickMenuItemsToManageProducts').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
             var idx = 'MANAGE_PRODUCTS_PICK_MENU_ITEMS_TO_MANAGE_PRODUCTS';
 
             if (err != null) {

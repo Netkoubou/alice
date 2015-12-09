@@ -12,7 +12,9 @@ var Footer = React.createClass({
     },
 
     getMessage: function() {
-        XHR.get('getFooterMessage').end(function(err, res) {
+        XHR.get('getFooterMessage').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
             if (res.body.status == 0) {
                 var message = res.body.message.replace(/(^\s+)|(\s+$)/g, '');
 

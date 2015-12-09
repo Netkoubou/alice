@@ -273,7 +273,9 @@ var SearchPane = React.createClass({
      * 項目をサーバに問い合わせる。
      */
     componentDidMount: function() {
-        XHR.get('pickMenuItemsForSearchPane').end(function(err, res) {
+        XHR.get('pickMenuItemsForSearchPane').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
             var errmsg_index = 'SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE';
 
             if (err) {

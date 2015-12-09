@@ -175,7 +175,9 @@ var ApplyCost = React.createClass({
     },
 
     componentDidMount: function() {
-        XHR.get('pickMenuItemsToApplyCost').end(function(err, res) {
+        XHR.get('pickMenuItemsToApplyCost').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
             var errmsg_index = 'APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST';
             if (err) {
                 alert(Messages.ajax[errmsg_index]);

@@ -99,7 +99,9 @@ var ManageUsers = React.createClass({
     },
 
     componentDidMount: function() {
-        XHR.get('tellAvailableDepartments').end(function(err, res) {
+        XHR.get('tellAvailableDepartments').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS);
                 throw 'ajax_tellAllDepartments';

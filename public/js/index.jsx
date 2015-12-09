@@ -62,7 +62,9 @@ var Page = React.createClass({
 
     logout: function() {
         if (confirm('ログアウトしますか?') ) {
-            XHR.get('logout').end(function(err, res) {
+            XHR.get('logout').set({
+                'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+            }).end(function(err, res) {
                 if (err) {
                     alert(Messages.ajax.INDEX_LOGOUT);
                     throw 'ajax_logout';
