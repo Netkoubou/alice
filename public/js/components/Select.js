@@ -10,6 +10,7 @@
 var React       = require('react');
 var SplitButton = require('react-bootstrap').SplitButton;
 var MenuItem    = require('react-bootstrap').MenuItem;
+var Util        = require('../lib/Util');
 
 var Select = React.createClass({
     propTypes: {
@@ -39,9 +40,7 @@ var Select = React.createClass({
         }.bind(this) );
 
         if (this.props.value != '' && this.props.options.length != 0) {
-            title = this.props.options.filter(function(o) {
-                return o.code === this.props.value;
-            }.bind(this) )[0].name;
+            title = Util.lookupName(this.props.value, this.props.options);
         }
 
         return (

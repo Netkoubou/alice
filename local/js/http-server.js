@@ -1,9 +1,9 @@
 'use strict';
 var express    = require('express');
+var session    = require('express-session');
 var https      = require('https');
 var fs         = require('fs');
 var bodyParser = require('body-parser');
-var session    = require('express-session');
 var log4js     = require('log4js');
 
 var logout                        = require('./logout');

@@ -54,5 +54,15 @@ module.exports = {
         }
 
         return this.hasDuplication(cdr, eq);
+    },
+
+    lookupName: function(code, array) {
+        var matched = array.filter(function(e) { return code === e.code });
+
+        if (matched.length > 0) {
+            return matched[0].name;
+        }
+
+        return '参照できません';
     }
 };

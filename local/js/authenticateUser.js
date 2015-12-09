@@ -10,7 +10,7 @@ var log_crit = log4js.getLogger('critical');
 module.exports = function(req, res) {
     var account    = req.body.account;
     var passphrase = req.body.passphrase;
-    
+
     util.query(function(db) {
         db.collection('users').find({
             is_alive: true,
