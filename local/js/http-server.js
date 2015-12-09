@@ -6,11 +6,12 @@ var bodyParser = require('body-parser');
 var session    = require('express-session');
 var log4js     = require('log4js');
 
-var logout                     = require('./logout');
-var pickMenuItemsForSearchPane = require('./pickMenuItemsForSearchPane');
-var pickMenuItemsToApplyCost   = require('./pickMenuItemsToApplyCost');
-var tellAvailableDepartments   = require('./tellAvailableDepartments');
-var getFooterMessage           = require('./getFooterMessage');
+var logout                        = require('./logout');
+var pickMenuItemsForSearchPane    = require('./pickMenuItemsForSearchPane');
+var pickMenuItemsToApplyCost      = require('./pickMenuItemsToApplyCost');
+var pickMenuItemsToManageProducts = require('./pickMenuItemsToManageProducts');
+var tellAvailableDepartments      = require('./tellAvailableDepartments');
+var getFooterMessage              = require('./getFooterMessage');
 
 var authenticateUser      = require('./authenticateUser');
 var searchCandidates      = require('./searchCandidates');
@@ -107,11 +108,12 @@ $.use(bodyParser.urlencoded({ extended: true }) );
 /*
  * ルーティング
  */
-$.get('/logout',                     logout);
-$.get('/pickMenuItemsForSearchPane', pickMenuItemsForSearchPane);
-$.get('/pickMenuItemsToApplyCost',   pickMenuItemsToApplyCost);
-$.get('/tellAvailableDepartments',   tellAvailableDepartments);
-$.get('/getFooterMessage',           getFooterMessage);
+$.get('/logout',                        logout);
+$.get('/pickMenuItemsForSearchPane',    pickMenuItemsForSearchPane);
+$.get('/pickMenuItemsToApplyCost',      pickMenuItemsToApplyCost);
+$.get('/pickMenuItemsToManageProducts', pickMenuItemsToManageProducts);
+$.get('/tellAvailableDepartments',      tellAvailableDepartments);
+$.get('/getFooterMessage',              getFooterMessage);
 
 $.post('/authenticateUser',      authenticateUser);
 $.post('/searchCandidates',      searchCandidates);

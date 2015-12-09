@@ -131,6 +131,13 @@ module.exports = {
             'ネットワークの問題でユーザの更新に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        MANAGE_PRODUCTS_PICK_MENU_ITEMS_TO_MANAGE_PRODUCTS:
+            'AJAX error: pickMenuItemsToManageProducts in ' +
+            'ManageProducts.js\n\n' +
+            'ネットワークの問題でメニュー項目の獲得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -238,6 +245,12 @@ module.exports = {
         EDIT_USER_UPDATE_USER:
             'Server error: updateUser in EditUser.js.js\n\n' +
             'ユーザの更新でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        MANAGE_PRODUCTS_PICK_MENU_ITEMS_TO_MANAGE_PRODUCTS:
+            'Server error: pickMenuItemsToManageProducts in ' +
+            'ManageProducts.js\n\n' +
+            'メニュー項目の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

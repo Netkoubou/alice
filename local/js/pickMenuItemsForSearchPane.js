@@ -9,56 +9,6 @@ var log_crit = log4js.getLogger('ctitical');
 
 
 /*
- * 全部門診療科に跨がって、通常発注 and/or 緊急発注を起案できるユーザは
- * 全ての部門診療科 (departments)、品目 (categories)、販売元 (traders) が
- * 選択対象となる。
- */
-function retrieve_all(res, db) {
-    var response = {
-        status:      0,
-        departments: [],
-        categories:  [],
-        traders:     []
-    };
-
-    function retrieve_all_of(target) {
-        var collection = db.collection(target);
-        
-        collection.find({ is_alive: true }).toArray(function(err, documents) {
-            if (err == null) {
-                response[target] = documents.map(function(d) {
-                    return { code: d._id, name: d.name };
-                });
-
-                switch (target) {
-                case 'departments':
-                    retrieve_all_of('categories');
-                    break;
-                case 'categories':
-                    retrieve_all_of('traders');
-                    break;
-                default:
-                    db.close();
-                    res.json(response);
-                }
-            } else {
-                db.close();
-                res.json({ status: 255 });
-                log_warn.warn(err);
-
-                var msg = '[pickMenuItemsForSearchPane] ' +
-                          'failed to access ' + target +  ' collection.';
-
-                log_warn.warn(msg);
-            }
-        });
-    }
-
-    retrieve_all_of('departments');
-}
-
-
-/*
  * ユーザが所属する部門診療科と係わる品目 (のコードと名前) 及び販売元 (の
  * コードと名前) を、以下のように割り出して行く。
  *
@@ -317,9 +267,11 @@ module.exports = function(req, res) {
 
         if (draft_ordinarily || draft_urgently) {
             /*
-             * 全部門診療科に跨って通常発注 and/or 緊急発注を起案できる
+             * 全部門診療科に跨がって、通常発注 and/or 緊急発注を起案できる
+             * ユーザは、全ての部門診療科 (departments)、品目 (categories)、
+             * 販売元 (traders) が選択対象となる。
              */
-            retrieve_all(res, db);
+            util.retrieve_all_departments_categories_traders(res, db);
         } else {
             /*
              * 自分の所属する部門診療科の通常発注 and/or 緊急発注しか

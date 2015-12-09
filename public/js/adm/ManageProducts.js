@@ -22,25 +22,25 @@ var ManageProducts = React.createClass({
     },
 
     componentDidMount: function() {
-        XHR.get('pickMenuItemsForManageProducts').end(function(err, res) {
-            var idx = 'MANAGE_PRODUCTS_PICK_MENU_ITEMS_FOR_MANAGE_PRODUCTS';
+        XHR.get('pickMenuItemsToManageProducts').end(function(err, res) {
+            var idx = 'MANAGE_PRODUCTS_PICK_MENU_ITEMS_TO_MANAGE_PRODUCTS';
 
             if (err) {
                 alert(Messages.ajax[idx]);
-                throw 'ajax_pickMenuItemsForSearchPane';
+                throw 'ajax_pickMenuItemsToSearchPane';
             }
 
             if (res.body.status != 0) {
                 alert(Messages.server[idx]);
-                throw 'server_pickMenuItemsForSearchPane';
+                throw 'server_pickMenuItemsToSearchPane';
             }
 
             this.setState({
                 departments: res.body.departments,
                 categories:  res.body.categories,
                 traders:     res.body.traders
-            }.bind(this) );
-        });
+            });
+        }.bind(this) );
     },
 
     onSelectDepartment: function(e) {

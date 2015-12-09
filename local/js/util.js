@@ -164,5 +164,52 @@ module.exports = {
                 }
             });
         });
-    }
+    },
+
+    retrieve_all_departments_categories_traders(res, db) {
+        var response = {
+            status:      0,
+            departments: [],
+            categories:  [],
+            traders:     []
+        };
+    
+        function retrieve_all(target) {
+            var collection = db.collection(target);
+            
+            collection.find({
+                is_alive: true
+            }).toArray(function(err, documents) {
+                if (err == null) {
+                    response[target] = documents.map(function(d) {
+                        return { code: d._id, name: d.name };
+                    });
+    
+                    switch (target) {
+                    case 'departments':
+                        retrieve_all('categories');
+                        break;
+                    case 'categories':
+                        retrieve_all('traders');
+                        break;
+                    default:
+                        db.close();
+                        res.json(response);
+                    }
+                } else {
+                    db.close();
+                    res.json({ status: 255 });
+                    log_warn.warn(err);
+    
+                    var msg = '[util.' +
+                              'retrieve_all_departments_categories_traders] ' +
+                              'failed to access ' + target +  ' collection.';
+    
+                    log_warn.warn(msg);
+                }
+            });
+        }
+    
+        retrieve_all('departments');
+    },
 };
