@@ -110,7 +110,7 @@ var Buttons = React.createClass({
 
     render: function() {
         var buttons = [
-            <Button key="0" bsSize="small" onClick={this.props.goBack}>
+            <Button key="0" onClick={this.props.goBack}>
               戻る
             </Button>
         ];
@@ -118,41 +118,36 @@ var Buttons = React.createClass({
         switch (this.props.permission) {
         case 'APPROVE':
             buttons.push(
-                <Button key="1" bsSize="small" onClick={this.props.onApprove}>
+                <Button key="1" onClick={this.props.onApprove}>
                   承認
                 </Button>
             );
             buttons.push(
-                <Button key="2" bsSize="small" onClick={this.props.onDeny}>
+                <Button key="2" onClick={this.props.onDeny}>
                   否認 
                 </Button>
             );
             break;
         case 'BACK_TO_REQUESTING':
             buttons.push(
-                <Button key="3"
-                        bsSize="small"
-                        onClick={this.props.onRevertToRequesting}>
+                <Button key="3" onClick={this.props.onRevertToRequesting}>
                   依頼中に戻す
                 </Button>
             );
             break;
         case 'PROCESS':
             buttons.push(
-                <Button key="4"
-                        bsSize="small"
-                        onClick={this.props.onRevertToRequesting}>
+                <Button key="4" onClick={this.props.onRevertToRequesting}>
                   依頼中へ戻す
                 </Button>
             );
             buttons.push(
-                <Button key="5" bsSize="small" onClick={this.props.onPrint}>
+                <Button key="5" onClick={this.props.onPrint}>
                   印刷
                 </Button>
             );
             buttons.push(
                 <Button key="6"
-                        bsSize="small"
                         onClick={this.props.onFix}
                         disabled={!this.props.need_save}>
                   確定
@@ -162,7 +157,6 @@ var Buttons = React.createClass({
         case 'BACK_TO_APPROVED':
             buttons.push(
                 <Button key="7"
-                        bsSize="small"
                         onClick={this.props.onRevertToApproved}>
                   承認済みへ戻す
                 </Button>

@@ -165,7 +165,7 @@ var ManageProducts = React.createClass({
                          onChange={this.onChangeSearchText} />
                 </div>
                 <div id="manage-products-buttons">
-                  <Button bsSize="small" onClick={this.onSearch}>検索</Button>
+                  <Button onClick={this.onSearch}>検索</Button>
                 </div>
               </fieldset>
               <TableFrame id="manage-products-products"

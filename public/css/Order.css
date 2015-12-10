@@ -152,7 +152,7 @@
   width: 80px;
 }
 
-#list-orders-buttons     { float:  right; }
+#list-orders-buttons     {}
 #list-orders-table-frame { height: calc(100% - 128px); }
 
 #list-orders-orders {

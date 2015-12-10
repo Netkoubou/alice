@@ -665,20 +665,20 @@ var EditUser = React.createClass({
         var title   = this.makeTableFrameTitle();
         var data    = this.composeTableFrameData();
         var buttons = [
-            <Button key="0" bsSize="small" onClick={this.props.goBack}>
+            <Button key="0" onClick={this.props.goBack}>
               戻る
             </Button>
         ];
 
         if (this.props.target == null) {
             buttons.push(
-                <Button key="1" bsSize="small" onClick={this.onRegisterUser}>
+                <Button key="1" onClick={this.onRegisterUser}>
                   追加
                 </Button>
             );
         } else {
             buttons.push(
-                <Button key="1" bsSize="small" onClick={this.onUpdateUser}>
+                <Button key="1" onClick={this.onUpdateUser}>
                   更新
                 </Button>
             );

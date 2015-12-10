@@ -5,6 +5,9 @@ var Header = React.createClass({
     propTypes: { user: React.PropTypes.object.isRequired },
 
     render: function() {
+        var subsysname = 'Supply Processing & Distribution';
+
+        /*
         var selector = Math.random();
         var subsysname;
 
@@ -21,8 +24,9 @@ var Header = React.createClass({
             // たった四杯で夜も寝られず
             subsysname = 'Just four disturbs our sleep.';
         } else {
-            subsysname = 'Supply Processing Distribution';
+            subsysname = 'Supply Processing & Distribution';
         }
+        */
 
         return (
           <div id="header">

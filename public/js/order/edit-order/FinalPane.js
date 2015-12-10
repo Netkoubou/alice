@@ -110,14 +110,13 @@ var ButtonForNextAction = React.createClass({
              * 且つ発注確定一覧 （finalists) を空、という状態である。
              */
              return (
-                <Button bsSize="small" onClick={this.eraseOrder}>
+                <Button onClick={this.eraseOrder}>
                   消去
                 </Button>
              );
         } else if (this.props.needSave) {
             return (
-                <Button bsSize="small"
-                        onClick={this.props.onFix}
+                <Button onClick={this.props.onFix}
                         disabled={this.props.trader.code === ''}>
                   確定
                 </Button>
@@ -125,7 +124,7 @@ var ButtonForNextAction = React.createClass({
         }
 
         return (
-            <Button bsSize="small" onClick={this.props.onPrint}>
+            <Button onClick={this.props.onPrint}>
               提出 
             </Button>
         );
@@ -538,7 +537,7 @@ var FinalPane = React.createClass({
 
         if (this.props.goBack != undefined) {
             go_back_button = (
-                <Button bsSize="small" onClick={this.props.goBack}>
+                <Button onClick={this.props.goBack}>
                   戻る
                 </Button>
             );
@@ -558,7 +557,7 @@ var FinalPane = React.createClass({
               </div>
               <div id="final-pane-buttons">
                 {go_back_button}
-                <Button bsSize="small" onClick={this.onClear}>
+                <Button onClick={this.onClear}>
                   クリア
                 </Button>
                 <ButtonForNextAction onFix={this.onFix}
