@@ -87,7 +87,7 @@ var ListCosts = React.createClass({
     },
 
     onSearch: function() {
-        XHR.post('lookupCosts').send({
+        XHR.post('/lookupCosts').send({
             start_date: this.state.start_date.format('YYYY/MM/DD'),
             end_date:   this.state.end_date.format('YYYY/MM/DD'),
             state: {

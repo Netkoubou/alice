@@ -1,12 +1,12 @@
 'use strict';
-var React      = require('react');
-var ReactDOM   = require('react-dom');
-var Input      = require('react-bootstrap').Input;
-var Button     = require('react-bootstrap').Button;
-var XHR        = require('superagent');
-var Messages   = require('../lib/Messages');
-var Util       = require('../lib/Util');
-var TableFrame = require('../components/TableFrame');
+var React          = require('react');
+var ReactDOM       = require('react-dom');
+var Input          = require('react-bootstrap').Input;
+var Button         = require('react-bootstrap').Button;
+var XHR            = require('superagent');
+var Messages       = require('../lib/Messages');
+var Util           = require('../lib/Util');
+var TableFrame     = require('../components/TableFrame');
 
 var SelectDepartment = React.createClass({
     propTypes: {
@@ -39,7 +39,6 @@ var SelectDepartment = React.createClass({
 
 var EditUser = React.createClass({
     propTypes: {
-        isMyself: React.PropTypes.bool,
         target:   React.PropTypes.shape({
             account:    React.PropTypes.string.isRequired,
             name:       React.PropTypes.string.isRequired,
@@ -202,6 +201,18 @@ var EditUser = React.createClass({
 
         var route = (action === 'REGISTER')? '/registerUser': '/updateUser';
 
+
+        /*
+         * DBMS が MySQL のためだけのコード、本来は不要。
+         */
+        if (action === 'UPDATE') {
+            this.state.post.id = this.props.target.id;
+        }
+        /*
+         * ここまで。
+         */
+
+
         XHR.post(route).send(this.state.post).end(function(err, res) {
             if (err) {
                 if (action === 'REGISTER') {
@@ -229,28 +240,13 @@ var EditUser = React.createClass({
                 return;
             }
 
-            if (this.props.isMyself) {
-                alert('更新しました。できれば一度ログアウトして下さい。');
-            } else {
-                alert('完了しました。');
-            }
-
+            alert('完了しました。');
             this.props.goBack();
         }.bind(this) );
     },
 
     onRegisterUser: function() { this.registerOrUpdateUser('REGISTER'); },
-
-    onUpdateUser: function() {
-        if (this.props.isMyself) {
-            var msg = 'ご自分のユーザ情報を更新しようとしています。\n' +
-                      'よろしいですか?';
-            confirm(msg);
-            alert('更新後、できれば一旦ログアウトして下さい。');
-        }
-
-        this.registerOrUpdateUser('UPDATE');
-    },
+    onUpdateUser:   function() { this.registerOrUpdateUser('UPDATE');   },
 
     onChangeAccount: function() {
         this.state.post.account = this.refs.account.getValue();

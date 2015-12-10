@@ -30,6 +30,7 @@ module.exports = function(req, res) {
                     status: 0,
                     users:  users.map(function(u) {
                         return {
+                            id:          0, // 不要 (DBMS が MySQL の場合のみ)
                             account:     u.account,
                             name:        u.name,
                             email:       u.email,

@@ -36,6 +36,11 @@
   cursor: pointer;
 }
 
+.manage-users-popover {
+  color:  #888888;
+  cursor: pointer;
+}
+
 .manage-users-add-user:hover,
 .manage-users-remove-user:hover,
 .manage-users-account:hover {
