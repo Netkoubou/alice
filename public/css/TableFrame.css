@@ -4,7 +4,7 @@
 }
 
 .table-frame-title {
-  border-bottom:  4px #dddddd solid;
+  border-bottom:  4px #888888 solid;
   margin-bottom:  2px;
   padding-bottom: 4px;
   width:          calc(100% - 16px);
@@ -28,14 +28,14 @@
 .table-frame-body table { width: 100%; }
 
 .table-frame tbody tr {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #888888;
   margin-bottom: 10px;
 }
 
 .table-frame tbody td:first-child { padding-left: 0; }
 
 .table-frame tbody td {
-  border-right:  1px solid #cccccc;
+  border-right:  1px solid #888888;
   padding-left:  4px;
   padding-right: 4px;
 }
