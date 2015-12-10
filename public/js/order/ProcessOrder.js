@@ -306,7 +306,7 @@ var ProcessOrder = React.createClass({
                 if (p.cur_price <= 0.0 || p.cur_price != p.cur_price) {
                     alert('現在単価には 0 より大きな値を指定して下さい。');
                     var e = this.refs['cur_price' + i.toString()];
-                    ReactDOM.findDOMNode(e).focus();
+                    ReactDOM.findDOMNode(e).select();
                     return false;
                 }
 
@@ -315,7 +315,7 @@ var ProcessOrder = React.createClass({
                 if (ba == 0 || ba != ba) {  // ba != ba も同様
                     alert('請求額を指定して下さい。');
                     var e = this.refs['billing_amount' + i.toString()];
-                    ReactDOM.findDOMNode(e).focus();
+                    ReactDOM.findDOMNode(e).select();
                     return false;
                 }
             }

@@ -198,7 +198,7 @@ var FinalPane = React.createClass({
             if (q == 0 || q != q) {
                 alert('数量を指定して下さい。');
                 var e = this.refs['quantity' + i.toString()];
-                ReactDOM.findDOMNode(e).focus();
+                ReactDOM.findDOMNode(e).select();
                 return false;
             }
         }

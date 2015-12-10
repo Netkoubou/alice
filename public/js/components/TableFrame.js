@@ -11,7 +11,8 @@
  * 具体的な指定例は css/Order.css を参照。
  */
 'use strict';
-var React = require('react');
+var React    = require('react');
+var ReactDOM = require('react-dom');
 
 
 /*
@@ -265,7 +266,6 @@ TableFrame.Input = React.createClass({
     propTypes: {
         placeholder: React.PropTypes.string.isRequired,
         onChange:    React.PropTypes.func.isRequired,
-        ref:         React.PropTypes.string,
         maxLength:   React.PropTypes.number,
         type:        React.PropTypes.oneOf([
             'string',
@@ -274,7 +274,12 @@ TableFrame.Input = React.createClass({
         ]).isRequired
     },
 
-    getInitialState: function() { return { value: this.props.placeholder }; },
+    getInitialState: function() {
+        return {
+            ref_name: Math.random(),
+            value:    this.props.placeholder
+        };
+    },
 
     onChange: function(e) {
         var value;
@@ -330,6 +335,10 @@ TableFrame.Input = React.createClass({
         this.props.onChange(value);
     },
 
+    onClick: function() {
+        ReactDOM.findDOMNode(this.refs[this.state.ref_name]).select();
+    },
+
     render: function() {
         var class_name;
 
@@ -340,12 +349,13 @@ TableFrame.Input = React.createClass({
         }
 
         return (
-            <input ref={this.props.ref}
+            <input ref={this.state.ref_name}
                    value={this.state.value}
                    className={class_name}
-                   onBlur={this.onBlur}
                    maxLength={this.props.maxLength}
-                   onChange={this.onChange} />
+                   onChange={this.onChange}
+                   onClick={this.onClick}
+                   onBlur={this.onBlur} />
         );
     }
 });

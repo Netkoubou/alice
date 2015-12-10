@@ -122,21 +122,14 @@ var ApplyCost = React.createClass({
             if (row.quantity <= 0) {
                 alert('数量には 0 より大きな値を指定して下さい。');
                 e = this.refs["quantity" + i.toString()];
-                ReactDOM.findDOMNode(e).focus();
+                ReactDOM.findDOMNode(e).select();
                 return;
             }
 
             if (row.price <= 0) {
                 alert('単価には 0 より大きな値を指定して下さい。');
                 e = this.refs["price" + i.toString()];
-                ReactDOM.findDOMNode(e).focus();
-                return;
-            }
-
-            if (row.note === '') {
-                alert('摘要 / 備考を入力して下さい。');
-                e = this.refs["article" + i.toString()];
-                ReactDOM.findDOMNode(e).focus();
+                ReactDOM.findDOMNode(e).select();
                 return;
             }
         }
