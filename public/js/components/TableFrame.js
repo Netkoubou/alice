@@ -316,7 +316,7 @@ TableFrame.Input = React.createClass({
                 value = '0';
             }
 
-            value = parseInt(value);
+            value = parseInt(value.replace(/,/g, '') );
             this.setState({ value: value.toLocaleString() });
             break;
         case 'real':
@@ -324,7 +324,7 @@ TableFrame.Input = React.createClass({
                 value = '0.00';
             }
 
-            value = parseFloat(value);
+            value = parseFloat(value.replace(/,/g, '') );
             this.setState({ value: value.toLocaleString('ja-JP', {
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2
