@@ -43,6 +43,7 @@ module.exports = function(req, res) {
 
             last_modified_date: today,
             last_modifier_code: req.session.user._id,
+            completed_date:     '',
             is_alive:           true
         };
 

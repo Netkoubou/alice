@@ -3,6 +3,7 @@ var React      = require('react');
 var ReactDOM   = require('react-dom');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
+var DatePicker = require('react-datepicker');
 var XHR        = require('superagent');
 var moment     = require('moment');
 var TableFrame = require('../components/TableFrame');
@@ -157,6 +158,13 @@ var Buttons = React.createClass({
         case 'BACK_TO_APPROVED':
             buttons.push(
                 <Button key="7"
+                        onClick={this.props.onFix}
+                        disabled={!this.props.need_save}>
+                  完了日変更
+                </Button>
+            );
+            buttons.push(
+                <Button key="8"
                         onClick={this.props.onRevertToApproved}>
                   承認済みへ戻す
                 </Button>
@@ -195,9 +203,10 @@ var ProcessOrder = React.createClass({
         });
 
         return {
-            order_remark: this.props.order.order_remark,
-            products:     products,
-            need_save:    false
+            order_remark:   this.props.order.order_remark,
+            completed_date: this.props.order.completed_date,
+            products:       products,
+            need_save:      false
         };
     },
 
@@ -318,7 +327,7 @@ var ProcessOrder = React.createClass({
         return true;
     },
 
-    makePostDataOfOrder: function() {
+    decideOrderState: function() {
         var order_state     = this.props.order.order_state;
         var num_of_products = this.state.products.length;
 
@@ -336,10 +345,14 @@ var ProcessOrder = React.createClass({
             order_state = 'COMPLETED';
         }
 
+        return order_state;
+    },
+
+    makePostDataOfOrder: function() {
         return {
             order_id:        this.props.order.order_id, // 不要
             order_code:      this.props.order.order_code,
-            order_state:     order_state,
+            order_state:     this.decideOrderState(),
             order_remark:    this.state.order_remark,
             order_version:   this.props.order.order_version,
             department_code: this.props.order.department_code,
@@ -353,7 +366,9 @@ var ProcessOrder = React.createClass({
                     state:          p.state,
                     billing_amount: p.billing_amount
                 };
-            })
+            }),
+
+            completed_date: this.state.completed_date
         };
     },
 
@@ -407,7 +422,7 @@ var ProcessOrder = React.createClass({
         }.bind(this);
     },
 
-    onChangeState: function(index) {
+    onChangeProductState: function(index) {
         return function(e) {
             if (e.target.value != 'DELIVERED') {
                 var original = this.props.order.products[index];
@@ -418,9 +433,20 @@ var ProcessOrder = React.createClass({
             }
 
             this.state.products[index].state = e.target.value;
+
+            var completed_date = this.state.completed_date;
+            var order_state    = this.decideOrderState();
+
+            if (order_state === 'COMPLETED' && completed_date === '') {
+                completed_date = moment().format('YYYY/MM/DD');
+            } else if (order_state != 'COMPLETED' && completed_date != '') {
+                completed_date = '';
+            }
+
             this.setState({
-                products:  this.state.products,
-                need_save: true
+                products:       this.state.products,
+                completed_date: completed_date,
+                need_save:      true
             });
         }.bind(this);
     },
@@ -520,8 +546,9 @@ var ProcessOrder = React.createClass({
 
         if (permission === 'PROCESS') {
             state_view = (
-                <SelectProductState initialSelected={product.state}
-                                    onSelect={this.onChangeState(index)} />
+                <SelectProductState
+                  initialSelected={product.state}
+                  onSelect={this.onChangeProductState(index)} />
             );
 
             // if (this.props.order.products[index].state === 'ORDERED') {
@@ -593,6 +620,13 @@ var ProcessOrder = React.createClass({
         return legend;
     },
 
+    onChangeCompletedDate: function(date) {
+        this.setState({
+            completed_date: date.format('YYYY/MM/DD'),
+            need_save:      true
+        });
+    },
+
     render: function() {
         var permission  = this.decidePermission();
         var table_title = this.makeTableFrameTitle();
@@ -611,6 +645,32 @@ var ProcessOrder = React.createClass({
 
             return this.composeTableFrameDataRow(permission, product, index);
         }.bind(this) );
+
+        var weekdays       = [ '日', '月', '火', '水', '木', '金', '土' ];
+        var completed_date = this.state.completed_date;
+
+        if (this.decideOrderState() === 'COMPLETED') {
+            var selected_date  = moment();
+
+            if (completed_date != '') {
+                selected_date = moment(completed_date, 'YYYY/MM/DD');
+            }
+
+            completed_date = (
+                <div id="process-order-completed-date-picker">
+                  <div id="process-order-completed-date-picker-inner">
+                    <DatePicker dateFormat="YYYY/MM/DD"
+                                dateFormatCalendar="YYYY/MM/DD"
+                                selected={selected_date}
+                                weekdays={weekdays}
+                                weekStart='0'
+                                onChange={this.onChangeCompletedDate} />
+                  </div>
+                </div>
+            );
+        } else if (completed_date === '') {
+            completed_date = '未完了です';
+        }
 
         return (
             <div id="process-order">
@@ -631,6 +691,9 @@ var ProcessOrder = React.createClass({
                           data={table_data} />
               <OrderTotals order_total={order_total}
                            billing_total={billing_total} />
+              <Notice id="process-order-completed-date" title="完了日">
+                {completed_date}
+              </Notice>
               <Buttons key={Math.random()}
                        permission={permission}
                        goBack={this.props.goBack}

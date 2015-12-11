@@ -285,7 +285,8 @@ function construct_response(orders, db, res) {
 
             last_modified_date:    order.last_modified_date,
             last_modifier_code:    order.last_modifier_code,
-            last_modifier_account: ''   // これから埋める
+            last_modifier_account: '',  // これから埋める
+            completed_date:        order.completed_date
         };
             
         lookup('drafter_account', order, index);
