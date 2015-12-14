@@ -169,7 +169,8 @@ module.exports = function(req, res) {
                     trader_code:   req.body.trader_code,
                     products:      products,
                     last_modified_date: now,
-                    last_modifier_code: req.session.user._id
+                    last_modifier_code: req.session.user._id,
+                    completed_date:     req.body.completed_date
                 }
             },
             callback_findOneAndUpdate(req, res, db, prices)

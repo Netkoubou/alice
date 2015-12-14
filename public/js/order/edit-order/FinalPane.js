@@ -301,7 +301,9 @@ var FinalPane = React.createClass({
                     state:          p.state,
                     billing_amount: p.billing_amount
                 };
-            })
+            }),
+
+            completed_date: ''
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.FINAL_PANE_UPDATE_ORDER);
