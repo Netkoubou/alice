@@ -93,17 +93,29 @@ var Page = React.createClass({
     render: function() {
         if (this.state.user === null) {
             return (
-                <fieldset id="login">
-                  <Input type="text" 
-                         ref="account"
-                         maxLength="32"
-                         placeholder="アカウント" />
-                  <Input type="password"
-                         ref="passphrase"
-                         maxLength="32"
-                         placeholder="パスワード" />
-                  <Button onClick={this.login}>ログイン</Button>
-                </fieldset>
+                <div>
+                  <div id="header">
+                    <img id="header-logo" src="img/logo.png" />
+                    <div id="header-systitle">
+                      <div id="header-sysname">次世代物品調達システム</div>
+                      <span id="header-subsysname">
+                        Supply Processing & Distribution
+                      </span>
+                    </div>
+                    <div id="header-petname">Perry</div>
+                  </div>
+                  <fieldset id="login">
+                    <Input type="text" 
+                           ref="account"
+                           maxLength="32"
+                           placeholder="アカウント" />
+                    <Input type="password"
+                           ref="passphrase"
+                           maxLength="32"
+                           placeholder="パスワード" />
+                    <Button onClick={this.login}>ログイン</Button>
+                  </fieldset>
+                </div>
             );
         }
 
