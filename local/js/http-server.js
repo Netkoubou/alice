@@ -29,6 +29,7 @@ var listUsers             = require('./listUsers');
 var registerUser          = require('./registerUser');
 var updateUser            = require('./updateUser');
 var eraseUser             = require('./eraseUser');
+var searchProducts        = require('./searchProducts');
 
 var $ = express();
 
@@ -131,3 +132,4 @@ $.post('/listUsers',             listUsers);
 $.post('/registerUser',          registerUser);
 $.post('/updateUser',            updateUser);
 $.post('/eraseUser',             eraseUser);
+$.post('/searchProducts',        searchProducts);
