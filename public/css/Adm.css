@@ -175,3 +175,54 @@
 #manage-products-products col:nth-child(7) { width: 16px; }
 #manage-products-products td:nth-child(1) { text-align: center }
 #manage-products-products td:nth-child(7) { text-align: center }
+
+.manage-products-add-product {
+  color:  #1976d2;
+  cursor: pointer;
+}
+
+.manage-products-add-product:hover { text-decoration: underline; }
+
+#edit-products {
+  width:     100%;
+  height:    100%;
+  font-size: small;
+}
+
+#edit-products-name,
+#edit-products-maker,
+#edit-products-note {
+  margin: 8px 16px 16px 32px;
+  width:  calc(100% - 48px);
+}
+
+#edit-products-selects {
+  float:       left;
+  display:     flex;
+  margin-left: 32px;
+}
+
+.edit-products-select { padding-right: 8px; }
+
+#edit-products-prices {
+  float:         right;
+  display:       flex;
+  margin-right:  16px;
+  margin-bottom: 16px;
+}
+
+.edit-products-price { margin-left: 8px; }
+
+.edit-products-price-input {
+  width: 96px;
+  margin-right: 16px;
+}
+
+#edit-products-department-codes {
+  margin-top: 32px;
+  width:      calc(100% - 48px);
+}
+
+#edit-products-department-codes col:nth-child(1) { width: 24px; }
+#edit-products-department-codes col:nth-child(2) { width: calc(100% - 24px); }
+#edit-products-department-codes td:nth-child(1) { text-align: center }

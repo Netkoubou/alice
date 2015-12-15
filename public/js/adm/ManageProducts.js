@@ -5,6 +5,7 @@ var Button         = require('react-bootstrap').Button;
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Popover        = require('react-bootstrap').Popover;
 var XHR            = require('superagent');
+var EditProduct    = require('./EditProduct');
 var Select         = require('../components/Select');
 var TableFrame     = require('../components/TableFrame');
 var Messages       = require('../lib/Messages');
@@ -13,6 +14,7 @@ var Util           = require('../lib/Util');
 var ManageProducts = React.createClass({
     getInitialState: function() {
         return {
+            next_ope:        null,
             department_code: '',
             category_code:   '',
             trader_code:     '',
@@ -82,22 +84,38 @@ var ManageProducts = React.createClass({
             }
 
             this.setState({ products: res.body.products });
-        });
+        }.bind(this) );
     },
 
-    lookupDepartmentName: function(code) {
-        return Util.lookupName(code, this.state.departments);
-    },
-
-    loookupCategoryName: function(code) {
+    lookupCategoryName: function(code) {
         return Util.lookupName(code, this.state.categories);
     },
 
-    loookupTraderName: function(code) {
+    lookupTraderName: function(code) {
         return Util.lookupName(code, this.state.traders);
     },
 
+    backToHere: function() {
+        this.onSearch();
+        this.setState({ next_ope: null });
+    },
+
+    onAddProduct: function() {
+        var next_ope = (
+            <EditProduct departments={this.state.departments}
+                         categories={this.state.categories}
+                         traders={this.state.traders}
+                         goBack={this.backToHere} />
+        );
+
+        this.setState({ next_ope: next_ope });
+    },
+
     render: function() {
+        if (this.state.next_ope != null) {
+            return this.state.next_ope;
+        }
+
         var title = [
             { name: '+/-',           type: 'void'   },
             { name: '品名',          type: 'string' },
@@ -108,8 +126,8 @@ var ManageProducts = React.createClass({
             { name: '!',             type: 'void'   }
         ];
 
-        var data = this.state.products.map(function(p) {
-            var category_name = this.lookupCategoyName(p.category_code);
+        var data = this.state.products.map(function(p, i) {
+            var category_name = this.lookupCategoryName(p.category_code);
             var trader_name   = this.lookupTraderName(p.trader_code);
 
             return [
@@ -121,10 +139,16 @@ var ManageProducts = React.createClass({
                 { value: p.cur_price,   view: p.cur_price },
                 { value: '',            view: '!' }
             ];
-        });
+        }.bind(this) );
 
         data.push([
-            { value: '', view: '+' },
+            {
+                value: '',
+                view:  <div className="manage-products-add-product"
+                            onClick={this.onAddProduct}>
+                         +
+                       </div>
+            },
             { value: '', view: ''  },
             { value: '', view: ''  },
             { value: '', view: ''  },

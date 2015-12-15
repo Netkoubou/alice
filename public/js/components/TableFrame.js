@@ -312,7 +312,7 @@ TableFrame.Input = React.createClass({
 
         switch (this.props.type) {
         case 'int':
-            if (value === '') {
+            if (value === '' || value === '-') {
                 value = '0';
             }
 
@@ -320,7 +320,7 @@ TableFrame.Input = React.createClass({
             this.setState({ value: value.toLocaleString() });
             break;
         case 'real':
-            if (value === '') {
+            if (value === '' || value === '-') {
                 value = '0.00';
             }
 
