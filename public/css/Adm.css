@@ -190,6 +190,7 @@
   width:     100%;
   height:    100%;
   font-size: small;
+  position:  relative;
 }
 
 #edit-products-name,
@@ -214,18 +215,27 @@
   margin-bottom: 16px;
 }
 
-.edit-products-price { margin-left: 8px; }
+.edit-products-price { margin-left:  8px; }
 
 .edit-products-price-input {
-  width: 96px;
+  width:        96px;
   margin-right: 16px;
 }
 
 #edit-products-department-codes {
   margin-top: 32px;
   width:      calc(100% - 48px);
+  height:     calc(100% - 320px);
 }
 
 #edit-products-department-codes col:nth-child(1) { width: 24px; }
 #edit-products-department-codes col:nth-child(2) { width: calc(100% - 24px); }
 #edit-products-department-codes td:nth-child(1) { text-align: center }
+
+#edit-products-buttons {
+  position: absolute;
+  right:    16px;
+  bottom:    4px;
+}
+
+.edit-products-button { margin-left: 4px; }
