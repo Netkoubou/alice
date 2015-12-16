@@ -122,7 +122,8 @@
   cursor: pointer;
 }
 
-.edit-user-add-department:hover, .edit-user-remove-department:hover {
+.edit-user-add-department:hover,
+.edit-user-remove-department:hover {
   text-decoration: underline;
 }
 
@@ -131,6 +132,8 @@
   right:    16px;
   bottom:    8px;
 }
+
+.edit-user-button { margin-left: 4px; }
 
 #manage-products {
   position:  relative;

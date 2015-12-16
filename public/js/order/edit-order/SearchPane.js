@@ -438,10 +438,14 @@ var SearchPane = React.createClass({
                          onChange={this.onChangeSearchText} />
                 </div>
                 <Button onClick={this.onSearch}
+                        bsStyle="primary"
+                        bsSize="large"
                         className="search-pane-button">
                   検索
                 </Button>
                 <Button onClick={this.onClear}
+                        bsStyle="primary"
+                        bsSize="large"
                         className="search-pane-button">
                   クリア
                 </Button>

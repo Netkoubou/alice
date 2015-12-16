@@ -343,9 +343,9 @@ TableFrame.Input = React.createClass({
         var class_name;
 
         if (this.props.type === 'int' || this.props.type === 'real') {
-            class_name = 'number';
+            class_name = 'table-frame-input table-frame-input-number';
         } else {
-            class_name = 'string';
+            class_name = 'table-frame-input table-frame-input-string';
         }
 
         return (

@@ -110,13 +110,19 @@ var ButtonForNextAction = React.createClass({
              * 且つ発注確定一覧 （finalists) を空、という状態である。
              */
              return (
-                <Button onClick={this.eraseOrder}>
+                <Button bsSize="large"
+                        bsStyle="primary"
+                        className="final-pane-button"
+                        onClick={this.eraseOrder}>
                   消去
                 </Button>
              );
         } else if (this.props.needSave) {
             return (
                 <Button onClick={this.props.onFix}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="final-pane-button"
                         disabled={this.props.trader.code === ''}>
                   確定
                 </Button>
@@ -124,7 +130,10 @@ var ButtonForNextAction = React.createClass({
         }
 
         return (
-            <Button onClick={this.props.onPrint}>
+            <Button bsSize="large"
+                    bsStyle="primary"
+                    className="final-pane-button"
+                    onClick={this.props.onPrint}>
               提出 
             </Button>
         );
@@ -539,7 +548,10 @@ var FinalPane = React.createClass({
 
         if (this.props.goBack != undefined) {
             go_back_button = (
-                <Button onClick={this.props.goBack}>
+                <Button bsSize="large"
+                        bsStyle="primary"
+                        className="final-pane-button"
+                        onClick={this.props.goBack}>
                   戻る
                 </Button>
             );
@@ -559,7 +571,10 @@ var FinalPane = React.createClass({
               </div>
               <div id="final-pane-buttons">
                 {go_back_button}
-                <Button onClick={this.onClear}>
+                <Button bsSize="large"
+                        bsStyle="primary"
+                        className="final-pane-button"
+                        onClick={this.onClear}>
                   クリア
                 </Button>
                 <ButtonForNextAction onFix={this.onFix}

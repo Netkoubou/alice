@@ -231,7 +231,11 @@ var ListCosts = React.createClass({
                          ref="rejected" />
                 </div>
                 <div id="list-costs-buttons">
-                  <Button onClick={this.onSearch}>検索</Button>
+                  <Button onClick={this.onSearch}
+                          bsSize="large"
+                          bsStyle="primary">
+                    検索
+                  </Button>
                 </div>
               </fieldset>
               <fieldset id="list-costs-table-frame">

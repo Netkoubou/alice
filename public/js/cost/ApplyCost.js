@@ -319,8 +319,18 @@ var ApplyCost = React.createClass({
                 <Notice title="合計">{total.toLocaleString()}</Notice>
               </div>
               <div id="apply-cost-buttons">
-                <Button onClick={this.onClear}>クリア</Button>
-                <Button onClick={this.onRegister}>登録</Button>
+                <Button onClick={this.onClear}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="apply-cost-button">
+                  クリア
+                </Button>
+                <Button onClick={this.onRegister}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="apply-cost-button">
+                  登録
+                </Button>
               </div>
             </div>
         );

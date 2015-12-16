@@ -172,14 +172,14 @@ var ManageProducts = React.createClass({
                           placeholder="品目"
                           value={this.state.category_code}
                           onSelect={this.onSelectCategory}
-                          options={this.state.departments} />
+                          options={this.state.categories} />
                 </div>
                 <div className="manage-products-select">
                   <Select key="販売元"
                           placeholder="発注先 販売元"
                           value={this.state.trader_code}
                           onSelect={this.onSelectTrader}
-                          options={this.state.departments} />
+                          options={this.state.traders} />
                 </div>
                 <div id="manage-products-input">
                   <Input type="text"
@@ -189,7 +189,11 @@ var ManageProducts = React.createClass({
                          onChange={this.onChangeSearchText} />
                 </div>
                 <div id="manage-products-buttons">
-                  <Button onClick={this.onSearch}>検索</Button>
+                  <Button bsSize="large"
+                          bsStyle="primary"
+                          onClick={this.onSearch}>
+                    検索
+                  </Button>
                 </div>
               </fieldset>
               <TableFrame id="manage-products-products"

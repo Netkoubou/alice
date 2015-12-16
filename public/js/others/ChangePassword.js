@@ -134,7 +134,11 @@ var ChangePassword = React.createClass({
                      value={this.state.reconfirmation}
                      onChange={this.onChangeReconfirmation}
                      placeholder="新パスワード (確認用)" />
-              <Button onClick={this.onChangePassword}>変更</Button>
+              <Button bsSize="large"
+                      bsStyle="primary"
+                      onClick={this.onChangePassword}>
+                変更
+              </Button>
             </fieldset>
         );
     }

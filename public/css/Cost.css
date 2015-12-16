@@ -68,6 +68,8 @@
   bottom:   4px;
 }
 
+.apply-cost-button { margin-left: 4px; }
+
 #list-costs {
   width:      calc(100% - 8px);
   height:     100%;
@@ -163,7 +165,7 @@
 #process-cost-breakdowns {
   margin-left: 48px;
   height:      calc(100% - 240px);
-  width:       calc(100% - 48px);
+  width:       calc(100% -  48px);
 }
 
 #process-cost-breakdowns col:nth-child(1) { width: 96px; }
@@ -189,3 +191,5 @@
   bottom:   4px;
   right:    0;
 }
+
+.process-cost-button { margin-left: 4px; }

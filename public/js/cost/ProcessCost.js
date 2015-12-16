@@ -150,10 +150,18 @@ var ProcessCost = React.createClass({
         if (permission === 'APPROVE') {
             legend  = '承認';
             buttons = [
-                <Button key="1" onClick={this.onApprove}>
+                <Button key="1"
+                        bsStyle="primary"
+                        bsSize="large"
+                        className="process-cost-button"
+                        onClick={this.onApprove}>
                   承認
                 </Button>,
-                <Button key="2" onClick={this.onReject}>
+                <Button key="2"
+                        bsStyle="primary"
+                        bsSize="large"
+                        className="process-cost-button"
+                        onClick={this.onReject}>
                   却下
                 </Button>
             ]
@@ -186,7 +194,10 @@ var ProcessCost = React.createClass({
                 {total.toLocaleString()}
               </Notice>
               <div id="process-cost-buttons">
-                <Button onClick={this.props.goBack}>
+                <Button bsStyle="primary"
+                        bsSize="large"
+                        className="process-cost-button"
+                        onClick={this.props.goBack}>
                   戻る
                 </Button>
                 {buttons}

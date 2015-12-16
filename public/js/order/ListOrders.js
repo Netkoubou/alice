@@ -330,7 +330,11 @@ var ListOrders = React.createClass({
                        ref="completed" />
               </div>
               <div id="list-orders-buttons">
-                <Button onClick={this.onSearch}>検索</Button>
+                <Button bsSize="large"
+                        bsStyle="primary"
+                        onClick={this.onSearch}>
+                  検索
+                </Button>
               </div>
             </fieldset>
         );

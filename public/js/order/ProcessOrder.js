@@ -56,12 +56,11 @@ var OrderNotices = React.createClass({
             <Notice className="process-order-notice" title="発注区分">
               {Util.toOrderTypeName(this.props.order.order_type)}
             </Notice>
-            <Notice className="process-order-notice"
-                    title="発注元 部門診療科">
-              {this.props.order.department_name}
-            </Notice>
-            <Notice id="process-order-trader" title="発注先 販売元">
+            <Notice className="process-order-notice" title="発注先 販売元">
              {this.props.order.trader_name}
+            </Notice>
+            <Notice id="process-order-department" title="発注元 部門診療科">
+              {this.props.order.department_name}
             </Notice>
           </div>
         );
@@ -111,7 +110,11 @@ var Buttons = React.createClass({
 
     render: function() {
         var buttons = [
-            <Button key="0" onClick={this.props.goBack}>
+            <Button key="0"
+                    bsSize="large"
+                    bsStyle="primary"
+                    className="process-order-button"
+                    onClick={this.props.goBack}>
               戻る
             </Button>
         ];
@@ -119,36 +122,59 @@ var Buttons = React.createClass({
         switch (this.props.permission) {
         case 'APPROVE':
             buttons.push(
-                <Button key="1" onClick={this.props.onApprove}>
+                <Button key="1"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
+                        onClick={this.props.onApprove}>
                   承認
                 </Button>
             );
             buttons.push(
-                <Button key="2" onClick={this.props.onDeny}>
+                <Button key="2"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
+                        onClick={this.props.onDeny}>
                   否認 
                 </Button>
             );
             break;
         case 'BACK_TO_REQUESTING':
             buttons.push(
-                <Button key="3" onClick={this.props.onRevertToRequesting}>
+                <Button key="3"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
+                        onClick={this.props.onRevertToRequesting}>
                   依頼中に戻す
                 </Button>
             );
             break;
         case 'PROCESS':
             buttons.push(
-                <Button key="4" onClick={this.props.onRevertToRequesting}>
+                <Button key="4"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
+                        onClick={this.props.onRevertToRequesting}>
                   依頼中へ戻す
                 </Button>
             );
             buttons.push(
-                <Button key="5" onClick={this.props.onPrint}>
+                <Button key="5"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
+                        onClick={this.props.onPrint}>
                   印刷
                 </Button>
             );
             buttons.push(
                 <Button key="6"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
                         onClick={this.props.onFix}
                         disabled={!this.props.need_save}>
                   確定
@@ -158,6 +184,9 @@ var Buttons = React.createClass({
         case 'BACK_TO_APPROVED':
             buttons.push(
                 <Button key="7"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
                         onClick={this.props.onFix}
                         disabled={!this.props.need_save}>
                   完了日変更
@@ -165,6 +194,9 @@ var Buttons = React.createClass({
             );
             buttons.push(
                 <Button key="8"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
                         onClick={this.props.onRevertToApproved}>
                   承認済みへ戻す
                 </Button>

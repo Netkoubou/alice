@@ -113,7 +113,9 @@ var Page = React.createClass({
                            ref="passphrase"
                            maxLength="32"
                            placeholder="パスワード" />
-                    <Button onClick={this.login}>ログイン</Button>
+                    <Button bsStyle="primary"
+                            bsSize="large"
+                            onClick={this.login}>ログイン</Button>
                   </fieldset>
                 </div>
             );

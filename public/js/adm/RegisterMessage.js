@@ -32,7 +32,11 @@ var RegisterMessage = React.createClass({
                      ref="message"
                      maxLength="128"
                      placeholder="メッセージ" />
-              <Button onClick={this.registerMessage}>登録</Button>
+              <Button bsSize="large"
+                      bsStyle="primary"
+                      onClick={this.registerMessage}>
+                登録
+              </Button>
             </fieldset>
         );
     }

@@ -42,6 +42,7 @@
 
 .table-frame tbody td:last-child { border-right: 0px; }
 
+.table-frame-input,
 .table-frame input {
   color:  #2196f3;
   border: none;
@@ -50,8 +51,9 @@
   transition-duration: 250ms;
 }
 
-.table-frame input.number { text-align: right; }
+.table-frame-input-number { text-align: right; }
 
+.table-frame-input:focus,
 .table-frame input:focus {
   box-shadow: inset #2196f3 1px -1px 1px 1px, inset #2196f3 -1px 1px 1px 1px;
 }

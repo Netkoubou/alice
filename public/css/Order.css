@@ -20,10 +20,14 @@
 
 .search-pane-row    { margin:       8px 0 8px 32px; }
 .search-pane-menu   { margin-right: 8px; }
-.search-pane-button { float:        right; }
+
+.search-pane-button {
+  margin-left: 4px;
+  float:       right;
+}
 
 
-#candidate-pane     { height:       calc(100% - 348px); }
+#candidate-pane { height: calc(100% - 368px); }
 
 #candidate-pane-candidates {
   height: 100%;
@@ -115,7 +119,7 @@
 .final-pane-finalist-name:hover { text-decoration: underline; }
 
 #final-pane-total {
-  width:    192px; 
+  width:    128px; 
   margin:   8px 0 8px 32px;
   position: absolute;
   bottom:   4px;
@@ -126,6 +130,8 @@
   bottom:   14px;
   right:     0px;
 }
+
+.final-pane-button { margin-left: 4px; }
 
 #list-orders {
   width:       calc(100% - 8px);
@@ -228,7 +234,7 @@
   padding-right: 8px;
 }
 
-#process-order-trader { width: 25%; }
+#process-order-department { width: 25%; }
 
 #process-order-remark {
   margin: 0 8px 32px 32px;
@@ -266,14 +272,14 @@
 }
 
 .process-order-total {
-  width:      192px;
+  width:      128px;
   margin-right: 8px;
 }
 
 #process-order-completed-date {
   position: absolute;
   width:    128px;
-  left:     448px;
+  left:     320px;
   bottom:     4px;
 }
 
@@ -300,3 +306,5 @@
   bottom:   4px;
   right:    0;
 }
+
+.process-order-button { margin-left: 4px; }
