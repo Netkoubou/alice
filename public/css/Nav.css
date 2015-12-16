@@ -24,14 +24,14 @@
 
 .nav-item-title {
   padding:     6px 0 6px 12px;
-  font-size:   110%;
-  color:       #bbdefb;
+  color:       #ffffff;
+  font-size:   130%;
   font-family: sans-serif;
 }
 
 .nav-item {
   padding:     8px 0 8px 24px;
-  color:       #ffffff;
+  color:       #bbdefb;
   font-family: sans-serif;
   transition-property: background, color, font-size;
   transition-duration: 250ms;
