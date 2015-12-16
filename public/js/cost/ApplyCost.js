@@ -231,7 +231,6 @@ var ApplyCost = React.createClass({
             {
                 value: breakdown.article,
                 view:  <TableFrame.Input
-                         key={Math.random()}
                          type="string"
                          placeholder={breakdown.article}
                          ref={'article' + index.toString()}
@@ -240,7 +239,6 @@ var ApplyCost = React.createClass({
             {
                 value: breakdown.quantity,
                 view:  <TableFrame.Input
-                         key={Math.random()}
                          type="int"
                          placeholder={breakdown.quantity.toLocaleString()}
                          ref={'quantity' + index.toString()}
@@ -249,7 +247,6 @@ var ApplyCost = React.createClass({
             {
                 value: breakdown.price,
                 view:  <TableFrame.Input
-                         key={Math.random()}
                          type="int"
                          placeholder={breakdown.price.toLocaleString()}
                          ref={'price' + index.toString()}
@@ -262,7 +259,6 @@ var ApplyCost = React.createClass({
             {
                 value: breakdown.note,
                 view:  <TableFrame.Input
-                         key={Math.random()}
                          type="string"
                          placeholder={breakdown.note}
                          ref={'note' + index.toString()}
