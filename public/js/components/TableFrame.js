@@ -327,8 +327,8 @@ TableFrame.Input = React.createClass({
 
             value = parseFloat(value.replace(/,/g, '') );
             this.setState({ value: value.toLocaleString('ja-JP', {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
             })});
             break;
         }

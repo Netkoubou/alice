@@ -186,56 +186,55 @@
 
 .manage-products-add-product:hover { text-decoration: underline; }
 
-#edit-products {
+#edit-product {
   width:     100%;
   height:    100%;
   font-size: small;
-  position:  relative;
+  display:   flex;
 }
 
-#edit-products-name,
-#edit-products-maker,
-#edit-products-note {
+#edit-product-left {
+  width:   55%;
+  height: 100%;
+}
+
+#edit-product-right {
+  width:     45%;
+  height:   100%;
+  position: relative;
+}
+
+#edit-product-name,
+#edit-product-maker,
+#edit-product-note {
   margin: 8px 16px 16px 32px;
   width:  calc(100% - 48px);
 }
 
-#edit-products-selects {
-  float:       left;
-  display:     flex;
-  margin-left: 32px;
+.edit-product-select { margin: 0 0 16px 32px; }
+
+.edit-product-price  {
+  width:  128px;
+  margin: 0 0 16px 32px;
 }
 
-.edit-products-select { padding-right: 8px; }
-
-#edit-products-prices {
-  float:         right;
-  display:       flex;
-  margin-right:  16px;
-  margin-bottom: 16px;
-}
-
-.edit-products-price { margin-left:  8px; }
-
-.edit-products-price-input {
+.edit-product-price-input {
   width:        96px;
   margin-right: 16px;
 }
 
-#edit-products-department-codes {
-  margin-top: 32px;
-  width:      calc(100% - 48px);
-  height:     calc(100% - 320px);
+#edit-product-departments {
+  margin-top: 8px;
+  width:      calc(100% -  48px);
+  height:     calc(100% - 128px);
 }
 
-#edit-products-department-codes col:nth-child(1) { width: 24px; }
-#edit-products-department-codes col:nth-child(2) { width: calc(100% - 24px); }
-#edit-products-department-codes td:nth-child(1) { text-align: center }
+.edit-product-department-name { margin-left: 8px; }
 
-#edit-products-buttons {
+#edit-product-buttons {
   position: absolute;
   right:    16px;
   bottom:    4px;
 }
 
-.edit-products-button { margin-left: 4px; }
+.edit-product-button { margin-left: 4px; }
