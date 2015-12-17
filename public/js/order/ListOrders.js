@@ -156,6 +156,16 @@ var ListOrders = React.createClass({
         }.bind(this) )
     },
 
+    onClear: function() {
+        this.setState({
+            is_requesting: false,
+            is_approving:  false,
+            is_approved:   false,
+            is_nullified:  false,
+            is_completed:  false
+        });
+    },
+
     onChangeCheckbox: function() {
         this.setState({
             is_requesting: this.refs.requesting.getChecked(),
@@ -332,6 +342,13 @@ var ListOrders = React.createClass({
               <div id="list-orders-buttons">
                 <Button bsSize="large"
                         bsStyle="primary"
+                        className="list-orders-button"
+                        onClick={this.onClear}>
+                  クリア
+                </Button>
+                <Button bsSize="large"
+                        bsStyle="primary"
+                        className="list-orders-button"
                         onClick={this.onSearch}>
                   検索
                 </Button>

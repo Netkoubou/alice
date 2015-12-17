@@ -61,11 +61,23 @@ var ListCosts = React.createClass({
     propTypes: { user: React.PropTypes.object.isRequired },
 
     getInitialState: function() {
+        var can_approve = false;
+
+        if (this.props.user.privileged.approve) {
+            can_approve = true;
+        } else {
+            this.props.user.departments.forEach(function(d) {
+                if (d.approve) {
+                    can_approve = true;
+                }
+            });
+        }
+
         return {
             next_ope:     null,
             start_date:   moment(),
             end_date:     moment(),
-            is_approving: false,
+            is_approving: can_approve,
             is_approved:  false,
             is_rejected:  false,
             costs:        []
@@ -108,6 +120,14 @@ var ListCosts = React.createClass({
 
             this.setState({ costs: res.body.costs });
         }.bind(this) );
+    },
+
+    onClear: function() {
+        this.setState({
+            is_approving: false,
+            is_approved:  false,
+            is_rejected:  false
+        });
     },
 
     onChangeCheckbox: function() {
@@ -231,7 +251,14 @@ var ListCosts = React.createClass({
                          ref="rejected" />
                 </div>
                 <div id="list-costs-buttons">
+                  <Button onClick={this.onClear}
+                          className="list-costs-button"
+                          bsSize="large"
+                          bsStyle="primary">
+                    クリア 
+                  </Button>
                   <Button onClick={this.onSearch}
+                          className="list-costs-button"
                           bsSize="large"
                           bsStyle="primary">
                     検索

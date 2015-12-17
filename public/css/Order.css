@@ -158,7 +158,7 @@
   width: 80px;
 }
 
-#list-orders-buttons     {}
+.list-orders-button { margin-left: 4px; }
 #list-orders-table-frame { height: calc(100% - 128px); }
 
 #list-orders-orders {

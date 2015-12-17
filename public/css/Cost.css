@@ -95,7 +95,7 @@
   width: 80px;
 }
 
-#list-costs-buttons {}
+.list-costs-button { margin-left: 4px; }
 #list-costs-table-frame { height: calc(100% - 128px); }
 
 #list-costs-costs {
