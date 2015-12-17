@@ -267,6 +267,7 @@ TableFrame.Input = React.createClass({
         placeholder: React.PropTypes.string.isRequired,
         onChange:    React.PropTypes.func.isRequired,
         maxLength:   React.PropTypes.number,
+        disabled:    React.PropTypes.bool,
         type:        React.PropTypes.oneOf([
             'string',
             'int',
@@ -342,10 +343,16 @@ TableFrame.Input = React.createClass({
     render: function() {
         var class_name;
 
-        if (this.props.type === 'int' || this.props.type === 'real') {
-            class_name = 'table-frame-input table-frame-input-number';
+        if (this.props.disabled != null && this.props.disabled) {
+            class_name = 'table-frame-input-disabled ';
         } else {
-            class_name = 'table-frame-input table-frame-input-string';
+            class_name = 'table-frame-input ';
+        }
+
+        if (this.props.type === 'int' || this.props.type === 'real') {
+            class_name += 'table-frame-input-number';
+        } else {
+            class_name += 'table-frame-input-string';
         }
 
         return (
@@ -353,6 +360,7 @@ TableFrame.Input = React.createClass({
                    value={this.state.value}
                    className={class_name}
                    maxLength={this.props.maxLength}
+                   disabled={this.props.disabled}
                    onChange={this.onChange}
                    onClick={this.onClick}
                    onBlur={this.onBlur} />

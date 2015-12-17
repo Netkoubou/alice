@@ -220,7 +220,7 @@ var ApplyCost = React.createClass({
             {
                 value: breakdown.date,
                 view:  <DatePicker
-                         className="apply-cost-date"
+                         className="apply-cost-date table-frame-input"
                          dateFormat="YYYY/MM/DD"
                          dateFormatCalendar="YYYY/MM/DD"
                          selected={moment(breakdown.date, 'YYYY/MM/DD')}
