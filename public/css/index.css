@@ -31,7 +31,27 @@
   position: relative;
 }
 
-#login, #change-password, #register-message {
+#login-outer {
+  width:   100%;
+  height:  100%;
+  display: flex;
+  justify-content: center;
+}
+
+#login-inner {
+  width:  512px;
+  height: 320px;
+  border: thin solid #2196f3;
+  margin-top: 128px;
+}
+
+#login {
+  margin:      0 48px 0 48px;
+  padding-top: 32px;
+  text-align:  right;
+}
+
+#change-password, #register-message {
   margin:      0 384px 0 384px;
   padding-top: 128px;
   text-align:  right;
