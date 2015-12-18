@@ -114,6 +114,7 @@ var EditProduct = React.createClass({
                 name:             '',
                 category_code:    '',
                 maker:            '',
+                is_common_item:   false,
                 department_codes: [],
                 trader_code:      '',
                 min_price:        0.0,
@@ -130,11 +131,7 @@ var EditProduct = React.createClass({
              * props は変更不可なので、その値をシコシコとコピー
              */
             for (p in this.props.target) {
-                if (p ===' department_codes') {
-                    post[p] = this.props.target[p].map(function(d) {
-                        return d;
-                    });
-                } else {
+                if (p != 'department_codes') {
                     post[p] = this.props.target[p];
                 }
             }
@@ -227,10 +224,9 @@ var EditProduct = React.createClass({
             return;
         }
 
-        if (post.department_codes.length == 0) {
-            alert('発注元 部門診療科を 1 個以上指定して下さい。');
-            return;
-        }
+        post.department_codes = this.props.departments.filter(function(_, i) {
+            return this.state.is_checked[i];
+        }.bind(this) ).map(function(d) { return d.code; });
 
         XHR.post('/registerProduct').send(post).end(function(err, res) {
             if (err) {
@@ -245,19 +241,15 @@ var EditProduct = React.createClass({
 
             alert('登録しました');
             this.props.goBack();
-        });
+        }.bind(this) );
     },
 
-    onRemove: function(index) {
-        return function() {
-            var head = this.state.post.department_codes.slice(0, index);
-            var tail = this.state.post.department_codes.slice(index + 1);
-
-            this.setState({ post: head.concat(tail) });
-        }.bind(this);
+    onChangeIsCommonItem: function() {
+        this.state.post.is_common_item = !this.state.post.is_common_item;
+        this.setState({ post: this.state.post });
     },
 
-    onChangeCheckbox: function(index) {
+    onChangeIsChecked: function(index) {
         return function() {
             this.state.is_checked[index] = !this.state.is_checked[index];
             this.setState({ is_checked: this.state.is_checked });
@@ -265,25 +257,27 @@ var EditProduct = React.createClass({
     },
 
     onClear: function() {
-        for (var i = 0; i < this.state.is_checked.length; i++) {
-            this.state.is_checked[i] = false;
-        }
-
-        this.setState({ is_checked: this.state.is_checked });
+        this.state.post.is_common_item = false;
+        this.setState({
+            post:       this.state.post,  
+            is_checked: this.state.is_checked.map(function(_) {
+                return false;
+            })
+        });
     },
 
     render: function() {
         var title = [{ name: '発注元 部門診療科', type: 'string' }];
-
-        var data = this.props.departments.map(function(department, index) {
+        var data  = this.props.departments.map(function(department, index) {
             return [
                 {
                     value: department.name,
                     view: <div>
                             <span className="edit-product-department-name">
                               <input type="checkbox"
-                                     checked={this.state.is_checked[index]}
-                                     onChange={this.onChangeCheckbox(index)} />
+                                     disabled={this.state.post.is_common_item}
+                                     onChange={this.onChangeIsChecked(index)}
+                                     checked={this.state.is_checked[index]} />
                             </span>
                             <span className="edit-product-department-name">
                               {department.name}
@@ -292,6 +286,10 @@ var EditProduct = React.createClass({
                 },
             ];
         }.bind(this) );
+
+        var is_checked_any = this.state.is_checked.filter(function(x) {
+            return x;
+        }).length > 0;
 
         return (
             <div id="edit-product">
@@ -341,6 +339,12 @@ var EditProduct = React.createClass({
                 </div>
               </div>
               <div id="edit-product-right">
+                <input id="edit-product-is-common-item"
+                       type="checkbox"
+                       disabled={is_checked_any}
+                       checked={this.state.post.is_common_item}
+                       onChange={this.onChangeIsCommonItem} />
+                <strong>全部門診療科で購入可</strong>
                 <TableFrame id="edit-product-departments"
                             title={title} data={data} />
                 <div id="edit-product-buttons">
