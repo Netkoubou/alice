@@ -49,7 +49,6 @@ module.exports = function(req, res) {
                  * ことにして、前者のエラーが発生したことにしちゃう。
                  */
                 res.json({ status: 1 });
-
                 log_warn.warn(err);
 
                 msg = '[registerUser] ' + 
