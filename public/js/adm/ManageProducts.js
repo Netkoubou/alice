@@ -159,6 +159,27 @@ var ManageProducts = React.createClass({
         ];
     },
 
+    decideProductNote: function(product, index) {
+        if (product.note === '') {
+            return '';
+        }
+
+        var popover = (
+            <Popover id={'manage-products-popover' + index.toString()}
+                     title="備考">
+              {product.note}
+            </Popover>
+        );
+
+        return (
+            <OverlayTrigger container={this.refs.manageProducts}
+                            placement="left"
+                            overlay={popover}>
+              <span className="manage-products-note">!</span>
+            </OverlayTrigger>
+        );
+    },
+
     composeTableFrameData: function() {
         var data = this.state.products.map(function(p, i) {
             var category_name = this.lookupCategoryName(p.category_code);
@@ -177,7 +198,10 @@ var ManageProducts = React.createClass({
                 { value: p.maker,       view: p.maker },
                 { value: trader_name,   view: trader_name },
                 { value: p.cur_price,   view: p.cur_price },
-                { value: '',            view: '!' }
+                {
+                    value: '',
+                    view:  this.decideProductNote(p, i)
+                }
             ];
         }.bind(this) );
 
@@ -206,7 +230,7 @@ var ManageProducts = React.createClass({
         }
 
         return (
-            <div id="manage-products">
+            <div id="manage-products" ref="manageProducts">
               <fieldset id="manage-products-search">
                 <div className="manage-products-select">
                   <Select key="部門診療科"
