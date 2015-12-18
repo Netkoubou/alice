@@ -120,6 +120,20 @@ var ManageProducts = React.createClass({
         this.setState({ next_ope: next_ope });
     },
 
+    onSelectProduct: function(index) {
+        return function() {
+            var next_ope = (
+                <EditProduct target={this.state.products[index]}
+                             departments={this.state.departments}
+                             categories={this.state.categories}
+                             traders={this.state.traders}
+                             goBack={this.backToHere} />
+            );
+
+            this.setState({ next_ope: next_ope });
+        }.bind(this);
+    },
+
     onRemoveProduct: function(index) {
         return function() {
             var msg = '"' + this.state.products[index].name +
@@ -193,7 +207,13 @@ var ManageProducts = React.createClass({
                              -
                            </div>
                 },
-                { value: p.name,        view: p.name },
+                {
+                    value: p.name,
+                    view:  <div className="manage-products-product-name"
+                                onClick={this.onSelectProduct(i)}>
+                             {p.name}
+                           </div>
+                },
                 { value: category_name, view: category_name },
                 { value: p.maker,       view: p.maker },
                 { value: trader_name,   view: trader_name },

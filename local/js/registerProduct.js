@@ -34,7 +34,8 @@ module.exports = function(req, res) {
             if (err == null) {
                 res.json({ status: 0 });
 
-                msg = '[registerProduct] registered product by "' +
+                msg = '[registerProduct] registered product: "' +
+                      product.name + '" by "' +
                       req.session.user.account + '".';
 
                 log_info.info(msg);
@@ -42,7 +43,8 @@ module.exports = function(req, res) {
                 res.json({ status: 255 });
                 log_warn.warn(err);
 
-                msg = '[registerProduct] failed to register product by "' +
+                msg = '[registerProduct] failed to register product: "' +
+                      product.name + '" by "' +
                       req.session.user.account + '".';
 
                 log_warn.warn(msg);

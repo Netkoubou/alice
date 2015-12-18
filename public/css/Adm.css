@@ -182,6 +182,13 @@
 #manage-products-products td:nth-child(6) { text-align: right; }
 #manage-products-products td:nth-child(7) { text-align: center; }
 
+.manage-products-product-name {
+  color:       #1976d2;
+  cursor:      pointer;
+}
+
+.manage-products-product-name:hover { text-decoration: underline; }
+
 .manage-products-note { 
   font-weight: bold;
   color:       #1976d2;

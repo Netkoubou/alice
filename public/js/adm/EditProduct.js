@@ -71,15 +71,62 @@ var Prices = React.createClass({
     }
 });
 
+var Buttons = React.createClass({
+    propTypes: {
+        onClear:        React.PropTypes.func.isRequired,
+        goBack:         React.PropTypes.func.isRequired,
+        targetAction:   React.PropTypes.func.isRequired,
+        isRegistration: React.PropTypes.bool.isRequired
+    },
+
+    render: function() {
+        var target_action_name;
+        var target_action_func;
+
+        if (this.props.isRegistration) {
+            target_action_name = '登録';
+            target_action_func = this.props.targetAction('register');
+        } else {
+            target_action_name = '更新';
+            target_action_func = this.props.targetAction('update');
+        }
+
+        return (
+            <div id="edit-product-buttons">
+              <Button className="edit-product-button"
+                      bsSize="large"
+                      bsStyle="primary"
+                      onClick={this.props.onClear}>
+                クリア 
+              </Button>
+              <Button className="edit-product-button"
+                      bsSize="large"
+                      bsStyle="primary"
+                      onClick={this.props.goBack}>
+                戻る
+              </Button>
+              <Button className="edit-product-button"
+                      bsSize="large"
+                      bsStyle="primary"
+                      onClick={target_action_func}>
+                {target_action_name}
+              </Button>
+            </div>
+        );
+    }
+});
+
 var EditProduct = React.createClass({
     propTypes: {
         target: React.PropTypes.shape({
             code:          React.PropTypes.string.isRequired,
             name:          React.PropTypes.string.isRequired,
             category_code: React.PropTypes.string.isRequired,
+            
             department_codes: React.PropTypes.arrayOf(
                 React.PropTypes.string.isRequired
             ).isRequired,
+
             trader_code: React.PropTypes.string.isRequired,
             min_price:   React.PropTypes.number.isRequired,
             cur_price:   React.PropTypes.number.isRequired,
@@ -130,7 +177,7 @@ var EditProduct = React.createClass({
             /*
              * props は変更不可なので、その値をシコシコとコピー
              */
-            for (p in this.props.target) {
+            for (var p in this.props.target) {
                 if (p != 'department_codes') {
                     post[p] = this.props.target[p];
                 }
@@ -191,57 +238,70 @@ var EditProduct = React.createClass({
         }.bind(this);
     },
 
-    onRegister: function() {
-        var post = this.state.post;
-
-        if (post.name === '') {
-            alert('品名を入力して下さい。');
-            return;
-        }
-
-        if (post.maker === '') {
-            alert('製造元を入力して下さい。');
-            return;
-        }
-
-        if (post.category_code === '') {
-            alert('品目を選択して下さい。');
-            return;
-        }
-
-        if (post.trader_code === '') {
-            alert('販売元を選択して下さい。');
-            return;
-        }
-
-        if (post.min_price < 0.0) {
-            alert('最低価格には 0 以上を指定して下さい。');
-            return;
-        }
-
-        if (post.cur_price <= 0.0) {
-            alert('現在価格に 0 より大きな値を指定して下さい。');
-            return;
-        }
-
-        post.department_codes = this.props.departments.filter(function(_, i) {
-            return this.state.is_checked[i];
-        }.bind(this) ).map(function(d) { return d.code; });
-
-        XHR.post('/registerProduct').send(post).end(function(err, res) {
-            if (err) {
-                alert(Messages.ajax.EDIT_PRODUCT_REGISTER_PRODUCT);
-                throw 'ajax_registerProduct';
+    onRegisterOrUpdate: function(action) {
+        return function() {
+            var post = this.state.post;
+    
+            if (post.name === '') {
+                alert('品名を入力して下さい。');
+                return;
+            }
+    
+            if (post.maker === '') {
+                alert('製造元を入力して下さい。');
+                return;
+            }
+    
+            if (post.category_code === '') {
+                alert('品目を選択して下さい。');
+                return;
+            }
+    
+            if (post.trader_code === '') {
+                alert('販売元を選択して下さい。');
+                return;
+            }
+    
+            if (post.min_price < 0.0) {
+                alert('最低価格には 0 以上を指定して下さい。');
+                return;
+            }
+    
+            if (post.cur_price <= 0.0) {
+                alert('現在価格に 0 より大きな値を指定して下さい。');
+                return;
             }
 
-            if (res.body.status != 0) {
-                alert(Messages.server.EDIT_PRODUCT_REGISTER_PRODUCT);
-                throw 'server_registerProduct';
+            var departments = this.props.departments;
+    
+            post.department_codes = departments.filter(function(_, i) {
+                return this.state.is_checked[i];
+            }.bind(this) ).map(function(d) { return d.code; });
+
+            var err_msg_index;
+
+            if (action === 'register') {
+                err_msg_index = 'EDIT_PRODUCT_REGISTER_PRODUCT';
+            } else {
+                err_msg_index        = 'EDIT_PRODUCT_UPDATE_PRODUCT';
+                this.state.post.code = this.props.target.code;
             }
 
-            alert('登録しました');
-            this.props.goBack();
-        }.bind(this) );
+            XHR.post(action + 'Product').send(post).end(function(err, res) {
+                if (err) {
+                    alert(Messages.ajax[err_msg_index]);
+                    throw 'ajax_' + action + 'Product';
+                }
+    
+                if (res.body.status != 0) {
+                    alert(Messages.server[err_msg_index]);
+                    throw 'server_' + action + 'Product';
+                }
+    
+                alert('完了しました');
+                this.props.goBack();
+            }.bind(this) );
+        }.bind(this);
     },
 
     onChangeIsCommonItem: function() {
@@ -266,9 +326,8 @@ var EditProduct = React.createClass({
         });
     },
 
-    render: function() {
-        var title = [{ name: '発注元 部門診療科', type: 'string' }];
-        var data  = this.props.departments.map(function(department, index) {
+    composeTableFrameData: function() {
+        return this.props.departments.map(function(department, index) {
             return [
                 {
                     value: department.name,
@@ -286,10 +345,17 @@ var EditProduct = React.createClass({
                 },
             ];
         }.bind(this) );
+    },
 
-        var is_checked_any = this.state.is_checked.filter(function(x) {
+    isAnyChecked: function() {
+        return this.state.is_checked.filter(function(x) {
             return x;
         }).length > 0;
+    },
+
+    render: function() {
+        var title = [{ name: '発注元 部門診療科', type: 'string' }];
+        var data  = this.composeTableFrameData();
 
         return (
             <div id="edit-product">
@@ -341,32 +407,16 @@ var EditProduct = React.createClass({
               <div id="edit-product-right">
                 <input id="edit-product-is-common-item"
                        type="checkbox"
-                       disabled={is_checked_any}
+                       disabled={this.isAnyChecked()}
                        checked={this.state.post.is_common_item}
                        onChange={this.onChangeIsCommonItem} />
                 <strong>全部門診療科で購入可</strong>
                 <TableFrame id="edit-product-departments"
                             title={title} data={data} />
-                <div id="edit-product-buttons">
-                  <Button className="edit-product-button"
-                          bsSize="large"
-                          bsStyle="primary"
-                          onClick={this.onClear}>
-                    クリア 
-                  </Button>
-                  <Button className="edit-product-button"
-                          bsSize="large"
-                          bsStyle="primary"
-                          onClick={this.props.goBack}>
-                    戻る
-                  </Button>
-                  <Button className="edit-product-button"
-                          bsSize="large"
-                          bsStyle="primary"
-                          onClick={this.onRegister}>
-                    登録
-                  </Button>
-                </div>
+                <Buttons onClear={this.onClear}
+                         goBack={this.props.goBack}
+                         targetAction={this.onRegisterOrUpdate}
+                         isRegistration={this.props.target == null} />
               </div>
             </div>
         );

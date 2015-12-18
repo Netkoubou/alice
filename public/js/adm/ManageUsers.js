@@ -49,10 +49,6 @@ var ManageUsers = React.createClass({
     },
 
     onSelectUser: function(index) {
-        var next_ope;
-        var my_account     = this.props.user.account;
-        var target_account = this.state.users[index].account;
-
         return function() {
             var next_ope = <EditUser target={this.state.users[index]}
                                      departments={this.state.departments}

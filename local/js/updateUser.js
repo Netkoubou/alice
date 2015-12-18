@@ -30,14 +30,17 @@ function update_user(req, res, db, user) {
 
             if (err == null) {
                 res.json({ status: 0 });
-                msg = '[updateUser] updated user: "' + req.body.account + '".';
+                msg = '[updateUser] updated user: "' + req.body.account +
+                      '" by "' + req.session.user.account + '".';
+
                 log_info.info(msg);
             } else {
                 res.json({ status: 255 });
                 log_warn.warn(err);
 
                 msg = '[updateUser] failed to update user: "' +
-                      req.body.account + '".';
+                      req.body.account + '" by "' +
+                      req.session.user.account + '".';
 
                 log_warn.warn(msg);
             }
@@ -66,7 +69,9 @@ module.exports = function(req, res) {
                     log_warn.warn(err);
                 }
 
-                var msg = '[updateUser] failed to access "users" collection.';
+                var msg = '[updateUser] failed to access ' +
+                          '"users" collection by "' +
+                          req.session.user.account + '".';
 
                 log_warn.warn(msg);
             }
