@@ -63,8 +63,11 @@ module.exports = function(req, res) {
 
     util.query(function(db) {
         var sel = {
-            is_alive:         true,
-            department_codes: new ObjectID(req.body.department_code)
+            is_alive: true,
+            '$or': [
+                { is_common_item:   true },
+                { department_codes: new ObjectID(req.body.department_code) }
+            ]
         };
 
         if (req.body.category_code != '') {

@@ -19,7 +19,11 @@ module.exports = function(req, res) {
         var sel = { is_alive: true };
 
         if (req.body.department_code != '') {
-            sel.department_codes = new ObjectID(req.body.department_code)
+            // sel.department_codes = new ObjectID(req.body.department_code)
+            sel['$or'] = [
+                { is_common_item:   true },
+                { department_codes: new ObjectID(req.body.department_code) }
+            ];
         };
 
         if (req.body.category_code != '') {
