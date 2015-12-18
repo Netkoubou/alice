@@ -224,9 +224,6 @@ var ManageUsers = React.createClass({
             return this.state.next_ope;
         }
 
-        var title = this.makeTableFrameTitle();
-        var data  = this.composeTableFrameData();
-
         return (
             <div id="manage-users" ref="manageUsers">
               <div id="manage-users-select">
@@ -237,8 +234,8 @@ var ManageUsers = React.createClass({
                         options={this.state.departments} />
               </div>
               <TableFrame id="manage-users-list"
-                          title={title}
-                          data={data} />
+                          title={this.makeTableFrameTitle()}
+                          data={this.composeTableFrameData()} />
             </div>
         );
     }

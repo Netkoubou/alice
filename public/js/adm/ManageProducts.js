@@ -120,12 +120,8 @@ var ManageProducts = React.createClass({
         this.setState({ next_ope: next_ope });
     },
 
-    render: function() {
-        if (this.state.next_ope != null) {
-            return this.state.next_ope;
-        }
-
-        var title = [
+    makeTableFrameTitle: function() {
+        return [
             { name: '+/-',           type: 'void'   },
             { name: '品名',          type: 'string' },
             { name: '品目',          type: 'string' },
@@ -134,7 +130,9 @@ var ManageProducts = React.createClass({
             { name: '現在単価',      type: 'number' },
             { name: '!',             type: 'void'   }
         ];
+    },
 
+    composeTableFrameData: function() {
         var data = this.state.products.map(function(p, i) {
             var category_name = this.lookupCategoryName(p.category_code);
             var trader_name   = this.lookupTraderName(p.trader_code);
@@ -165,6 +163,14 @@ var ManageProducts = React.createClass({
             { value: '', view: ''  },
             { value: '', view: ''  }
         ]);
+
+        return data;
+    },
+
+    render: function() {
+        if (this.state.next_ope != null) {
+            return this.state.next_ope;
+        }
 
         return (
             <div id="manage-products">
@@ -213,7 +219,8 @@ var ManageProducts = React.createClass({
                 </div>
               </fieldset>
               <TableFrame id="manage-products-products"
-                          title={title} data={data} />
+                          title={this.makeTableFrameTitle()}
+                          data={this.composeTableFrameData()} />
             </div>
         );
     }
