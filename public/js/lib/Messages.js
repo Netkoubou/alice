@@ -144,6 +144,12 @@ module.exports = {
             'ネットワークの問題で物品の登録に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        EDIT_PRODUCT_ERASE_PRODUCT:
+            'AJAX error: eraseProduct in EditProduct.js.js\n\n' +
+            'ネットワークの問題で物品の削除に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -262,6 +268,11 @@ module.exports = {
         EDIT_PRODUCT_REGISTER_PRODUCT:
             'Server error: registerProduct in EditProduct.js.js\n\n' +
             '物品の登録でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        EDIT_PRODUCT_ERASE_PRODUCT:
+            'Server error: eraseProduct in EditProduct.js.js\n\n' +
+            '物品の削除でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

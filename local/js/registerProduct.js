@@ -11,7 +11,7 @@ var log_crit = log4js.getLogger('critical');
 module.exports = function(req, res) {
     if (req.session.user == null) {
         res.json({ status: 255 });
-        log_warn.warn('[bookCost] invalid session.');
+        log_warn.warn('[registerProduct] invalid session.');
         return;
     }
 

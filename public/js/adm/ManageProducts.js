@@ -120,6 +120,33 @@ var ManageProducts = React.createClass({
         this.setState({ next_ope: next_ope });
     },
 
+    onRemoveProduct: function(index) {
+        return function() {
+            var msg = '"' + this.state.products[index].name +
+                      '" を削除します。\nよろしいですか?';
+
+            if (confirm(msg) ) {
+                XHR.post('/eraseProduct').send({
+                    code: this.state.products[index].code
+                }).end(function(err, res) {
+                    if (err) {
+                        alert(Messages.ajax.MANAGE_PRODUCTS_ERASE_PRODUCT);
+                        throw 'ajax_eraseProduct';
+                    }
+
+                    if (res.body.status != 0) {
+                        alert(Messages.server.MANAGE_PRODUCTS_ERASE_PRODUCT);
+                        throw 'server_eraseProduct';
+                    }
+
+                    alert('削除しました。');
+                    this.onSearch();
+
+                }.bind(this) );
+            }
+        }.bind(this);
+    },
+
     makeTableFrameTitle: function() {
         return [
             { name: '+/-',           type: 'void'   },
@@ -138,7 +165,13 @@ var ManageProducts = React.createClass({
             var trader_name   = this.lookupTraderName(p.trader_code);
 
             return [
-                { value: '',            view: '-' },
+                {
+                    value: '',
+                    view:  <div className="manage-products-remove-product"
+                                onClick={this.onRemoveProduct(i)}>
+                             -
+                           </div>
+                },
                 { value: p.name,        view: p.name },
                 { value: category_name, view: category_name },
                 { value: p.maker,       view: p.maker },

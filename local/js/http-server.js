@@ -31,6 +31,7 @@ var updateUser            = require('./updateUser');
 var eraseUser             = require('./eraseUser');
 var searchProducts        = require('./searchProducts');
 var registerProduct       = require('./registerProduct');
+var eraseProduct          = require('./eraseProduct');
 
 var $ = express();
 
@@ -135,3 +136,4 @@ $.post('/updateUser',            updateUser);
 $.post('/eraseUser',             eraseUser);
 $.post('/searchProducts',        searchProducts);
 $.post('/registerProduct',       registerProduct);
+$.post('/eraseProduct',          eraseProduct);
