@@ -66,6 +66,15 @@ var ManageProducts = React.createClass({
         this.setState({ search_text: e.target.value });
     },
 
+    onClear: function() {
+        this.setState({
+            department_code: '',
+            category_code:   '',
+            trader_code:     '',
+            search_text:     ''
+        });
+    },
+
     onSearch: function() {
         XHR.post('/searchProducts').send({
             department_code: this.state.department_code,
@@ -191,6 +200,13 @@ var ManageProducts = React.createClass({
                 <div id="manage-products-buttons">
                   <Button bsSize="large"
                           bsStyle="primary"
+                          className="manage-products-button"
+                          onClick={this.onClear}>
+                    クリア 
+                  </Button>
+                  <Button bsSize="large"
+                          bsStyle="primary"
+                          className="manage-products-button"
                           onClick={this.onSearch}>
                     検索
                   </Button>

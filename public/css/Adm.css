@@ -163,6 +163,8 @@
   right:    16px;
 }
 
+.manage-products-button { margin-left: 4px; }
+
 #manage-products-products {
   margin-top: 80px;
   width:      calc(100% -  50px);
