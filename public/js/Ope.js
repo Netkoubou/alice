@@ -10,6 +10,7 @@ var ListCosts       = require('./cost/ListCosts');
 var RegisterMessage = require('./adm/RegisterMessage');
 var ManageUsers     = require('./adm/ManageUsers');
 var ManageProducts  = require('./adm/ManageProducts');
+var ManageOthers    = require('./adm/ManageOthers');
 var ChangePassword  = require('./others/ChangePassword');
 
 
@@ -59,6 +60,9 @@ var Ope = React.createClass({
             break;
         case 'MANAGE_PRODUCTS':
             contents = <ManageProducts />;
+            break;
+        case 'MANAGE_OTHERS':
+            contents = <ManageOthers />;
             break;
         default:
             contents = null;

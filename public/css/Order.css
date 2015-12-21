@@ -53,8 +53,8 @@
 }
 
 #final-pane-notices {
-  padding-left: 32px;
-  height:       176px;
+  padding-left:  32px;
+  height:       192px;
   width:        100%;
 }
 
@@ -92,7 +92,7 @@
 
 #final-pane-finalists {
   clear:  both;
-  height: calc(100% - 308px);
+  height: calc(100% - 324px);
   width:  calc(100% -  32px);
 }
 

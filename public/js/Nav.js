@@ -88,10 +88,9 @@ var Nav = React.createClass({
             'LIST_BUDGET',              // 予算一覧
             'ADMIN_BUDGET',             // 予算管理
             'MANAGE_USERS',             // ユーザ管理
-            'MANAGE_DEPARTMENTS',       // 部門診療科情報管理
-            'MANAGE_TRADERS',           // 販売元情報管理
             'MANAGE_PRODUCTS',          // 物品情報管理
             'REGISTER_MESSAGE',         // フッタに表示するメッセージの登録
+            'MANAGE_OTHERS',            // その他の管理
             'CHANGE_PASSWORD',          // パスワード変更
             'LOGOUT'
         ]).isRequired
@@ -267,18 +266,15 @@ var Nav = React.createClass({
                   <NavItem name="ユーザ"
                            onClick={this.onSelect('MANAGE_USERS')}
                            isSelected={selected === 'MANAGE_USERS'} />
-                  <NavItem name="部門診療科"
-                           onClick={this.dummy}
-                           isSelected={selected === 'MANAGE_DEPARTMENTS'} />
-                  <NavItem name="販売元"
-                           onClick={this.dummy}
-                           isSelected={selected === 'MANAGE_TRADERS'} />
                   <NavItem name="物品"
                            onClick={this.onSelect('MANAGE_PRODUCTS')}
                            isSelected={selected === 'MANAGE_PRODUCTS'} />
                   <NavItem name="メッセージ"
                            onClick={this.onSelect('REGISTER_MESSAGE')}
                            isSelected={selected === 'REGISTER_MESSAGE'} />
+                  <NavItem name="その他の管理"
+                           onClick={this.onSelect('MANAGE_OTHERS')}
+                           isSelected={selected === 'MANAGE_OTHERS'} />
                 </div>
             );
         } else if (is_admin) {
