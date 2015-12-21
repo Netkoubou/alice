@@ -49,9 +49,7 @@ var CandidatePane = React.createClass({
             { name: '品名',     type: 'string' },
             { name: '製造元',   type: 'string' },
             { name: '販売元',   type: 'string' },
-            { name: '最安単価', type: 'number' },
             { name: '現在単価', type: 'number' },
-            { name: '最高単価', type: 'number' }
         ];
     },
 
@@ -92,16 +90,8 @@ var CandidatePane = React.createClass({
                     view:  <span>{candidate.trader_name}</span>
                 },
                 {
-                    value: candidate.min_price,
-                    view:  <span>{min_price}</span>
-                },
-                {
                     value: candidate.cur_price,
                     view:  <span>{cur_price}</span>
-                },
-                {
-                    value: candidate.max_price,
-                    view:  <span>{max_price}</span>
                 },
             ];
         });
