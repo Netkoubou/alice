@@ -36,7 +36,7 @@ var Prices = React.createClass({
         });
 
         return (
-            <div>
+            <div id="edit-product-prices">
               <Notice title="最低価格" className="edit-product-price">
                 <div className="edit-product-price-input">
                   <TableFrame.Input
@@ -390,11 +390,6 @@ var EditProduct = React.createClass({
                           onSelect={this.onSelect('trader_code')}
                           options={this.props.traders} />
                 </div>
-                <Prices minPrice={this.state.post.min_price}
-                        curPrice={this.state.post.cur_price}
-                        maxPrice={this.state.post.max_price}
-                        isRegistration={this.props.target == null}
-                        onChange={this.onChangePrice} />
                 <div id="edit-product-note">
                   <Input type="text"
                          bsSize="small"
@@ -403,6 +398,11 @@ var EditProduct = React.createClass({
                          value={this.state.post.note}
                          placeholder="備考" />
                 </div>
+                <Prices minPrice={this.state.post.min_price}
+                        curPrice={this.state.post.cur_price}
+                        maxPrice={this.state.post.max_price}
+                        isRegistration={this.props.target == null}
+                        onChange={this.onChangePrice} />
               </div>
               <div id="edit-product-right">
                 <input id="edit-product-is-common-item"

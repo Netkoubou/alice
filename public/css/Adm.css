@@ -238,9 +238,14 @@
 
 .edit-product-select { margin: 0 0 16px 32px; }
 
+#edit-product-prices {
+  margin-left: 32px;
+  display:     flex;
+}
+
 .edit-product-price  {
-  width:  128px;
-  margin: 0 0 16px 32px;
+  width:      128px;
+  margin-right: 8px;
 }
 
 .edit-product-price-input {
