@@ -39,7 +39,8 @@ var SelectDepartment = React.createClass({
 
 var EditUser = React.createClass({
     propTypes: {
-        target:   React.PropTypes.shape({
+        user:   React.PropTypes.object.isRequired,
+        target: React.PropTypes.shape({
             account:    React.PropTypes.string.isRequired,
             name:       React.PropTypes.string.isRequired,
             email:      React.PropTypes.string.isRequired,
@@ -394,16 +395,30 @@ var EditUser = React.createClass({
 
     composeTableFrameData: function() {
         var data = this.state.post.departments.map(function(d, i) {
-            var disabled_administrate     = false;
+            var disabled_administrate     = true;
+            var disabled_process_order    = true;
+            var disabled_approve          = true;
             var disabled_draft_ordinarily = false;
             var disabled_draft_urgently   = false;
-            var disabled_process_order    = false;
-            var disabled_approve          = false;
 
             var privileged = this.state.post.privileged;
 
-            if (privileged.administrate) {
-                disabled_administrate = true;
+            if (this.props.user.privileged.administrate) {
+                if (!privileged.administrate) {
+                    disabled_administrate = false;
+                }
+
+                if (!privileged.process_order) {
+                    disabled_process_order = false;
+                }
+
+                if (!privileged.approve) {
+                    if (!privileged.draft_ordinarily && !d.draft_ordinarily) {
+                        if (!privileged.draft_urgently && !d.draft_urgently) {
+                            disabled_approve = false;
+                        }
+                    }
+                }
             }
 
             if (privileged.draft_ordinarily) {
@@ -417,22 +432,6 @@ var EditUser = React.createClass({
             if (privileged.approve || d.approve) {
                 disabled_draft_ordinarily = true;
                 disabled_draft_urgently   = true;
-            }
-
-            if (privileged.process_order) {
-                disabled_process_order = true;
-            }
-
-            if (privileged.approve) {
-                disabled_approve = true;
-            }
-
-            if (privileged.draft_ordinarily || d.draft_ordinarily) {
-                disabled_approve = true;
-            }
-
-            if (privileged.draft_urgently || d.draft_urgently) {
-                disabled_approve = true;
             }
 
             return [
@@ -529,59 +528,74 @@ var EditUser = React.createClass({
      * メソッドで代用することに。
      */
     generatePrivilegedPermissions: function() {
-        var disabled_administrate     = false;
-        var disabled_draft_ordinarily = false;
-        var disabled_draft_urgently   = false;
-        var disabled_process_order    = false;
-        var disabled_approve          = false;
+        var disabled_administrate     = true;
+        var disabled_draft_ordinarily = true;
+        var disabled_draft_urgently   = true;
+        var disabled_process_order    = true;
+        var disabled_approve          = true;
 
         var privileged = this.state.post.privileged;
         var department = this.state.department;
 
-        if (department.administrate > 0) {
-            disabled_administrate = true;
-        }
 
-        if (department.draft_ordinarily > 0) {
-            disabled_draft_ordinarily = true;
-        }
+        /*
+         * まず、privileged 権限は privileged.administrate な人でないと設定
+         * することはできない。
+         * どこぞの 1 課長程度が、全部門診療科に跨がる権限を設定できちゃった
+         * らさすがにまずいでしょ。
+         */
+        if (this.props.user.privileged.administrate) {
+            if (department.administrate == 0) {
+                disabled_administrate = false;
+            }
 
-        if (department.draft_urgently > 0) {
-            disabled_draft_urgently = true;
-        }
+            if (department.approve == 0 && !privileged.approve) {
+                if (department.draft_ordinarily == 0) {
+                    disabled_draft_ordinarily = false;
+                }
 
-        if (department.approve > 0 || privileged.approve) {
-            disabled_draft_ordinarily = true;
-            disabled_draft_urgently   = true;
-        }
+                if (department.draft_urgently == 0) {
+                    disabled_draft_urgently   = false;
+                }
+            }
+    
+            if (department.process_order == 0) {
+                disabled_process_order = false;
+            }
 
-        if (department.process_order > 0) {
-            disabled_process_order = true;
-        }
 
-        if (department.approve > 0) {
-            disabled_approve = true;
-        }
-
-        if (department.draft_ordinarily > 0 || privileged.draft_ordinarily) {
-            disabled_approve = true;
-        }
-
-        if (department.draft_urgently > 0 || privileged.draft_urgently) {
-            disabled_approve = true;
+            /*
+             * マジ最低の条件判断文だけど、やってることはシンプルなので
+             * 許してあげて。
+             * && で一つに繋げると、アホみたいに長くなってそれはそれで
+             * 読み辛いし、かと言って短い変数を用意して条件判断文を作成
+             * するほど複雑じゃないし。
+             * とりあえず内容としては、
+             * 
+             * - 部門診療科の approve 権限を持っていなくて、
+             * - 通常発注の権限を一切設定されておらず、
+             * - 緊急発注の権限も全く無い
+             *
+             * 場合にのみ privileged.approve の権限を設定可能、
+             * というだけのことですの。
+             */
+            if (department.approve == 0) {
+                if (department.draft_ordinarily == 0) {
+                    if (!privileged.draft_ordinarily) {
+                        if (department.draft_urgently == 0) {
+                            if (!privileged.draft_urgently) {
+                                disabled_approve = false;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return (
             <fieldset>
               <legend>全部門診療科に跨がる権限</legend>
               <div id="edit-user-checkboxes">
-                <div className="edit-user-checkbox">
-                  <Input type="checkbox"
-                         label="システム管理"
-                         checked={this.state.post.privileged.administrate}
-                         disabled={disabled_administrate}
-                         onChange={this.onChangePrivilegedAdministrate} />
-                </div>
                 <div className="edit-user-checkbox">
                   <Input type="checkbox"
                          label="通常発注起案"
@@ -602,13 +616,6 @@ var EditUser = React.createClass({
                          checked={this.state.post.privileged.process_order}
                          disabled={disabled_process_order}
                          onChange={this.onChangePrivilegedProcessOrder} />
-                </div>
-                <div className="edit-user-checkbox">
-                  <Input type="checkbox"
-                         label="承認"
-                         checked={this.state.post.privileged.approve}
-                         disabled={disabled_approve}
-                         onChange={this.onChangePrivilegedApprove} />
                 </div>
               </div>
             </fieldset>

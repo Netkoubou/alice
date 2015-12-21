@@ -50,7 +50,8 @@ var ManageUsers = React.createClass({
 
     onSelectUser: function(index) {
         return function() {
-            var next_ope = <EditUser target={this.state.users[index]}
+            var next_ope = <EditUser user={this.props.user}
+                                     target={this.state.users[index]}
                                      departments={this.state.departments}
                                      goBack={this.backToHere} />;
 
@@ -65,7 +66,8 @@ var ManageUsers = React.createClass({
         }
 
         this.setState({
-            next_ope: <EditUser departments={this.state.departments}
+            next_ope: <EditUser user={this.props.user}
+                                departments={this.state.departments}
                                 goBack={this.backToHere} />
         });
     },
@@ -134,8 +136,23 @@ var ManageUsers = React.createClass({
     },
 
     isOutsider: function(target) {
+        /*
+         * privileged.administrate なユーザはどんなユーザでも作りたい放題
+         * なので、悪いことしまくれちゃう。
+         */
         if (this.props.user.privileged.administrate) {
             return false;
+        }
+
+
+        /*
+         * privileged.administrate でないユーザは、privilged な権限を持つ
+         * ユーザ、すなわち上位の権限を持つユーザを編集することはできない。
+         */
+        for (var p in target.privileged) {
+            if (target.privileged[p]) {
+                return true;
+            }
         }
 
         for (var i = 0; i < target.departments.length; i++) {
@@ -174,11 +191,13 @@ var ManageUsers = React.createClass({
                 eraser  = '';
 
                 var id      = "manage-users-popover" + i.toString();
-                var popover = <Popover id={id}>
-                                ご自分のユーザ情報、若しくは管轄外の部門
-                                診療科に所属するユーザの情報を変更することは
-                                できません。
-                              </Popover>;
+                var popover = (
+                    <Popover id={id}>
+                      ご自分のユーザ情報、管轄外の部門診療科に所属するユーザの
+                      情報、若しくは上位の権限を持つユーザの情報を変更する
+                      ことはできません。
+                    </Popover>
+                );
 
                 account = (
                     <OverlayTrigger container={this.refs.manageUsers}
