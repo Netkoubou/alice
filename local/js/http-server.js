@@ -11,6 +11,7 @@ var pickMenuItemsForSearchPane    = require('./pickMenuItemsForSearchPane');
 var pickMenuItemsToApplyCost      = require('./pickMenuItemsToApplyCost');
 var pickMenuItemsToManageProducts = require('./pickMenuItemsToManageProducts');
 var tellAvailableDepartments      = require('./tellAvailableDepartments');
+var tellAll                       = require('./tellAll');
 var getFooterMessage              = require('./getFooterMessage');
 
 var authenticateUser      = require('./authenticateUser');
@@ -117,6 +118,9 @@ $.get('/pickMenuItemsForSearchPane',    pickMenuItemsForSearchPane);
 $.get('/pickMenuItemsToApplyCost',      pickMenuItemsToApplyCost);
 $.get('/pickMenuItemsToManageProducts', pickMenuItemsToManageProducts);
 $.get('/tellAvailableDepartments',      tellAvailableDepartments);
+$.get('/tellAllDepartments',            tellAll('departments') );
+$.get('/tellAllCategories',             tellAll('categories') );
+$.get('/tellAllTraders',                tellAll('traders') );
 $.get('/getFooterMessage',              getFooterMessage);
 
 $.post('/authenticateUser',      authenticateUser);

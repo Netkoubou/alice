@@ -279,6 +279,53 @@
 
 #manage-others-select-target {
     padding-top:    8px;
-    margin-left:   48px;
+    margin-left:   32px;
     margin-bottom: 24px;
+}
+
+#manage-others-departments, 
+#manage-others-categories,
+#manage-others-traders {
+  margin-top: 16px;
+  width:      calc(100% -  64px);
+  height:     calc(100% - 128px);
+}
+
+#manage-others-departments col:nth-child(1) { width: 24px; }
+#manage-others-departments col:nth-child(2) { width: calc(40% - 24px); }
+#manage-others-departments col:nth-child(3) { width: 30%; }
+#manage-others-departments col:nth-child(4) { width: 30%; }
+#manage-others-departments td:nth-child(1) { text-align: center; }
+
+#manage-others-categories col:nth-child(1) { width: 24px; }
+#manage-others-categories col:nth-child(2) { width: calc(100% - 24px); }
+#manage-others-categories td:nth-child(1) { text-align: center; }
+
+#manage-others-traders col:nth-child(1) { width: 40px; }
+#manage-others-traders col:nth-child(2) { width: calc(75% - 376px); }
+#manage-others-traders col:nth-child(3) { width: 128px; }
+#manage-others-traders col:nth-child(4) { width: 128px; }
+#manage-others-traders col:nth-child(5) { width: 25%; }
+#manage-others-traders col:nth-child(6) { width: 80px; }
+#manage-others-traders td:nth-child(1) { text-align: center; }
+
+.manage-others-add-item { 
+  color:  #1976d2;
+  cursor: pointer;
+}
+
+.manage-others-update-item {
+  color:  #ff9800;
+  cursor: pointer;
+}
+
+.manage-others-remove-item { 
+  color:  #ff0000;
+  cursor: pointer;
+}
+
+.manage-others-add-item:hover,
+.manage-others-update-item:hover,
+.manage-others-remove-item:hover {
+  text-decoration: underline;
 }
