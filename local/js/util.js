@@ -14,8 +14,8 @@ module.exports = {
 
         mongodb.connect('mongodb://localhost:27017/alice', function(err, db) {
             if (err != null) {
-                log_warn(err);
-                log_warn('[util.query] cannot connect with MongoDB.');
+                log_warn.warn(err);
+                log_warn.warn('[util.query] cannot connect with MongoDB.');
             } else {
                 callback(db);
             }
