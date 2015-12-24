@@ -1,5 +1,6 @@
 'use strict';
 var React      = require('react');
+var ReactDOM   = require('react-dom');
 var XHR        = require('superagent');
 var Select     = require('../components/Select');
 var TableFrame = require('../components/TableFrame');
@@ -51,11 +52,11 @@ var ManageOthers = React.createClass({
     },
 
     onAddItem: function() {
-        var new_row = {};
+        var item = {};
 
         switch (this.state.target_code) {
         case 'DEPARTMENTS':
-            new_row = {
+            item = {
                 code: '',
                 name: '',
                 abbr: '',
@@ -63,24 +64,218 @@ var ManageOthers = React.createClass({
             };
             break;
         case 'CATEGORIES':
-            new_row = {
+            item = {
                 code: '',
                 name: ''
             };
             break;
         case 'TRADERS':
-            new_row = {
+            item = {
                 code:          '',
+                name:          '',
                 tel:           '',
                 fax:           '',
                 email:         '',
-                communication: ''
+                communication: 'fax'
             };
             break;
         }
 
-        this.state.table_data.push(new_row);
+        this.state.table_data.push(item);
         this.setState({ table_data: this.state.table_data });
+    },
+
+    validateDepartment: function(index) {
+        var department = this.state.table_data[index];
+        var e, is_duplicated;
+
+        if (department.name === '') {
+            alert('名前を入力して下さい。');
+            e = this.refs['department_name' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        is_duplicated = this.state.table_data.filter(function(d) {
+            return d.name === department.name;
+        }).length > 1;
+        
+        if (is_duplicated) {
+            alert('名前がユニークではありません。');
+            e = this.refs['department_name' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        if (department.abbr === '') {
+            alert('略称を入力して下さい。')
+            e = this.refs['department_abbr' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        is_duplicated = this.state.table_data.filter(function(d) {
+            return d.abbr === department.abbr;
+        }).length > 1;
+
+        if (is_duplicated) {
+            alert('略称がユニークではありません。');
+            e = this.refs['department_abbr' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        if (department.tel === '') {
+            alert('電話番号を入力して下さい。');
+            e = this.refs['department_tel' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        return true;
+    },
+
+    validateCategory: function(index) {
+        var category = this.state.table_data[index];
+        var e, is_duplicated;
+
+        if (category.name === '') {
+            alert('名前を入力して下さい。');
+            e = this.refs['category_name' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        is_duplicated = this.state.table_data.filter(function(d) {
+            return d.name === category.name;
+        }).length > 1;
+
+        if (is_duplicated) {
+            alert('名前がユニークではありません。');
+            e = this.refs['category_name' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        return true;
+    },
+
+    validateTrader: function(index) {
+        var trader = this.state.table_data[index];
+        var e, is_duplicated;
+
+        if (trader.name === '') {
+            alert('名前を入力して下さい。');
+            e = this.refs['trader_name' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        is_duplicated = this.state.table_data.filter(function(d) {
+            return d.name === trader.name;
+        }).length > 1;
+
+        if (is_duplicated) {
+            alert('名前がユニークではありません。');
+            e = this.refs['trader_name' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        if (trader.tel === '') {
+            alert('電話番号を入力して下さい。');
+            e = this.refs['trader_tel' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        if (trader.communication === 'fax' && trader.fax === '') {
+            alert('FAX 番号を入力して下さい。');
+            e = this.refs['trader_fax' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        if (trader.communication === 'email' && trader.email === '') {
+            alert('E-Mail アドレスを入力して下さい。');
+            e = this.refs['trader_email' + index.toString()];
+            ReactDOM.findDOMNode(e).select();
+            return false;
+        }
+
+        return true;
+    },
+
+    onRegisterItem: function(index) {
+        return function() {
+            var post = null;
+            var item = this.state.table_data[index];
+
+            switch (this.state.target_code) {
+            case 'DEPARTMENTS':
+                if (!this.validateDepartment(index) ) {
+                    return;
+                }
+
+                post = {
+                    target: this.state.target_code,
+                    document: {
+                        name: item.name,
+                        abbr: item.abbr,
+                        tel:  item.tel
+                    }
+                };
+
+                break;
+            case 'CATEGORIES':
+                if (!this.validateCategory(index) ) {
+                    return;
+                }
+
+                post = {
+                    target: this.state.target_code,
+                    document: {
+                        name: item.name
+                    }
+                };
+
+                break;
+            case 'TRADERS':
+                if (!this.validateTrader(index) ) {
+                    return;
+                }
+
+                post = {
+                    target: this.state.target_code,
+                    document: {
+                        name:          item.name,
+                        tel:           item.tel,
+                        fax:           item.fax,
+                        email:         item.email,
+                        communication: item.communication
+                    }
+                }
+
+                break;
+            }
+
+            XHR.post('/registerItem').send(post).end(function(err, res) {
+                if (err != null) {
+                    alert(Messages.ajax.MANAGE_OTHERS_REGISTER_ITEM);
+                    throw 'ajax_registerItem';
+                }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server.MANAGE_OTHERS_REGISTER_ITEM);
+                    throw 'server_registerItem';
+                }
+
+                alert('登録しました。');
+                
+                this.state.table_data[index].code = res.body.code;
+                this.setState({ table_data: this.state.table_data });
+            }.bind(this) );
+        }.bind(this);
     },
 
     onRemoveItem: function(index) {
@@ -88,63 +283,32 @@ var ManageOthers = React.createClass({
         }.bind(this);
     },
 
-    onChangeDepartmentName: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeDepartmentAbbr: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeDepartmentTel: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeCategoryName: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeTraderName: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeTraderTel: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeTraderFax: function(index) {
-        return function(e) {
-        }.bind(this);
-    },
-
-    onChangeTraderEmail: function(index) {
-        return function(e) {
+    onChangeItem: function(index, attribute) {
+        return function(value) {
+            this.state.table_data[index][attribute] = value;
+            this.setState({ table_data: this.state.table_data });
         }.bind(this);
     },
 
     onSelectTraderCommunication: function(index) {
         return function(e) {
+            this.state.table_data[index].communication = e.target.value;
+            this.setState({ table_data: this.state.table_data });
         }.bind(this);
     },
 
-    decideOperator: function(code) {
+    decideOperator: function(code, index) {
         if (code === '') {
             return (
                 <div className="manage-others-update-item"
-                     onClick={this.props.onUpdate}>
+                     onClick={this.onRegisterItem(index)}>
                   !
                 </div>
             );
         } else {
             return (
                 <div className="manage-others-remove-item"
-                     onClick={this.props.onUpdate}>
+                     onClick={this.onRemoveItem(index)}>
                   -
                 </div>
             );
@@ -154,26 +318,32 @@ var ManageOthers = React.createClass({
     composeTableDataOfDepartments: function() {
         var data = this.state.table_data.map(function(d, i) {
             return [
-                { value: '', view: this.decideOperator(d.code) },
+                { value: '', view: this.decideOperator(d.code, i) },
                 {
                     value: d.name,
                     view: <TableFrame.Input
+                            key={"department_name" + i.toString()}
+                            ref={"department_name" + i.toString()}
                             placeholder={d.name}
-                            onChange={this.onChangeDepartmentName(i)}
+                            onChange={this.onChangeItem(i, 'name')}
                             type="string" />
                 },
                 {
                     value: d.abbr, 
                     view:  <TableFrame.Input
+                             key={"department_abbr" + i.toString()}
+                             ref={"department_abbr" + i.toString()}
                              placeholder={d.abbr}
-                             onChange={this.onChangeDepartmentAbbr(i)}
+                             onChange={this.onChangeItem(i, 'abbr')}
                              type="string" />
                 },
                 {
                     value: d.tel,
                     view:  <TableFrame.Input
+                             key={"department_tel" + i.toString()}
+                             ref={"department_tel" + i.toString()}
                              placeholder={d.tel}
-                             onChange={this.onChangeDepartmentTel(i)}
+                             onChange={this.onChangeItem(i, 'tel')}
                              type="string" />
                 }
 
@@ -199,12 +369,14 @@ var ManageOthers = React.createClass({
     composeTableDataOfCategories: function() {
         var data = this.state.table_data.map(function(c, i) {
             return [
-                { value: '', view: this.decideOperator(c.code) },
+                { value: '', view: this.decideOperator(c.code, i) },
                 {
                     value: c.name,
                     view:  <TableFrame.Input
+                             key={"category_name" + i.toString()}
+                             ref={"category_name" + i.toString()}
                              placeholder={c.name}
-                             onChange={this.onChangeCategoryName(i)}
+                             onChange={this.onChangeItem(i, 'name')}
                              type="string" />
                 }
             ];
@@ -227,39 +399,47 @@ var ManageOthers = React.createClass({
     composeTableDataOfTraders: function() {
         var data = this.state.table_data.map(function(t, i) {
             return [
-                { value: '', view: this.decideOperator(t.code) },
+                { value: '', view: this.decideOperator(t.code, i) },
                 {
                     value: t.name,
                     view:  <TableFrame.Input
+                             key={"trader_name" + i.toString()}
+                             ref={"trader_name" + i.toString()}
                              placeholder={t.name}
-                             onChange={this.onChangeTraderName(i)}
+                             onChange={this.onChangeItem(i, 'name')}
                              type="string" />
                 },
                 {
                     value: t.tel,
                     view:  <TableFrame.Input
+                             key={"trader_tel" + i.toString()}
+                             ref={"trader_tel" + i.toString()}
                              placeholder={t.tel}
-                             onChange={this.onChangeTraderTel(i)}
+                             onChange={this.onChangeItem(i, 'tel')}
                              type="string" />
                 },
                 {
                     value: t.fax,
                     view:  <TableFrame.Input
+                             key={"trader_fax" + i.toString()}
+                             ref={"trader_fax" + i.toString()}
                              placeholder={t.fax}
-                             onChange={this.onChangeTraderFax(i)}
+                             onChange={this.onChangeItem(i, 'fax')}
                              type="string" />
                 },
                 {
                     value: t.email,
                     view:  <TableFrame.Input
+                             key={"trader_email" + i.toString()}
+                             ref={"trader_email" + i.toString()}
                              placeholder={t.email}
-                             onChange={this.onChangeTraderEmail(i)}
+                             onChange={this.onChangeItem(i, 'email')}
                              type="string" />
                 },
                 {
                     value: t.communication,
                     view:  <TableFrame.Select
-                             initialSelected="fax"
+                             initialSelected={t.communication}
                              onSelect={this.onSelectTraderCommunication(i)}>
                              <TableFrame.Option value="fax">
                                FAX

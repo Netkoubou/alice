@@ -291,14 +291,14 @@
   height:     calc(100% - 128px);
 }
 
-#manage-others-departments col:nth-child(1) { width: 24px; }
-#manage-others-departments col:nth-child(2) { width: calc(40% - 24px); }
-#manage-others-departments col:nth-child(3) { width: 30%; }
-#manage-others-departments col:nth-child(4) { width: 30%; }
+#manage-others-departments col:nth-child(1) { width: 40px; }
+#manage-others-departments col:nth-child(2) { width: calc(100% - 232px); }
+#manage-others-departments col:nth-child(3) { width: 64px; }
+#manage-others-departments col:nth-child(4) { width: 128px; }
 #manage-others-departments td:nth-child(1) { text-align: center; }
 
-#manage-others-categories col:nth-child(1) { width: 24px; }
-#manage-others-categories col:nth-child(2) { width: calc(100% - 24px); }
+#manage-others-categories col:nth-child(1) { width: 40px; }
+#manage-others-categories col:nth-child(2) { width: calc(100% - 40px); }
 #manage-others-categories td:nth-child(1) { text-align: center; }
 
 #manage-others-traders col:nth-child(1) { width: 40px; }
