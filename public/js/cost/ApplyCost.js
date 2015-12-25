@@ -44,7 +44,8 @@ var ApplyCost = React.createClass({
             department:     { code: '', name: '' },
             account_title:  { code: '', name: '' },
             remark:         '',
-            breakdowns:     []
+            breakdowns:     [],
+            key_sfx:        0
         };
     },
 
@@ -73,7 +74,8 @@ var ApplyCost = React.createClass({
             var a = this.state.breakdowns;
         
             this.setState({
-                breakdowns: a.slice(0, index).concat(a.slice(index + 1) )
+                breakdowns: a.slice(0, index).concat(a.slice(index + 1) ),
+                key_sfx:    this.state.key_sfx + 1
             });
         }.bind(this);
     },
@@ -211,6 +213,7 @@ var ApplyCost = React.createClass({
 
     composeTableFrameDataRow: function(breakdown, index) {
         var weekdays = [ '日', '月', '火', '水', '木', '金', '土' ];
+        var key_sfx  = index.toString() + '_' + this.state.key_sfx.toString();
 
         return [
             {
@@ -233,6 +236,7 @@ var ApplyCost = React.createClass({
                 view:  <TableFrame.Input
                          type="string"
                          placeholder={breakdown.article}
+                         key={'article' + key_sfx}
                          ref={'article' + index.toString()}
                          onChange={this.onChange(index, 'article')} />
             },
@@ -241,6 +245,7 @@ var ApplyCost = React.createClass({
                 view:  <TableFrame.Input
                          type="int"
                          placeholder={breakdown.quantity.toLocaleString()}
+                         key={'quantity' + key_sfx}
                          ref={'quantity' + index.toString()}
                          onChange={this.onChange(index, 'quantity')} />
             },
@@ -249,6 +254,7 @@ var ApplyCost = React.createClass({
                 view:  <TableFrame.Input
                          type="int"
                          placeholder={breakdown.price.toLocaleString()}
+                         key={'price' + key_sfx}
                          ref={'price' + index.toString()}
                          onChange={this.onChange(index, 'price')} />
             },
@@ -261,6 +267,7 @@ var ApplyCost = React.createClass({
                 view:  <TableFrame.Input
                          type="string"
                          placeholder={breakdown.note}
+                         key={'note' + key_sfx}
                          ref={'note' + index.toString()}
                          onChange={this.onChange(index, 'note')} />
             },

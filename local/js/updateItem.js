@@ -10,27 +10,18 @@ var log_crit = log4js.getLogger('critical');
 module.exports = function(req, res) {
     if (req.session.user == null) {
         req.json({ status: 255 });
-        log_warn.warn('[updateProduct] invalid session.');
+        log_warn.warn('[updateItem] invalid session.');
         return;
     }
 
-    var product_id = new ObjectID(req.body.code);
-    var product    = req.body;
-
-    product.category_code = new ObjectID(product.category_code);
-    product.trader_code   = new ObjectID(product.trader_code);
-    product.is_alive      = true;
-
-    product.department_codes = product.department_codes.map(function(d) {
-        return new ObjectID(d);
-    }); 
-
-    delete product.code;
-
     util.query(function(db) {
-        db.collection('products').replaceOne(
-            { _id: product_id },
-            product,
+        var collection = req.body.target.toLowerCase();
+
+        req.body.item.is_alive = true;
+
+        db.collection(collection).replaceOne(
+            { _id: new ObjectID(req.body.code) },
+            req.body.item,
             function(err, result) {
                 var msg;
                 db.close();
@@ -38,17 +29,16 @@ module.exports = function(req, res) {
                 if (err == null) {
                     res.json({ status: 0 });
     
-                    msg = '[updateProduct] updated product: "' +
-                          product.name + '" by "' +
-                          req.session.user.account + '".';
+                    msg = '[updateItem] updated item in "' + collection +
+                          '" by "' + req.session.user.account + '".';
     
                     log_info.info(msg);
                 } else {
                     res.json({ status: 255 });
                     log_warn.warn(err);
     
-                    msg = '[updateProduct] failed to update product: "' +
-                          product.name + '" by "' +
+                    msg = '[updateItem] failed to update item in "' +
+                          collection + '" by "' +
                           req.session.user.account + '".';
     
                     log_warn.warn(msg);

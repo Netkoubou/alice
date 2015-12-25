@@ -9,7 +9,8 @@ var ManageOthers = React.createClass({
     getInitialState: function() {
         return {
             target_code: '',
-            table_data:  []
+            table_data:  [],
+            key_sfx:     0
         };
     },
 
@@ -206,7 +207,7 @@ var ManageOthers = React.createClass({
         return true;
     },
 
-    onRegisterItem: function(index) {
+    onRegisterOrUpdateItem: function(index) {
         return function() {
             var post = null;
             var item = this.state.table_data[index];
@@ -219,7 +220,7 @@ var ManageOthers = React.createClass({
 
                 post = {
                     target: this.state.target_code,
-                    document: {
+                    item: {
                         name: item.name,
                         abbr: item.abbr,
                         tel:  item.tel
@@ -234,7 +235,7 @@ var ManageOthers = React.createClass({
 
                 post = {
                     target: this.state.target_code,
-                    document: {
+                    item: {
                         name: item.name
                     }
                 };
@@ -247,7 +248,7 @@ var ManageOthers = React.createClass({
 
                 post = {
                     target: this.state.target_code,
-                    document: {
+                    item: {
                         name:          item.name,
                         tel:           item.tel,
                         fax:           item.fax,
@@ -259,21 +260,39 @@ var ManageOthers = React.createClass({
                 break;
             }
 
-            XHR.post('/registerItem').send(post).end(function(err, res) {
+            var route;
+
+            if (item.code === '') {
+                route = 'registerItem';
+            } else {
+                route     = 'updateItem';
+                post.code = item.code;
+            }
+
+            XHR.post('/' + route).send(post).end(function(err, res) {
+                var msg_idx;
+
+                if (item.code === '') {
+                    msg_idx = 'MANAGE_OTHERS_REGISTER_ITEM';
+                } else {
+                    msg_idx = 'MANAGE_OTHERS_UPDATE_ITEM';
+                }
+
                 if (err != null) {
-                    alert(Messages.ajax.MANAGE_OTHERS_REGISTER_ITEM);
-                    throw 'ajax_registerItem';
+                    alert(Messages.ajax[msg_idx]);
+                    throw 'ajax_' + route;
                 }
 
                 if (res.body.status != 0) {
-                    alert(Messages.server.MANAGE_OTHERS_REGISTER_ITEM);
-                    throw 'server_registerItem';
+                    alert(Messages.server[msg_idx]);
+                    throw 'server_' + route;
                 }
 
-                alert('登録しました。');
-                
-                this.state.table_data[index].code = res.body.code;
-                this.setState({ table_data: this.state.table_data });
+                if (item.code === '') {
+                    alert('登録しました。');
+                    this.state.table_data[index].code = res.body.code;
+                    this.setState({ table_data: this.state.table_data });
+                }
             }.bind(this) );
         }.bind(this);
     },
@@ -305,7 +324,10 @@ var ManageOthers = React.createClass({
                 var head = this.state.table_data.slice(0, index);
                 var tail = this.state.table_data.slice(index + 1);
 
-                this.setState({ table_data: head.concat(tail) });
+                this.setState({
+                    table_data: head.concat(tail),
+                    key_sfx:    this.state.key_sfx + 1
+                });
             }.bind(this) );
         }.bind(this);
     },
@@ -314,6 +336,10 @@ var ManageOthers = React.createClass({
         return function(value) {
             this.state.table_data[index][attribute] = value;
             this.setState({ table_data: this.state.table_data });
+
+            if (this.state.table_data[index].code != '') {
+                (this.onRegisterOrUpdateItem(index))();
+            }
         }.bind(this);
     },
 
@@ -321,6 +347,10 @@ var ManageOthers = React.createClass({
         return function(e) {
             this.state.table_data[index].communication = e.target.value;
             this.setState({ table_data: this.state.table_data });
+
+            if (this.state.table_data[index].code != '') {
+                (this.onRegisterOrUpdateItem(index))();
+            }
         }.bind(this);
     },
 
@@ -328,7 +358,7 @@ var ManageOthers = React.createClass({
         if (code === '') {
             return (
                 <div className="manage-others-update-item"
-                     onClick={this.onRegisterItem(index)}>
+                     onClick={this.onRegisterOrUpdateItem(index)}>
                   !
                 </div>
             );
@@ -344,21 +374,23 @@ var ManageOthers = React.createClass({
 
     composeTableDataOfDepartments: function() {
         var data = this.state.table_data.map(function(d, i) {
+            var key_sfx = i.toString() + '_' + this.state.key_sfx.toString();
+
             return [
                 { value: '', view: this.decideOperator(d.code, i) },
                 {
                     value: d.name,
-                    view: <TableFrame.Input
-                            key={"department_name" + i.toString()}
-                            ref={"department_name" + i.toString()}
-                            placeholder={d.name}
-                            onChange={this.onChangeItem(i, 'name')}
-                            type="string" />
+                    view:  <TableFrame.Input
+                             key={"department_name" + key_sfx}
+                             ref={"department_name" + i.toString()}
+                             placeholder={d.name}
+                             onChange={this.onChangeItem(i, 'name')}
+                             type="string" />
                 },
                 {
                     value: d.abbr, 
                     view:  <TableFrame.Input
-                             key={"department_abbr" + i.toString()}
+                             key={"department_abbr" + key_sfx}
                              ref={"department_abbr" + i.toString()}
                              placeholder={d.abbr}
                              onChange={this.onChangeItem(i, 'abbr')}
@@ -367,7 +399,7 @@ var ManageOthers = React.createClass({
                 {
                     value: d.tel,
                     view:  <TableFrame.Input
-                             key={"department_tel" + i.toString()}
+                             key={"department_tel" + key_sfx}
                              ref={"department_tel" + i.toString()}
                              placeholder={d.tel}
                              onChange={this.onChangeItem(i, 'tel')}
@@ -395,12 +427,14 @@ var ManageOthers = React.createClass({
 
     composeTableDataOfCategories: function() {
         var data = this.state.table_data.map(function(c, i) {
+            var key_sfx = i.toString() + '_' + this.state.key_sfx.toString();
+
             return [
                 { value: '', view: this.decideOperator(c.code, i) },
                 {
                     value: c.name,
                     view:  <TableFrame.Input
-                             key={"category_name" + i.toString()}
+                             key={"category_name" + key_sfx}
                              ref={"category_name" + i.toString()}
                              placeholder={c.name}
                              onChange={this.onChangeItem(i, 'name')}
@@ -425,12 +459,14 @@ var ManageOthers = React.createClass({
 
     composeTableDataOfTraders: function() {
         var data = this.state.table_data.map(function(t, i) {
+            var key_sfx = i.toString() + '_' + this.state.key_sfx.toString();
+
             return [
                 { value: '', view: this.decideOperator(t.code, i) },
                 {
                     value: t.name,
                     view:  <TableFrame.Input
-                             key={"trader_name" + i.toString()}
+                             key={"trader_name" + key_sfx}
                              ref={"trader_name" + i.toString()}
                              placeholder={t.name}
                              onChange={this.onChangeItem(i, 'name')}
@@ -439,7 +475,7 @@ var ManageOthers = React.createClass({
                 {
                     value: t.tel,
                     view:  <TableFrame.Input
-                             key={"trader_tel" + i.toString()}
+                             key={"trader_tel" + key_sfx}
                              ref={"trader_tel" + i.toString()}
                              placeholder={t.tel}
                              onChange={this.onChangeItem(i, 'tel')}
@@ -448,7 +484,7 @@ var ManageOthers = React.createClass({
                 {
                     value: t.fax,
                     view:  <TableFrame.Input
-                             key={"trader_fax" + i.toString()}
+                             key={"trader_fax" + key_sfx}
                              ref={"trader_fax" + i.toString()}
                              placeholder={t.fax}
                              onChange={this.onChangeItem(i, 'fax')}
@@ -457,7 +493,7 @@ var ManageOthers = React.createClass({
                 {
                     value: t.email,
                     view:  <TableFrame.Input
-                             key={"trader_email" + i.toString()}
+                             key={"trader_email" + key_sfx}
                              ref={"trader_email" + i.toString()}
                              placeholder={t.email}
                              onChange={this.onChangeItem(i, 'email')}

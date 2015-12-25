@@ -159,7 +159,13 @@ module.exports = {
 
         MANAGE_OTHERS_REGISTER_ITEM:
             'AJAX error: registerItem in ManageOthers.js.js\n\n' +
-            'ネットワークの問題でその他の項目登録に失敗しました。\n' +
+            'ネットワークの問題でその他の項目の登録に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        MANAGE_OTHERS_UPDATE_ITEM:
+            'AJAX error: updateItem in ManageOthers.js.js\n\n' +
+            'ネットワークの問題でその他の項目の更新に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
@@ -294,7 +300,12 @@ module.exports = {
 
         MANAGE_OTHERS_REGISTER_ITEM:
             'Server error: registerItem in ManageOthers.js.js\n\n' +
-            'その他の項目登録でサーバにエラーが発生しました。\n' +
+            'その他の項目の登録でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        MANAGE_OTHERS_UPDATE_ITEM:
+            'Server error: updateItem in ManageOthers.js.js\n\n' +
+            'その他の項目の更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

@@ -16,11 +16,11 @@ module.exports = function(req, res) {
 
     util.query(function(db) {
         var collection = req.body.target.toLowerCase();
-        var document   = req.body.document;
+        var item       = req.body.item;
 
-        document.is_alive = true;
+        item.is_alive = true;
 
-        db.collection(collection).insertOne(document, function(err, result) {
+        db.collection(collection).insertOne(item, function(err, result) {
             var msg;
 
             db.close();
