@@ -28,14 +28,16 @@ module.exports = function(collection_name) {
     
                     log_warn.warn(msg);
                 } else {
-                    documents.code = documents._id;
-
-                    delete documents._id;
-                    delete documents.is_alive;
-
                     var response = { status: 0 };
 
-                    response[collection_name] = documents;
+                    response[collection_name] = documents.map(function(d) {
+                        d.code = d._id;
+
+                        delete d._id;
+                        delete d.is_alive;
+
+                        return d;
+                    });
 
                     res.json(response);
                 }

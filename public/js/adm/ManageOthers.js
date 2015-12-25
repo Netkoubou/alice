@@ -280,6 +280,33 @@ var ManageOthers = React.createClass({
 
     onRemoveItem: function(index) {
         return function() {
+            var item_name = this.state.table_data[index].name;
+
+            if (!confirm(item_name + ' を削除します。よろしいですか?') ) {
+                return;
+            }
+
+            XHR.post('/eraseItem').send({
+                target: this.state.target_code,
+                code:   this.state.table_data[index].code
+            }).end(function(err, res) {
+                if (err != null) {
+                    alert(Messages.ajax.MANAGE_OTHERS_ERASE_ITEM);
+                    throw 'ajax_eraseItem';
+                }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server.MANAGE_OTHERS_ERASE_ITEM);
+                    throw 'server_eraseItem';
+                }
+
+                alert('削除しました。');
+
+                var head = this.state.table_data.slice(0, index);
+                var tail = this.state.table_data.slice(index + 1);
+
+                this.setState({ table_data: head.concat(tail) });
+            }.bind(this) );
         }.bind(this);
     },
 
