@@ -2,7 +2,10 @@
 var React = require('react');
 
 var Header = React.createClass({
-    propTypes: { user: React.PropTypes.object.isRequired },
+    propTypes: {
+        user:      React.PropTypes.object.isRequired,
+        appearNav: React.PropTypes.func.isRequired
+    },
 
     render: function() {
         var subsysname = 'Supply Processing & Distribution';
@@ -29,7 +32,7 @@ var Header = React.createClass({
         */
 
         return (
-          <div id="header">
+          <div id="header" onClick={this.props.appearNav}>
             <img id="header-logo" src="img/logo.png" />
             <div id="header-systitle">
               <div id="header-sysname">次世代物品調達システム</div>
