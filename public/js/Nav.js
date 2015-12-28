@@ -93,14 +93,12 @@ var Nav = React.createClass({
             'MANAGE_OTHERS',            // その他の管理
             'CHANGE_PASSWORD',          // パスワード変更
             'LOGOUT'
-        ]).isRequired
+        ]).isRequired,
+
+        navId:   React.PropTypes.string.isRequired,
+        hideNav: React.PropTypes.func.isRequired
     },
 
-
-    /*
-     * 最初にページが表示された時は、ナビゲーションバーを表示する (隠さない)
-     */
-    getInitialState: function() { return { nav_id: 'nav-first' } },
 
     dummy: function() {
         alert('工事中です (そっとしておいて下さい)');
@@ -109,7 +107,7 @@ var Nav = React.createClass({
     onSelect: function(action) {
         return function() {
             this.props.onSelect(action);
-            this.setState({ nav_id: 'nav' });
+            this.props.hideNav();
         }.bind(this);
     },
 
@@ -294,7 +292,7 @@ var Nav = React.createClass({
          * 長かった ...
          */
         return (
-            <div id={this.state.nav_id}>
+            <div id={this.props.navId}>
               {draft_order}
               <NavItemTitle name="経費精算申請" />
               <NavItem name="起案"

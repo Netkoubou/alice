@@ -22,13 +22,14 @@ var Page = React.createClass({
     getInitialState: function() {
         return ({
             user:   null,
-            action: 'NONE'
+            action: 'NONE',
+            nav_id: 'nav-appeared'
         });
     },
 
-    setAction: function(selected) {
-        this.setState({ action: selected });
-    },
+    setAction: function(selected) { this.setState({ action: selected }); },
+    appearNav: function() { this.setState({ nav_id: 'nav-appeared' }); },
+    hideNav:   function() { this.setState({ nav_id: 'nav-hidden'   }); },
 
     login: function() {
         var account    = this.refs.account.getValue();
@@ -125,12 +126,14 @@ var Page = React.createClass({
 
         return (
             <div>
-              <Header user={this.state.user} />
+              <Header user={this.state.user} appearNav={this.appearNav} />
               <div id="content">
                 <Nav user={this.state.user}
                      onSelect={this.setAction}
                      logout={this.logout}
-                     selected={this.state.action} />
+                     selected={this.state.action}
+                     navId={this.state.nav_id}
+                     hideNav={this.hideNav} />
                 <Ope user={this.state.user} action={this.state.action} />
               </div>
               <Footer />

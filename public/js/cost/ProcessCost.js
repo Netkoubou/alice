@@ -4,9 +4,12 @@ var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
 var XHR        = require('superagent');
 var Notice     = require('../components/Notice');
+var Select     = require('../components/Select');
 var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
+
+var reasons    = require('./reasons.json');
 
 var CostNotices = React.createClass({
     propTypes: { cost: React.PropTypes.object.isRequired },
@@ -46,14 +49,17 @@ var ProcessCost = React.createClass({
     },
 
     getInitialState: function() {
-        return { remark: this.props.cost.cost_remark }
+        return {
+            reason: '',
+            remark: this.props.cost.cost_remark
+        }
     },
 
     onFix: function(final_state) {
         XHR.post('/fixCost').send({
             cost_id:     this.props.cost.cost_id,   // 不要
             cost_code:   this.props.cost.cost_code,
-            cost_remark: this.state.remark,
+            cost_remark: this.state.reason + this.state.remark,
             cost_state:  final_state
         }).end(function(err, res) {
             if (err) {
@@ -142,10 +148,11 @@ var ProcessCost = React.createClass({
         return permission;
     },
 
+    onSelectReason: function(e) { this.setState({ reason: e.code }); },
+
     render: function() {
         var permission = this.decidePermission();
-        var legend     = '参照';
-        var buttons    = null;
+        var legend, buttons, remark;
 
         if (permission === 'APPROVE') {
             legend  = '承認';
@@ -165,6 +172,39 @@ var ProcessCost = React.createClass({
                   却下
                 </Button>
             ]
+
+            var reason_options = reasons.map(function(r, i) {
+                return { code: r, name: r };
+            });
+
+            reason_options.push({ code: '', name: 'なし' });
+
+            remark = (
+                <div>
+                  <div id='process-cost-select-reason'>
+                    <Select placeholder="コメント"
+                            onSelect={this.onSelectReason}
+                            value={this.state.reason}
+                            options={reason_options} />
+                  </div>
+                  <Input id="process-cost-remark"
+                         type="text"
+                         bsSize="small"
+                         placeholder="備考・連絡"
+                         value={this.state.remark}
+                         disabled={permission === 'REFER_ONLY'}
+                         onChange={this.onChangeRemark} />
+                </div>
+            );
+        } else {
+            legend  = '参照';
+            buttons = null;
+            remark  = <Input id="process-cost-disabled-remark"
+                             type="text"
+                             bsSize="small"
+                             placeholder="備考・連絡"
+                             value={this.state.remark}
+                             disabled={true} />;
         }
 
         var total       = 0;
@@ -179,13 +219,7 @@ var ProcessCost = React.createClass({
               <fieldset>
                 <legend>{legend}</legend>
                 <CostNotices cost={this.props.cost} />
-                <Input id="process-cost-remark"
-                       type="text"
-                       bsSize="small"
-                       placeholder="備考・連絡"
-                       value={this.state.remark}
-                       disabled={permission === 'REFER_ONLY'}
-                       onChange={this.onChangeRemark} />
+                {remark}
               </fieldset>
               <TableFrame id="process-cost-breakdowns"
                           title={table_title}
