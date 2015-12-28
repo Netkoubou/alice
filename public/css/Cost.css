@@ -157,8 +157,19 @@
 
 #process-cost-account-title { width: 20%; }
 
+#process-cost-select-reason {
+  float:  left;
+  margin: 0 16px 32px 32px;
+  width:  96px;
+}
+
 #process-cost-remark {
-  margin: 0 8px 32px 32px;
+  width: calc(100% - 152px);
+  float: right;
+}
+
+#process-cost-disabled-remark {
+  margin: 0 16px 32px 32px;
   width:  calc(100% - 32px);
 }
 
