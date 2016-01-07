@@ -12,6 +12,7 @@ var ManageUsers     = require('./adm/ManageUsers');
 var ManageProducts  = require('./adm/ManageProducts');
 var ManageOthers    = require('./adm/ManageOthers');
 var ChangePassword  = require('./others/ChangePassword');
+var InputAmount     = require('./budget/InputAmount');    
 
 
 /*
@@ -63,6 +64,9 @@ var Ope = React.createClass({
             break;
         case 'MANAGE_OTHERS':
             contents = <ManageOthers />;
+            break;
+        case 'INPUT_AMOUNT':
+            contents = <InputAmount />;
             break;
         default:
             contents = null;
