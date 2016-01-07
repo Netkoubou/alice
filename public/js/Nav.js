@@ -86,7 +86,7 @@ var Nav = React.createClass({
             'APPLY_COST',               // 経費精算申請起案
             'LIST_COSTS',               // 経費精算申請一覧
             'LIST_BUDGET',              // 予算一覧
-            'ADMIN_BUDGET',             // 予算管理
+            'INPUT_AMOUNT',             // 予算 / 出費額入力
             'MANAGE_USERS',             // ユーザ管理
             'MANAGE_PRODUCTS',          // 物品情報管理
             'REGISTER_MESSAGE',         // フッタに表示するメッセージの登録
@@ -239,7 +239,7 @@ var Nav = React.createClass({
             budget.push(<NavItemTitle key="0" name="予算" />);
             budget.push(
                 <NavItem key="1"
-                         name="一覧"
+                         name="閲覧"
                          onClick={this.dummy}
                          isSelected={selected === 'LIST_BUDGET'} />
             );
@@ -247,9 +247,9 @@ var Nav = React.createClass({
 
         if (this.props.user.privileged.administrate) {
             budget.push(<NavItem key="2"
-                                 name="管理"
-                                 onClick={this.dummy}
-                                 isSelected={selected === 'ADMIN_BUDGET'} />
+                                 name="入力"
+                                 onClick={this.onSelect('INPUT_AMOUNT')}
+                                 isSelected={selected === 'INPUT_AMOUNT'} />
             );
         }
 
