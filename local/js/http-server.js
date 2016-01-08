@@ -12,6 +12,7 @@ var pickMenuItemsToApplyCost      = require('./pickMenuItemsToApplyCost');
 var pickMenuItemsToManageProducts = require('./pickMenuItemsToManageProducts');
 var tellAvailableDepartments      = require('./tellAvailableDepartments');
 var tellAll                       = require('./tellAll');
+var collectDepartmentBudgets      = require('./collectDepartmentBudgets');
 var getFooterMessage              = require('./getFooterMessage');
 
 var authenticateUser      = require('./authenticateUser');
@@ -37,6 +38,7 @@ var eraseProduct          = require('./eraseProduct');
 var registerItem          = require('./registerItem');
 var updateItem            = require('./updateItem');
 var eraseItem             = require('./eraseItem');
+var bookDepartmentBudgets = require('./bookDepartmentBudgets');
 
 var $ = express();
 
@@ -124,6 +126,7 @@ $.get('/tellAvailableDepartments',      tellAvailableDepartments);
 $.get('/tellAllDepartments',            tellAll('departments') );
 $.get('/tellAllCategories',             tellAll('categories') );
 $.get('/tellAllTraders',                tellAll('traders') );
+$.get('/collectDepartmentBudgets',      collectDepartmentBudgets);
 $.get('/getFooterMessage',              getFooterMessage);
 
 $.post('/authenticateUser',      authenticateUser);
@@ -149,3 +152,4 @@ $.post('/eraseProduct',          eraseProduct);
 $.post('/registerItem',          registerItem);
 $.post('/updateItem',            updateItem);
 $.post('/eraseItem',             eraseItem);
+$.post('/bookDepartmentBudgets', bookDepartmentBudgets);

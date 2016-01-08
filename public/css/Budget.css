@@ -1,0 +1,22 @@
+#input-amount {
+  width:     calc(100% - 48px);
+  height:    100%;
+  padding:   48px 48px 48px 48px;
+  font-size: small;
+  position:  relative;
+}
+
+#input-amount-table {
+  width:  100%;
+  height: calc(100% - 96px);
+}
+
+#input-amount-table col:nth-child(1) { width: calc(100% - 128px); }
+#input-amount-table col:nth-child(2) { width: 128px; }
+#input-amount-table td:nth-child(2) { text-align: right; }
+
+#input-amount-button {
+  position: absolute;
+  bottom:   48px;
+  right:    16px;
+}

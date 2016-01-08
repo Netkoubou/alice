@@ -73,61 +73,61 @@ module.exports = {
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         APPLY_COST_BOOK_COST:
-            'AJAX error: bookCost in ApplyCost.js.js\n\n' +
+            'AJAX error: bookCost in ApplyCost.js\n\n' +
             'ネットワークの問題で経費精算の申請に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:
-            'AJAX error: bookCost in ApplyCost.js.js\n\n' +
+            'AJAX error: bookCost in ApplyCost.js\n\n' +
             'ネットワークの問題でメニュー項目の獲得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         LIST_COSTS_LOOKUP_COSTS:
-            'AJAX error: lookupCosts in ListCosts.js.js\n\n' +
+            'AJAX error: lookupCosts in ListCosts.js\n\n' +
             'ネットワークの問題で経費精算の検索に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         PROCESS_COST_FIX_COST:
-            'AJAX error: fixCost in ProcessCost.js.js\n\n' +
+            'AJAX error: fixCost in ProcessCost.js\n\n' +
             'ネットワークの問題で経費精算の承認 / 却下に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
-            'AJAX error: tellAvailableDepartments in ManageUsers.js.js\n\n' +
+            'AJAX error: tellAvailableDepartments in ManageUsers.js\n\n' +
             'ネットワークの問題で部門診療科情報の獲得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         MANAGE_USERS_LIST_USERS:
-            'AJAX error: listUsers in ManageUsers.js.js\n\n' +
+            'AJAX error: listUsers in ManageUsers.js\n\n' +
             'ネットワークの問題でユーザ情報の獲得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         MANAGE_USERS_ERASE_USER:
-            'AJAX error: eraseUser in ManageUsers.js.js\n\n' +
+            'AJAX error: eraseUser in ManageUsers.js\n\n' +
             'ネットワークの問題でユーザ情報の削除に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         EDIT_USER_REGISTER_USER:
-            'AJAX error: addUser in EditUser.js.js\n\n' +
+            'AJAX error: addUser in EditUser.js\n\n' +
             'ネットワークの問題でユーザの追加に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         EDIT_USER_REGISTER_USER:
-            'AJAX error: addUser in EditUser.js.js\n\n' +
+            'AJAX error: addUser in EditUser.js\n\n' +
             'ネットワークの問題でユーザの追加に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         EDIT_USER_UPDATE_USER:
-            'AJAX error: updateUser in EditUser.js.js\n\n' +
+            'AJAX error: updateUser in EditUser.js\n\n' +
             'ネットワークの問題でユーザの更新に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
@@ -140,32 +140,44 @@ module.exports = {
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         EDIT_PRODUCT_REGISTER_PRODUCT:
-            'AJAX error: registerProduct in EditProduct.js.js\n\n' +
+            'AJAX error: registerProduct in EditProduct.js\n\n' +
             'ネットワークの問題で物品の登録に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         EDIT_PRODUCT_UPDATE_PRODUCT:
-            'AJAX error: updateProduct in EditProduct.js.js\n\n' +
+            'AJAX error: updateProduct in EditProduct.js\n\n' +
             'ネットワークの問題で物品の更新に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         EDIT_PRODUCT_ERASE_PRODUCT:
-            'AJAX error: eraseProduct in EditProduct.js.js\n\n' +
+            'AJAX error: eraseProduct in EditProduct.js\n\n' +
             'ネットワークの問題で物品の削除に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         MANAGE_OTHERS_REGISTER_ITEM:
-            'AJAX error: registerItem in ManageOthers.js.js\n\n' +
+            'AJAX error: registerItem in ManageOthers.js\n\n' +
             'ネットワークの問題でその他の項目の登録に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         MANAGE_OTHERS_UPDATE_ITEM:
-            'AJAX error: updateItem in ManageOthers.js.js\n\n' +
+            'AJAX error: updateItem in ManageOthers.js\n\n' +
             'ネットワークの問題でその他の項目の更新に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        INPUT_AMOUNT_COLLECT_DEPARTMENT_BUDGETS:
+            'AJAX error: collectDepartmentBudgets in InputAmount.js\n\n' +
+            'ネットワークの問題で各部門診療科の予算の取得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        INPUT_AMOUNT_BOOK_DEPARTMENT_BUDGETS:
+            'AJAX error: bookDepartmentBudgets in InputAmount.js\n\n' +
+            'ネットワークの問題で各部門診療科の予算の記録に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
@@ -247,33 +259,32 @@ module.exports = {
             'サーバ管理者に問い合わせて下さい。',
 
         PROCESS_COST_FIX_COST:
-            'Server error: fixCost in ProcessCost.js.js\n\n' +
+            'Server error: fixCost in ProcessCost.js\n\n' +
             '経費精算の承認 / 却下でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
-            'Server error: tellAvailableDepartments in ManageUsers.js.js\n\n' +
+            'Server error: tellAvailableDepartments in ManageUsers.js\n\n' +
             '部門診療科情報の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_USERS_LIST_USERS:
-            'Server error: listUsers in ManageUsers.js.js\n\n' +
+            'Server error: listUsers in ManageUsers.js\n\n' +
             'ユーザ情報の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_USERS_ERASE_USER:
-            'Server error: eraseUser in ManageUsers.js.js\n\n' +
+            'Server error: eraseUser in ManageUsers.js\n\n' +
             'ユーザ情報の削除でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-
         EDIT_USER_REGISTER_USER:
-            'Server error: addUser in EditUser.js.js\n\n' +
+            'Server error: addUser in EditUser.js\n\n' +
             'ユーザの追加でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         EDIT_USER_UPDATE_USER:
-            'Server error: updateUser in EditUser.js.js\n\n' +
+            'Server error: updateUser in EditUser.js\n\n' +
             'ユーザの更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
@@ -284,28 +295,38 @@ module.exports = {
             'サーバ管理者に問い合わせて下さい。',
 
         EDIT_PRODUCT_REGISTER_PRODUCT:
-            'Server error: registerProduct in EditProduct.js.js\n\n' +
+            'Server error: registerProduct in EditProduct.js\n\n' +
             '物品の登録でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         EDIT_PRODUCT_UPDATE_PRODUCT:
-            'Server error: updateProduct in EditProduct.js.js\n\n' +
+            'Server error: updateProduct in EditProduct.js\n\n' +
             '物品の更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         EDIT_PRODUCT_ERASE_PRODUCT:
-            'Server error: eraseProduct in EditProduct.js.js\n\n' +
+            'Server error: eraseProduct in EditProduct.js\n\n' +
             '物品の削除でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_OTHERS_REGISTER_ITEM:
-            'Server error: registerItem in ManageOthers.js.js\n\n' +
+            'Server error: registerItem in ManageOthers.js\n\n' +
             'その他の項目の登録でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_OTHERS_UPDATE_ITEM:
             'Server error: updateItem in ManageOthers.js.js\n\n' +
             'その他の項目の更新でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        INPUT_AMOUNT_COLLECT_DEPARTMENT_BUDGETS:
+            'Server error: collectDepartmentBudgets in InputAmount.js\n\n' +
+            '各部門診療科の予算の取得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        INPUT_AMOUNT_BOOK_DEPARTMENT_BUDGETS:
+            'Server error: bookDepartmentBudgets in InputAmount.js\n\n' +
+            '各部門診療科の予算の記録でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 
