@@ -434,19 +434,13 @@ var ProcessOrder = React.createClass({
         }
     },
 
-    onChangeCurPrice: function(index) {
-        return function(cur_price) {
-            this.state.products[index].cur_price = cur_price;
-            this.setState({
-                products:  this.state.products,
-                need_save: true
-            });
-        }.bind(this);
-    },
-
     onChangeBillingAmount: function(index) {
         return function(billing_amount) {
-            this.state.products[index].billing_amount = billing_amount;
+            var product   = this.state.products[index];
+            var cur_price = billing_amount / product.quantity;
+
+            product.cur_price      = cur_price;
+            product.billing_amount = billing_amount;
             this.setState({
                 products:  this.state.products,
                 need_save: true
@@ -585,15 +579,6 @@ var ProcessOrder = React.createClass({
 
             // if (this.props.order.products[index].state === 'ORDERED') {
                 if (product.state === 'DELIVERED') {
-                    cur_price_view = (
-                        <TableFrame.Input
-                          key={Math.random()}
-                          type='real'
-                          placeholder={cur_price_view}
-                          onChange={this.onChangeCurPrice(index)}
-                          ref={"cur_price" + index.toString()} />
-                    );
-
                     billing_amount_view = (
                         <TableFrame.Input
                           key={Math.random()}
