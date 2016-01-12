@@ -81,7 +81,7 @@ module.exports = function(req, res) {
                         is_already_sent = true;
 
                         if (err != null) {
-                            log_warn(err);
+                            log_warn.warn(err);
                         }
 
                         var msg = '[pickMenuItemsToApplyCost] ' +
