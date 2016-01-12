@@ -18,6 +18,6 @@
 
 #input-amount-button {
   position: absolute;
-  bottom:   48px;
-  right:    16px;
+  bottom:   32px;
+  right:    0;
 }
