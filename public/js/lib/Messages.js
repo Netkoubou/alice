@@ -169,15 +169,15 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        INPUT_AMOUNT_COLLECT_DEPARTMENT_BUDGETS:
+        INPUT_AMOUNT_COLLECT_BUDGETS_AND_INCOMES:
             'AJAX error: collectDepartmentBudgets in InputAmount.js\n\n' +
-            'ネットワークの問題で各部門診療科の予算の取得に失敗しました。\n' +
+            'ネットワークの問題で予算 / 収入の取得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        INPUT_AMOUNT_BOOK_DEPARTMENT_BUDGETS:
+        INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES:
             'AJAX error: bookDepartmentBudgets in InputAmount.js\n\n' +
-            'ネットワークの問題で各部門診療科の予算の記録に失敗しました。\n' +
+            'ネットワークの問題で予算 / 収入の記録に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
@@ -319,14 +319,14 @@ module.exports = {
             'その他の項目の更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-        INPUT_AMOUNT_COLLECT_DEPARTMENT_BUDGETS:
-            'Server error: collectDepartmentBudgets in InputAmount.js\n\n' +
-            '各部門診療科の予算の取得でサーバにエラーが発生しました。\n' +
+        INPUT_AMOUNT_COLLECT_BUDGETS_AND_INCOMES:
+            'Server error: collectBudgetsAndIncomes in InputAmount.js\n\n' +
+            '予算 / 収入の取得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-        INPUT_AMOUNT_BOOK_DEPARTMENT_BUDGETS:
-            'Server error: bookDepartmentBudgets in InputAmount.js\n\n' +
-            '各部門診療科の予算の記録でサーバにエラーが発生しました。\n' +
+        INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES:
+            'Server error: bookBudgetsAndIncomes in InputAmount.js\n\n' +
+            '予算 / 収入の記録でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

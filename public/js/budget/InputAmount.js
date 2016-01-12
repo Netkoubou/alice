@@ -16,16 +16,16 @@ var InputAmount = React.createClass({
     },
 
     onBook: function() {
-        XHR.post('/bookDepartmentBudgets').send({
+        XHR.post('/bookBudgetsAndIncomes').send({
             budgets: this.state.budgets
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.INPUT_AMOUNT_BOOK_DEPARTMENT_BUDGETS);
+                alert(Messages.ajax.INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES);
                 throw 'ajax_bookDepartmentBudgets';
             }
 
             if (res.body.status > 0) {
-                alert(Messages.server.INPUT_AMOUNT_BOOK_DEPARTMENT_BUDGETS);
+                alert(Messages.server.INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES);
                 throw 'server_bookDepartmentBudgets';
             }
 
@@ -34,16 +34,18 @@ var InputAmount = React.createClass({
     },
 
     componentDidMount: function() {
-        XHR.get('/collectDepartmentBudgets').set({
+        XHR.get('/collectBudgetsAndIncomes').set({
             'If-Modified-Sice': 'Thu, 01 Jan 1970 00:00:00 GMT'
         }).end(function(err, res) {
+            var errmsg_idx = 'INPUT_AMOUNT_COLLECT_BUDGETS_AND_INCOMES';
+
             if (err) {
-                alert(Messages.ajax.INPUT_AMOUNT_COLLECT_DEPARTMENT_BUDGETS);
+                alert(Messages.ajax[errmsg_idx]);
                 throw 'ajax_collectDepartmentBudgets';
             }
 
             if (res.body.status != 0) {
-                alert(Messages.server.INPUT_AMOUNT_COLLECT_DEPARTMENT_BUDGETS);
+                alert(Messages.server[errmsg_idx]);
                 throw 'server_collectDepartmentBudgets';
             }
 
@@ -54,7 +56,19 @@ var InputAmount = React.createClass({
     render: function() {
         var title = [
             { name: '部門診療科', type: 'string' },
-            { name: '予算額',     type: 'number' }
+            { name: '予算額',     type: 'number' },
+            { name:  '4 月',      type: 'number' },
+            { name:  '5 月',      type: 'number' },
+            { name:  '6 月',      type: 'number' },
+            { name:  '7 月',      type: 'number' },
+            { name:  '8 月',      type: 'number' },
+            { name:  '9 月',      type: 'number' },
+            { name: '10 月',      type: 'number' },
+            { name: '11 月',      type: 'number' },
+            { name: '12 月',      type: 'number' },
+            { name:  '1 月',      type: 'number' },
+            { name:  '2 月',      type: 'number' },
+            { name:  '3 月',      type: 'number' }
         ];
 
         var data = this.state.budgets.map(function(b, i) {
@@ -68,7 +82,6 @@ var InputAmount = React.createClass({
                     view:  <TableFrame.Input placeholder={b.amount.toString()}
                                              onChange={this.onChangeAmount(i)}
                                              type="int" />
-
                 }
             ];
         });
