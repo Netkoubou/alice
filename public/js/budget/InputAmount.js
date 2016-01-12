@@ -2,11 +2,46 @@
 var React      = require('react');
 var Button     = require('react-bootstrap').Button;
 var XHR        = require('superagent');
+var moment     = require('moment');
+var Select     = require('../components/Select');
 var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
 
 var InputAmount = React.createClass({
-    getInitialState: function() { return { budgets: [] } },
+    getInitialState: function() {
+        var now   = moment();
+        this.year = (now.month() < 2)? now.year() - 1: now.year();
+
+        return {
+            year:    this.year,
+            budgets: []
+        }
+    },
+
+    onSelectYear: function(e) {
+        var year = parseInt(e.code);
+
+        XHR.post('/collectBudgetsAndIncomes').send({
+            year: year
+        }).end(function(err, res) {
+            var errmsg_idx = 'INPUT_AMOUNT_COLLECT_BUDGETS_AND_INCOMES';
+
+            if (err) {
+                alert(Messages.ajax[errmsg_idx]);
+                throw 'ajax_collectDepartmentBudgets';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server[errmsg_idx]);
+                throw 'server_collectDepartmentBudgets';
+            }
+
+            this.setState({
+                year:    year,
+                budgets: res.body.budgets
+            });
+        }.bind(this) );
+    },
 
     onChangeAmount: function(index) {
         return function(amount) {
@@ -33,27 +68,18 @@ var InputAmount = React.createClass({
         }.bind(this) );
     },
 
-    componentDidMount: function() {
-        XHR.get('/collectBudgetsAndIncomes').set({
-            'If-Modified-Sice': 'Thu, 01 Jan 1970 00:00:00 GMT'
-        }).end(function(err, res) {
-            var errmsg_idx = 'INPUT_AMOUNT_COLLECT_BUDGETS_AND_INCOMES';
-
-            if (err) {
-                alert(Messages.ajax[errmsg_idx]);
-                throw 'ajax_collectDepartmentBudgets';
-            }
-
-            if (res.body.status != 0) {
-                alert(Messages.server[errmsg_idx]);
-                throw 'server_collectDepartmentBudgets';
-            }
-
-            this.setState({ budgets: res.body.budgets });
-        }.bind(this) );
-    },
-
     render: function() {
+        var select_options = [];
+
+        for (var year = 2015; year <= this.year; year++) {
+            var year_string = year.toString();
+
+            select_options.push({
+                code: year_string,
+                name: year_string + ' 年度'
+            });
+        }
+
         var title = [
             { name: '部門診療科', type: 'string' },
             { name: '予算額',     type: 'number' },
@@ -88,6 +114,12 @@ var InputAmount = React.createClass({
 
         return (
             <div id="input-amount">
+              <div id="input-amount-select">
+                <Select placeholder={this.state.year.toString()}
+                        onSelect={this.onSelectYear}
+                        value={this.state.year.toString()}
+                        options={select_options} />
+              </div>
               <TableFrame id="input-amount-table"
                           title={title}
                           data={data} />

@@ -15,7 +15,5 @@ module.exports = function(req, res) {
     }
 
     util.query(function(db) {
-        res.json({ status: 255 });
-        db.close();
     });
 };

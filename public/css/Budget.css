@@ -6,9 +6,14 @@
   position:  relative;
 }
 
+#input-amount-select {
+  margin-left:   32px;
+  margin-bottom: 32px;
+}
+
 #input-amount-table {
   width:  100%;
-  height: calc(100% - 96px);
+  height: calc(100% - 144px);
 }
 
 #input-amount-table col:nth-child(1)   { width: calc(100% - 1088px); }
