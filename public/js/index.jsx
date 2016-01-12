@@ -76,7 +76,11 @@ var Page = React.createClass({
                     throw 'server_logout';
                 }
 
-                this.setState({ user: null, action: 'NONE' });
+                this.setState({
+                    user:   null,
+                    action: 'NONE',
+                    nav_id: 'nav-appeared'
+                });
             }.bind(this) );
         }
     },
