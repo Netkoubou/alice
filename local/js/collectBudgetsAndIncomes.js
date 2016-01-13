@@ -1,6 +1,5 @@
 'use strict';
 var log4js = require('log4js');
-var moment = require('moment');
 var util   = require('./util');
 
 var log_info = log4js.getLogger('info');
@@ -39,7 +38,10 @@ module.exports = function(req, res) {
                     response.budgets_and_incomes.forEach(function(bai) {
                         if (bai.department_name === '') {
                             ds.forEach(function(d) {
-                                if (bai.department_code === d._id) {
+                                var code = bai.department_code.toString();
+                                var id   = d._id.toString();
+
+                                if (code === id) {
                                     bai.department_name = d.name;
                                 }
                             });
@@ -83,7 +85,10 @@ module.exports = function(req, res) {
                         var found = false;
 
                         response.budgets_and_incomes.forEach(function(bai) {
-                            if (d._id === bai.department_code) {
+                            var id   = d._id.toString();
+                            var code = bai.department_code.toString();
+
+                            if (id === code) {
                                 found = true;
                             }
                         });

@@ -59,8 +59,17 @@ var InputAmount = React.createClass({
     },
 
     onBook: function() {
+        var tab = this.state.budgets_and_incomes.map(function(bai) {
+            return {
+                department_code: bai.department_code,
+                budget:          bai.budget,
+                incomes:         bai.incomes
+            };
+        });
+
         XHR.post('/bookBudgetsAndIncomes').send({
-            budgets_and_incomes: this.state.budgets_and_incomes
+            year:                this.state.year,
+            budgets_and_incomes: tab
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES);
