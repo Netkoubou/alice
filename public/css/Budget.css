@@ -16,9 +16,9 @@
   height: calc(100% - 144px);
 }
 
-#input-amount-table col:nth-child(1)   { width: calc(100% - 1088px); }
-#input-amount-table col:nth-child(2)   { width: 128px; }
-#input-amount-table col:nth-child(n+3) { width:  80px; }
+#input-amount-table col:nth-child(1)   { width: calc(100% - 1056px); }
+#input-amount-table col:nth-child(2)   { width: 96px; }
+#input-amount-table col:nth-child(n+3) { width: 80px; }
 #input-amount-table td:nth-child(n+2) { text-align: right; }
 
 #input-amount-button {

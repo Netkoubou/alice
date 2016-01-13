@@ -9,12 +9,9 @@ var Messages   = require('../lib/Messages');
 
 var InputAmount = React.createClass({
     getInitialState: function() {
-        var now   = moment();
-        this.year = (now.month() < 2)? now.year() - 1: now.year();
-
         return {
-            year:    this.year,
-            budgets: []
+            year:                '',
+            budgets_and_incomes: []
         }
     },
 
@@ -37,22 +34,33 @@ var InputAmount = React.createClass({
             }
 
             this.setState({
-                year:    year,
-                budgets: res.body.budgets
+                year:                year,
+                budgets_and_incomes: res.body.budgets_and_incomes
             });
         }.bind(this) );
     },
 
-    onChangeAmount: function(index) {
+    onChangeBudget: function(index) {
         return function(amount) {
-            this.state.budgets[index].amount = amount;
-            this.setState({ budgets: this.state.budgets });
+            this.state.budgets_and_incomes[index].budget = amount;
+            this.setState({
+                budgets_and_incomes: this.state.budgets_and_incomes
+            });
+        }.bind(this);
+    },
+
+    onChangeIncome: function(index, month) {
+        return function(amount) {
+            this.state.budgets_and_incomes[index].incomes[month] = amount;
+            this.setState({
+                budgets_and_incomes: this.state.budgets_and_incomes
+            });
         }.bind(this);
     },
 
     onBook: function() {
         XHR.post('/bookBudgetsAndIncomes').send({
-            budgets: this.state.budgets
+            budgets_and_incomes: this.state.budgets_and_incomes
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES);
@@ -70,8 +78,10 @@ var InputAmount = React.createClass({
 
     render: function() {
         var select_options = [];
+        var now            = moment();
+        var this_year      = (now.month() < 2)? now.year() - 1: now.year();
 
-        for (var year = 2015; year <= this.year; year++) {
+        for (var year = 2015; year <= this_year; year++) {
             var year_string = year.toString();
 
             select_options.push({
@@ -97,25 +107,43 @@ var InputAmount = React.createClass({
             { name:  '3 月',      type: 'number' }
         ];
 
-        var data = this.state.budgets.map(function(b, i) {
-            return [
+        var data = this.state.budgets_and_incomes.map(function(bai, index) {
+            var row = [
                 {
-                    value: b.department,
-                    view:  b.department
+                    value: bai.department_name,
+                    view:  bai.department_name
                 },
                 {
-                    value: b.amount,
-                    view:  <TableFrame.Input placeholder={b.amount.toString()}
-                                             onChange={this.onChangeAmount(i)}
-                                             type="int" />
+                    value: bai.budget,
+                    view:  <TableFrame.Input
+                             placeholder={bai.budget.toLocaleString()}
+                             onChange={this.onChangeBudget(index)}
+                             type="int" />
                 }
             ];
-        });
+
+
+            /*
+             * 以下、month は実際の月の数 -1 であることに注意。
+             * つまり 1 月は 0, 12 月は 11。
+             */
+            bai.incomes.forEach(function(income, month) {
+                row.push({
+                    value: income,
+                    view:  <TableFrame.Input
+                             placeholder={income.toLocaleString()}
+                             onChange={this.onChangeIncome(index, month)}
+                             type="int" />
+                });
+            }.bind(this) );
+
+            return row;
+        }.bind(this) );
 
         return (
             <div id="input-amount">
               <div id="input-amount-select">
-                <Select placeholder={this.state.year.toString()}
+                <Select placeholder="年度を選択して下さい"
                         onSelect={this.onSelectYear}
                         value={this.state.year.toString()}
                         options={select_options} />
