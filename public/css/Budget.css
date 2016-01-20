@@ -26,3 +26,32 @@
   bottom:   32px;
   right:    0;
 }
+
+#show-sheet {
+  width:     calc(100% - 32px);
+  height:    100%;
+  padding:   32px 32px 32px 32px;
+  font-size: small;
+  position:  relative;
+}
+
+#show-sheet-select {
+  margin-left:   32px;
+  margin-bottom: 32px;
+}
+
+.show-sheet-income { color: blue; }
+.show-sheet-outgo  { color: red; }
+
+#show-sheet-table {
+  width:  100%;
+  height: calc(100% - 144px);
+}
+
+#show-sheet-table col:nth-child(1)   { width: calc(100% - 1248px); }
+#show-sheet-table col:nth-child(2)   { width: 96px; }
+#show-sheet-table col:nth-child(n+3) { width: 80px; }
+#show-sheet-table col:nth-child(15) { width: 96px; }
+#show-sheet-table col:nth-child(16) { width: 96px; }
+#show-sheet-table td:nth-child(n+2) { text-align: right; }
+

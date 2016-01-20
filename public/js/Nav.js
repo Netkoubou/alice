@@ -85,7 +85,7 @@ var Nav = React.createClass({
             'LIST_ORDERS',              // 発注一覧
             'APPLY_COST',               // 経費精算申請起案
             'LIST_COSTS',               // 経費精算申請一覧
-            'LIST_BUDGET',              // 予算一覧
+            'SHOW_SHEET',               // 予算一覧
             'INPUT_AMOUNT',             // 予算 / 出費額入力
             'MANAGE_USERS',             // ユーザ管理
             'MANAGE_PRODUCTS',          // 物品情報管理
@@ -233,15 +233,15 @@ var Nav = React.createClass({
 
 
         /*
-         * 予算メニュー
+         * 予算と収支メニュー
          */
         if (is_admin) {
-            budget.push(<NavItemTitle key="0" name="予算" />);
+            budget.push(<NavItemTitle key="0" name="予算と収支" />);
             budget.push(
                 <NavItem key="1"
                          name="閲覧"
-                         onClick={this.dummy}
-                         isSelected={selected === 'LIST_BUDGET'} />
+                         onClick={this.onSelect('SHOW_SHEET')}
+                         isSelected={selected === 'SHOW_SHEET'} />
             );
         }
 

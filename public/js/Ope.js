@@ -13,6 +13,7 @@ var ManageProducts  = require('./adm/ManageProducts');
 var ManageOthers    = require('./adm/ManageOthers');
 var ChangePassword  = require('./others/ChangePassword');
 var InputAmount     = require('./budget/InputAmount');    
+var ShowSheet       = require('./budget/ShowSheet');
 
 
 /*
@@ -67,6 +68,9 @@ var Ope = React.createClass({
             break;
         case 'INPUT_AMOUNT':
             contents = <InputAmount />;
+            break;
+        case 'SHOW_SHEET':
+            contents = <ShowSheet />;
             break;
         default:
             contents = null;
