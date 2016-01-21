@@ -170,14 +170,26 @@ module.exports = {
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         INPUT_AMOUNT_COLLECT_BUDGETS_AND_INCOMES:
-            'AJAX error: collectDepartmentBudgets in InputAmount.js\n\n' +
+            'AJAX error: collectBudgetsAndIncomes in InputAmount.js\n\n' +
             'ネットワークの問題で予算 / 収入の取得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
         INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES:
-            'AJAX error: bookDepartmentBudgets in InputAmount.js\n\n' +
+            'AJAX error: bookBudgetsAndIncomes in InputAmount.js\n\n' +
             'ネットワークの問題で予算 / 収入の記録に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        SHOW_SHEET_COLLECT_BUDGETS_AND_INCOMES:
+            'AJAX error: collectBudgetsAndIncomes in ShowSheet.js\n\n' +
+            'ネットワークの問題で予算 / 収入の取得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        SHOW_SHEET_COLLECT_OUTGOES:
+            'AJAX error: collectOutgoes in ShowSheet.js\n\n' +
+            'ネットワークの問題で支出の取得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
@@ -327,6 +339,16 @@ module.exports = {
         INPUT_AMOUNT_BOOK_BUDGETS_AND_INCOMES:
             'Server error: bookBudgetsAndIncomes in InputAmount.js\n\n' +
             '予算 / 収入の記録でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        SHOW_SHEET_COLLECT_BUDGETS_AND_INCOMES:
+            'Server error: collectBudgetsAndIncomes in ShowSheet.js\n\n' +
+            '予算 / 収入の取得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        SHOW_SHEET_COLLECT_OUTGOES:
+            'Server error: collectOutgoes in ShowSheet.js\n\n' +
+            '支出の取得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 

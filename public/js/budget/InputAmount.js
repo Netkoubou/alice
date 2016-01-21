@@ -25,12 +25,12 @@ var InputAmount = React.createClass({
 
             if (err) {
                 alert(Messages.ajax[errmsg_idx]);
-                throw 'ajax_collectDepartmentBudgets';
+                throw 'ajax_collectBudgetsAndIncomes';
             }
 
             if (res.body.status != 0) {
                 alert(Messages.server[errmsg_idx]);
-                throw 'server_collectDepartmentBudgets';
+                throw 'server_collectBudgetsAndIncomes';
             }
 
             this.setState({

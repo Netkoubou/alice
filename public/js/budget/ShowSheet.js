@@ -6,6 +6,7 @@ var XHR            = require('superagent');
 var moment         = require('moment');
 var Select         = require('../components/Select');
 var TableFrame     = require('../components/TableFrame');
+var Messages       = require('../lib/Messages');
 
 var Cell = React.createClass({
     propTypes: {
@@ -47,7 +48,47 @@ var ShowSheet = React.createClass({
         };
     },
 
-    onSelectYear: function() {
+    onSelectYear: function(e) {
+        var year = parseInt(e.code);
+        var errmsg_idx;
+
+        XHR.post('/collectBudgetsAndIncomes').send({
+            year: year
+        }).end(function(err, res0) {
+            errmsg_idx = 'SHOW_SHEET_COLLECT_BUDGET_AND_INCOMES';
+
+            if (err) {
+                alert(Messages.ajax[errmsg_idx]);
+                throw 'ajax_collectBudgetsAndIncomes';
+            }
+
+            if (res0.body.status != 0) {
+                alert(Messages.server[errmsg_idx]);
+                throw 'server_collectBudgetsAndIncomes';
+            }
+
+            XHR.post('/collectOutgoes').send({
+                year: year
+            }).end(function(err, res1) {
+                errmsg_idx = 'SHOW_SHEET_COLLECT_OUTGOES';
+
+                if (err) {
+                    alert(Messages.ajax[errmsg_idx]);
+                    throw 'ajax_collectOutgoes';
+                }
+
+                if (res1.body.status != 0) {
+                    alert(Messages.server[errmsg_idx]);
+                    throw 'server_collectOutgoes';
+                }
+
+                this.setState({
+                    year: year,
+                    budgets_and_incomes: res0.body.budgets_and_incomes,
+                    outgoes:             res1.body.outgoes
+                });
+            }.bind(this) );
+        }.bind(this) );
     },
 
     render: function() {
