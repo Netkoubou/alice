@@ -187,8 +187,8 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
-        SHOW_SHEET_COLLECT_OUTGOES:
-            'AJAX error: collectOutgoes in ShowSheet.js\n\n' +
+        SHOW_SHEET_COMPUTE_OUTGOES:
+            'AJAX error: computeOutgoes in ShowSheet.js\n\n' +
             'ネットワークの問題で支出の取得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
@@ -346,8 +346,8 @@ module.exports = {
             '予算 / 収入の取得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
-        SHOW_SHEET_COLLECT_OUTGOES:
-            'Server error: collectOutgoes in ShowSheet.js\n\n' +
+        SHOW_SHEET_COMPUTE_OUTGOES:
+            'Server error: computeOutgoes in ShowSheet.js\n\n' +
             '支出の取得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },

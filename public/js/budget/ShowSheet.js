@@ -67,19 +67,19 @@ var ShowSheet = React.createClass({
                 throw 'server_collectBudgetsAndIncomes';
             }
 
-            XHR.post('/collectOutgoes').send({
+            XHR.post('/computeOutgoes').send({
                 year: year
             }).end(function(err, res1) {
-                errmsg_idx = 'SHOW_SHEET_COLLECT_OUTGOES';
+                errmsg_idx = 'SHOW_SHEET_COMPUTE_OUTGOES';
 
                 if (err) {
                     alert(Messages.ajax[errmsg_idx]);
-                    throw 'ajax_collectOutgoes';
+                    throw 'ajax_computeOutgoes';
                 }
 
                 if (res1.body.status != 0) {
                     alert(Messages.server[errmsg_idx]);
-                    throw 'server_collectOutgoes';
+                    throw 'server_computeOutgoes';
                 }
 
                 this.setState({
