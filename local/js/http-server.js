@@ -38,6 +38,7 @@ var registerItem             = require('./registerItem');
 var updateItem               = require('./updateItem');
 var eraseItem                = require('./eraseItem');
 var collectBudgetsAndIncomes = require('./collectBudgetsAndIncomes');
+var computeOutgoes           = require('./computeOutgoes');
 var bookBudgetsAndIncomes    = require('./bookBudgetsAndIncomes');
 
 var $ = express();
@@ -152,4 +153,5 @@ $.post('/registerItem',             registerItem);
 $.post('/updateItem',               updateItem);
 $.post('/eraseItem',                eraseItem);
 $.post('/collectBudgetsAndIncomes', collectBudgetsAndIncomes);
+$.post('/computeOutgoes',           computeOutgoes);
 $.post('/bookBudgetsAndIncomes',    bookBudgetsAndIncomes);

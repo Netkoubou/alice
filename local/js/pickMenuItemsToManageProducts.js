@@ -1,6 +1,6 @@
 'use strict';
-var log4js   = require('log4js');
-var util     = require('./util');
+var log4js = require('log4js');
+var util   = require('./util');
 
 var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');

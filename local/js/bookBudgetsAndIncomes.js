@@ -27,11 +27,11 @@ module.exports = function(req, res) {
             db.collection('budgets_and_incomes').updateOne(
                 {
                     year:            req.body.year,
-                    department_code: new ObjectID(department_code)
+                    department_code: budget_and_incomes.department_code
                 },
                 {
                     year:            req.body.year,
-                    department_code: new ObjectID(department_code),
+                    department_code: budget_and_incomes.department_code,
                     budget:          budget_and_incomes.budget,
                     incomes:         budget_and_incomes.incomes
                 },

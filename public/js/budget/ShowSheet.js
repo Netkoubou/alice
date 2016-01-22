@@ -94,7 +94,7 @@ var ShowSheet = React.createClass({
     render: function() {
         var select_options = [];
         var now            = moment();
-        var this_year      = (now.month() < 2)? now.year(): now.year() - 1;
+        var this_year      = (now.month() < 2)? now.year() - 1: now.year();
 
         for (var year = 2015; year <= this_year; year++) {
             var year_string = year.toString();

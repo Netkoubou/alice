@@ -21,7 +21,7 @@ module.exports = function(req, res) {
                 '$set': {
                     cost_remark: req.body.cost_remark,
                     cost_state:  req.body.cost_state,
-                    fix_date:    moment().format('YYYY/MM/DD')
+                    fixed_date:  moment().format('YYYY/MM/DD')
                 }
             },
             function(err, result) {
