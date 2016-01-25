@@ -1,6 +1,7 @@
 node_modules/
 public/js/index.js
 public/js/order/PreviewOrder.js
+public/js/budget/DrawIncomeAndOutgoGraph.js
 *.log
 *.pem
 *.swp

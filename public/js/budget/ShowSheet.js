@@ -83,10 +83,18 @@ var ShowSheet = React.createClass({
                 }
 
                 this.setState({
-                    year: year,
+                    year:                year,
                     budgets_and_incomes: res0.body.budgets_and_incomes,
                     outgoes:             res1.body.outgoes
                 });
+
+                window.info = {
+                    year:                year,
+                    budgets_and_incomes: res0.body.budgets_and_incomes,
+                    outgoes:             res1.body.outgoes
+                };
+
+                window.open('income-and-outgo-graph.html', '収支グラフ');
             }.bind(this) );
         }.bind(this) );
     },
