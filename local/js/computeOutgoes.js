@@ -68,7 +68,8 @@ module.exports = function(req, res) {
         ]
     ];
 
-    var outgoes = [];
+    var outgoes  = [];
+    var finished = [];
     var already_sent = false;
 
 
@@ -97,9 +98,11 @@ module.exports = function(req, res) {
      * row.department_code で特定される部門診療科の、
      * month_index で示される月の支出を算出する。
      */
-    function fill_outgo(db, row, months_index, is_final) {
+    function fill_outgo(db, row, months_index) {
         if (months_index >= months.length) {
-            if (is_final) {
+            finished.push(true);
+
+            if (finished.length == outgoes.length) {
                 res.json({ status: 0, outgoes: outgoes });
                 already_sent = true;
             }
@@ -136,7 +139,7 @@ module.exports = function(req, res) {
                          * ここがキモ、他は枝葉末節
                          */
                         row.outgoes.push(compute_outgo(orders, costs) );
-                        fill_outgo(db, row, months_index + 1, is_final);
+                        fill_outgo(db, row, months_index + 1);
                     } else {
                         db.close();
                         log_warn.warn(err);
@@ -172,21 +175,21 @@ module.exports = function(req, res) {
     function fill_department_names(db) {
         db.collection('departments').find().toArray(function(err, ds) {
             if (err == null) {
-                outgoes.forEach(function(o, i) {
+                outgoes.forEach(function(outgo, i) {
                     if (already_sent) {
                         return;
                     }
 
-                    ds.forEach(function(d) {
-                        var code = o.department_code;
-                        var id   = d._id.toString();
+                    ds.forEach(function(department) {
+                        var code = outgo.department_code;
+                        var id   = department._id.toString();
 
                         if (code === id) {
-                            o.department_name = d.name;
+                            outgo.department_name = department.name;
                         }
                     });
 
-                    fill_outgo(db, o, 0, i + 1 == outgoes.length);
+                    fill_outgo(db, outgo, 0);
                 });
             } else {
                 db.close();

@@ -124,7 +124,64 @@ var ShowSheet = React.createClass({
             { name: '残額',       type: 'number' }
         ];
 
-        var data = [
+        var data = this.state.budgets_and_incomes.map(function(bai, row_idx) {
+            var row            = [];
+            var sum_of_incomes = 0;
+            var sum_of_outgoes = 0;;
+
+            row.push({
+                value: bai.department_name,
+                view:  bai.department_name
+            });
+            
+            row.push({
+                value: bai.budget,
+                view:  bai.budget.toLocaleString()
+            });
+
+            var outgoes = this.state.outgoes.filter(function(o) {
+                return bai.department_code === o.department_code;
+            });
+
+            for (var i = 0; i < 12; i++) {
+                var outgo = (outgoes.length == 1)? outgoes[0].outgoes[i]: 0;
+
+                if (outgo === undefined) {
+                    console.log("i = " + i.toString() );
+                    console.log(outgoes[0]);
+                }
+
+                row.push({
+                    value: '',
+                    view:  <Cell id={row_idx.toString() + '-' + i.toString()}
+                                 budget={bai.budget}
+                                 income={bai.incomes[i]}
+                                 outgo={outgo} />
+                });
+
+                sum_of_incomes += bai.incomes[i];
+                sum_of_outgoes += outgo;
+            }
+
+            row.push({
+                value: '',
+                view:  <Cell id={row_idx.toString() + '-sum'}
+                             budget={bai.budget}
+                             income={sum_of_incomes}
+                             outgo={sum_of_outgoes} />
+            });
+
+            var remains = bai.budget - sum_of_outgoes;
+
+            row.push({
+                value: remains,
+                view:  remains.toLocaleString()
+            });
+
+            return row;
+        }.bind(this) );
+        /*
+        [
             [
                 { value: 'foo',  view: 'foo' },
                 { value: '100000', view: '100,000' },
@@ -136,105 +193,9 @@ var ShowSheet = React.createClass({
                                 outgo={100}
                                 contaner={this.refs.showSheet} />
                 },
-                {
-                    value: '1000',
-                    view: <Cell id="0-05"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-06"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-07"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-08"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-09"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-10"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-11"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-12"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-01"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-02"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '1000',
-                    view: <Cell id="0-03"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-                {
-                    value: '12000',
-                    view: <Cell id="0-sum"
-                                budget={100000}
-                                income={12000}
-                                outgo={1200}
-                                contaner={this.refs.showSheet} />
-                },
-                { value: '98800', view: '98,800' }
             ]
         ];
+        */
 
         return (
             <div id="show-sheet" ref="showSheet">
