@@ -1,4 +1,5 @@
 'use strict';
+var moment = require('moment');
 var log4js = require('log4js');
 var util   = require('./util');
 
@@ -160,11 +161,25 @@ module.exports = function(req, res) {
                 });
 
 
-                /*
-                 * 次に、未だ budgets_and_incomes コレクションに取り込まれて
-                 * いない部門診療科を補填する。
-                 */
-                fill_departments();
+                var now       = moment();
+                var this_year = (now.month() < 2)? now.year() - 1: now.year();
+
+                if (req.body.year < this_year) {
+                    /*
+                     * 去年度以前のデータを要求されている場合、
+                     * それらは fix されているものとして考え、
+                     * budgets_and_incomes コレクションに取り込まれた部門
+                     * 診療科だけを返す。
+                     */
+                    fill_names();
+                } else {
+                    /*
+                     * 今年度のデータを要求されている場合、
+                     * 未だ budgets_and_incomes コレクションに取り込まれて
+                     * いない部門診療科を補填する。
+                     */
+                    fill_departments();
+                }
             } else {
                 db.close();
                 res.json({ status: 255 });
