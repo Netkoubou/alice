@@ -680,7 +680,7 @@ var ProcessOrder = React.createClass({
                                 dateFormatCalendar="YYYY/MM/DD"
                                 selected={selected_date}
                                 weekdays={weekdays}
-                                weekStart='0'
+                                weekStart="0"
                                 onChange={this.onChangeCompletedDate} />
                   </div>
                 </div>

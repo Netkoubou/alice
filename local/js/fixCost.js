@@ -1,6 +1,5 @@
 'use strict';
 var log4js = require('log4js');
-var moment = require('moment');
 var util   = require('./util');
 
 var log_info = log4js.getLogger('info');
@@ -21,7 +20,7 @@ module.exports = function(req, res) {
                 '$set': {
                     cost_remark: req.body.cost_remark,
                     cost_state:  req.body.cost_state,
-                    fixed_date:  moment().format('YYYY/MM/DD')
+                    fixed_date:  req.body.fixed_date
                 }
             },
             function(err, result) {

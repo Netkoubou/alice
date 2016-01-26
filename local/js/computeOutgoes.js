@@ -124,6 +124,7 @@ module.exports = function(req, res) {
 
             if (err == null) {
                 db.collection('costs').find({
+                    cost_state: 'APPROVED',
                     fixed_date: {
                         '$gte': months[months_index][0],
                         '$lte': months[months_index][1]

@@ -197,6 +197,31 @@
   bottom:     4px;
 }
 
+#process-cost-fixed-date {
+  position: absolute;
+  width:    128px;
+  left:     248px;
+  bottom:     4px;
+}
+
+#process-cost-fixed-date-picker {
+  width:      80px;
+  height:     16px;
+  margin-top:  4px;
+  margin-left: 4px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#process-cost-fixed-date-picker-inner {
+  color:       #1976d2;
+  height:      22px;
+  margin-top:  -8px;
+  margin-left: -2px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
 #process-cost-buttons {
   position: absolute;
   bottom:   4px;

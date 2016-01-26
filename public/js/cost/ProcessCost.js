@@ -2,6 +2,8 @@
 var React      = require('react');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
+var DatePicker = require('react-datepicker');
+var moment     = require('moment');
 var XHR        = require('superagent');
 var Notice     = require('../components/Notice');
 var Select     = require('../components/Select');
@@ -50,17 +52,21 @@ var ProcessCost = React.createClass({
 
     getInitialState: function() {
         return {
-            reason: '',
-            remark: this.props.cost.cost_remark
+            reason:     '',
+            remark:     this.props.cost.cost_remark,
+            fixed_date: moment()
         }
     },
+
+    onChangeFixedDate: function(date) { this.setState({ fixed_date: date }); },
 
     onFix: function(final_state) {
         XHR.post('/fixCost').send({
             cost_id:     this.props.cost.cost_id,   // 不要
             cost_code:   this.props.cost.cost_code,
             cost_remark: this.state.reason + this.state.remark,
-            cost_state:  final_state
+            cost_state:  final_state,
+            fixed_date:  this.state.fixed_date.format('YYYY/MM/DD')
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.PROCESS_COST_FIX_COST);
@@ -226,6 +232,19 @@ var ProcessCost = React.createClass({
                           data={table_data} />
               <Notice id="process-cost-total" title="合計">
                 {total.toLocaleString()}
+              </Notice>
+              <Notice id="process-cost-fixed-date" title="承認日">
+                <div id="process-cost-fixed-date-picker">
+                  <div id="process-cost-fixed-date-picker-inner">
+                    <DatePicker
+                      dateFormat="YYYY/MM/DD"
+                      dateFormatCalendar="YYYY/MM/DD"
+                      selected={this.state.fixed_date}
+                      weekdays={[ '日', '月', '火', '水', '木', '金', '土' ]}
+                      weekStart="0"
+                      onChange={this.onChangeFixedDate} />
+                  </div>
+                </div>
               </Notice>
               <div id="process-cost-buttons">
                 <Button bsStyle="primary"
