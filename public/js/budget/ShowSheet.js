@@ -17,9 +17,13 @@ var Cell = React.createClass({
     },
 
     render: function() {
-        var rate    = this.props.outgo / this.props.budget * 100;
+        var rate        = this.props.outgo / this.props.budget * 100;
+        var rate_string = rate.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
         var popover = <Popover id={this.props.id} title="執行率">
-                        {rate.toString() + ' %'}
+                        {rate_string + ' %'}
                       </Popover>;
                       
         return (
