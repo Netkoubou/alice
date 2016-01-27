@@ -32,8 +32,10 @@ var Header = React.createClass({
         */
 
         return (
-          <div id="header" onClick={this.props.appearNav}>
-            <img id="header-logo" src="img/logo.png" />
+          <div id="header">
+            <img id="header-logo"
+                 src="img/logo.png"
+                 onClick={this.props.appearNav} />
             <div id="header-systitle">
               <div id="header-sysname">次世代物品調達システム</div>
               <span id="header-subsysname">
