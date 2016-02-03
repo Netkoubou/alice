@@ -1,0 +1,14 @@
+#graph{
+  width:        100%;
+  height:       100%;
+}
+
+h1 { padding-left: 256px; }
+
+.axis path, .axis line {
+  fill:            none;
+  stroke:          black;
+  shape-rendering: crispEdges;
+}
+
+.axis text { font-size: 12px; }
