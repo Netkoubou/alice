@@ -33,7 +33,8 @@ var CostCode = React.createClass({
                 quantity: React.PropTypes.number.isRequired,
                 price:    React.PropTypes.number.isRequired,
                 note:     React.PropTypes.string.isRequired
-            }) ).isRequired
+            }) ).isRequired,
+            fixed_date: React.PropTypes.string.isRequired
         }).isRequired,
 
         goBack:   React.PropTypes.func.isRequired,

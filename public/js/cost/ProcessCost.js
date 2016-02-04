@@ -220,6 +220,29 @@ var ProcessCost = React.createClass({
             return this.composeTableFrameDataRow(b);
         }.bind(this) );
 
+        var fixed_date;
+        var cost_state = this.props.cost.cost_state;
+
+        if (cost_state === 'APPROVING' && permission === 'APPROVE') {
+            fixed_date = (
+                <div id="process-cost-fixed-date-picker">
+                  <div id="process-cost-fixed-date-picker-inner">
+                    <DatePicker
+                      dateFormat="YYYY/MM/DD"
+                      dateFormatCalendar="YYYY/MM/DD"
+                      selected={this.state.fixed_date}
+                      weekdays={[ '日', '月', '火', '水', '木', '金', '土' ]}
+                      weekStart="0"
+                      onChange={this.onChangeFixedDate} />
+                  </div>
+                </div>
+            );
+        } else if (this.props.cost.fixed_date === '') {
+            fixed_date = '未承認です';
+        } else {
+            fixed_date = this.props.cost.fixed_date;
+        }
+
         return (
             <div id="process-cost">
               <fieldset>
@@ -234,17 +257,7 @@ var ProcessCost = React.createClass({
                 {total.toLocaleString()}
               </Notice>
               <Notice id="process-cost-fixed-date" title="承認日">
-                <div id="process-cost-fixed-date-picker">
-                  <div id="process-cost-fixed-date-picker-inner">
-                    <DatePicker
-                      dateFormat="YYYY/MM/DD"
-                      dateFormatCalendar="YYYY/MM/DD"
-                      selected={this.state.fixed_date}
-                      weekdays={[ '日', '月', '火', '水', '木', '金', '土' ]}
-                      weekStart="0"
-                      onChange={this.onChangeFixedDate} />
-                  </div>
-                </div>
+                {fixed_date}
               </Notice>
               <div id="process-cost-buttons">
                 <Button bsStyle="primary"

@@ -144,7 +144,8 @@ function construct_response(costs, db, res) {
             drafter_name:       '', // これから埋める
             account_title_code: cost.account_title_code,
             account_title_name: '', // これから埋める
-            breakdowns:         cost.breakdowns
+            breakdowns:         cost.breakdowns,
+            fixed_date:         cost.fixed_date
         };
 
         retrieve('drafter', cost, index);
