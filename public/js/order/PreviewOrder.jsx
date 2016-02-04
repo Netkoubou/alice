@@ -5,26 +5,42 @@ var ReactDOM = require('react-dom');
 var StampRow = React.createClass({
     render: function() {
         return (
-            <table id="stamp">
-              <thead>
-                <tr>
-                  <th>病院長</th>
-                  <th>部長</th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
+            <div>
+              <table className="stamp" id="left-stamp">
+                <thead>
+                  <tr>
+                    <th colSpan="5">発注書承認印欄</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>院長</td>
+                    <td>部長</td>
+                    <td>院務担当</td>
+                    <td>室長</td>
+                    <td>SPD 担当</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table className="stamp" id="right-stamp">
+                <thead>
+                  <tr>
+                    <th colSpan="6">納品書処理印欄</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>確定</td>
+                    <td>請求処理</td>
+                    <td>確認</td>
+                    <td>院務担当</td>
+                    <td>確認</td>
+                    <td>SPD 担当</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
         );
     }
 });
