@@ -37,6 +37,8 @@ var RemoveItem = React.createClass({
 });
 
 var ApplyCost = React.createClass({
+    propTypes: { userName: React.PropTypes.string.isRequired },
+
     getInitialState: function() {
         return {
             departments:    [],
@@ -153,6 +155,20 @@ var ApplyCost = React.createClass({
             }
 
             alert('申請しました。')
+
+            window.info = {
+                user:          this.props.userName,
+                cost_code:     res.body.cost_code,
+                drafting_date: moment().format('YYYY/MM/DD'),
+                department:    this.state.department.name,
+                account_title: this.state.account_title.name,
+                breakdowns:    this.state.breakdowns
+            };
+
+            window.open(
+                'preview-cost-application.html',
+                '経費精算申請書 印刷プレビュー'
+            );
 
             var department = { code: '', name: '' };
 

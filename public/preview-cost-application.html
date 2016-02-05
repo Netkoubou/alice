@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>経費精算申請書 印刷プレビュー</title>
+    <link rel="stylesheet" href="css/PreviewCostApplication.css" />
+  </head>
+  <body>
+    <div id="preview-cost-application">
+      <fieldset>
+        <h1>神奈川歯科大学 附属病院 経費精算申請書</h1>
+        <table class="stamp" id="left-stamp">
+          <thead>
+            <tr>
+              <th colspan="4">承認印欄</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>院長</td>
+              <td>院務部</td>
+              <td>部長</td>
+              <td>起案者</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <table class="stamp" id="right-stamp">
+          <thead>
+            <tr>
+              <th colspan="3">印欄</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="contents-area"></div>
+      </fieldset>
+      <button onclick="window.print();">印刷</button>
+    </div>
+    <script src="js/cost/PreviewCostApplication.js"></script>
+  </body>
+</html>

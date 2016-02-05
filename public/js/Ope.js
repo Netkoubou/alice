@@ -51,7 +51,7 @@ var Ope = React.createClass({
             contents = <RegisterMessage />;
             break;
         case 'APPLY_COST':
-            contents = <ApplyCost />;
+            contents = <ApplyCost userName={this.props.user.name}/>;
             break;
         case 'LIST_COSTS':
             contents = <ListCosts key={Math.random()}

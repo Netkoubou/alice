@@ -34,7 +34,10 @@ module.exports = function(req, res) {
             db.close();
 
             if (err == null) {
-                res.json({ status: 0 });
+                res.json({
+                    status:    0,
+                    cost_code: cost.cost_code
+                });
 
                 msg = '[bookCost] booked cost: "' + cost.cost_code + '" ' +
                       'by "' + req.session.user.account + '".';

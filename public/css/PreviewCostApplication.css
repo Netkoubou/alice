@@ -1,0 +1,112 @@
+#preview-cost-application { width: 206mm; }
+
+fieldset {
+  width:     100%;
+  height:    293mm;
+  font-size:  12px;
+}
+
+h1 {
+  margin-left:   32px;
+  margin-bottom: 24px;
+}
+
+.stamp {
+  border-spacing: 0;
+  border-top:  1px solid #000000;
+  border-left: 1px solid #000000;
+}
+
+.stamp th {
+  font-weight:   normal;
+  border-bottom: 1px solid #000000;
+  border-right:  1px solid #000000;
+}
+
+.stamp td {
+  border-bottom: 1px solid #000000;
+  border-right:  1px solid #000000;
+  height: 56px;
+  width:  56px;
+  text-align: center;
+  color:      #aaaaaa;
+}
+
+#left-stamp {
+  margin-left:   32px;
+  margin-bottom: 12px;
+  float:         left;
+}
+
+#right-stamp {
+  margin-right:  32px;
+  margin-bottom: 12px;
+  float: right;
+}
+
+#contents-area { clear: both; }
+
+#infos { margin-left: 32px; }
+
+#infos table {
+  border-top:     1px solid #000000;
+  border-left:    1px solid #000000;
+  border-spacing: 0;
+  margin-bottom: 18px;
+}
+
+#infos table td {
+  border-bottom: 1px solid #000000;
+  border-right:  1px solid #000000;
+  height:       18px;
+}
+
+#left-infos  { float: left;  margin-right: 12px; }
+#right-infos { float: right; margin-right: 32px; }
+
+.info-name { width: 128px; }
+.info-data { width: 208px; }
+
+#breakdowns {
+  clear:          both;
+  border-top:     1px solid #000000;
+  border-left:    1px solid #000000;
+  border-spacing: 0;
+  margin-left:    32px;
+  margin-right:   32px;
+  width:          calc(100% - 64px);
+}
+
+#breakdowns td {
+  border-bottom: 1px solid #000000;
+  border-right:  1px solid #000000;
+  padding-bottom: 24px;
+}
+
+#breakdowns tr td:nth-child(1) { width:  3%; }
+#breakdowns tr td:nth-child(2) { width: 10%; }
+#breakdowns tr td:nth-child(3) { width: 29%; }
+#breakdowns tr td:nth-child(4) { width:  8%; }
+#breakdowns tr td:nth-child(5) { width:  8%; }
+#breakdowns tr td:nth-child(6) { width: 12%; }
+#breakdowns tr td:nth-child(7) { width: 30%; }
+
+.breakdowns-header       { text-align: center; }
+.breakdowns-data-number  { text-align: right; }
+.breakdowns-data-string  { text-align: left;  }
+
+button {
+  float:            right;
+  width:            80px;
+  height:           48px;
+  margin-right:    -20px;
+  background-color: #1976d2;
+  border:           1px solid #aaaaaa;
+  border-radius:    4px;
+  font-size:        120%;
+  color:            #ffffff;
+}
+
+button:hover { background-color: #01579b; }
+
+@media print { button { display: none; } }

@@ -323,7 +323,7 @@ var ProcessOrder = React.createClass({
             })
         };
 
-        var w = window.open('preview-order.html', '発注書 印刷プレビュー');
+        window.open('preview-order.html', '発注書 印刷プレビュー');
     },
 
     validateProducts: function() {
