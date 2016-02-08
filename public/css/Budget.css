@@ -55,3 +55,25 @@
 #show-sheet-table col:nth-child(16) { width: 96px; }
 #show-sheet-table td:nth-child(n+2) { text-align: right; }
 
+#show-sheet-expense-ratios {
+  width: 100%;
+  margin-top:  32px;
+  margin-left: 32px;
+}
+
+#show-sheet-expense-ratios col:nth-child(1)   { width: calc(100% - 1232px); }
+#show-sheet-expense-ratios col:nth-child(n+2) { width: 80px; }
+#show-sheet-expense-ratios col:nth-child(14)  { width: 96px; }
+#show-sheet-expense-ratios col:nth-child(15)  { width: 112px; }
+#show-sheet-expense-ratios td:nth-child(n+2) { text-align: right; }
+
+.show-sheet-expense-ratios-td {
+  border-right:  1px solid #888888;
+  border-top:    1px solid #888888;
+  border-bottom: 1px solid #888888;
+}
+
+#show-sheet-expense-ratios-td-tail {
+  border-top:    1px solid #888888;
+  border-bottom: 1px solid #888888;
+}

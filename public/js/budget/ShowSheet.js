@@ -43,6 +43,72 @@ var Cell = React.createClass({
     }
 });
 
+var ExpenseRatio = React.createClass({
+    propTypes: {
+        sums: React.PropTypes.arrayOf(React.PropTypes.shape({
+            income: React.PropTypes.number.isRequired,
+            outgo:  React.PropTypes.number.isRequired
+        }) )
+    },
+
+    render: function() {
+        var sum_of_incomes = 0;
+        var sum_of_outgoes = 0;
+
+        var cols = []
+        var tds  = this.props.sums.map(function(s) {
+            var ratio = (s.outgo / s.income * 100).toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
+
+            sum_of_incomes += s.income;
+            sum_of_outgoes += s.outgo;
+
+            cols.push(<col key={Math.random()}></col>);
+            return (
+                <td className="show-sheet-expense-ratios-td"
+                    key={Math.random()}>
+                  {ratio + " %"}
+                </td>
+            );
+        });
+
+        var total_ratio        = sum_of_outgoes / sum_of_incomes * 100;
+        var total_ratio_string = total_ratio.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+
+        cols.unshift(<col key={Math.random()}></col>);
+        tds.unshift(
+            <td className="show-sheet-expense-ratios-td" key={Math.random()}>
+              経費率
+            </td>
+        );
+
+        cols.push(<col key={Math.random()}></col>);
+        tds.push(
+            <td id="show-sheet-expense-ratios-td-tail" key={Math.random()}>
+              {total_ratio_string + " %"}
+            </td>
+        );
+        cols.push(<col key={Math.random()}></col>);
+        tds.push( <td key={Math.random()}> </td>);
+
+        return (
+            <table id="show-sheet-expense-ratios">
+              <colgroup>
+                {cols}
+              </colgroup>
+              <tbody>
+                <tr>{tds}</tr>
+              </tbody>
+            </table>
+        );
+    }
+});
+
 var ShowSheet = React.createClass({
     getInitialState: function() {
         return {
@@ -103,21 +169,8 @@ var ShowSheet = React.createClass({
         }.bind(this) );
     },
 
-    render: function() {
-        var select_options = [];
-        var now            = moment();
-        var this_year      = (now.month() < 2)? now.year() - 1: now.year();
-
-        for (var year = 2015; year <= this_year; year++) {
-            var year_string = year.toString();
-
-            select_options.push({
-                code: year_string,
-                name: year_string + ' 年度'
-            });
-        }
-
-        var title = [
+    makeTableTitle: function() {
+        return [
             { name: '部門診療科', type: 'string' },
             { name: '予算額',     type: 'number' },
             { name:  '4 月',      type: 'void' },
@@ -135,7 +188,40 @@ var ShowSheet = React.createClass({
             { name: '合計',       type: 'void' },
             { name: '残額',       type: 'number' }
         ];
+    },
 
+    initSums: function() {
+        return [
+            { income: 0, outgo: 0 }, //  4 月
+            { income: 0, outgo: 0 }, //  5 月
+            { income: 0, outgo: 0 }, //  6 月
+            { income: 0, outgo: 0 }, //  7 月
+            { income: 0, outgo: 0 }, //  8 月
+            { income: 0, outgo: 0 }, //  9 月
+            { income: 0, outgo: 0 }, // 10 月
+            { income: 0, outgo: 0 }, // 11 月
+            { income: 0, outgo: 0 }, // 12 月
+            { income: 0, outgo: 0 }, //  1 月
+            { income: 0, outgo: 0 }, //  2 月
+            { income: 0, outgo: 0 }, //  3 月
+        ];
+    },
+
+    render: function() {
+        var select_options = [];
+        var now            = moment();
+        var this_year      = (now.month() < 2)? now.year() - 1: now.year();
+
+        for (var year = 2015; year <= this_year; year++) {
+            var year_string = year.toString();
+
+            select_options.push({
+                code: year_string,
+                name: year_string + ' 年度'
+            });
+        }
+
+        var sums = this.initSums(); // 各月の収支の合計
         var data = this.state.budgets_and_incomes.map(function(bai, row_idx) {
             var row            = [];
             var sum_of_incomes = 0;
@@ -172,7 +258,9 @@ var ShowSheet = React.createClass({
                 });
 
                 sum_of_incomes += bai.incomes[i];
+                sums[i].income += bai.incomes[i];
                 sum_of_outgoes += outgo;
+                sums[i].outgo  += outgo;
             }
 
             row.push({
@@ -192,22 +280,6 @@ var ShowSheet = React.createClass({
 
             return row;
         }.bind(this) );
-        /*
-        [
-            [
-                { value: 'foo',  view: 'foo' },
-                { value: '100000', view: '100,000' },
-                {
-                    value: '1000',
-                    view: <Cell id="0-04"
-                                budget={100000}
-                                income={1000}
-                                outgo={100}
-                                contaner={this.refs.showSheet} />
-                },
-            ]
-        ];
-        */
 
         return (
             <div id="show-sheet" ref="showSheet">
@@ -218,8 +290,9 @@ var ShowSheet = React.createClass({
                         options={select_options} />
               </div>
               <TableFrame id="show-sheet-table"
-                          title={title}
+                          title={this.makeTableTitle()}
                           data={data} />
+              <ExpenseRatio sums={sums} />
             </div>
         );
     }
