@@ -25,10 +25,11 @@ var Util           = require('../lib/Util');
  */
 var OrderCode = React.createClass({
     propTypes: {
-        user:     React.PropTypes.object.isRequired,
-        order:    React.PropTypes.object.isRequired,
-        goBack:   React.PropTypes.func.isRequired,
-        onSelect: React.PropTypes.func.isRequired
+        isExpensive: React.PropTypes.bool.isRequired,
+        user:        React.PropTypes.object.isRequired,
+        order:       React.PropTypes.object.isRequired,
+        goBack:      React.PropTypes.func.isRequired,
+        onSelect:    React.PropTypes.func.isRequired
     },
 
     render: function() {
@@ -66,8 +67,17 @@ var OrderCode = React.createClass({
             }
         }
                 
+        var class_name = 'list-orders-order-code';
+
+        if (this.props.isExpensive) {
+            /*
+             * 院長承認が必要な発注は、発注番号を赤にすることで区別する。
+             */
+            class_name = 'list-orders-order-code-for-expensive';
+        }
+
         return (
-            <div className="list-orders-order-code" onClick={on_click}>
+            <div className={class_name} onClick={on_click}>
               {this.props.order.order_code}
             </div>
         );
@@ -104,7 +114,9 @@ var ListOrders = React.createClass({
         });
 
         return {
-            next_ope:      null,
+            next_ope:      null,    // これが、本ページから遷移する先のページ
+                                    // を示す変数。null の場合は遷移せず、
+                                    // 本ページに留まる。
             start_date:    moment(),
             end_date:      moment(),
             is_requesting: can_process_order,
@@ -123,8 +135,18 @@ var ListOrders = React.createClass({
         });
     },
 
+
+    /*
+     * 遷移先のページを設定するためのコールバック関数。
+     * ま、説明するまでもなく、見りゃ分かりますね。
+     */
     onSelect: function(next_ope) { this.setState({ next_ope: next_ope }); },
 
+
+    /*
+     * 名前の通り、遷移した先のページから本ページに戻って来るためのコール
+     * バック関数。
+     */
     backToHere: function() {
         this.setState({ next_ope: null });
         this.onSearch();
@@ -235,9 +257,23 @@ var ListOrders = React.createClass({
 
             var order_total   = 0.0;
             var billing_total = 0;
+            var is_expensive  = false;
 
             order.products.forEach(function(f) {
-                order_total   += f.cur_price * f.quantity;
+                var sub_total  = f.cur_price * f.quantity;
+
+
+                /*
+                 * 発注の小計 (単価 * 数量) が 150,000 円以上の場合、
+                 * 高額な物を買うということで、院長承認が必要。
+                 * 発注の「総」計ではなく、「小」計であることに注意。
+                 * 発注「総」計を見ても、院長承認が必要かどうかは分からない。
+                 */
+                if (sub_total >= 150000) {
+                    is_expensive = true;
+                }
+
+                order_total   += sub_total;
                 billing_total += f.billing_amount;
             });
 
@@ -246,7 +282,8 @@ var ListOrders = React.createClass({
             return [
                 {   // 起案番号
                     value: order.order_code,
-                    view:  <OrderCode user={this.props.user}
+                    view:  <OrderCode isExpensive={is_expensive}
+                                      user={this.props.user}
                                       order={order}
                                       goBack={this.backToHere}
                                       onSelect={this.onSelect} />
@@ -358,6 +395,11 @@ var ListOrders = React.createClass({
     },
 
     render: function() {
+        /*
+         * ここで、本ページに留まるか、他のページに遷移するかを制御する。
+         * this.state.next_ope を (非 null から) null に変更することで、
+         * あたかも本ページに戻って来るかのように振る舞うことができる。
+         */
         if (this.state.next_ope != null) {
             return this.state.next_ope;
         }

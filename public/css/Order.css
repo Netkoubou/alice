@@ -187,6 +187,13 @@
 
 .list-orders-order-code:hover { text-decoration: underline; }
 
+.list-orders-order-code-for-expensive {
+  color:  #ff0000;
+  cursor: pointer;
+}
+
+.list-orders-order-code-for-expensive:hover { text-decoration: underline; }
+
 @keyframes urgency {
   from { font-size: xx-small; font-weight: lighter; color: orange; }
   to   { font-size: normal;   font-weight: bold;    color: red     }
