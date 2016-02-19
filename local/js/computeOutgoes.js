@@ -94,6 +94,7 @@ module.exports = function(req, res) {
         return sum;
     }
 
+
     /*
      * row.department_code で特定される部門診療科の、
      * month_index で示される月の支出を算出する。
@@ -143,6 +144,7 @@ module.exports = function(req, res) {
                         fill_outgo(db, row, months_index + 1);
                     } else {
                         db.close();
+                        res.json({ status: 255 });
                         log_warn.warn(err);
 
                         var msg = '[computeOutgoes] failed to access ' +
@@ -220,6 +222,12 @@ module.exports = function(req, res) {
             year: req.body.year
         }).toArray(function(err, budgets_and_incomes) {
             if (err == null) {
+                if (budgets_and_incomes.length == 0) {
+                    db.close();
+                    res.json({ status: 0, outgoes: [] });
+                    return;
+                }
+
                 budgets_and_incomes.forEach(function(doc) {
                     outgoes.push({
                         department_code: doc.department_code,
