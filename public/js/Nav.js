@@ -235,7 +235,7 @@ var Nav = React.createClass({
         /*
          * 予算と収支メニュー
          */
-        if (is_admin) {
+        if (this.props.user.privileged.administrate) {
             budget.push(<NavItemTitle key="0" name="予算と収支" />);
             budget.push(
                 <NavItem key="1"
@@ -243,9 +243,6 @@ var Nav = React.createClass({
                          onClick={this.onSelect('SHOW_SHEET')}
                          isSelected={selected === 'SHOW_SHEET'} />
             );
-        }
-
-        if (this.props.user.privileged.administrate) {
             budget.push(<NavItem key="2"
                                  name="入力"
                                  onClick={this.onSelect('INPUT_AMOUNT')}
