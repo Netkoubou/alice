@@ -267,8 +267,8 @@ var EditProduct = React.createClass({
                 return;
             }
     
-            if (post.cur_price <= 0.0) {
-                alert('現在価格に 0 より大きな値を指定して下さい。');
+            if (post.cur_price < 0.0) {
+                alert('現在価格に 0 以上を指定して下さい。');
                 return;
             }
 

@@ -171,11 +171,21 @@ var OrderProducts = React.createClass({
 
 var PreviewOrder = React.createClass({
     render: function() {
+        var title     = '神奈川歯科大学 附属病院 ';
+        var stamp_row = null;
+
+        if (window.opener.info.purpose === 'APPROVAL') {
+            title    += '発注依頼書';
+            stamp_row = <StampRow />;
+        } else {
+            title += '注文書';
+        }
+
         return (
             <div id="preview-order">
               <fieldset>
-                <h1>神奈川歯科大学 附属病院 発注書</h1>
-                {window.opener.info.purpose === 'APPROVAL'? <StampRow />: null}
+                <h1>{title}</h1>
+                {stamp_row}
                 <OrderInfos />
                 <OrderProducts />  
               </fieldset>
