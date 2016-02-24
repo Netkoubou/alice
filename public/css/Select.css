@@ -1,0 +1,9 @@
+.select-menu-item:hover {
+  color:           #1976d2;
+  text-decoration: underline;
+}
+
+.dropdown-menu {
+  overflow-y: scroll;
+  max-height: 384px;
+}

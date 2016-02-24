@@ -34,7 +34,7 @@ var Select = React.createClass({
                 <MenuItem eventKey={i}
                           key={o.code}
                           onSelect={this.onSelect}>
-                  {o.name}
+                  <div className="select-menu-item">{o.name}</div>
                 </MenuItem>
             );
         }.bind(this) );
