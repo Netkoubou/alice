@@ -219,9 +219,9 @@ var StoreForEditOrder = Fluxxor.createStore({
      * 発注確定一覧をクリアする場合、状態が処理中のもの *だけ* 除去する。
      * 以下の状態のものは除去しちゃいけない。
      *
-     *   - 発注済み
+     *   - 発注済
      *   - キャンセル
-     *   - 納品済み
+     *   - 納品済
      */
     onClearFinalists: function() {
         this.finalists = this.finalists.filter(function(finalist) {
@@ -511,7 +511,7 @@ var EditOrder = React.createClass({
             order_state: React.PropTypes.oneOf([
                 'REQUESTING',       // 依頼中
                 'APPROVING',        // 承認待ち
-                'APPROVED',         // 承認済み
+                'APPROVED',         // 承認済
                 'NULLIFIED',        // 無効
                 'COMPLETED'         // 完了
             ]).isRequired,
@@ -536,9 +536,9 @@ var EditOrder = React.createClass({
 
                 state: React.PropTypes.oneOf([
                     'UNORDERED',    // 未発注
-                    'ORDERED',      // 発注済み
+                    'ORDERED',      // 発注済
                     'CANCELED',     // キャンセル
-                    'DELIVERED'     // 納品済み
+                    'DELIVERED'     // 納品済
                 ]).isRequired,
 
                 billing_amount:      React.PropTypes.number.isRequired,

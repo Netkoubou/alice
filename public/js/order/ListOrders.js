@@ -357,7 +357,7 @@ var ListOrders = React.createClass({
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"
-                       label="承認済み"
+                       label="承認済"
                        checked={this.state.is_approved}
                        onChange={this.onChangeCheckbox}
                        ref="approved" />

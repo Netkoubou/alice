@@ -11,7 +11,7 @@ module.exports = {
         switch (state) {
         case 'REQUESTING': return '依頼中';
         case 'APPROVING':  return '承認待ち';
-        case 'APPROVED':   return '承認済み';
+        case 'APPROVED':   return '承認済';
         case 'NULLIFIED':  return '無効';
         }
 
@@ -21,17 +21,17 @@ module.exports = {
     toProductStateName: function(state) {
         switch (state) {
         case 'UNORDERED': return '未発注';
-        case 'ORDERED':   return '発注済み';
+        case 'ORDERED':   return '発注済';
         case 'CANCELED':  return 'キャンセル';
         }
 
-        return '納品済み';  // DELIVERED
+        return '納品済';  // DELIVERED
     },
 
     toCostStateName: function(state) {
         switch (state) {
         case 'APPROVING': return '承認待ち';
-        case 'APPROVED':  return '承認済み';
+        case 'APPROVED':  return '承認済';
         }
 
         return '却下';      // REJECTED

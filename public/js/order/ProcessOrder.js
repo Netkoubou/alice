@@ -25,13 +25,13 @@ var SelectProductState = React.createClass({
                 未発注
               </TableFrame.Option>
               <TableFrame.Option value="ORDERED">
-                発注済み
+                発注済
               </TableFrame.Option>
               <TableFrame.Option value="CANCELED">
                 キャンセル
               </TableFrame.Option>
               <TableFrame.Option value="DELIVERED">
-                納品済み
+                納品済
               </TableFrame.Option>
             </TableFrame.Select>
         );
@@ -136,7 +136,7 @@ var Buttons = React.createClass({
                         bsStyle="primary"
                         className="process-order-button"
                         onClick={this.props.onDeny}>
-                  否認 
+                  差し戻し 
                 </Button>
             );
             break;
@@ -198,7 +198,7 @@ var Buttons = React.createClass({
                         bsStyle="primary"
                         className="process-order-button"
                         onClick={this.props.onRevertToApproved}>
-                  承認済みへ戻す
+                  承認済へ戻す
                 </Button>
             );
             break;
@@ -284,7 +284,7 @@ var ProcessOrder = React.createClass({
     },
 
     onDeny: function() {
-        if (confirm('この発注を *否認* します。よろしいですか?') ) {
+        if (confirm('この発注を差し戻します。よろしいですか?') ) {
             this.changeOrderState('REQUESTING');
         }
     },
@@ -296,7 +296,7 @@ var ProcessOrder = React.createClass({
     },
 
     onRevertToApproved: function() {
-        if (confirm('この発注を「承認済み」に戻します。よろしいですか?') ) {
+        if (confirm('この発注を「承認済」に戻します。よろしいですか?') ) {
             this.changeOrderState('APPROVED');
         }
     },
