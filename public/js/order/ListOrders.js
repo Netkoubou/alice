@@ -237,12 +237,11 @@ var ListOrders = React.createClass({
             var popover = <Popover id={id} title="備考・連絡">
                             {order.order_remark}
                           </Popover>;
-
             return (
                 <OverlayTrigger container={this.refs.listOrders}
                                 placement="left"
                                 overlay={popover}>
-                  <span className="list-orders-remark">!</span>
+                  <div className="list-orders-remark">!</div>
                 </OverlayTrigger>
             );
         }
@@ -252,8 +251,23 @@ var ListOrders = React.createClass({
 
     composeTableFrameData: function() {
         return this.state.orders.map(function(order, index) {
-            var order_state      = Util.toOrderStateName(order.order_state);
             var order_type_view  = this.decideOrderTypeView(order);
+            var order_remark     = this.decideOrderRemark(order, index)
+            var order_state;
+            
+
+            /*
+             * 差し戻された発注を目立たせるために、状態名を赤に
+             */
+            if (order.order_state === 'REQUESTING' && order_remark != '') {
+                order_state = (
+                    <span className="list-orders-turned-back">
+                      {Util.toOrderStateName(order.order_state)}
+                    </span>
+                );
+            } else {
+                order_state = Util.toOrderStateName(order.order_state);
+            }
 
             var order_total   = 0.0;
             var billing_total = 0;
@@ -322,7 +336,7 @@ var ListOrders = React.createClass({
                 },
                 {   // 備考・連絡
                     value: '',
-                    view:  this.decideOrderRemark(order, index)
+                    view:  order_remark
                 }
             ];
         }.bind(this) );

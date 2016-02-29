@@ -212,6 +212,7 @@
 }
 
 .list-orders-remark:hover { text-decoration: underline; }
+.list-orders-turned-back  { color: #ff0000; }
 
 #process-order {
   width:       calc(100% - 8px);
