@@ -82,7 +82,28 @@ module.exports = function(req, res) {
                      * このため、部門診療科数がアホみたいに増えると破綻する
                      * 可能性がある。まぁそこまで増えることはないだろうが ...
                      */
-                    var freshers = departments.filter(function(d) {
+                    var freshers = departments.filter(function(d0) {
+                        /*
+                         * ログインしているユーザが所属していない部門診療科を
+                         * 除く
+                         */
+                        var is_belonged = false;
+
+                        if (req.session.user.privileged.administrate) {
+                            is_belonged = true;
+                        } else {
+                            req.session.user.departments.forEach(function(d1) {
+                                var target   = d0._id.toString();
+                                var belonged = d1.code.toString();
+
+                                if (target === belonged) {
+                                    is_belonged = true;
+                                }
+                            });
+                        }
+                            
+                        return is_belonged;
+                    }).filter(function(d) {
                         var found = false;
 
                         response.budgets_and_incomes.forEach(function(bai) {
@@ -146,23 +167,39 @@ module.exports = function(req, res) {
         }).toArray(function(err, budgets_and_incomes) {
             if (err == null) {
                 /*
-                 * 引っこ抜いたデータから、取り敢えず返り値を作成する。
+                 * 引っこ抜いたデータから、先ずログインしているユーザが所属
+                 * して *いない* 部門診療科を除き、仮の返り値を作成する。
                  * 新規に追加されて未だ budgets_and_incomes コレクションに
                  * 反映されていない部門診療科コードと、各部門診療科名は後で
                  * 補填する。
                  */
-                budgets_and_incomes.forEach(function(doc) {
+                budgets_and_incomes.filter(function(doc) {
+                    // ログインしているユーザが所属していない部門診療科を除く
+                    var is_belonged = false;
+
+                    if (req.session.user.privileged.administrate) {
+                        is_belonged = true;
+                    } else {
+                        req.session.user.departments.forEach(function(d) {
+                            if (d.code.toString() === doc.department_code) {
+                                is_belonged = true;
+                            }
+                        });
+                    }
+
+                    return is_belonged;
+                }).forEach(function(doc) {
+                    // 仮りの返り値作成
                     response.budgets_and_incomes.push({
                         department_code: doc.department_code,
-                        department_name: '',
+                        department_name: '',    // 後で埋める
                         budget:          doc.budget,
                         incomes:         doc.incomes
                     });
                 });
 
-
                 var now       = moment();
-                var this_year = (now.month() < 2)? now.year() - 1: now.year();
+                var this_year = (now.month() < 3)? now.year() - 1: now.year();
 
                 if (req.body.year < this_year) {
                     /*
@@ -176,7 +213,7 @@ module.exports = function(req, res) {
                     /*
                      * 今年度のデータを要求されている場合、
                      * 未だ budgets_and_incomes コレクションに取り込まれて
-                     * いない部門診療科を補填する。
+                     * いない (かもしれない) 部門診療科を補填する。
                      */
                     fill_departments();
                 }

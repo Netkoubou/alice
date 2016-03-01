@@ -70,7 +70,7 @@ var Ope = React.createClass({
             contents = <InputAmount />;
             break;
         case 'SHOW_SHEET':
-            contents = <ShowSheet />;
+            contents = <ShowSheet user={this.props.user}/>;
             break;
         default:
             contents = null;

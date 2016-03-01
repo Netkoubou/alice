@@ -99,11 +99,6 @@ var Nav = React.createClass({
         hideNav: React.PropTypes.func.isRequired
     },
 
-
-    dummy: function() {
-        alert('工事中です (そっとしておいて下さい)');
-    },
-
     onSelect: function(action) {
         return function() {
             this.props.onSelect(action);
@@ -248,8 +243,15 @@ var Nav = React.createClass({
                                  onClick={this.onSelect('INPUT_AMOUNT')}
                                  isSelected={selected === 'INPUT_AMOUNT'} />
             );
+        } else if (is_admin) {
+            budget.push(<NavItemTitle key="0" name="予算と収支" />);
+            budget.push(
+                <NavItem key="1"
+                         name="閲覧"
+                         onClick={this.onSelect('SHOW_SHEET')}
+                         isSelected={selected === 'SHOW_SHEET'} />
+            );
         }
-
 
         /*
          * システム管理メニュー

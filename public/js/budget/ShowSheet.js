@@ -110,6 +110,8 @@ var ExpenseRatio = React.createClass({
 });
 
 var ShowSheet = React.createClass({
+    propTypes: { user: React.PropTypes.object.isRequired },
+
     getInitialState: function() {
         return {
             year:                '',
@@ -210,7 +212,7 @@ var ShowSheet = React.createClass({
     render: function() {
         var select_options = [];
         var now            = moment();
-        var this_year      = (now.month() < 2)? now.year() - 1: now.year();
+        var this_year      = (now.month() < 3)? now.year() - 1: now.year();
 
         for (var year = 2015; year <= this_year; year++) {
             var year_string = year.toString();
@@ -281,6 +283,12 @@ var ShowSheet = React.createClass({
             return row;
         }.bind(this) );
 
+        var expense_ratio = null;
+
+        if (this.props.user.privileged.administrate) {
+            expense_ratio = <ExpenseRatio sums={sums} />;
+        }
+
         return (
             <div id="show-sheet" ref="showSheet">
               <div id="show-sheet-select">
@@ -292,7 +300,7 @@ var ShowSheet = React.createClass({
               <TableFrame id="show-sheet-table"
                           title={this.makeTableTitle()}
                           data={data} />
-              <ExpenseRatio sums={sums} />
+              {expense_ratio}
             </div>
         );
     }

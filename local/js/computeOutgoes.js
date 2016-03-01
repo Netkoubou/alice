@@ -228,10 +228,26 @@ module.exports = function(req, res) {
                     return;
                 }
 
-                budgets_and_incomes.forEach(function(doc) {
+                budgets_and_incomes.filter(function(doc) {
+                    // ログインしているユーザが所属していない部門診療科を除く
+                    var is_belonged = false;
+
+                    if (req.session.user.privileged.administrate) {
+                        is_belonged = true;
+                    } else {
+                        req.session.user.departments.forEach(function(d) {
+                            if (d.code.toString() === doc.department_code) {
+                                is_belonged = true;
+                            }
+                        });
+                    }
+
+                    return is_belonged;
+                }).forEach(function(doc) {
+                    // 仮りの返り値作成
                     outgoes.push({
                         department_code: doc.department_code,
-                        department_name: '',
+                        department_name: '',    // 後で埋める
                         outgoes:         []
                     });
                 });
