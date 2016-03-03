@@ -17,13 +17,21 @@ var Cell = React.createClass({
     },
 
     render: function() {
-        var rate        = this.props.outgo / this.props.budget * 100;
-        var rate_string = rate.toLocaleString('ja-JP', {
+        var exec_ratio        = this.props.outgo / this.props.budget * 100;
+        var exec_ratio_string = exec_ratio.toLocaleString('ja-JP', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 2
         });
-        var popover = <Popover id={this.props.id} title="執行率">
-                        {rate_string + ' %'}
+
+        var expense_ratio        = this.props.outgo / this.props.income * 100;
+        var expense_ratio_string = expense_ratio.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+
+        var popover = <Popover id={this.props.id}>
+                        <div>執行率: {exec_ratio_string    + ' %'}</div>
+                        <div>経費率: {expense_ratio_string + ' %'}</div>
                       </Popover>;
                       
         return (
@@ -69,7 +77,7 @@ var ExpenseRatio = React.createClass({
             return (
                 <td className="show-sheet-expense-ratios-td"
                     key={Math.random()}>
-                  {ratio + " %"}
+                  {ratio + ' %'}
                 </td>
             );
         });
