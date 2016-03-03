@@ -2,7 +2,7 @@
 
 ### 要件
 
-* OS は Linux、BSD 系若しくは U*IX が楽。 Mac OS X や Windows でも (ちょっと頑張る必要があるかもしれないけど) 多分イケる。
+* OS は Linux、BSD 系などの U*IX が楽。 Mac OS X や Windows でも (ちょっと頑張る必要があるかもしれないけど) 多分イケる。
 * サーバを別途自前で用意する場合 (本番環境)
     * git
     * node (v5.1.0 以上)
@@ -38,7 +38,13 @@ alice/public 以下が Web サーバで公開するドキュメントになる�
 
 mongodb の起動方法は以下。
 
-    % mongod -config /etc/mongodb.conf &
+    % su
+    $ su mongodb
+    % mongod --config /etc/mongodb.conf
+
+若しくは
+
+    % sudo -u mongodb mongod --config /etc/mongodb.conf
 
 ##### 1. サーバを別途自前で用意する場合の手順を踏む。
 
@@ -98,8 +104,7 @@ Web ブラウザで https://localhost:8080 にアクセスすれば使える
 
 ##### 2. 8080 番ポートの利用状況
 
-テスト用サーバは 8080 番ポートを使うのだが、他で利用されていると
-(当然ながら) 起動しない (というか、できない)。
+テスト用サーバは 8080 番ポートを使うのだが、他で利用されていると起動に失敗する。
 8080 番ポートを利用する他のプログラムや、
 前に起動したままのテスト用サーバがないか netstat コマンドなどで確認する。
 
@@ -108,7 +113,7 @@ Web ブラウザで https://localhost:8080 にアクセスすれば使える
     }, $).listen(8080);
                  ^^^^
 
-を直接書き変えても OK。
+を直接書き変える。
 その場合は Web ブラウザでアクセスする際の URL のポート番号も変えること。
 
 
@@ -151,4 +156,3 @@ Web ブラウザで https://localhost:8080 にアクセスすれば使える
 最後にテスト用サーバを起動する。
 
     % npm run http-server
-
