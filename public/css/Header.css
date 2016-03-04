@@ -32,12 +32,28 @@
   margin-left:  24px;
 }
 
-#header-welcome {
+#header-right-end {
   flex-grow:       1;
   align-self:      flex-end;
-  display:         flex;
   justify-content: flex-end;
-  color:           #ffffff;
+  position:        relative;
+}
+
+#header-help {
+  position: absolute;
+  right:     4px;
+  bottom:   68px;
+}
+
+#header-help a { color: white; }
+
+#header-help:hover { text-decoration: underline; }
+
+#header-welcome {
+  position: absolute;
+  right:    4px;
+  bottom:   4px;
+  color:    #ffffff;
 }
 
 #header-account {

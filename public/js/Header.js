@@ -8,9 +8,8 @@ var Header = React.createClass({
     },
 
     render: function() {
-        var subsysname = 'Supply Processing & Distribution';
+        // var subsysname = 'Supply Processing & Distribution';
 
-        /*
         var selector = Math.random();
         var subsysname;
 
@@ -29,7 +28,6 @@ var Header = React.createClass({
         } else {
             subsysname = 'Supply Processing & Distribution';
         }
-        */
 
         return (
           <div id="header">
@@ -43,11 +41,16 @@ var Header = React.createClass({
               </span>
             </div>
             <div id="header-petname">Perry</div>
-            <div id="header-welcome">
-              ようこそ
-              <span id="header-account">
-                {this.props.user.name + ' (' + this.props.user.account + ')'}
-              </span>様
+            <div id="header-right-end">
+              <div id="header-help">
+                <a href="help/manual.html" target="_blank">ヘルプ</a>
+              </div>
+              <div id="header-welcome">
+                ようこそ
+                <span id="header-account">
+                  {this.props.user.name + ' (' + this.props.user.account + ')'}
+                </span>様
+              </div>
             </div>
           </div>
         );
