@@ -4,7 +4,7 @@ background: radial-gradient(#abbaab, #ffffff);
 
 #title02{
   border-left: 10px solid #CC3366;
-  border-bottom: 1px dashed #CC3366; /* ä¸‹ãƒœãƒ¼ãƒ€ãƒ¼ã‚’ã€1pxå¹…ã®ç ´ç·šã€ç·šè‰²#CC3366ã« */
+  border-bottom: 1px dashed #CC3366; /* ‰ºƒ{[ƒ_[‚ğA1px•‚Ì”jüAüF#CC3366‚É */
 }
 
 #title03{
@@ -135,7 +135,7 @@ h4 {
 	  border-right-color: transparent;
 	}
 
-/*---ãƒªãƒœãƒ³è¦‹å‡ºã—---*/
+/*---ƒŠƒ{ƒ“Œ©o‚µ---*/
 h1 {
   position: relative;
   color: #111;
