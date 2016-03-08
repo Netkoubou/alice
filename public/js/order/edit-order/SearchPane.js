@@ -259,11 +259,11 @@ var SearchPane = React.createClass({
         }
 
         return this.getFlux().actions.updateCandidates({
-            order_type:      this.props.orderType,
-            category_code:   this.state.category_code,
-            department:      this.state.department,
-            trader_code:     this.state.trader_code,
-            search_text:     this.state.search_text
+            order_type:    this.props.orderType,
+            category_code: this.state.category_code,
+            department:    this.state.department,
+            trader_code:   this.state.trader_code,
+            search_text:   this.state.search_text
         });
     },
 
@@ -273,8 +273,8 @@ var SearchPane = React.createClass({
      * 項目をサーバに問い合わせる。
      */
     componentDidMount: function() {
-        XHR.get('pickMenuItemsForSearchPane').set({
-            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        XHR.post('pickMenuItemsForSearchPane').send({
+            order_type: this.props.orderType
         }).end(function(err, res) {
             var errmsg_index = 'SEARCH_PANE_PICK_MENU_ITEMS_FOR_SEARCH_PANE';
 
