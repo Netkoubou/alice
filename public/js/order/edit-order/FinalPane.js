@@ -452,6 +452,21 @@ var FinalPane = React.createClass({
             minimumFractionDigits: 2
         });
 
+        var quantity;
+
+        if (finalist.state === 'UNORDERED') {
+            quantity = (
+                <TableFrame.Input
+                  key={Math.random()}
+                  type='int'
+                  placeholder={finalist.quantity.toLocaleString()}
+                  ref={'quantity' + index.toString()}
+                  onChange={this.onChangeQuantity(index)} />
+            );
+        } else {
+            quantity = finalist.quantity;
+        }
+
         return [
             {
                 value: finalist.name,
@@ -470,12 +485,7 @@ var FinalPane = React.createClass({
             },
             {
                 value: finalist.quantity,
-                view:  <TableFrame.Input
-                         key={Math.random()}
-                         type='int'
-                         placeholder={finalist.quantity.toLocaleString()}
-                         ref={'quantity' + index.toString()}
-                         onChange={this.onChangeQuantity(index)} />
+                view:  quantity
             },
             {
                 value: subtotal,
