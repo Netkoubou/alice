@@ -15,7 +15,7 @@ var Header = React.createClass({
 
         if (selector < 0.01) {
             // 開国してくださいよ
-            subsysname = 'Open your contry, please...';
+            subsysname = 'Open your country, please...';
         } else if (selector < 0.02) {
             // 開国すれば良いのです
             subsysname = 'It\'s OK only to open your country!';
@@ -24,7 +24,7 @@ var Header = React.createClass({
             subsysname = 'It\'s suck bad to close a country!';
         } else if (selector < 0.04) {
             // たった四杯で夜も寝られず
-            subsysname = 'Just four disturbs our sleep.';
+            subsysname = 'Just four disturb our sleep.';
         } else {
             subsysname = 'Supply Processing & Distribution';
         }

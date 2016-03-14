@@ -30,7 +30,7 @@ var log_crit = log4js.getLogger('ctitical');
  * コード (retrieve_departments) を function で分割、最後に retrieve_traders
  * を呼び出す、というどこぞの教科書のような実装をしてみた。
  */
-function retrieve_step_by_step(user, db, res) {
+function retrieve_step_by_step(user, order_type, db, res) {
     var categories      = [];
     var traders         = [];
     var departments     = [];
@@ -214,6 +214,28 @@ function retrieve_step_by_step(user, db, res) {
                 return;
             }
 
+            var is_target = false;
+
+            if (order_type === 'ORDINARY_ORDER' && d.draft_ordinarily) {
+                /*
+                 * 通常発注なので、通常発注権限を持っている部門診療科が対象
+                 */
+                is_target = true;
+            }
+
+            if (order_type === 'URGENCY_ORDER' && d.draft_urgently) {
+                // 緊急発注でも同じ
+                is_target = true;
+            }
+
+            if (!is_target) {
+                if (user.departments.length == i + 1) {
+                    retrieve_products();
+                }
+
+                return;
+            }
+
             db.collection('departments').find({
                 is_alive: true,
                 _id:      new ObjectID(d.code)
@@ -262,22 +284,26 @@ module.exports = function(req, res) {
     }
 
     util.query(function(db) {
+        var order_type       = req.body.order_type;
         var draft_ordinarily = req.session.user.privileged.draft_ordinarily;
         var draft_urgently   = req.session.user.privileged.draft_urgently;
 
-        if (draft_ordinarily || draft_urgently) {
+        if (order_type === 'ORDINARY_ORDER' && draft_ordinarily) {
             /*
-             * 全部門診療科に跨がって、通常発注 and/or 緊急発注を起案できる
-             * ユーザは、全ての部門診療科 (departments)、品目 (categories)、
+             * 全部門診療科に跨がって通常発注を起案できるユーザは、
+             * 全ての部門診療科 (departments)、品目 (categories)、
              * 販売元 (traders) が選択対象となる。
              */
+            util.retrieve_all_departments_categories_traders(res, db);
+        } else if (order_type === 'URGENCY_ORDER' && draft_urgently) {
+            // 全部門診療科に跨がって緊急発注を起案できるユーザは、以下同文
             util.retrieve_all_departments_categories_traders(res, db);
         } else {
             /*
              * 自分の所属する部門診療科の通常発注 and/or 緊急発注しか
              * 起案できない
              */
-            retrieve_step_by_step(req.session.user, db, res);
+            retrieve_step_by_step(req.session.user, order_type, db, res);
         }
     });
 };
