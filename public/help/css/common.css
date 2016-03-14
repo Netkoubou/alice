@@ -135,6 +135,39 @@ h4 {
 	  border-right-color: transparent;
 	}
 
+h5 {
+	  position: relative;
+	  color: #111;
+	  background: #ccc;
+	  font-size: 20px;
+	  line-height: 1;
+	  margin: 30px 20px 10px -10px;
+	  padding: 14px 5px 10px 50px;
+	  border-radius: 22px 0 0 22px;
+	}
+	h5:before {
+	  content: "";
+	  position: absolute;
+	  background: #eee;
+	  top: 50%;
+	  left: 14px;
+	  margin-top :-10px;
+	  height: 20px;
+	  width: 20px;
+	  border-radius: 50%;
+	  box-shadow: 1px 1px 1px #777 inset;
+	}
+	h5:after {
+	  content: "";
+	  position: absolute;
+	  top: 0;
+	  right: -22px;
+	  height: 0;
+	  width: 0;
+	  border: 22px solid #ccc;
+	  border-right-color: transparent;
+	}
+
 /*---ÉäÉ{Éìå©èoÇµ---*/
 h1 {
   position: relative;
