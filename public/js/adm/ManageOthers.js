@@ -126,13 +126,6 @@ var ManageOthers = React.createClass({
             return false;
         }
 
-        if (department.tel === '') {
-            alert('電話番号を入力して下さい。');
-            e = this.refs['department_tel' + index.toString()];
-            ReactDOM.findDOMNode(e).select();
-            return false;
-        }
-
         return true;
     },
 
