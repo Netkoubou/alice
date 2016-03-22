@@ -8,7 +8,7 @@
 <BODY leftmargin="50" topmargin="20" rightmargin="50 "bottommargin="20">
 <h1><a name="3-0"><FONT size="5">CHAPTER 1．事前準備</FONT></a></h1>
 <h2 id="title02"><a name="1-1"><FONT size="5">１．１．使用ブラウザーの設定</FONT></h2></a>
-◇例として、Chromの設定を記述してあります。他のブラウザーをご使用の場合は、同様な設定をしてください。<br>
+◇例として、Chromeの設定を記述してあります。他のブラウザーをご使用の場合は、同様な設定をしてください。<br>
 
 <h2 id="title02"><a name="1-1-1"><FONT size="3">１．１．１．ポップアップブロックを無効にする。</FONT></h2></a>
 <!--
@@ -28,8 +28,8 @@ InternetExplorerを起動し、「　」をクリックして表示された一�
 <br>
 -->
 
-<FONT size="2">【Chromの場合】<br>
-◇Chromを起動し、「　」をクリックして表示された一覧から「設定」をクリックします。<br>
+<FONT size="2">【Chromeの場合】<br>
+◇Chromeを起動し、「　」をクリックして表示された一覧から「設定」をクリックします。<br>
 <img src="./img/spd-003.jpg" width="300" height="350"><br>
 <br>
 
@@ -53,7 +53,7 @@ InternetExplorerを起動し、「　」をクリックして表示された一�
 <br>
 
 <h2 id="title02"><a name="1-1-2"><FONT size="3">１．１．２．印刷設定</FONT></h2></a>
-<FONT size="2">【Chromの場合】<br>
+<FONT size="2">【Chromeの場合】<br>
 ◇Chromを起動し、「　」をクリックして表示された一覧から「印刷」をクリックします。<br>
 <img src="./img/spd-008.jpg" width="300" height="350"><br>
 <br>
@@ -67,5 +67,74 @@ InternetExplorerを起動し、「　」をクリックして表示された一�
 
 <a href="javascript:history.go(-1)">前のページに戻る</a>
 <br><br>
+
+<h2 id="title02"><a name="1-1-3"><FONT size="3">１．１．３．ＳＳＬ証明書のインポート</FONT></h2></a>
+<FONT size="2">【Chromeの場合】<br>
+◇Chromeブラウザーでアクセスしたとき、アドレスバーに赤色斜線と警告画面出てしまいます。その場合の対策手順を下記に記述します。<br>
+<br>
+<img src="./img/spd-026.jpg"><br>
+<br>
+<img src="./img/spd-017.jpg"><br>
+<br>
+
+◇SSL証明書の取得<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Chromeを起動し、URLに「ftp://spd.kdu.ac.jp」を指定してください。下記の画面が表示されます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cat.crt をクリックしてください。<br>
+<img src="./img/spd-011.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;下記が表示されます。<br>
+<img src="./img/spd-012.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;表示内容を選択し、コピー保存してください。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;その後、テキストエディター（メモ帳など）を起動し、コピーした内容を貼り付けてください。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ファイル名を「ca.crt」とし、管理しやすい場所（ドキュメント配下とか）に保存してください。<br>
+<img src="./img/spd-013.jpg"><br>
+<br>
+
+◇SSL証明書のインポート<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Chromeを起動し、メニューから設定を選びます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;設定画面の下の方に「詳細設定を表示・・・」という文字があるのでこれをクリックします。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;「HTTPS/SSL」という項目が出てきて「証明書を管理・・・」というボタンがありますので、これをクリックします。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;証明書管理画面が表示されます。この画面で「インポート」をクリックします。<br>
+<img src="./img/spd-018.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;証明書インポートウィザードが表示されますので、「次へ」をクリックします。<br>
+<img src="./img/spd-019.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;証明書のファイルを指定（上記のca.crtファイル）し、「次へ」をクリックします。<br>
+<img src="./img/spd-020.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;次の「証明ストア」の選択画面ではいったん「参照」をクリックします。<br>
+<img src="./img/spd-021.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;表示された画面で「信頼されたルート証明機関」を選んで「OK」をクリックします。先ほどの画面に戻ったら、「次へ」をクリックします。<br>
+<img src="./img/spd-022.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;選択された内容が表示されるので、確認して「完了」をクリックします。<br>
+<img src="./img/spd-023.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;セキュリティ警告画面が表示されますが、「はい」をクリックします。<br>
+<img src="./img/spd-024.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;完了画面が表示されますので、「OK」をクリックし完了です。<br>
+<img src="./img/spd-025.jpg"><br>
+<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;アドレスバーの表示もhttpsに斜線が入らずちゃんと緑色で表示されます。<br>
+<img src="./img/spd-027.jpg"><br>
+<br>
+
+<a href="javascript:history.go(-1)">前のページに戻る</a>
+<br><br>
+
 </body>
 </html>
