@@ -26,7 +26,7 @@
     % npm install
     % npm run build-dist
 
-alice/public 以下が Web サーバで公開するドキュメントになる。
+alice/public 以下が HTTP サーバの公開するドキュメントになる。
 
 上記のままでも動作には問題ないが、クライアント (Web ブラウザ側) のデバックを
 考慮するのならば、
