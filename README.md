@@ -1,19 +1,21 @@
-# 環境構築方法
+# テスト環境構築方法
 
 ### 要件
 
 * OS は Linux、BSD 系などの U*IX が楽。 Mac OS X や Windows でも (ちょっと頑張る必要があるかもしれないけど) 多分イケる。
-* サーバを別途自前で用意する場合 (本番環境)
-    * git
-    * node (v5.1.0 以上)
-    * npm
-* テスト用のサーバまでまるっと構築する場合 (テスト環境)
-    * サーバを別途自前で用意する場合の要件に加えて、
-    * MongoDB
-    * OpenSSL (オレオレ証明書で動かす場合)
+* git
+* node (v5.1.0 以上)
+* npm
+* MongoDB
+* OpenSSL
 
 
-### サーバを別途自前で用意する場合
+### 構築手順
+
+##### 0. 要件の準備
+
+上記の要件に挙がっているソフトウェアをインストールしておく。
+##### 1. ソースコードの取得
 
 以下は (root ではない) 一般ユーザで、且つそのユーザのホームディレクトリ内で
 実行すること。
@@ -21,32 +23,13 @@
 
     % git clone https://github.com/Netkoubou/alice.git
     % cd alice
+
+#### 2. クライアントコードのコンパイル
+
     % npm install
     % npm run build-dist
 
-以上で終わり。
-alice/public 以下が Web サーバで公開するドキュメントになるので、
-それを適切なパスに配置して完了。
-後は、Web ブラウザで公開された URL にアクセスすれば OK。
-
-
-### テスト用のサーバまでまるっと構築する場合
-
-テスト用の環境なので、root ではなく一般ユーザで作成することを推奨。
-
-##### 0. MongoDB と OpenSSL をインストールしておき、それぞれ利用可能なようにしておく。
-
-mongodb の起動方法は以下。
-
-    % su
-    $ su mongodb
-    % mongod --config /etc/mongodb.conf
-
-若しくは
-
-    % sudo -u mongodb mongod --config /etc/mongodb.conf
-
-##### 1. サーバを別途自前で用意する場合の手順を踏む。
+alice/public 以下が Web サーバで公開するドキュメントになる。
 
 上記のままでも動作には問題ないが、クライアント (Web ブラウザ側) のデバックを
 考慮するのならば、
@@ -60,17 +43,29 @@ mongodb の起動方法は以下。
 とすると、デバッグがし易くなる。
 
 
-##### 2. MongoDB にテストデータを流し込む
+##### 3. MongoDB にテストデータを流し込む
+
+先ずは mongodb を起動方法する。
+
+    % su
+    $ su mongodb
+    % mongod --config /etc/mongodb.conf
+
+若しくは
+
+    % sudo -u mongodb mongod --config /etc/mongodb.conf
+
+起動したら、テストデータを流し込む。
 
     % mongo localhost/alice --quiet local/utils/insert-dummy-data.js
 
 
-##### 3. SSL のオレオレ証明書と秘密鍵を作成 (質問に何と答えるかは、スクリプト内のコメント参照)
+##### 4. SSL のオレオレ証明書と秘密鍵を作成 (質問に何と答えるかは、スクリプト内のコメント参照)
 
     % cd local/certs
     % sh ../utils/gen-dummy-certs.sh
 
-##### 4. テスト用サーバを起動
+##### 5. HTTP サーバを起動
 
     % cd ../
     % sudo npm run http-server
@@ -122,20 +117,15 @@ mongodb の起動方法は以下。
 にアクセスすること。
 
 
-# 更新方法
+### 更新方法
 
-開発が進み、古くなった環境を最新に更新する場合の方法は以下
-
-### サーバを別途自前で用意する場合
-
-構築時に npm コマンドを実行したディレクトリに行き、
+開発が進み、古くなった環境を最新に更新する場合、構築時に npm コマンドを実行したディレクトリに行ってから、
 
     % git pull
     % npm install
     % npm run build-dist
 
-これでエラーが出なければ完了。
-エラーが出た場合は、続けて以下を試す。
+ここでエラーが出た場合は、続けて以下を試す。
 
     % rm -Rf node_modules
     % npm update
@@ -143,14 +133,7 @@ mongodb の起動方法は以下。
 
 デバックを考慮するのであれば、build-dist の代わりに build を使うこと。
 
-
-### テスト用のサーバまでまるっと更新する場合
-
-まず、テスト用サーバ (http-server) を停止しておく。
-次にサーバを別途自前で用意する場合の手順を踏んでから、
-以下のようにコマンドを実行して、一旦 MongoDB からデータを綺麗に消し
-(テスト用のデータも更新されているかもしれないので) てから、
-新しいデータを流し込む。
+次に HTTP サーバ (http-server) を停止してから、以下のように一旦 MongoDB からデータを綺麗に消し (テスト用のデータも更新されているかもしれないので)、新しいデータを流し込む。
 
     % mongo
     > use alice
@@ -158,6 +141,6 @@ mongodb の起動方法は以下。
     > exit
     % mongo localhost/alice --quiet local/utils/insert-dummy-data.js
 
-最後にテスト用サーバを起動する。
+最後に HTTP サーバを起動して完了。
 
     % sudo npm run http-server
