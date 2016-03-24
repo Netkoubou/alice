@@ -50,7 +50,7 @@ var $ = express();
 https.createServer({
     key:  fs.readFileSync('local/certs/key.pem'),
     cert: fs.readFileSync('local/certs/cert.pem')
-}, $).listen(8080);
+}, $).listen(443);
 
 
 /*

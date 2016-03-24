@@ -12,6 +12,8 @@ var Messages       = require('../lib/Messages');
 var Util           = require('../lib/Util');
 
 var ManageProducts = React.createClass({
+    propTypes: { user: React.PropTypes.object.isRequired },
+
     getInitialState: function() {
         return {
             next_ope:        null,
@@ -196,24 +198,30 @@ var ManageProducts = React.createClass({
 
     composeTableFrameData: function() {
         var data = this.state.products.map(function(p, i) {
+            var product_name  = p.name;
             var category_name = this.lookupCategoryName(p.category_code);
             var trader_name   = this.lookupTraderName(p.trader_code);
+            var remover       = '';
+
+            if (this.props.user.privileged.administrate) {
+                product_name = (
+                    <div className="manage-products-product-name"
+                         onClick={this.onSelectProduct(i)}>
+                      {p.name}
+                    </div>
+                );
+
+                remover = (
+                    <div className="manage-products-remove-product"
+                         onClick={this.onRemoveProduct(i)}>
+                      -
+                    </div>
+                );
+            }
 
             return [
-                {
-                    value: '',
-                    view:  <div className="manage-products-remove-product"
-                                onClick={this.onRemoveProduct(i)}>
-                             -
-                           </div>
-                },
-                {
-                    value: p.name,
-                    view:  <div className="manage-products-product-name"
-                                onClick={this.onSelectProduct(i)}>
-                             {p.name}
-                           </div>
-                },
+                { value: '',            view: remover },
+                { value: p.name,        view: product_name },
                 { value: category_name, view: category_name },
                 { value: p.maker,       view: p.maker },
                 { value: trader_name,   view: trader_name },
@@ -225,21 +233,23 @@ var ManageProducts = React.createClass({
             ];
         }.bind(this) );
 
-        data.push([
-            {
-                value: '',
-                view:  <div className="manage-products-add-product"
-                            onClick={this.onAddProduct}>
-                         +
-                       </div>
-            },
-            { value: '', view: ''  },
-            { value: '', view: ''  },
-            { value: '', view: ''  },
-            { value: '', view: ''  },
-            { value: '', view: ''  },
-            { value: '', view: ''  }
-        ]);
+        if (this.props.user.privileged.administrate) {
+            data.push([
+                {
+                    value: '',
+                    view:  <div className="manage-products-add-product"
+                                onClick={this.onAddProduct}>
+                            +
+                        </div>
+                },
+                { value: '', view: ''  },
+                { value: '', view: ''  },
+                { value: '', view: ''  },
+                { value: '', view: ''  },
+                { value: '', view: ''  },
+                { value: '', view: ''  }
+            ]);
+        }
 
         return data;
     },

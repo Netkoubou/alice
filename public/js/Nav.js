@@ -281,6 +281,18 @@ var Nav = React.createClass({
                   <NavItem name="ユーザ"
                            onClick={this.onSelect('MANAGE_USERS')}
                            isSelected={selected === 'MANAGE_USERS'} />
+                  <NavItem name="物品一覧"
+                           onClick={this.onSelect('MANAGE_PRODUCTS')}
+                           isSelected={selected === 'MANAGE_PRODUCTS'} />
+                </div>
+            );
+        } else {
+            admin = (
+                <div>
+                  <NavItemTitle name="システム管理" />
+                  <NavItem name="物品一覧"
+                           onClick={this.onSelect('MANAGE_PRODUCTS')}
+                           isSelected={selected === 'MANAGE_PRODUCTS'} />
                 </div>
             );
         }

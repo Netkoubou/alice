@@ -61,7 +61,7 @@ var Ope = React.createClass({
             contents = <ManageUsers user={this.props.user} />;
             break;
         case 'MANAGE_PRODUCTS':
-            contents = <ManageProducts />;
+            contents = <ManageProducts user={this.props.user} />;
             break;
         case 'MANAGE_OTHERS':
             contents = <ManageOthers />;
@@ -70,7 +70,7 @@ var Ope = React.createClass({
             contents = <InputAmount />;
             break;
         case 'SHOW_SHEET':
-            contents = <ShowSheet user={this.props.user}/>;
+            contents = <ShowSheet user={this.props.user} />;
             break;
         default:
             contents = null;
