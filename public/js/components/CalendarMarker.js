@@ -37,7 +37,7 @@ var CalendarMarker = React.createClass({
                 '11 月',
                 '12 月'
             ],
-            firstDay: 1
+            firstDay: 0
         };
     },
 
