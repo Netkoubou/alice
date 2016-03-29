@@ -194,16 +194,7 @@
 
 .list-orders-order-code-for-expensive:hover { text-decoration: underline; }
 
-@keyframes urgency {
-  from { font-size: xx-small; font-weight: lighter; color: orange; }
-  to   { font-size: normal;   font-weight: bold;    color: red     }
-}
-
-.list-orders-urgency {
-  animation-name:            urgency;
-  animation-duration:        500ms;
-  animation-iteration-count: infinite;
-}
+.list-orders-urgency { color: red; }
 
 .list-orders-remark {
   font-weight: bold;
