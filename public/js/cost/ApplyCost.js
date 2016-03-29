@@ -123,15 +123,15 @@ var ApplyCost = React.createClass({
                 return;
             }
 
-            if (row.quantity <= 0) {
-                alert('数量には 0 より大きな値を指定して下さい。');
+            if (row.quantity < 0) {
+                alert('数量には 0 以上の値を指定して下さい。');
                 e = this.refs["quantity" + i.toString()];
                 ReactDOM.findDOMNode(e).select();
                 return;
             }
 
-            if (row.price <= 0) {
-                alert('単価には 0 より大きな値を指定して下さい。');
+            if (row.price < 0) {
+                alert('単価には 0 以上の値を指定して下さい。');
                 e = this.refs["price" + i.toString()];
                 ReactDOM.findDOMNode(e).select();
                 return;
