@@ -156,6 +156,22 @@ var ProcessCost = React.createClass({
 
     onSelectReason: function(e) { this.setState({ reason: e.code }); },
 
+    onPrint: function() {
+        window.info = {
+            user:          this.props.user.name,
+            cost_code:     this.props.cost.cost_code,
+            drafting_date: this.props.cost.drafting_date,
+            department:    this.props.cost.department_name,
+            account_title: this.props.cost.account_title_name,
+            breakdowns:    this.props.cost.breakdowns
+        };
+
+        window.open(
+            'preview-cost-application.html',
+            '経費精算申請書 印刷プレビュー'
+        );
+    },
+
     render: function() {
         var permission = this.decidePermission();
         var legend, buttons, remark;
@@ -260,6 +276,12 @@ var ProcessCost = React.createClass({
                 {fixed_date}
               </Notice>
               <div id="process-cost-buttons">
+                <Button bsStyle="primary"
+                        bsSize="large"
+                        className="process-cost-button"
+                        onClick={this.onPrint}>
+                  印刷
+                </Button>
                 <Button bsStyle="primary"
                         bsSize="large"
                         className="process-cost-button"
