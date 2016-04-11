@@ -495,6 +495,79 @@ var ListOrders = React.createClass({
         );
     },
 
+    printRequestingOrder: function(index) {
+        var order = this.state.orders[index];
+
+        XHR.post('changeOrderState').send({
+            order_id:      order.order_id,    // 不要
+            order_code:    order.order_code,
+            order_state:   'APPROVING',
+            order_remark:  order.order_remark,
+            order_version: order.order_version
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.LIST_ORDER_CHANGE_ORDER_STATE);
+                throw 'ajax_changeOrderState';
+            }
+
+            if (res.body.status > 1) {
+                alert(Messages.server.LIST_ORDER_CHANGE_ORDER_STATE);
+                throw 'server_changeOrderState';
+            }
+                    
+            if (res.body.status == 1) {
+                alert(Messages.information.UPDATE_CONFLICT);
+            } else {
+                var d_name = order.department_name;
+                var d_tel  = order.department_tel;
+
+                window.info = {
+                    purpose:       'APPROVAL',
+                    order_code:    order.order_code,
+                    department:    d_name + ' (' + d_tel + ') ',
+                    trader:        order.trader_name,
+                    drafting_date: order.drafting_date,
+                    order_date:    '',
+                    products:      order.products.map(function(p) {
+                        return {
+                            name:     p.name,
+                            maker:    p.maker,
+                            quantity: p.quantity,
+                            price:    p.cur_price
+                        };
+                    })
+                }
+
+                var url   = 'preview-order.html';
+                var title = '発注書 印刷プレビュー';
+                var w     = window.open(url, title);
+                w.print();
+                w.close();
+
+                this.printOrder(index + 1);
+            }
+        }.bind(this) );
+    },
+
+    printOrder: function(index) {
+        if (index < this.state.orders.length) {
+            switch (this.state.orders[index].order_state) {
+            case 'REQUESTING':
+                this.printRequestingOrder(index);
+                break;
+            case 'APPROVED':
+                this.printOrder(index + 1);
+                break;
+            default:
+                this.printOrder(index + 1);
+            }
+        } else {
+            this.onSearch();
+        }
+    },
+
+    printAll: function() { this.printOrder(0); },
+
     render: function() {
         /*
          * ここで、本ページに留まるか、他のページに遷移するかを制御する。
@@ -505,8 +578,20 @@ var ListOrders = React.createClass({
             return this.state.next_ope;
         }
         
-        var title = this.makeTableFrameTitle();
-        var data  = this.composeTableFrameData();
+        var title     = this.makeTableFrameTitle();
+        var data      = this.composeTableFrameData();
+        var print_all = null;
+
+        if (this.props.user.privileged.process_order) {
+            print_all = (
+                <Button bsStyle="primary"
+                        bsSize="large"
+                        id="list-orders-print-all"
+                        onClick={this.printAll}>
+                  全印刷
+                </Button>
+            );
+        }
 
         return (
             <div id="list-orders" ref="listOrders">
@@ -517,6 +602,7 @@ var ListOrders = React.createClass({
                             title={title}
                             data={data} />
               </fieldset>
+              {print_all}
             </div>
         );
     }
