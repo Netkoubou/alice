@@ -39,14 +39,18 @@ module.exports = function(req, res) {
 
         db.collection('products').find(sel).toArray(function(err, products) {
             if (err == null && products != null) {
-                products.forEach(function(p) {
-                    p.code = p._id;
+                if (products.length > 999) {
+                    res.json({ status: 1 });
+                } else {
+                    products.forEach(function(p) {
+                        p.code = p._id;
 
-                    delete p._id;
-                    delete p.is_alive;
-                });
+                        delete p._id;
+                        delete p.is_alive;
+                    });
 
-                res.json({ status: 0, products: products });
+                    res.json({ status: 0, products: products });
+                }
             } else {
                 db.close();
                 res.json({ status: 255 });
