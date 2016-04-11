@@ -114,17 +114,19 @@ var ListOrders = React.createClass({
         });
 
         return {
-            next_ope:      null,    // これが、本ページから遷移する先のページ
-                                    // を示す変数。null の場合は遷移せず、
-                                    // 本ページに留まる。
-            start_date:    moment(),
-            end_date:      moment(),
-            is_requesting: can_process_order,
-            is_approving:  can_approve,
-            is_approved:   can_process_order,
-            is_nullified:  false,
-            is_completed:  false,
-            orders:        []
+            next_ope: null, // これが、本ページから遷移する先のページ
+                            // を示す変数。null の場合は遷移せず、
+                            // 本ページに留まる。
+            start_date:           moment(),
+            end_date:             moment(),
+            is_requesting:        can_process_order,
+            is_approving:         can_approve,
+            is_approved:          can_process_order,
+            is_partially_ordered: false,
+            is_fully_ordered:     false,
+            is_nullified:         false,
+            is_completed:         false,
+            orders:               []
         };
     },
 
@@ -153,13 +155,30 @@ var ListOrders = React.createClass({
     },
 
     onSearch: function() {
+        /*
+         * 一部発注と全発注済みは、必要に迫られて後から付け足した状態。
+         * DB を変更することはできないので、承認済みの発注の中から、
+         * 
+         *   - 物品が一つも発注されていない       == 承認済み
+         *   - 未発注の物品と発注済みの物品が混在 == 一部発注
+         *   - 物品は全て発注されている           == 全発注済み
+         *         
+         * という感じにクライアント側で選別する。
+         * 面倒臭い ...
+         */
+        var is_approved          = this.state.is_approved;
+        var is_partially_ordered = this.state.is_partially_ordered;
+        var is_fully_ordered     = this.state.is_fully_ordered;
+
+        var approved = is_approved || is_partially_ordered || is_fully_ordered;
+
         XHR.post('searchOrders').send({
             start_date: this.state.start_date.format('YYYY/MM/DD'),
             end_date:   this.state.end_date.format('YYYY/MM/DD'),
             state: {
                 is_requesting: this.state.is_requesting,
                 is_approving:  this.state.is_approving,
-                is_approved:   this.state.is_approved,
+                is_approved:   approved,
                 is_nullified:  this.state.is_nullified,
                 is_completed:  this.state.is_completed
             }
@@ -174,27 +193,62 @@ var ListOrders = React.createClass({
                 throw 'server_searchOrders';
             }
 
-            this.setState({ orders: res.body.orders });
+            var orders = res.body.orders.filter(function(order) {
+                if (order.order_state != 'APPROVED') {
+                    return true;
+                }
+
+                var has_unordered = false;
+                var has_ordered   = false;
+
+                order.products.forEach(function(p) {
+                    if (p.state === 'UNORDERED') {
+                        has_unordered = true;
+                    } else {
+                        has_ordered = true;
+                    }
+                });
+
+                if (is_approved && has_unordered && !has_ordered) {
+                    return true;
+                }
+                
+                if (is_partially_ordered && has_unordered && has_ordered) {
+                    return true;
+                }
+
+                if (is_fully_ordered && !has_unordered && has_ordered) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            this.setState({ orders: orders });
         }.bind(this) )
     },
 
     onClear: function() {
         this.setState({
-            is_requesting: false,
-            is_approving:  false,
-            is_approved:   false,
-            is_nullified:  false,
-            is_completed:  false
+            is_requesting:        false,
+            is_approving:         false,
+            is_approved:          false,
+            is_partially_ordered: false,
+            is_fully_ordered:     false,
+            is_nullified:         false,
+            is_completed:         false
         });
     },
 
     onChangeCheckbox: function() {
         this.setState({
-            is_requesting: this.refs.requesting.getChecked(),
-            is_approving:  this.refs.approving.getChecked(),
-            is_approved:   this.refs.approved.getChecked(),
-            is_nullified:  this.refs.nullified.getChecked(),
-            is_completed:  this.refs.completed.getChecked()
+            is_requesting:        this.refs.requesting.getChecked(),
+            is_approving:         this.refs.approving.getChecked(),
+            is_approved:          this.refs.approved.getChecked(),
+            is_partially_ordered: this.refs.partially_ordered.getChecked(),
+            is_fully_ordered:     this.refs.fully_ordered.getChecked(),
+            is_nullified:         this.refs.nullified.getChecked(),
+            is_completed:         this.refs.completed.getChecked()
         });
     },
 
@@ -265,6 +319,25 @@ var ListOrders = React.createClass({
                       {Util.toOrderStateName(order.order_state)}
                     </span>
                 );
+            } else if (order.order_state === 'APPROVED') {
+                var has_unordered = false;
+                var has_ordered   = false;
+
+                order.products.forEach(function(p) {
+                    if (p.state === 'UNORDERED') {
+                        has_unordered = true;
+                    } else {
+                        has_ordered = true;
+                    }
+                });
+
+                if (has_unordered && has_ordered) {
+                    order_state = '一部発注';
+                } else if (!has_unordered && has_ordered) {
+                    order_state = '全発注済';
+                } else {
+                    order_state = Util.toOrderStateName(order.order_state);
+                }
             } else {
                 order_state = Util.toOrderStateName(order.order_state);
             }
@@ -378,6 +451,20 @@ var ListOrders = React.createClass({
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"
+                       label="一部発注"
+                       checked={this.state.is_partially_ordered}
+                       onChange={this.onChangeCheckbox}
+                       ref="partially_ordered" />
+              </div>
+              <div className="list-orders-checkbox">
+                <Input type="checkbox"
+                       label="全発注済"
+                       checked={this.state.is_fully_ordered}
+                       onChange={this.onChangeCheckbox}
+                       ref="fully_ordered" />
+              </div>
+              <div className="list-orders-checkbox-short">
+                <Input type="checkbox"
                        label="無効"
                        checked={this.state.is_nullified}
                        onChange={this.onChangeCheckbox}
@@ -391,14 +478,14 @@ var ListOrders = React.createClass({
                        ref="completed" />
               </div>
               <div id="list-orders-buttons">
-                <Button bsSize="large"
-                        bsStyle="primary"
+                <Button bsStyle="primary"
+                        bsSize="large"
                         className="list-orders-button"
                         onClick={this.onClear}>
                   クリア
                 </Button>
-                <Button bsSize="large"
-                        bsStyle="primary"
+                <Button bsStyle="primary"
+                        bsSize="large"
                         className="list-orders-button"
                         onClick={this.onSearch}>
                   検索

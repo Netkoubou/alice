@@ -154,6 +154,11 @@
   width: 80px;
 }
 
+.list-orders-checkbox-short {
+  float: left;
+  width: 60px;
+}
+
 .list-orders-button { margin-left: 4px; }
 #list-orders-table-frame { height: calc(100% - 128px); }
 
