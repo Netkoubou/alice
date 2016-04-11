@@ -198,6 +198,12 @@ module.exports = {
             'ネットワークの問題で物品の検索に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        LIST_ORDER_CHANGE_ORDER_STATE:
+            'AJAX error: changeOrderState in ListOrder.js\n\n' +
+            'ネットワークの問題で発注の状態変更に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
 
     server: {
@@ -360,6 +366,11 @@ module.exports = {
         MANAGE_PRODUCTS_SEARCH_PRODUCTS:
             'Server error: searchProducts in ManageProducts.js\n\n' +
             '物品の検索でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        LIST_ORDER_CHANGE_ORDER_STATE:
+            'Server error: changeOrderState in ListOrder.js\n\n' +
+            '発注の状態変更でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 
