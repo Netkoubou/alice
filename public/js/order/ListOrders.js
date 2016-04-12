@@ -495,9 +495,7 @@ var ListOrders = React.createClass({
         );
     },
 
-    printRequestingOrder: function(index) {
-        var order = this.state.orders[index];
-
+    toApproving: function(order) {
         XHR.post('changeOrderState').send({
             order_id:      order.order_id,    // 不要
             order_code:    order.order_code,
@@ -506,67 +504,97 @@ var ListOrders = React.createClass({
             order_version: order.order_version
         }).end(function(err, res) {
             if (err) {
-                alert(Messages.ajax.LIST_ORDER_CHANGE_ORDER_STATE);
-                throw 'ajax_changeOrderState';
-            }
-
-            if (res.body.status > 1) {
-                alert(Messages.server.LIST_ORDER_CHANGE_ORDER_STATE);
-                throw 'server_changeOrderState';
-            }
-                    
-            if (res.body.status == 1) {
+                alert(Messages.ajax.LIST_ORDERS_CHANGE_ORDER_STATE);
+            } else if (res.body.status > 1) {
+                alert(Messages.server.LIST_ORDERS_CHANGE_ORDER_STATE);
+            } else if (res.body.status == 1) {
                 alert(Messages.information.UPDATE_CONFLICT);
-            } else {
-                var d_name = order.department_name;
-                var d_tel  = order.department_tel;
-
-                window.info = {
-                    purpose:       'APPROVAL',
-                    order_code:    order.order_code,
-                    department:    d_name + ' (' + d_tel + ') ',
-                    trader:        order.trader_name,
-                    drafting_date: order.drafting_date,
-                    order_date:    '',
-                    products:      order.products.map(function(p) {
-                        return {
-                            name:     p.name,
-                            maker:    p.maker,
-                            quantity: p.quantity,
-                            price:    p.cur_price
-                        };
-                    })
-                }
-
-                var url   = 'preview-order.html';
-                var title = '発注書 印刷プレビュー';
-                var w     = window.open(url, title);
-                w.print();
-                w.close();
-
-                this.printOrder(index + 1);
             }
-        }.bind(this) );
+        });
     },
 
-    printOrder: function(index) {
-        if (index < this.state.orders.length) {
-            switch (this.state.orders[index].order_state) {
-            case 'REQUESTING':
-                this.printRequestingOrder(index);
-                break;
-            case 'APPROVED':
-                this.printOrder(index + 1);
-                break;
-            default:
-                this.printOrder(index + 1);
+    toOrdered: function(order) {
+        XHR.post('updateOrder').send({
+            order_id:      order.order_id,
+            order_code:    order.order_code,
+            order_state:   'APPROVED',
+            order_remark:  order.order_remark,
+            order_version: order.order_version,
+            trader_code:   order.trader_code,
+            products:      order.products.map(function(p) {
+                return {
+                    code:           p.code,
+                    price:          p.cur_price,
+                    quantity:       p.quantity,
+                    state:          'ORDERED',
+                    billing_amount: p.billing_amount
+                };
+            }),
+            completed_date: ''
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.LIST_ORDERS_UPDATE_ORDER);
+            } else if (res.body.status > 1) {
+                alert(Messages.server.LIST_ORDERS_UPDATE_ORDER);
+            } else if (res.body.status == 1) {
+                alert(Messages.information.UPDATE_CONFLICT);
             }
-        } else {
-            this.onSearch();
+        });
+    },
+
+    toSheetInfo: function(order, purpose, order_date) {
+        var department_name = order.department_name;
+        var department_tel  = order.department_tel;
+
+        return {
+            purpose:       purpose,
+            order_code:    order.order_code,
+            department:    department_name + ' (' + department_tel + ') ',
+            trader:        order.trader_name,
+            drafting_date: order.drafting_date,
+            order_date:    order_date,
+            products:      order.products.map(function(p) {
+                return {
+                    name:     p.name,
+                    maker:    p.maker,
+                    quantity: p.quantity,
+                    price:    p.cur_price
+                };
+            })
         }
     },
 
-    printAll: function() { this.printOrder(0); },
+    printAll: function() {
+        var orders = [];
+
+        this.state.orders.forEach(function(order) {
+            switch (order.order_state) {
+            case 'REQUESTING':
+                this.toApproving(order);
+                orders.push(this.toSheetInfo(order, 'APPROVAL', '') );
+                break;
+            case 'APPROVED':
+                if (order.trader_communication === 'fax') {
+                    var ordered_ones = order.products.filter(function(p) {
+                        return p.state != 'UNORDERED';
+                    });
+
+                    if (ordered_ones == 0) {
+                        var today = moment().format('YYYY/MM/DD');
+
+                        this.toOrdered(order);
+                        orders.push(this.toSheetInfo(order, 'FAX', today) );
+                    }
+                }
+
+                break;
+            }
+        }.bind(this) );
+
+        window.orders = orders;
+        window.open('preview-all-orders.html', '発注書 全印刷プレビュー');
+        this.onSearch();
+    },
 
     render: function() {
         /*

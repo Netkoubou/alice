@@ -211,7 +211,8 @@ function construct_response(orders, db, res) {
             cursor = db.collection('traders').find({ _id: id }).limit(1);
 
             next_action = function(trader) {
-                response[index].trader_name = trader.name;
+                response[index].trader_name          = trader.name;
+                response[index].trader_communication = trader.communication;
 
                 order_count++;
                 products_count[index] = 0;
@@ -267,19 +268,20 @@ function construct_response(orders, db, res) {
         }
 
         response[index] = {
-            order_id:        0,     // 不要 (DBMS に MySQL を用いる場合に必要)
-            order_code:      order.order_code,
-            order_type:      order.order_type,
-            order_state:     order.order_state,
-            order_remark:    order.order_remark,
-            order_version:   order.order_version,
-            drafting_date:   order.drafting_date,
-            drafter_account: '',    // これから埋める
-            department_code: order.department_code,
-            department_name: '',    // これから埋める
-            department_tel:  '',    // これから埋める
-            trader_code:     order.trader_code,
-            trader_name:     '',    // これから埋める
+            order_id:             0,    // 不要
+            order_code:           order.order_code,
+            order_type:           order.order_type,
+            order_state:          order.order_state,
+            order_remark:         order.order_remark,
+            order_version:        order.order_version,
+            drafting_date:        order.drafting_date,
+            drafter_account:      '',   // これから埋める
+            department_code:      order.department_code,
+            department_name:      '',   // これから埋める
+            department_tel:       '',   // これから埋める
+            trader_code:          order.trader_code,
+            trader_name:          '',   // これから埋める
+            trader_communication: '',   // これから埋める
 
             products: [],
 
