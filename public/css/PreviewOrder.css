@@ -110,5 +110,5 @@ button:hover { background-color: #01579b; }
 
 @media print {
   button   { display: none; }
-  fieldset { border: none; }
+  fieldset { border:  none; }
 }
