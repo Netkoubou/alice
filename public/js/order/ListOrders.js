@@ -221,8 +221,24 @@ var ListOrders = React.createClass({
                     return true;
                 }
 
+
+                /*
+                 * 何もチェックが無い時は全部表示
+                 */
+                var r = this.state.is_requesting;
+                var i = this.state.is_approving;
+                var d = this.state.is_approved;
+                var p = this.state.is_partially_ordered;
+                var f = this.state.is_fully_ordered;
+                var n = this.state.is_nullified;
+                var c = this.state.is_completed;
+
+                if (!(r || i || d || p || f || n || c) ) {
+                    return true;
+                }
+
                 return false;
-            });
+            }.bind(this) );
 
             this.setState({ orders: orders });
         }.bind(this) )
