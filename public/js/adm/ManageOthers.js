@@ -506,6 +506,9 @@ var ManageOthers = React.createClass({
                              <TableFrame.Option value="tel">
                                電話
                              </TableFrame.Option>
+                             <TableFrame.Option value="none">
+                               不要
+                             </TableFrame.Option>
                            </TableFrame.Select>
                 }
             ];

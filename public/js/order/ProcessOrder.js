@@ -21,9 +21,6 @@ var SelectProductState = React.createClass({
         return (
             <TableFrame.Select initialSelected={this.props.initialSelected}
                                onSelect={this.props.onSelect}>
-              <TableFrame.Option value="UNORDERED">
-                未発注
-              </TableFrame.Option>
               <TableFrame.Option value="ORDERED">
                 発注済
               </TableFrame.Option>
@@ -98,6 +95,7 @@ var Buttons = React.createClass({
         ]),
 
         goBack:               React.PropTypes.func.isRequired,
+        toOrdered:            React.PropTypes.func.isRequired,
         onApprove:            React.PropTypes.func.isRequired,
         onDeny:               React.PropTypes.func.isRequired,
         onRevertToRequesting: React.PropTypes.func.isRequired,
@@ -105,7 +103,8 @@ var Buttons = React.createClass({
         onFix:                React.PropTypes.func.isRequired,
         onRevertToApproved:   React.PropTypes.func.isRequired,
 
-        need_save: React.PropTypes.bool.isRequired
+        is_unordered: React.PropTypes.bool.isRequired,
+        need_save:    React.PropTypes.bool.isRequired
     },
 
     render: function() {
@@ -157,8 +156,9 @@ var Buttons = React.createClass({
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
-                        onClick={this.props.onRevertToRequesting}>
-                  依頼中へ戻す
+                        onClick={this.props.toOrdered}
+                        disabled={!this.props.is_unordered}>
+                  発注済へ
                 </Button>
             );
             buttons.push(
@@ -240,6 +240,17 @@ var ProcessOrder = React.createClass({
             products:       products,
             need_save:      false
         };
+    },
+
+    toOrdered: function() {
+        this.state.products.forEach(function(p) {
+            p.state = 'ORDERED';
+        });
+
+        this.setState({
+            products:  this.state.products,
+            need_save: true
+        });
     },
 
     onChangeRemark: function(e) {
@@ -562,7 +573,7 @@ var ProcessOrder = React.createClass({
         var billing_amount_view = product.billing_amount.toLocaleString();
         var state_view          = Util.toProductStateName(product.state);
 
-        if (permission === 'PROCESS') {
+        if (permission === 'PROCESS' && product.state != 'UNORDERED') {
             state_view = (
                 <SelectProductState
                   initialSelected={product.state}
@@ -681,6 +692,8 @@ var ProcessOrder = React.createClass({
             completed_date = '未完了です';
         }
 
+        var is_unordered = this.state.products[0].state === 'UNORDERED';
+
         return (
             <div id="process-order">
               <fieldset>
@@ -706,12 +719,14 @@ var ProcessOrder = React.createClass({
               <Buttons key={Math.random()}
                        permission={permission}
                        goBack={this.props.goBack}
+                       toOrdered={this.toOrdered}
                        onApprove={this.onApprove}
                        onDeny={this.onDeny}
                        onRevertToRequesting={this.onRevertToRequesting}
                        onPrint={this.onPrint}
                        onFix={this.onFix}
                        onRevertToApproved={this.onRevertToApproved}
+                       is_unordered={is_unordered}
                        need_save={this.state.need_save} />
             </div>
         );

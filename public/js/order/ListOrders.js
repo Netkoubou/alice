@@ -117,16 +117,15 @@ var ListOrders = React.createClass({
             next_ope: null, // これが、本ページから遷移する先のページ
                             // を示す変数。null の場合は遷移せず、
                             // 本ページに留まる。
-            start_date:           moment(),
-            end_date:             moment(),
-            is_requesting:        can_process_order,
-            is_approving:         can_approve,
-            is_approved:          can_process_order,
-            is_partially_ordered: false,
-            is_fully_ordered:     false,
-            is_nullified:         false,
-            is_completed:         false,
-            orders:               []
+            start_date:    moment(),
+            end_date:      moment(),
+            is_requesting: can_process_order,
+            is_approving:  can_approve,
+            is_approved:   can_process_order,
+            is_ordered:    false,
+            is_nullified:  false,
+            is_completed:  false,
+            orders:        []
         };
     },
 
@@ -155,30 +154,27 @@ var ListOrders = React.createClass({
     },
 
     onSearch: function() {
+        var is_approved = this.state.is_approved;
+        var is_ordered  = this.state.is_ordered;
+
+
         /*
-         * 一部発注と全発注済みは、必要に迫られて後から付け足した状態。
+         * 発注済は、必要に迫られて後から付け足した状態。
          * DB を変更することはできないので、承認済みの発注の中から、
          * 
-         *   - 物品が一つも発注されていない       == 承認済み
-         *   - 未発注の物品と発注済みの物品が混在 == 一部発注
-         *   - 物品は全て発注されている           == 全発注済み
+         *   - 物品が (一つも) 発注されていない == 承認済
+         *   - 物品は (全て) 発注されている     == 発注済
          *         
          * という感じにクライアント側で選別する。
          * 面倒臭い ...
          */
-        var is_approved          = this.state.is_approved;
-        var is_partially_ordered = this.state.is_partially_ordered;
-        var is_fully_ordered     = this.state.is_fully_ordered;
-
-        var approved = is_approved || is_partially_ordered || is_fully_ordered;
-
         XHR.post('searchOrders').send({
             start_date: this.state.start_date.format('YYYY/MM/DD'),
             end_date:   this.state.end_date.format('YYYY/MM/DD'),
             state: {
                 is_requesting: this.state.is_requesting,
                 is_approving:  this.state.is_approving,
-                is_approved:   approved,
+                is_approved:   is_approved || is_ordered,
                 is_nullified:  this.state.is_nullified,
                 is_completed:  this.state.is_completed
             }
@@ -198,26 +194,19 @@ var ListOrders = React.createClass({
                     return true;
                 }
 
-                var has_unordered = false;
-                var has_ordered   = false;
 
-                order.products.forEach(function(p) {
-                    if (p.state === 'UNORDERED') {
-                        has_unordered = true;
-                    } else {
-                        has_ordered = true;
-                    }
-                });
-
-                if (is_approved && has_unordered && !has_ordered) {
+                /*
+                 * 発注の中の物品は、「未発注」とそれ以外が混在することは
+                 * ない (と言うか、しちゃいけない)。
+                 * このため、発注が「承認済」なのか「発注済」なのかは、
+                 * 1 番目の物品の状態で判断できる。
+                 * 
+                 */
+                if (is_approved && order.products[0].state === 'UNORDERED') {
                     return true;
                 }
                 
-                if (is_partially_ordered && has_unordered && has_ordered) {
-                    return true;
-                }
-
-                if (is_fully_ordered && !has_unordered && has_ordered) {
+                if (is_ordered && order.products[0].state != 'UNORDERED') {
                     return true;
                 }
 
@@ -228,12 +217,11 @@ var ListOrders = React.createClass({
                 var r = this.state.is_requesting;
                 var i = this.state.is_approving;
                 var d = this.state.is_approved;
-                var p = this.state.is_partially_ordered;
-                var f = this.state.is_fully_ordered;
+                var o = this.state.is_ordered;
                 var n = this.state.is_nullified;
                 var c = this.state.is_completed;
 
-                if (!(r || i || d || p || f || n || c) ) {
+                if (!(r || i || d || o || n || c) ) {
                     return true;
                 }
 
@@ -246,25 +234,23 @@ var ListOrders = React.createClass({
 
     onClear: function() {
         this.setState({
-            is_requesting:        false,
-            is_approving:         false,
-            is_approved:          false,
-            is_partially_ordered: false,
-            is_fully_ordered:     false,
-            is_nullified:         false,
-            is_completed:         false
+            is_requesting: false,
+            is_approving:  false,
+            is_approved:   false,
+            is_ordered:    false,
+            is_nullified:  false,
+            is_completed:  false
         });
     },
 
     onChangeCheckbox: function() {
         this.setState({
-            is_requesting:        this.refs.requesting.getChecked(),
-            is_approving:         this.refs.approving.getChecked(),
-            is_approved:          this.refs.approved.getChecked(),
-            is_partially_ordered: this.refs.partially_ordered.getChecked(),
-            is_fully_ordered:     this.refs.fully_ordered.getChecked(),
-            is_nullified:         this.refs.nullified.getChecked(),
-            is_completed:         this.refs.completed.getChecked()
+            is_requesting: this.refs.requesting.getChecked(),
+            is_approving:  this.refs.approving.getChecked(),
+            is_approved:   this.refs.approved.getChecked(),
+            is_ordered:    this.refs.ordered.getChecked(),
+            is_nullified:  this.refs.nullified.getChecked(),
+            is_completed:  this.refs.completed.getChecked()
         });
     },
 
@@ -327,7 +313,7 @@ var ListOrders = React.createClass({
             
 
             /*
-             * 差し戻された発注を目立たせるために、状態名を赤に
+             * 備考が記された発注を目立たせるよう状態名を赤に
              */
             if (order.order_state === 'REQUESTING' && order_remark != '') {
                 order_state = (
@@ -336,23 +322,10 @@ var ListOrders = React.createClass({
                     </span>
                 );
             } else if (order.order_state === 'APPROVED') {
-                var has_unordered = false;
-                var has_ordered   = false;
-
-                order.products.forEach(function(p) {
-                    if (p.state === 'UNORDERED') {
-                        has_unordered = true;
-                    } else {
-                        has_ordered = true;
-                    }
-                });
-
-                if (has_unordered && has_ordered) {
-                    order_state = '一部発注';
-                } else if (!has_unordered && has_ordered) {
-                    order_state = '全発注済';
-                } else {
+                if (order.products[0].state === 'UNORDERED') {
                     order_state = Util.toOrderStateName(order.order_state);
+                } else {
+                    order_state = '発注済';
                 }
             } else {
                 order_state = Util.toOrderStateName(order.order_state);
@@ -453,7 +426,7 @@ var ListOrders = React.createClass({
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"
-                       label="承認待ち"
+                       label="承認待"
                        checked={this.state.is_approving}
                        onChange={this.onChangeCheckbox}
                        ref="approving" />
@@ -467,17 +440,10 @@ var ListOrders = React.createClass({
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"
-                       label="一部発注"
-                       checked={this.state.is_partially_ordered}
+                       label="発注済"
+                       checked={this.state.is_ordered}
                        onChange={this.onChangeCheckbox}
-                       ref="partially_ordered" />
-              </div>
-              <div className="list-orders-checkbox">
-                <Input type="checkbox"
-                       label="全発注済"
-                       checked={this.state.is_fully_ordered}
-                       onChange={this.onChangeCheckbox}
-                       ref="fully_ordered" />
+                       ref="ordered" />
               </div>
               <div className="list-orders-checkbox-short">
                 <Input type="checkbox"
@@ -509,24 +475,6 @@ var ListOrders = React.createClass({
               </div>
             </fieldset>
         );
-    },
-
-    toApproving: function(order) {
-        XHR.post('changeOrderState').send({
-            order_id:      order.order_id,    // 不要
-            order_code:    order.order_code,
-            order_state:   'APPROVING',
-            order_remark:  order.order_remark,
-            order_version: order.order_version
-        }).end(function(err, res) {
-            if (err) {
-                alert(Messages.ajax.LIST_ORDERS_CHANGE_ORDER_STATE);
-            } else if (res.body.status > 1) {
-                alert(Messages.server.LIST_ORDERS_CHANGE_ORDER_STATE);
-            } else if (res.body.status == 1) {
-                alert(Messages.information.UPDATE_CONFLICT);
-            }
-        });
     },
 
     toOrdered: function(order) {
@@ -563,12 +511,12 @@ var ListOrders = React.createClass({
         var department_tel  = order.department_tel;
 
         return {
-            purpose:       purpose,
+            purpose:       'FAX',
             order_code:    order.order_code,
             department:    department_name + ' (' + department_tel + ') ',
             trader:        order.trader_name,
             drafting_date: order.drafting_date,
-            order_date:    order_date,
+            order_date:    moment().format('YYYY/MM/DD'),
             products:      order.products.map(function(p) {
                 return {
                     name:     p.name,
@@ -584,32 +532,29 @@ var ListOrders = React.createClass({
         var orders = [];
 
         this.state.orders.forEach(function(order) {
-            switch (order.order_state) {
-            case 'REQUESTING':
-                this.toApproving(order);
-                orders.push(this.toSheetInfo(order, 'APPROVAL', '') );
-                break;
-            case 'APPROVED':
-                if (order.trader_communication === 'fax') {
-                    var ordered_ones = order.products.filter(function(p) {
-                        return p.state != 'UNORDERED';
-                    });
+            var a = order.order_state          === 'APPROVED';
+            var o = order.order_type           === 'ORDINARY_ORDER';
+            var n = order.trader_communication === 'none';
 
-                    if (ordered_ones == 0) {
-                        var today = moment().format('YYYY/MM/DD');
+            if (a && o && !n) {
+                var ordered_ones = order.products.filter(function(p) {
+                    return p.state != 'UNORDERED';
+                });
 
-                        this.toOrdered(order);
-                        orders.push(this.toSheetInfo(order, 'FAX', today) );
-                    }
+                if (ordered_ones == 0) {
+                    this.toOrdered(order);
+                    orders.push(this.toSheetInfo(order) );
                 }
-
-                break;
             }
         }.bind(this) );
 
-        window.orders = orders;
-        window.open('preview-all-orders.html', '発注書 全印刷プレビュー');
-        this.onSearch();
+        if (orders.length > 0) {
+            window.orders = orders;
+            window.open('preview-all-orders.html', '発注書 全印刷プレビュー');
+            this.onSearch();
+        } else {
+            alert('印刷対象の発注はありません。');
+        }
     },
 
     render: function() {
