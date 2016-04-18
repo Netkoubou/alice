@@ -1,9 +1,10 @@
 #preview-order { width: 206mm; }
 
 fieldset {
-  width:     100%;
-  height:    293mm;
-  font-size:  12px;
+  width:            100%;
+  height:           293mm;
+  font-size:        12px;
+  page-break-after: always;
 }
 
 h1 {
@@ -32,40 +33,40 @@ h1 {
   color:      #aaaaaa;
 }
 
-#left-stamp {
+.left-stamp {
   margin-left:   32px;
   margin-bottom: 12px;
   float:         left;
 }
 
-#right-stamp {
+.right-stamp {
   margin-right:  32px;
   margin-bottom: 12px;
   float: right;
 }
 
-#infos { margin-left: 32px; }
+.infos { margin-left: 32px; }
 
-#infos table {
+.infos table {
   border-top:     1px solid #000000;
   border-left:    1px solid #000000;
   border-spacing: 0;
   margin-bottom: 18px;
 }
 
-#infos table td {
+.infos table td {
   border-bottom: 1px solid #000000;
   border-right:  1px solid #000000;
   height:       18px;
 }
 
-#left-infos  { float: left;  margin-right: 12px; }
-#right-infos { float: right; margin-right: 32px; }
+.left-infos  { float: left;  margin-right: 12px; }
+.right-infos { float: right; margin-right: 32px; }
 
 .info-name { width: 128px; }
 .info-data { width: 208px; }
 
-#products {
+.products {
   clear:          both;
   border-top:     1px solid #000000;
   border-left:    1px solid #000000;
@@ -75,19 +76,19 @@ h1 {
   width:          calc(100% - 64px);
 }
 
-#products td {
+.products td {
   border-bottom: 1px solid #000000;
   border-right:  1px solid #000000;
   padding-bottom: 24px;
 }
 
-#products tr td:nth-child(1) { width:  3%; }
-#products tr td:nth-child(2) { width: 40%; }
-#products tr td:nth-child(3) { width: 20%; }
-#products tr td:nth-child(4) { width: 12%; }
-#products tr td:nth-child(5) { width:  8%; }
-#products tr td:nth-child(6) { width: 12%; }
-#products tr td:nth-child(7) { width:  5%; }
+.products tr td:nth-child(1) { width:  3%; }
+.products tr td:nth-child(2) { width: 40%; }
+.products tr td:nth-child(3) { width: 20%; }
+.products tr td:nth-child(4) { width: 12%; }
+.products tr td:nth-child(5) { width:  8%; }
+.products tr td:nth-child(6) { width: 12%; }
+.products tr td:nth-child(7) { width:  5%; }
 
 .products-header       { text-align: center; }
 .products-data-number  { text-align: right; }

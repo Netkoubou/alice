@@ -89,12 +89,14 @@ var ManageProducts = React.createClass({
                 throw 'ajax_searchProducts';
             }
 
-            if (res.body.status != 0) {
+            if (res.body.status > 1) {
                 alert(Messages.server.MANAGE_PRODUCTS_SEARCH_PRODUCTS);
                 throw 'server_searchProducts';
+            } else if (res.body.status == 1) {
+                alert('件数が多過ぎます。検索条件でもっと絞って下さい。');
+            } else {
+                this.setState({ products: res.body.products });
             }
-
-            this.setState({ products: res.body.products });
         }.bind(this) );
     },
 

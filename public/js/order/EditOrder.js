@@ -173,7 +173,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             name:           payload.candidate.product_name,
             maker:          payload.candidate.maker,
             price:          payload.candidate.cur_price,
-            quantity:       0,
+            quantity:       1,
             state:          'UNORDERED',
             billing_amount: 0
         });

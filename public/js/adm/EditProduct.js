@@ -299,7 +299,6 @@ var EditProduct = React.createClass({
                 }
     
                 alert('完了しました');
-                this.props.goBack();
             }.bind(this) );
         }.bind(this);
     },

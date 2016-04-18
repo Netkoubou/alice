@@ -10,7 +10,7 @@ module.exports = {
     toOrderStateName: function(state) {
         switch (state) {
         case 'REQUESTING': return '依頼中';
-        case 'APPROVING':  return '承認待ち';
+        case 'APPROVING':  return '承認待';
         case 'APPROVED':   return '承認済';
         case 'NULLIFIED':  return '無効';
         }
@@ -30,7 +30,7 @@ module.exports = {
 
     toCostStateName: function(state) {
         switch (state) {
-        case 'APPROVING': return '承認待ち';
+        case 'APPROVING': return '承認待';
         case 'APPROVED':  return '承認済';
         }
 

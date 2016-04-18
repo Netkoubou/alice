@@ -63,7 +63,7 @@ var ApplyCost = React.createClass({
         this.state.breakdowns.push({
             date:     moment().format('YYYY/MM/DD'),
             article:  '',
-            quantity: 0,
+            quantity: 1,
             price:    0,
             note:     ''
         });

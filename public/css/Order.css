@@ -134,6 +134,7 @@
   height:      100%;
   padding-top:   8px;
   font-size:   small;
+  position:    relative;
 }
 
 #list-orders fieldset {
@@ -147,6 +148,7 @@
   float:       left;
   width:       256px;
   margin-left:  32px;
+  margin-right: 16px;
 }
 
 .list-orders-checkbox {
@@ -154,8 +156,13 @@
   width: 80px;
 }
 
+.list-orders-checkbox-short {
+  float: left;
+  width: 60px;
+}
+
 .list-orders-button { margin-left: 4px; }
-#list-orders-table-frame { height: calc(100% - 128px); }
+#list-orders-table-frame { height:   calc(100% - 180px); }
 
 #list-orders-orders {
   width:  calc(100% - 32px);
@@ -204,6 +211,12 @@
 
 .list-orders-remark:hover { text-decoration: underline; }
 .list-orders-turned-back  { color: #ff0000; }
+
+#list-orders-print-all {
+  position: absolute;
+  bottom:   4px;
+  right:    2px;
+}
 
 #process-order {
   width:       calc(100% - 8px);

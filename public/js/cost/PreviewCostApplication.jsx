@@ -11,7 +11,7 @@ var CostInfos = React.createClass({
                   <tr>
                     <td className="info-name">起案者</td>
                     <td className="info-data">
-                      {window.opener.info.user}
+                      {window.opener.info.drafter}
                     </td>
                   </tr>
                   <tr>

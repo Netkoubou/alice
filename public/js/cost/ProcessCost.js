@@ -157,13 +157,16 @@ var ProcessCost = React.createClass({
     onSelectReason: function(e) { this.setState({ reason: e.code }); },
 
     onPrint: function() {
+        var cost    = this.props.cost;
+        var drafter = cost.drafter_name + ' (' + cost.drafter_account + ')';
+
         window.info = {
-            user:          this.props.user.name,
-            cost_code:     this.props.cost.cost_code,
-            drafting_date: this.props.cost.drafting_date,
-            department:    this.props.cost.department_name,
-            account_title: this.props.cost.account_title_name,
-            breakdowns:    this.props.cost.breakdowns
+            drafter:       drafter,
+            cost_code:     cost.cost_code,
+            drafting_date: cost.drafting_date,
+            department:    cost.department_name,
+            account_title: cost.account_title_name,
+            breakdowns:    cost.breakdowns
         };
 
         window.open(

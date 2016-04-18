@@ -232,7 +232,7 @@ var ListCosts = React.createClass({
                 </div>
                 <div className="list-costs-checkbox">
                   <Input type="checkbox"
-                         label="承認待ち"
+                         label="承認待"
                          checked={this.state.is_approving}
                          onChange={this.onChangeCheckbox}
                          ref="approving" />
