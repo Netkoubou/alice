@@ -535,16 +535,12 @@ var ListOrders = React.createClass({
             var a = order.order_state          === 'APPROVED';
             var o = order.order_type           === 'ORDINARY_ORDER';
             var n = order.trader_communication === 'none';
+            var z = order.products[0].cur_price == 0;
+            var u = order.products[0].state    === 'UNORDERED';
 
-            if (a && o && !n) {
-                var ordered_ones = order.products.filter(function(p) {
-                    return p.state != 'UNORDERED';
-                });
-
-                if (ordered_ones == 0) {
-                    this.toOrdered(order);
-                    orders.push(this.toSheetInfo(order) );
-                }
+            if (a && o && !(n && z) && u) {
+                this.toOrdered(order);
+                orders.push(this.toSheetInfo(order) );
             }
         }.bind(this) );
 
