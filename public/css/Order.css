@@ -96,16 +96,14 @@
   width:  calc(100% -  32px);
 }
 
-#final-pane-finalists col:nth-child(1) { width: calc(55% - 160px); }
+#final-pane-finalists col:nth-child(1) { width: calc(70% - 160px); }
 #final-pane-finalists col:nth-child(2) { width: 20% }
 #final-pane-finalists col:nth-child(3) { width: 80px; }
 #final-pane-finalists col:nth-child(4) { width: 10%; }
 #final-pane-finalists col:nth-child(5) { width: 80px; }
-#final-pane-finalists col:nth-child(6) { width: 15%; }
 #final-pane-finalists td:nth-child(3) { text-align: right; }
 #final-pane-finalists td:nth-child(4) { text-align: right; }
 #final-pane-finalists td:nth-child(5) { text-align: right; }
-#final-pane-finalists td:nth-child(6) { text-align: center; }
 
 .final-pane-finalist-name {
   color:  #ff0000;

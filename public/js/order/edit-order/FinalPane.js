@@ -429,12 +429,11 @@ var FinalPane = React.createClass({
 
     makeTableFrameTitle: function() {
         return [
-            { name: '品名',     type: 'string' },
-            { name: '製造元',   type: 'string' },
-            { name: '現在単価', type: 'number' },
-            { name: '数量',     type: 'number' },
-            { name: '発注小計', type: 'number' },
-            { name: '状態',     type: 'string' }
+            { name: '品名',     type: 'void' },
+            { name: '製造元',   type: 'void' },
+            { name: '現在単価', type: 'void' },
+            { name: '数量',     type: 'void' },
+            { name: '発注小計', type: 'void' }
         ];
     },
 
@@ -457,7 +456,6 @@ var FinalPane = React.createClass({
         if (finalist.state === 'UNORDERED') {
             quantity = (
                 <TableFrame.Input
-                  key={Math.random()}
                   type='int'
                   placeholder={finalist.quantity.toLocaleString()}
                   ref={'quantity' + index.toString()}
@@ -490,10 +488,6 @@ var FinalPane = React.createClass({
             {
                 value: subtotal,
                 view:  <span>{subtotal_string}</span>
-            },
-            {
-                value: finalist.state,
-                view: <span>{state}</span>
             }
         ];
     },
