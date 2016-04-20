@@ -457,8 +457,7 @@ var SubeditOrder = React.createClass({
                             orderCode={this.state.order_code}
                             department={this.state.department}
                             finalTrader={this.state.trader} />
-                <CandidatePane key={Math.random()}
-                               candidates={this.state.candidates} />
+                <CandidatePane candidates={this.state.candidates} />
               </div>
               <div id="edit-order-right-side">
                 <FinalPane user={this.props.user}
