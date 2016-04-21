@@ -41,7 +41,9 @@ var CandidatePane = React.createClass({
             max_price:    React.PropTypes.number.isRequired,
             trader_code:  React.PropTypes.string.isRequired,
             trader_name:  React.PropTypes.string.isRequired
-        }) ).isRequired
+        }) ).isRequired,
+
+        selected: React.PropTypes.string
     },
 
     makeTableFrameTitle: function() {
@@ -97,6 +99,58 @@ var CandidatePane = React.createClass({
         });
     },
 
+
+    /*
+     * 選択された発注候補一覧を、テーブルの一番上に表示するためのコード。
+     * 検索直後に発注候補の物品を選択すると、その発注元の物品だけが表示
+     * されるようテーブルが再構成される。
+     * そうすると、多くの場合選択した物品を見失ってしまい、
+     * 操作性を著しく損ねてしまう。
+     * これを避けるため、テーブルが再構成される際、
+     * 選択した物品をテーブルの (表示領域の) 一番上に表示するようにする。
+     *
+     * まぁ、単に (発注候補一覧を表示する) TableFrame のプロパティである
+     * scrollTopIndex (TableFrame.js 参照) を算出しているだけなのだが、
+     * TableFrame をレンダリングする前にその値を算出する必要があるため、
+     * componentWillUpdate で対処している。
+     */
+    componentWillUpdate: function(next_props) {
+        var next_len = next_props.candidates.length;
+        var cur_len  = this.props.candidates.length;
+
+        this.scrollTopIndex = null;
+
+
+        /*
+         * 検索直後に発注候補である物品を選択すると、その販売元以外の物品は
+         * 除外される。つまり、
+         *
+         *   現在の候補一覧の数 > 次に表示する候補一覧の数
+         *
+         * となる訳で、この場合のみ選択した物品を一番上に表示する動作 (要は
+         * テーブルをスクロールする訳ですな) が必要となる。
+         *
+         *   現在の候補一覧の数 == 次に表示する候補一覧の数
+         *
+         * の場合は、テーブルの内容は変わっていないため、表示内容は変えるべ
+         * きではない。
+         *
+         * this.props.selected が、テーブルの一番上に表示したい物品、
+         * 即ち検索直後に選択された物品のコード。
+         * その物品が新しい物品一覧の何番目に位置するかを調べる。
+         */
+        if (cur_len > next_len && next_props.selected != null) {
+            for (var i = 0; i < next_len; i++) {
+                var candidate = next_props.candidates[i];
+
+                if (next_props.selected === candidate.product_code) {
+                    this.scrollTopIndex = i;
+                    break;
+                }
+            }
+        }
+    },
+
     render: function() {
         var title = this.makeTableFrameTitle();
         var data  = this.composeTableFrameData();
@@ -105,6 +159,7 @@ var CandidatePane = React.createClass({
             <fieldset id="candidate-pane" className="edit-order-pane">
               <legend>候補</legend>
               <TableFrame id="candidate-pane-candidates"
+                          scrollTopIndex={this.scrollTopIndex}
                           title={title} data={data} />
             </fieldset>
         );

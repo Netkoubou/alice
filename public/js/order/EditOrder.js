@@ -54,6 +54,7 @@ var StoreForEditOrder = Fluxxor.createStore({
         this.order_remark  = '';    // 備考
         this.order_version = 0;     // 発注のバージョン番号
         this.candidates    = [];    // 物品の発注候補一覧
+        this.selected      = null;  // 候補から確定に遷移した物品のコード
         this.finalists     = [];    // 物品の発注確定一覧
         this.need_save     = true;  // 発注確定一覧を DB に登録必要か?
 
@@ -121,6 +122,7 @@ var StoreForEditOrder = Fluxxor.createStore({
         this.order_code    = payload.code;
         this.order_version = payload.version;
         this.need_save     = false;
+        this.selected      = null;
         this.emit('change');
     },
 
@@ -151,6 +153,7 @@ var StoreForEditOrder = Fluxxor.createStore({
     onSearchCandidates: function(payload) {
         this.department = payload.department;
         this.candidates = payload.candidates;
+        this.selected   = null;
         this.emit('change');
     },
 
@@ -195,6 +198,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             });
         }
 
+        this.selected  = payload.candidate.product_code;
         this.need_save = true;  // 発注確定一覧が更新された
         this.emit('change');
     },
@@ -299,6 +303,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             name: order.trader_name
         };
 
+        this.selected  = null;
         this.need_save = false;     // 既存の発注 === 最新版 === 未更新
         this.emit('change');
     },
@@ -312,6 +317,7 @@ var StoreForEditOrder = Fluxxor.createStore({
         this.candidates      = [];
         this.trader          = { code: '', name: '未確定' };
         this.finalists       = [];
+        this.selected        = null;
         this.need_save       = true;
         this.emit('change');
     },
@@ -327,6 +333,7 @@ var StoreForEditOrder = Fluxxor.createStore({
             candidates:    this.candidates,
             trader:        this.trader,
             finalists:     this.finalists,
+            selected:      this.selected,
             need_save:     this.need_save
         }
     }
@@ -457,7 +464,8 @@ var SubeditOrder = React.createClass({
                             orderCode={this.state.order_code}
                             department={this.state.department}
                             finalTrader={this.state.trader} />
-                <CandidatePane candidates={this.state.candidates} />
+                <CandidatePane candidates={this.state.candidates}
+                               selected={this.state.selected} />
               </div>
               <div id="edit-order-right-side">
                 <FinalPane user={this.props.user}

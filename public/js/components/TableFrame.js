@@ -109,7 +109,8 @@ var TableFrame = React.createClass({
                 value: React.PropTypes.string.isRequired,
                 view:  React.PropTypes.element.isRequired
             }) )
-        ]).isRequired
+        ]).isRequired,
+        scrollTopIndex: React.PropTypes.number
     },
 
     getInitialState: function() {
@@ -214,6 +215,33 @@ var TableFrame = React.createClass({
         return data;
     },
 
+
+    /*
+     * テーブルの更新時にスクロールを制御するためのコード。
+     * this.props.data[this.props.scrollTopIndex] が、
+     * テーブルの一番上に来るようスクロールする。
+     *
+     *   this.props.scrollTopIndex == 0
+     *
+     * なら、スクロールせずテーブルの一番上を表示するし、
+     *
+     *   this.props.scrollTopIndex == data.length
+     *
+     * であれば、テーブルの一番下までスクロールする。
+     *
+     * スクロールするためには、(あたり前だが) テーブルのレンダリングが
+     * 終わっている必要があるため、componentDidUpdate で対処している。
+     */
+    componentDidUpdate: function() {
+        if (this.props.scrollTopIndex != null) {
+            var scroll_top_index = this.props.scrollTopIndex;
+            var len              = this.props.data.length;
+            var e = ReactDOM.findDOMNode(this.refs.table_frame_body);
+
+            e.scrollTop = e.scrollHeight * scroll_top_index / len;
+        }
+    },
+
     render: function() {
         /*
          * 表の列の幅を指定するための col を作成
@@ -245,7 +273,7 @@ var TableFrame = React.createClass({
                   <thead><tr>{title}</tr></thead>
                 </table>
               </div>
-              <div className="table-frame-body">
+              <div className="table-frame-body" ref="table_frame_body">
                 <table>
                   <colgroup>{cols}</colgroup>
                   <tbody>{tbody}</tbody>

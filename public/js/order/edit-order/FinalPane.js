@@ -567,7 +567,8 @@ var FinalPane = React.createClass({
               {this.makeFinalPaneNotices()}
               <TableFrame id="final-pane-finalists"
                           title={title}
-                          data={data} />
+                          data={data}
+                          scrollTopIndex={data.length} />
               <div id="final-pane-total">
                 <Notice title="発注総計">
                   {Math.round(total).toLocaleString()}
