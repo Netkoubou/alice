@@ -234,11 +234,13 @@ var TableFrame = React.createClass({
      */
     componentDidUpdate: function() {
         if (this.props.scrollTopIndex != null) {
-            var scroll_top_index = this.props.scrollTopIndex;
-            var len              = this.props.data.length;
-            var e = ReactDOM.findDOMNode(this.refs.table_frame_body);
+            var off = 0;
 
-            e.scrollTop = e.scrollHeight * scroll_top_index / len;
+            for (var i = 0; i < this.props.scrollTopIndex; i++) {
+                off += ReactDOM.findDOMNode(this.refs["tr" + i]).offsetHeight;
+            }
+
+            ReactDOM.findDOMNode(this.refs.table_frame_body).scrollTop = off;
         }
     },
 
@@ -262,8 +264,8 @@ var TableFrame = React.createClass({
                 return <td key={j}>{cell.view}</td>;
             });
 
-            return <tr key={i}>{tr}</tr>;
-        });
+            return <tr key={i} ref={"tr" + i}>{tr}</tr>;
+        }.bind(this) );
 
         return (
             <div id={this.props.id} className="table-frame">
