@@ -440,9 +440,9 @@ var ProcessOrder = React.createClass({
     onChangeBillingAmount: function(index) {
         return function(billing_amount) {
             var product   = this.state.products[index];
-            var cur_price = billing_amount / product.quantity;
+            // var cur_price = billing_amount / product.quantity;
 
-            product.cur_price      = cur_price;
+            // product.cur_price      = cur_price;
             product.billing_amount = billing_amount;
             this.setState({
                 products:  this.state.products,
@@ -453,10 +453,13 @@ var ProcessOrder = React.createClass({
 
     onChangeProductState: function(index) {
         return function(e) {
-            if (e.target.value != 'DELIVERED') {
-                var original = this.props.order.products[index];
-                var current  = this.state.products[index];
+            var current  = this.state.products[index];
+            var original = this.props.order.products[index];
 
+            if (e.target.value === 'DELIVERED') {
+                var subtotal = original.cur_price * original.quantity;
+                current.billing_amount = Math.round(subtotal);
+            } else {
                 current.cur_price      = original.cur_price;
                 current.billing_amount = original.billing_amount;
             }
@@ -483,6 +486,26 @@ var ProcessOrder = React.createClass({
     decidePermission: function() {
         var can_approve       = false;
         var can_process_order = false;
+
+        /*
+         * 院務部のアカウント inmu は、全部門診療科の発注を参照できるが、
+         * 変更はできない特殊なユーザ。
+         * 手っ取り早く実現するため、inmu に pririleged.approve を与え、
+         * 全部門診療科の発注の一覧を取得できるようにする。
+         * ただ、そのままだと発注を承認 / 差し戻しできてしまうため、
+         * 
+         *   user.account === 'inmu'
+         *
+         * をマジックナンバーとして扱い、その場合だけ特別に
+         * 
+         *   permission = 'REFER_ONLY'
+         *
+         * として、承認 / 差し戻しできなくする。
+         * 最低最悪の adhock hack だが、仕方ない ...
+         */
+        if (this.props.user.account === 'inmu') {
+            return 'REFER_ONLY';
+        }
 
         if (this.props.user.privileged.approve) {
             can_approve = true;
