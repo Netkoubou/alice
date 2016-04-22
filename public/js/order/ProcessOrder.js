@@ -453,10 +453,13 @@ var ProcessOrder = React.createClass({
 
     onChangeProductState: function(index) {
         return function(e) {
-            if (e.target.value != 'DELIVERED') {
-                var original = this.props.order.products[index];
-                var current  = this.state.products[index];
+            var current  = this.state.products[index];
+            var original = this.props.order.products[index];
 
+            if (e.target.value === 'DELIVERED') {
+                var subtotal = original.cur_price * original.quantity;
+                current.billing_amount = Math.round(subtotal);
+            } else {
                 current.cur_price      = original.cur_price;
                 current.billing_amount = original.billing_amount;
             }
