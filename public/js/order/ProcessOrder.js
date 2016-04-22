@@ -440,9 +440,9 @@ var ProcessOrder = React.createClass({
     onChangeBillingAmount: function(index) {
         return function(billing_amount) {
             var product   = this.state.products[index];
-            var cur_price = billing_amount / product.quantity;
+            // var cur_price = billing_amount / product.quantity;
 
-            product.cur_price      = cur_price;
+            // product.cur_price      = cur_price;
             product.billing_amount = billing_amount;
             this.setState({
                 products:  this.state.products,
