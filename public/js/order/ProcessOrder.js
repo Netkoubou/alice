@@ -30,6 +30,9 @@ var SelectProductState = React.createClass({
               <TableFrame.Option value="DELIVERED">
                 納品済
               </TableFrame.Option>
+              <TableFrame.Option value="PARTIAL-DELIVERED">
+                分納
+              </TableFrame.Option>
             </TableFrame.Select>
         );
     }
@@ -453,18 +456,61 @@ var ProcessOrder = React.createClass({
 
     onChangeProductState: function(index) {
         return function(e) {
-            var current  = this.state.products[index];
-            var original = this.props.order.products[index];
+            var current   = this.state.products[index];
+            var original  = this.props.order.products[index];
+            var new_state = e.target.value;
 
-            if (e.target.value === 'DELIVERED') {
-                var subtotal = original.cur_price * original.quantity;
+            switch (new_state) {
+            case 'PARTIAL-DELIVERED':
+                var n = parseInt(prompt('いくつ「納品済」にしますか?') );
+                
+                if (n != n || n <= 0 || n >= current.quantity) {
+                    alert('数量未満の自然数を入力して下さい。');
+                    return;
+                }
+
+                /*
+                 * 分納される場合に対応するため、一部の物品だけ納品済にして、
+                 * 残りは元の状態のままにする。
+                 * 以下で、元の状態のままにする方を (分割して) 一覧の最後に
+                 * 加える。
+                 */
+                this.state.products.push({
+                    code:           current.code,
+                    name:           current.name,
+                    maker:          current.maker,
+                    min_price:      current.min_price,
+                    cur_price:      current.cur_price,
+                    max_price:      current.max_price,
+                    quantity:       current.quantity - n,
+                    state:          current.state,
+                    billing_amount: 0
+                });
+
+
+                /*
+                 * こちらが納品済にする方。
+                 * ただ、実際に状態を変更するのはこの switch 文を抜けた直後。
+                 * ここでは、new_state を DELIVERED に変更するだけにとどめる。
+                 * 通常の納品済と同じ手続きを踏むため、以下で break していな
+                 * いことに注意。
+                 */
+                current.quantity = n;
+                new_state        = 'DELIVERED';
+                // thru
+            case 'DELIVERED':
+                var subtotal = current.cur_price * current.quantity;
                 current.billing_amount = Math.round(subtotal);
-            } else {
+
+                break;
+            default: 
                 current.cur_price      = original.cur_price;
                 current.billing_amount = original.billing_amount;
+
+                break;
             }
 
-            this.state.products[index].state = e.target.value;
+            this.state.products[index].state = new_state;
 
             var completed_date = this.state.completed_date;
             var order_state    = this.decideOrderState();
