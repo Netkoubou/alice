@@ -36,7 +36,8 @@ module.exports = function(req, res) {
                     cur_price:    product.cur_price,
                     max_price:    product.max_price,
                     trader_code:  trader._id,
-                    trader_name:  trader.name
+                    trader_name:  trader.name,
+                    trader_communication: trader.communication
                 });
 
                 if (candidates.length == num_of_candidates) {

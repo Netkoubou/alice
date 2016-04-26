@@ -40,7 +40,13 @@ var CandidatePane = React.createClass({
             cur_price:    React.PropTypes.number.isRequired,
             max_price:    React.PropTypes.number.isRequired,
             trader_code:  React.PropTypes.string.isRequired,
-            trader_name:  React.PropTypes.string.isRequired
+            trader_name:  React.PropTypes.string.isRequired,
+            trader_communication: React.PropTypes.oneOf([
+                'fax',
+                'tel',
+                'email',
+                'none'
+            ]).isRequired
         }) ).isRequired,
 
         selected: React.PropTypes.string

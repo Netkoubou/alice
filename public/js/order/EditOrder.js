@@ -65,7 +65,8 @@ var StoreForEditOrder = Fluxxor.createStore({
 
         this.trader = { // 発注先 販売元
             code: '',
-            name: '未確定'
+            name: '未確定',
+            communication: ''
         };
 
         this.bindActions(
@@ -152,8 +153,24 @@ var StoreForEditOrder = Fluxxor.createStore({
 
     onSearchCandidates: function(payload) {
         this.department = payload.department;
-        this.candidates = payload.candidates;
         this.selected   = null;
+
+        if (this.trader.communication === 'none') {
+            var should_be_zero = this.finalists[0].price == 0;
+
+            this.candidates = payload.candidates.filter(function(c) {
+                if (should_be_zero && c.cur_price == 0) {
+                    return true;
+                } else if (!should_be_zero && c.cur_price > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        } else {
+            this.candidates = payload.candidates;
+        }
+
         this.emit('change');
     },
 
@@ -178,13 +195,14 @@ var StoreForEditOrder = Fluxxor.createStore({
             price:          payload.candidate.cur_price,
             quantity:       1,
             state:          'UNORDERED',
-            billing_amount: 0
+            billing_amount: 0,
         });
 
         if (this.trader.code === '') {
             this.trader = {
-                code: payload.candidate.trader_code,
-                name: payload.candidate.trader_name
+                code:          payload.candidate.trader_code,
+                name:          payload.candidate.trader_name,
+                communication: payload.candidate.trader_communication
             }
 
 
@@ -193,8 +211,38 @@ var StoreForEditOrder = Fluxxor.createStore({
              * 以後は、当該販売元が必ず検索条件に指定されるため、
              * この操作は必要なくなる。
              */
+            var price = payload.candidate.cur_price;
+
             this.candidates = this.candidates.filter(function(c) {
-                return c.trader_code === payload.candidate.trader_code;
+                if (c.trader_code === payload.candidate.trader_code) {
+
+
+                    /*
+                     * 発注候補から選択された物品の販売元が、発注をかける
+                     * 必要がない販売元である場合 (何か矛盾している気がす
+                     * るが、気にしない)、業務の都合上、単価 0 円の物品と
+                     * 1 円以上の物品を混在させてはならない。
+                     *
+                     *   payload.candidate.trader_communication === 'none'
+                     *
+                     * が、発注をかける必要がない販売元であることを示して
+                     * いる。
+                     * 単価の判定は見れば分かるだろう。
+                     */
+                    if (payload.candidate.trader_communication === 'none') {
+                        if (price > 0 && c.cur_price > 0) {
+                            return true;
+                        } else if (price == 0 && c.cur_price == 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
             });
         }
 
@@ -211,7 +259,11 @@ var StoreForEditOrder = Fluxxor.createStore({
         this.finalists.splice(payload.index, 1);
 
         if (this.finalists.length == 0) {
-            this.trader = { code: '', name: '未確定' };
+            this.trader = {
+                code:          '',
+                name:          '未確定',
+                communication: ''
+            };
         }
 
         this.need_save = true;  // 発注確定一覧が更新された
@@ -233,7 +285,11 @@ var StoreForEditOrder = Fluxxor.createStore({
         });
 
         if (this.finalists.length == 0) {
-            this.trader = { code: '', name: '未確定' };
+            this.trader = {
+                code:          '',
+                name:          '未確定',
+                communication: ''
+            };
         }
 
         this.need_save = true;    // 発注確定一覧が更新された
@@ -299,8 +355,9 @@ var StoreForEditOrder = Fluxxor.createStore({
         });
 
         this.trader = {
-            code: order.trader_code,
-            name: order.trader_name
+            code:          order.trader_code,
+            name:          order.trader_name,
+            communication: order.trader_communication
         };
 
         this.selected  = null;
@@ -315,7 +372,11 @@ var StoreForEditOrder = Fluxxor.createStore({
         this.order_version   = 0;
         this.department      = { code: '', name: '' };
         this.candidates      = [];
-        this.trader          = { code: '', name: '未確定' };
+        this.trader          = {
+            code:          '',
+            name:          '未確定',
+            communication: ''
+        };
         this.finalists       = [];
         this.selected        = null;
         this.need_save       = true;
@@ -531,6 +592,13 @@ var EditOrder = React.createClass({
             department_name: React.PropTypes.string.isRequired,
             trader_code:     React.PropTypes.string.isRequired,
             trader_name:     React.PropTypes.string.isRequired,
+
+            trader_communication: React.PropTypes.oneOf([
+                'fax',
+                'tel',
+                'email',
+                'none'
+            ]),
 
             products: React.PropTypes.arrayOf(React.PropTypes.shape({
                 code:      React.PropTypes.string.isRequired,
