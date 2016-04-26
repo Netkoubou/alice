@@ -182,6 +182,11 @@ var OrderSheet = React.createClass({
             ]).isRequired,
 
             order_code:    React.PropTypes.string.isRequired,
+            order_type:    React.PropTypes.oneOf([
+                'ORDINARY_ORDER',
+                'URGENCY_ORDER'
+            ]),
+
             department:    React.PropTypes.string.isRequired,
             trader:        React.PropTypes.string.isRequired,
             drafting_date: React.PropTypes.string.isRequired,
@@ -199,8 +204,13 @@ var OrderSheet = React.createClass({
     render: function() {
         var title     = '神奈川歯科大学 附属病院 ';
         var stamp_row = null;
+        var ordered   = null;
 
         if (this.props.info.purpose === 'APPROVAL') {
+            if (this.props.info.order_type === 'URGENCY_ORDER') {
+                ordered = <p id="ordered">発注済</p>;
+            }
+
             title    += '発注依頼書';
             stamp_row = <StampRow />;
         } else {
@@ -209,7 +219,10 @@ var OrderSheet = React.createClass({
 
         return(
             <fieldset>
-              <h1>{title}</h1>
+              <div>
+                <p id="title">{title}</p>
+                {ordered}
+              </div>
               {stamp_row}
               <OrderInfos info={this.props.info} />
               <OrderProducts products={this.props.info.products} />  

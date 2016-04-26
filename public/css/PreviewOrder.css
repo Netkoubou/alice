@@ -3,13 +3,23 @@
 fieldset {
   width:            100%;
   height:           293mm;
-  font-size:        12px;
+  font-size:        14px;
   page-break-after: always;
+  position:         relative;
 }
 
-h1 {
+#title {
+  font-size:     28px;
+  font-weight:   bold;
   margin-left:   32px;
   margin-bottom: 24px;
+}
+
+#ordered {
+  font-size: 32px;
+  position:  absolute;
+  right:     40px;
+  top:       0px;
 }
 
 .stamp {
@@ -27,8 +37,9 @@ h1 {
 .stamp td {
   border-bottom: 1px solid #000000;
   border-right:  1px solid #000000;
-  height: 56px;
-  width:  56px;
+  font-size:  12px;
+  height:     56px;
+  width:      56px;
   text-align: center;
   color:      #aaaaaa;
 }

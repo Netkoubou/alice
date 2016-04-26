@@ -384,6 +384,7 @@ var FinalPane = React.createClass({
                 window.info = {
                     purpose:       'APPROVAL',
                     order_code:    this.props.orderCode,
+                    order_type:    this.props.orderType,
                     department:    this.props.department.name,
                     trader:        this.props.trader.name,
                     drafting_date: this.props.draftingDate,
