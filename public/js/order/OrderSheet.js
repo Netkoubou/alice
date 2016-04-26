@@ -103,17 +103,14 @@ var OrderProducts = React.createClass({
     propTypes: { products: React.PropTypes.array.isRequired },
 
     composeProduct: function(product, index) {
-        var subtotal     = product.price * product.quantity;
         var price_string = product.price.toLocaleString('ja-JP', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 2
         });
 
         var quantity_string = product.quantity.toLocaleString();
-        var subtotal_string = subtotal.toLocaleString('ja-JP', {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2
-        });
+        var subtotal        = Math.round(product.price * product.quantity);
+        var subtotal_string = subtotal.toLocaleString();
 
         var name  = product.name;
         var maker = product.maker;
@@ -134,7 +131,7 @@ var OrderProducts = React.createClass({
     render: function() {
         var total    = 0.0;
         var products = this.props.products.map(function(p, i) {
-            total += p.price * p.quantity;
+            total += Math.round(p.price * p.quantity);
             return this.composeProduct(p, i);
         }.bind(this) );
 
@@ -146,7 +143,7 @@ var OrderProducts = React.createClass({
               <td></td>
               <td className="products-data-number">合計</td>
               <td className="products-data-number">
-                {Math.floor(total).toLocaleString()}
+                {Math.round(total).toLocaleString()}
               </td>
               <td></td>
             </tr>
