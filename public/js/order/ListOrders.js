@@ -116,7 +116,10 @@ var ListOrders = React.createClass({
         return {
             next_ope: null, // これが、本ページから遷移する先のページ
                             // を示す変数。null の場合は遷移せず、
-                            // 本ページに留まる。
+                            // 本ページに留まる
+            selected: null, // goBack で戻って来た時に、選択された発注が一覧の
+                            // 一番上に来るようスクロールするため、選択された
+                            // 発注の index を覚えておくための変数
             start_date:    moment(),
             end_date:      moment(),
             is_requesting: can_process_order,
@@ -141,7 +144,14 @@ var ListOrders = React.createClass({
      * 遷移先のページを設定するためのコールバック関数。
      * ま、説明するまでもなく、見りゃ分かりますね。
      */
-    onSelect: function(next_ope) { this.setState({ next_ope: next_ope }); },
+    onSelect: function(index) {
+        return function(next_ope) {
+            this.setState({
+                next_ope: next_ope,
+                selected: index
+            });
+        }.bind(this);
+    },
 
 
     /*
@@ -256,15 +266,16 @@ var ListOrders = React.createClass({
 
     makeTableFrameTitle: function() {
         return [
-            { name: '起案番号',          type: 'string' },
             { name: '起案日',            type: 'string' },
-            { name: '起案者',            type: 'string' },
-            { name: '発注区分',          type: 'string' },
+            { name: '起案番号',          type: 'string' },
             { name: '発注元 部門診療科', type: 'string' },
+            { name: '発注区分',          type: 'string' },
+            { name: '品名',              type: 'string' },
             { name: '発注先 販売元',     type: 'string' },
             { name: '発注総計',          type: 'number' },
             { name: '請求総計',          type: 'number' },
             { name: '状態',              type: 'string' },
+            { name: '起案者',            type: 'string' },
             { name: '!',                 type: 'void' }
         ];
     },
@@ -356,29 +367,30 @@ var ListOrders = React.createClass({
             order_total = Math.round(order_total);
 
             return [
+                {   // 起案日
+                    value: order.drafting_date,
+                    view:  order.drafting_date.replace(/^\d{4}\//, '')
+                },
                 {   // 起案番号
                     value: order.order_code,
                     view:  <OrderCode isExpensive={is_expensive}
                                       user={this.props.user}
                                       order={order}
                                       goBack={this.backToHere}
-                                      onSelect={this.onSelect} />
+                                      onSelect={this.onSelect(index)} />
                 },
-                {   // 起案日
-                    value: order.drafting_date,
-                    view:  order.drafting_date
-                },
-                {   // 起案者
-                    value: order.drafter_account,
-                    view:  order.drafter_account
+                {   // 発注元 部門診療科
+                    value: order.department_name,
+                    view:  order.department_name
                 },
                 {   // 発注区分
                     value: order.order_type,
                     view:  order_type_view
                 },
-                {   // 発注元 部門診療科
-                    value: order.department_name,
-                    view:  order.department_name
+                {
+                    // 品名
+                    value: order.products[0].name,
+                    view:  order.products[0].name
                 },
                 {   // 発注先 販売元
                     value: order.trader_name,
@@ -396,12 +408,21 @@ var ListOrders = React.createClass({
                     value: order_state,
                     view:  order_state
                 },
+                {   // 起案者
+                    value: order.drafter_account,
+                    view:  order.drafter_account
+                },
                 {   // 備考・連絡
                     value: '',
                     view:  order_remark
                 }
             ];
         }.bind(this) );
+    },
+
+    onClickSearchButton: function() {
+        this.state.selected = null;
+        this.onSearch();
     },
 
 
@@ -585,7 +606,8 @@ var ListOrders = React.createClass({
                 <legend>発注一覧</legend>
                 <TableFrame id="list-orders-orders"
                             title={title}
-                            data={data} />
+                            data={data}
+                            scrollTopIndex={this.state.selected} />
               </fieldset>
               {print_all}
             </div>
