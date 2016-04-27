@@ -117,7 +117,7 @@ var ListOrders = React.createClass({
             next_ope: null, // これが、本ページから遷移する先のページ
                             // を示す変数。null の場合は遷移せず、
                             // 本ページに留まる
-            selected: null, // goBack で戻って来た時に、選択された発注が一覧の
+            selected: 0,    // goBack で戻って来た時に、選択された発注が一覧の
                             // 一番上に来るようスクロールするため、選択された
                             // 発注の index を覚えておくための変数
             start_date:    moment(),
@@ -237,6 +237,10 @@ var ListOrders = React.createClass({
 
                 return false;
             }.bind(this) );
+
+            orders.sort(function(a, b) {
+                return a.order_code < b.order_code ? -1: 1;
+            });
 
             this.setState({ orders: orders });
         }.bind(this) )
@@ -421,7 +425,7 @@ var ListOrders = React.createClass({
     },
 
     onClickSearchButton: function() {
-        this.state.selected = null;
+        this.state.selected = 0;
         this.onSearch();
     },
 
@@ -490,7 +494,7 @@ var ListOrders = React.createClass({
                 <Button bsStyle="primary"
                         bsSize="large"
                         className="list-orders-button"
-                        onClick={this.onSearch}>
+                        onClick={this.onClickSearchButton}>
                   検索
                 </Button>
               </div>
