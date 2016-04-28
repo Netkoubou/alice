@@ -11,8 +11,9 @@
  * 具体的な指定例は css/Order.css を参照。
  */
 'use strict';
-var React    = require('react');
-var ReactDOM = require('react-dom');
+var React      = require('react');
+var ReactDOM   = require('react-dom');
+var DatePicker = require('react-datepicker');
 
 
 /*
@@ -428,6 +429,29 @@ TableFrame.Select = React.createClass({
                     onChange={this.props.onSelect}>
               {this.props.children}
             </select>
+        );
+    }
+});
+
+TableFrame.DatePicker = React.createClass({
+    propTypes: {
+        selected: React.PropTypes.object.isRequired,
+        onChange: React.PropTypes.func.isRequired
+    },
+
+    render: function() {
+        var weekdays = [ '日', '月', '火', '水', '木', '金', '土' ];
+        return (
+            <div className="table-frame-datepicker">
+              <div className="table-frame-datepicker-inner">
+                <DatePicker dateFormat="YYYY/MM/DD"
+                            dateFormatCalendar="YYYY/MM/DD"
+                            selected={this.props.selected}
+                            weekdays={weekdays}
+                            weekStart="0"
+                            onChange={this.props.onChange} />
+              </div>
+            </div>
         );
     }
 });

@@ -254,20 +254,22 @@
   width:       calc(100% -  48px);
 }
 
-#process-order-products col:nth-child(1) { width: calc(70% - 370px); }
-#process-order-products col:nth-child(2) { width: 20%; }
-#process-order-products col:nth-child(3) { width: 80px; }
-#process-order-products col:nth-child(4) { width: 50px; }
-#process-order-products col:nth-child(5) { width: 80px; }
-#process-order-products col:nth-child(6) { width: 80px; }
-#process-order-products col:nth-child(7) { width: 80px; }
-#process-order-products col:nth-child(8) { width: 10%; }
+#process-order-products col:nth-child(1) { width: calc(85% - 586px); }
+#process-order-products col:nth-child(2) { width:  15%; }
+#process-order-products col:nth-child(3) { width:  96px; }
+#process-order-products col:nth-child(4) { width:  50px; }
+#process-order-products col:nth-child(5) { width:  80px; }
+#process-order-products col:nth-child(6) { width:  80px; }
+#process-order-products col:nth-child(7) { width:  80px; }
+#process-order-products col:nth-child(8) { width: 104px; }
+#process-order-products col:nth-child(9) { width:  96px; }
 #process-order-products td:nth-child(3)  { text-align: right; }
 #process-order-products td:nth-child(4)  { text-align: right; }
 #process-order-products td:nth-child(5)  { text-align: right; }
 #process-order-products td:nth-child(6)  { text-align: right; }
 #process-order-products td:nth-child(7)  { text-align: right; }
 #process-order-products td:nth-child(8)  { text-align: center; }
+#process-order-products td:nth-child(9)  { text-align: center; }
 
 #process-order-totals {
   display:     flex;
@@ -286,24 +288,6 @@
   width:    128px;
   left:     320px;
   bottom:     4px;
-}
-
-#process-order-completed-date-picker {
-  width:      80px;
-  height:     16px;
-  margin-top:  4px;
-  margin-left: 4px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-
-#process-order-completed-date-picker-inner {
-  color:       #1976d2;
-  height:      22px;
-  margin-top:  -8px;
-  margin-left: -2px;
-  overflow-x:  hidden;
-  overflow-y:  hidden;
 }
 
 #process-order-buttons {

@@ -3,7 +3,6 @@ var React      = require('react');
 var ReactDOM   = require('react-dom');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
-var DatePicker = require('react-datepicker');
 var XHR        = require('superagent');
 var moment     = require('moment');
 var TableFrame = require('../components/TableFrame');
@@ -14,8 +13,7 @@ var Util       = require('../lib/Util');
 var SelectProductState = React.createClass({
     propTypes: {
         initialSelected: React.PropTypes.string.isRequired,
-        onSelect:        React.PropTypes.func.isRequired,
-        paidDate:        React.PropTypes.string
+        onSelect:        React.PropTypes.func.isRequired
     },
 
     render: function() {
@@ -43,7 +41,7 @@ var SelectProductState = React.createClass({
                 分納
               </TableFrame.Option>
               <TableFrame.Option value="PAID">
-                {this.props.paidDate || '請求確定'}
+                請求確定
               </TableFrame.Option>
             </TableFrame.Select>
         );
@@ -540,13 +538,7 @@ var ProcessOrder = React.createClass({
 
                 break;
             case 'PAID':
-                var date = prompt('請求確定日 (YYYY/MM/DD) はいつですか?');
-
-                if (!date || !date.match(/^\d{4}\/\d{2}\/\d{2}$/) ) {
-                    alert('YYYY/MM/DD 形式の日付を入力して下さい。');
-                    return;
-                }
-
+                var date = moment().format('YYYY/MM/DD');
 
                 /*
                  * 日付の後の 0 は、請求単価。
@@ -587,6 +579,27 @@ var ProcessOrder = React.createClass({
                 completed_date: completed_date,
                 need_save:      true
             });
+        }.bind(this);
+    },
+
+    onChangePaidDate: function(index) {
+        return function(date) {
+            var product = this.state.products[index];
+            var is_paid = product.state.match(this.regex_paid);
+
+            if (is_paid) {
+                var paid_price = is_paid[2].toLocaleString('ja-JP', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                });
+
+                product.state = date.format('YYYY/MM/DD') + ' ' + paid_price;
+
+                this.setState({
+                    products:  this.state.products,
+                    need_save: true
+                });
+            }
         }.bind(this);
     },
 
@@ -672,6 +685,7 @@ var ProcessOrder = React.createClass({
             { name: '発注小計',    type: 'number' },
             { name: '請求単価',    type: 'number' },
             { name: '請求額',      type: 'number' },
+            { name: '請求確定日',  type: 'string' },
             { name: '状態',        type: 'string' }
         ];
     },
@@ -707,6 +721,7 @@ var ProcessOrder = React.createClass({
         if (permission === 'PROCESS' && product.state != 'UNORDERED') {
             var initial_selected = product.state;
             var paid_date        = null;
+            var paid_date_view   = null;
             var is_paid          = product.state.match(this.regex_paid);
 
             if (is_paid) {
@@ -719,7 +734,7 @@ var ProcessOrder = React.createClass({
                     minimumFractionDigits: 2
                 });
 
-                paid_price_view   = (
+                paid_price_view = (
                     <TableFrame.Input
                       key={Math.random()}
                       type='real'
@@ -727,13 +742,18 @@ var ProcessOrder = React.createClass({
                       onChange={this.onChangePaidPrice(index, paid_date)}
                       ref={"paid_price" + index.toString()} />
                 );
+
+                paid_date_view = (
+                    <TableFrame.DatePicker 
+                      selected={moment(paid_date, 'YYYY/MM/DD')}
+                      onChange={this.onChangePaidDate(index)} />
+                );
             }
                 
             state_view = (
                 <SelectProductState
                   initialSelected={initial_selected}
-                  onSelect={this.onChangeProductState(index)}
-                  paidDate={paid_date} />
+                  onSelect={this.onChangeProductState(index)} />
             );
 
             if (product.state === 'DELIVERED' || is_paid) {
@@ -767,6 +787,10 @@ var ProcessOrder = React.createClass({
             {
                 value: product.billing_amount,
                 view:  billing_amount_view
+            },
+            {
+                value: paid_date,
+                view:  paid_date_view
             },
             {
                 value: product.state,
@@ -822,27 +846,18 @@ var ProcessOrder = React.createClass({
             return this.composeTableFrameDataRow(permission, product, index);
         }.bind(this) );
 
-        var weekdays       = [ '日', '月', '火', '水', '木', '金', '土' ];
         var completed_date = this.state.completed_date;
 
         if (this.decideOrderState() === 'COMPLETED') {
-            var selected_date  = moment();
+            var selected_date = moment();
 
             if (completed_date != '') {
                 selected_date = moment(completed_date, 'YYYY/MM/DD');
             }
 
             completed_date = (
-                <div id="process-order-completed-date-picker">
-                  <div id="process-order-completed-date-picker-inner">
-                    <DatePicker dateFormat="YYYY/MM/DD"
-                                dateFormatCalendar="YYYY/MM/DD"
-                                selected={selected_date}
-                                weekdays={weekdays}
-                                weekStart="0"
-                                onChange={this.onChangeCompletedDate} />
-                  </div>
-                </div>
+                <TableFrame.DatePicker selected={selected_date}
+                                       onChange={this.onChangeCompletedDate} />
             );
         } else if (completed_date === '') {
             completed_date = '未完了です';
