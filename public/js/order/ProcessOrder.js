@@ -11,8 +11,6 @@ var Notice     = require('../components/Notice');
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 
-var regex_date = /^\d{4}\/\d{2}\/\d{2}$/;
-
 var SelectProductState = React.createClass({
     propTypes: {
         initialSelected: React.PropTypes.string.isRequired,
@@ -259,6 +257,14 @@ var ProcessOrder = React.createClass({
         };
     },
 
+    /*
+     * 請求確定状態を示す文字列の正規表現。
+     * 請求確定日に加え、請求単価も記録する。
+     * dirty hack の極み。
+     * 死にたい。
+     */
+    regex_paid: /^(\d{4}\/\d{2}\/\d{2})\s+(\d+(\.\d+)?)$/,
+
     toOrdered: function() {
         this.state.products.forEach(function(p) {
             p.state = 'ORDERED';
@@ -388,8 +394,8 @@ var ProcessOrder = React.createClass({
         }).length;
 
         var num_of_paid = this.state.products.filter(function(p) {
-            return p.state.match(regex_date);
-        }).length;
+            return p.state.match(this.regex_paid);
+        }.bind(this) ).length;
 
         if (num_of_products == num_of_canceled) {
             order_state = 'NULLIFIED';
@@ -452,6 +458,22 @@ var ProcessOrder = React.createClass({
                 this.props.goBack();
             }.bind(this) );
         }
+    },
+
+    onChangePaidPrice: function(index, paid_date) {
+        return function(paid_price) {
+            var product           = this.state.products[index];
+            var paid_price_string = paid_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
+
+            product.state = paid_date + ' ' + paid_price_string;
+            this.setState({
+                products:  this.state.products,   
+                need_save: true
+            });
+        }.bind(this);
     },
 
     onChangeBillingAmount: function(index) {
@@ -520,12 +542,26 @@ var ProcessOrder = React.createClass({
             case 'PAID':
                 var date = prompt('請求確定日 (YYYY/MM/DD) はいつですか?');
 
-                if (!date || !date.match(regex_date) ) {
+                if (!date || !date.match(/^\d{4}\/\d{2}\/\d{2}$/) ) {
                     alert('YYYY/MM/DD 形式の日付を入力して下さい。');
                     return;
                 }
 
-                new_state = date;
+
+                /*
+                 * 日付の後の 0 は、請求単価。
+                 * この時点では請求単価は入力されていないため、
+                 * 取り敢えず 0 を入力している。
+                 *
+                 * 何故これほど愚かしいことをしているのかと言うと、
+                 * システムの運用後、請求単価なる値を各発注の物品毎に記録
+                 * する必要があることが発覚したため。
+                 * しかし、それを記録するフィールドがないため、苦肉の策
+                 * (最近こんなんばっか) として、請求確定状態を示す日付けの
+                 * 後に数値として記録することにした。
+                 * ダメの極み。
+                 */
+                new_state = date + ' 0';
 
                 break;
             default: 
@@ -629,15 +665,14 @@ var ProcessOrder = React.createClass({
 
     makeTableFrameTitle: function() {
         return [
-            { name: '品名',     type: 'string' },
-            { name: '製造元',   type: 'string' },
-            { name: '最安単価', type: 'number' },
-            { name: '現在単価', type: 'number' },
-            { name: '最高単価', type: 'number' },
-            { name: '数量',     type: 'number' },
-            { name: '発注小計', type: 'number' },
-            { name: '請求額',   type: 'number' },
-            { name: '状態',     type: 'string' }
+            { name: '品名',        type: 'string' },
+            { name: '製造元',      type: 'string' },
+            { name: '単価 (定価)', type: 'number' },
+            { name: '数量',        type: 'number' },
+            { name: '発注小計',    type: 'number' },
+            { name: '請求単価',    type: 'number' },
+            { name: '請求額',      type: 'number' },
+            { name: '状態',        type: 'string' }
         ];
     },
 
@@ -666,15 +701,32 @@ var ProcessOrder = React.createClass({
 
         var billing_amount_view = product.billing_amount.toLocaleString();
         var state_view          = Util.toProductStateName(product.state);
+        var paid_price          =  0;
+        var paid_price_view     = "0";
 
         if (permission === 'PROCESS' && product.state != 'UNORDERED') {
             var initial_selected = product.state;
             var paid_date        = null;
-            var is_paid          = product.state.match(regex_date);
+            var is_paid          = product.state.match(this.regex_paid);
 
             if (is_paid) {
-                initial_selected = 'PAID';
-                paid_date        = product.state;
+                initial_selected  = 'PAID';
+                paid_date         = is_paid[1];
+                paid_price        = parseFloat(is_paid[2]);
+
+                var paid_price_string = paid_price.toLocaleString('ja-JP', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                });
+
+                paid_price_view   = (
+                    <TableFrame.Input
+                      key={Math.random()}
+                      type='real'
+                      placeholder={paid_price_string}
+                      onChange={this.onChangePaidPrice(index, paid_date)}
+                      ref={"paid_price" + index.toString()} />
+                );
             }
                 
             state_view = (
@@ -697,19 +749,21 @@ var ProcessOrder = React.createClass({
         }
 
         return [
-            { value: product.name,      view: product.name     },
-            { value: product.maker,     view: product.maker    },
-            { value: product.min_price, view: min_price_view },
+            { value: product.name,  view: product.name     },
+            { value: product.maker, view: product.maker    },
             {
                 value: product.cur_price,
                 view:  cur_price_view
             },
-            { value: product.max_price, view: max_price_view },
             {
                 value: product.quantity, 
                 view:  product.quantity.toLocaleString()
             },
             { value: subtotal, view: subtotal_view },
+            {
+                value: paid_price,
+                view:  paid_price_view
+            },
             {
                 value: product.billing_amount,
                 view:  billing_amount_view
