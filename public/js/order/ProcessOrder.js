@@ -11,13 +11,24 @@ var Notice     = require('../components/Notice');
 var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 
+var regex_date = /^\d{4}\/\d{2}\/\d{2}$/;
+
 var SelectProductState = React.createClass({
     propTypes: {
         initialSelected: React.PropTypes.string.isRequired,
-        onSelect:        React.PropTypes.func.isRequired
+        onSelect:        React.PropTypes.func.isRequired,
+        paidDate:        React.PropTypes.string
     },
 
     render: function() {
+        /*
+        * 請求確定した場合、物品の状態として請求確定した日付が入る。
+        * 本来なら、物品の状態と請求確定日は別項目にすべきなのだが、請求確定日
+        * なる情報が必要だと判明したのが、システム運用後。
+        * しょうがないので、苦肉の策として状態に日付 (yyyy/mm/dd) が入っていた
+        * ら、それは請求確定の状態であり、その日付を請求確定日とすることにした。
+        * もうダメダメ ...
+        */
         return (
             <TableFrame.Select initialSelected={this.props.initialSelected}
                                onSelect={this.props.onSelect}>
@@ -32,6 +43,9 @@ var SelectProductState = React.createClass({
               </TableFrame.Option>
               <TableFrame.Option value="PARTIAL-DELIVERED">
                 分納
+              </TableFrame.Option>
+              <TableFrame.Option value="PAID">
+                {this.props.paidDate || '請求確定'}
               </TableFrame.Option>
             </TableFrame.Select>
         );
@@ -373,13 +387,13 @@ var ProcessOrder = React.createClass({
             return p.state === 'CANCELED';
         }).length;
 
-        var num_of_delivered = this.state.products.filter(function(p) {
-            return p.state === 'DELIVERED';
+        var num_of_paid = this.state.products.filter(function(p) {
+            return p.state.match(regex_date);
         }).length;
 
         if (num_of_products == num_of_canceled) {
             order_state = 'NULLIFIED';
-        } else if (num_of_products == num_of_canceled + num_of_delivered) {
+        } else if (num_of_products == num_of_canceled + num_of_paid) {
             order_state = 'COMPLETED';
         }
 
@@ -501,6 +515,17 @@ var ProcessOrder = React.createClass({
             case 'DELIVERED':
                 var subtotal = current.cur_price * current.quantity;
                 current.billing_amount = Math.round(subtotal);
+
+                break;
+            case 'PAID':
+                var date = prompt('請求確定日 (YYYY/MM/DD) はいつですか?');
+
+                if (!date || !date.match(regex_date) ) {
+                    alert('YYYY/MM/DD 形式の日付を入力して下さい。');
+                    return;
+                }
+
+                new_state = date;
 
                 break;
             default: 
@@ -643,24 +668,32 @@ var ProcessOrder = React.createClass({
         var state_view          = Util.toProductStateName(product.state);
 
         if (permission === 'PROCESS' && product.state != 'UNORDERED') {
+            var initial_selected = product.state;
+            var paid_date        = null;
+            var is_paid          = product.state.match(regex_date);
+
+            if (is_paid) {
+                initial_selected = 'PAID';
+                paid_date        = product.state;
+            }
+                
             state_view = (
                 <SelectProductState
-                  initialSelected={product.state}
-                  onSelect={this.onChangeProductState(index)} />
+                  initialSelected={initial_selected}
+                  onSelect={this.onChangeProductState(index)}
+                  paidDate={paid_date} />
             );
 
-            // if (this.props.order.products[index].state === 'ORDERED') {
-                if (product.state === 'DELIVERED') {
-                    billing_amount_view = (
-                        <TableFrame.Input
-                          key={Math.random()}
-                          type='int'
-                          placeholder={billing_amount_view}
-                          onChange={this.onChangeBillingAmount(index)}
-                          ref={"billing_amount" + index.toString()} />
-                    );
-                }
-            // }
+            if (product.state === 'DELIVERED' || is_paid) {
+                billing_amount_view = (
+                    <TableFrame.Input
+                      key={Math.random()}
+                      type='int'
+                      placeholder={billing_amount_view}
+                      onChange={this.onChangeBillingAmount(index)}
+                      ref={"billing_amount" + index.toString()} />
+                );
+            }
         }
 
         return [

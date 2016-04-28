@@ -23,9 +23,10 @@ module.exports = {
         case 'UNORDERED': return '未発注';
         case 'ORDERED':   return '発注済';
         case 'CANCELED':  return 'キャンセル';
+        case 'DELIVERED': return '納品済み';
         }
 
-        return '納品済';  // DELIVERED
+        return state;   // 請求確定 (日付が入っている)
     },
 
     toCostStateName: function(state) {
