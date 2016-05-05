@@ -29,7 +29,7 @@ var SelectProductState = React.createClass({
             <TableFrame.Select initialSelected={this.props.initialSelected}
                                onSelect={this.props.onSelect}>
               <TableFrame.Option value="ORDERED">
-                発注済
+                納品待
               </TableFrame.Option>
               <TableFrame.Option value="CANCELED">
                 キャンセル
@@ -171,7 +171,7 @@ var Buttons = React.createClass({
                         className="process-order-button"
                         onClick={this.props.toOrdered}
                         disabled={!this.props.is_unordered}>
-                  発注済へ
+                  納品待へ
                 </Button>
             );
             buttons.push(
@@ -460,13 +460,7 @@ var ProcessOrder = React.createClass({
 
     onChangePaidPrice: function(index, paid_date) {
         return function(paid_price) {
-            var product           = this.state.products[index];
-            var paid_price_string = paid_price.toLocaleString('ja-JP', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-            });
-
-            product.state = paid_date + ' ' + paid_price_string;
+            this.state.products[index].state = paid_date + ' ' + paid_price;
             this.setState({
                 products:  this.state.products,   
                 need_save: true
@@ -553,7 +547,7 @@ var ProcessOrder = React.createClass({
                  * 後に数値として記録することにした。
                  * ダメの極み。
                  */
-                new_state = date + ' 0';
+                new_state = date + ' ' + current.cur_price;
 
                 break;
             default: 
@@ -717,17 +711,24 @@ var ProcessOrder = React.createClass({
         var state_view          = Util.toProductStateName(product.state);
         var paid_price          =  0;
         var paid_price_view     = "0";
+        var paid_date           = null;
+        var paid_date_view      = null;
+        var is_paid             = product.state.match(this.regex_paid);
+
+        if (is_paid) {
+            paid_date       = paid_date_view = is_paid[1];
+            paid_price      = parseFloat(is_paid[2]);
+            paid_price_view = paid_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
+        }
 
         if (permission === 'PROCESS' && product.state != 'UNORDERED') {
             var initial_selected = product.state;
-            var paid_date        = null;
-            var paid_date_view   = null;
-            var is_paid          = product.state.match(this.regex_paid);
 
             if (is_paid) {
                 initial_selected  = 'PAID';
-                paid_date         = is_paid[1];
-                paid_price        = parseFloat(is_paid[2]);
 
                 var paid_price_string = paid_price.toLocaleString('ja-JP', {
                     maximumFractionDigits: 2,

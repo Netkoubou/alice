@@ -21,12 +21,12 @@ module.exports = {
     toProductStateName: function(state) {
         switch (state) {
         case 'UNORDERED': return '未発注';
-        case 'ORDERED':   return '発注済';
+        case 'ORDERED':   return '納品待';
         case 'CANCELED':  return 'キャンセル';
         case 'DELIVERED': return '納品済み';
         }
 
-        return state;   // 請求確定 (日付が入っている)
+        return '請求確定';  // 日付が入っているため、switch に引っかからない
     },
 
     toCostStateName: function(state) {

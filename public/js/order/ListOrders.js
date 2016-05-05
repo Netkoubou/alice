@@ -126,6 +126,8 @@ var ListOrders = React.createClass({
             is_approving:  can_approve,
             is_approved:   can_process_order,
             is_ordered:    false,
+            is_delivered:  false,
+            is_paid:       false,
             is_nullified:  false,
             is_completed:  false,
             orders:        []
@@ -163,17 +165,105 @@ var ListOrders = React.createClass({
         this.onSearch();
     },
 
-    onSearch: function() {
-        var is_approved = this.state.is_approved;
-        var is_ordered  = this.state.is_ordered;
+    filterProducts: function(order) {
+        if (order.order_state != 'APPROVED') {
+            return true;
+        }
 
 
         /*
-         * 発注済は、必要に迫られて後から付け足した状態。
+         * 発注の中の物品は、「未発注」とそれ以外が混在することは
+         * ない (と言うか、しちゃいけない)。
+         * このため、発注が「承認済」なのか「発注済」なのかは、
+         * 1 番目の物品の状態で判断できる。
+         * 
+         */
+        var products = order.products;
+
+        if (this.state.is_approved && products[0].state === 'UNORDERED') {
+            return true;
+        }
+
+        var is_selected;
+
+        if (this.state.is_ordered) {
+            is_selected = false;
+
+            products.forEach(function(p) {
+                if (p.state === 'ORDERED') {
+                    is_selected = true;
+                }
+            });
+
+            if (is_selected) {
+                return true;
+            }
+        }
+
+        if (this.state.is_delivered) {
+            is_selected = false;
+
+            products.forEach(function(p) {
+                if (p.state === 'DELIVERED') {
+                    is_selected = true;
+                }
+            });
+
+            if (is_selected) {
+                return true;
+            }
+        }
+
+        if (this.state.is_paid) {
+            is_selected = false;
+
+            products.forEach(function(p) {
+                if (p.state.match(/^\d{4}\/\d{2}\/\d{2} /) ) {
+                    is_selected = true;
+                }
+            });
+
+            if (is_selected) {
+                return true;
+            }
+        }
+
+
+        /*
+         * 何もチェックが無い時は全部表示
+         */
+        var r  = this.state.is_requesting;
+        var ag = this.state.is_approving;
+        var ad = this.state.is_approved;
+        var o  = this.state.is_ordered;
+        var d  = this.state.is_delivered;
+        var p  = this.state.is_paid;
+        var n  = this.state.is_nullified;
+        var c  = this.state.is_completed;
+
+        if (!(r || ag || ad || o || d || p || n || c) ) {
+            return true;
+        }
+
+        return false;
+    },
+
+    onSearch: function() {
+        var a = this.state.is_approved;
+        var o = this.state.is_ordered;
+        var d = this.state.is_delivered;
+        var p = this.state.is_paid;
+
+
+        /*
+         * 納品待、納品済み及び請求確定は、必要に迫られて後から付け足した
+         * 状態。
          * DB を変更することはできないので、承認済みの発注の中から、
          * 
-         *   - 物品が (一つも) 発注されていない == 承認済
-         *   - 物品は (全て) 発注されている     == 発注済
+         *   - 物品が未だ (一つも) 発注されていない == 承認済
+         *   - 納品待 (状態) の物品がある: 納品待に引っかかる
+         *   - 納品済 (状態) の物品がある: 納品済に引っかかる
+         *   - 請求確定 (状態) の物品がある: 請求確定に引っかかる
          *         
          * という感じにクライアント側で選別する。
          * 面倒臭い ...
@@ -184,7 +274,7 @@ var ListOrders = React.createClass({
             state: {
                 is_requesting: this.state.is_requesting,
                 is_approving:  this.state.is_approving,
-                is_approved:   is_approved || is_ordered,
+                is_approved:   a || o || d || p,
                 is_nullified:  this.state.is_nullified,
                 is_completed:  this.state.is_completed
             }
@@ -199,44 +289,7 @@ var ListOrders = React.createClass({
                 throw 'server_searchOrders';
             }
 
-            var orders = res.body.orders.filter(function(order) {
-                if (order.order_state != 'APPROVED') {
-                    return true;
-                }
-
-
-                /*
-                 * 発注の中の物品は、「未発注」とそれ以外が混在することは
-                 * ない (と言うか、しちゃいけない)。
-                 * このため、発注が「承認済」なのか「発注済」なのかは、
-                 * 1 番目の物品の状態で判断できる。
-                 * 
-                 */
-                if (is_approved && order.products[0].state === 'UNORDERED') {
-                    return true;
-                }
-                
-                if (is_ordered && order.products[0].state != 'UNORDERED') {
-                    return true;
-                }
-
-
-                /*
-                 * 何もチェックが無い時は全部表示
-                 */
-                var r = this.state.is_requesting;
-                var i = this.state.is_approving;
-                var d = this.state.is_approved;
-                var o = this.state.is_ordered;
-                var n = this.state.is_nullified;
-                var c = this.state.is_completed;
-
-                if (!(r || i || d || o || n || c) ) {
-                    return true;
-                }
-
-                return false;
-            }.bind(this) );
+            var orders = res.body.orders.filter(this.filterProducts);
 
             orders.sort(function(a, b) {
                 return a.order_code < b.order_code ? -1: 1;
@@ -252,6 +305,8 @@ var ListOrders = React.createClass({
             is_approving:  false,
             is_approved:   false,
             is_ordered:    false,
+            is_delivered:  false,
+            is_paid:       false,
             is_nullified:  false,
             is_completed:  false
         });
@@ -263,6 +318,8 @@ var ListOrders = React.createClass({
             is_approving:  this.refs.approving.getChecked(),
             is_approved:   this.refs.approved.getChecked(),
             is_ordered:    this.refs.ordered.getChecked(),
+            is_delivered:  this.refs.delivered.getChecked(),
+            is_paid:       this.refs.paid.getChecked(),
             is_nullified:  this.refs.nullified.getChecked(),
             is_completed:  this.refs.completed.getChecked()
         });
@@ -465,10 +522,24 @@ var ListOrders = React.createClass({
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"
-                       label="発注済"
+                       label="納品待"
                        checked={this.state.is_ordered}
                        onChange={this.onChangeCheckbox}
                        ref="ordered" />
+              </div>
+              <div className="list-orders-checkbox">
+                <Input type="checkbox"
+                       label="納品済"
+                       checked={this.state.is_delivered}
+                       onChange={this.onChangeCheckbox}
+                       ref="delivered" />
+              </div>
+              <div className="list-orders-checkbox">
+                <Input type="checkbox"
+                       label="請求確定"
+                       checked={this.state.is_paid}
+                       onChange={this.onChangeCheckbox}
+                       ref="paid" />
               </div>
               <div className="list-orders-checkbox-short">
                 <Input type="checkbox"

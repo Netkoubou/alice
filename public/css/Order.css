@@ -159,8 +159,19 @@
   width: 60px;
 }
 
+#list-orders-buttons {
+  clear:    both;
+  position: absolute;
+  top:      112px;
+  right:     16px;
+}
+
 .list-orders-button { margin-left: 4px; }
-#list-orders-table-frame { height:   calc(100% - 180px); }
+
+#list-orders-table-frame {
+  margin-top: 24px;
+  height:     calc(100% - 176px);
+}
 
 #list-orders-orders {
   width:  calc(100% - 32px);
