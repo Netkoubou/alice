@@ -54,7 +54,7 @@ var ButtonForNextAction = React.createClass({
 
     propTypes: {
         onFix:        React.PropTypes.func.isRequired,
-        onPrint:      React.PropTypes.func.isRequired,
+        onSubmit:     React.PropTypes.func.isRequired,
         needSave:     React.PropTypes.bool.isRequired,
         orderCode:    React.PropTypes.string.isRequired,
         orderVersion: React.PropTypes.number.isRequired,
@@ -133,7 +133,7 @@ var ButtonForNextAction = React.createClass({
             <Button bsSize="large"
                     bsStyle="primary"
                     className="final-pane-button"
-                    onClick={this.props.onPrint}>
+                    onClick={this.props.onSubmit}>
               提出 
             </Button>
         );
@@ -359,9 +359,9 @@ var FinalPane = React.createClass({
 
 
     /*
-     * 印刷ボタンがクリックされたら
+     * 提出ボタンがクリックされたら
      */
-    onPrint: function() {
+    onSubmit: function() {
         XHR.post('changeOrderState').send({
             order_id:      this.props.orderId,  // 不要 (MySQL の場合のみ必要)
             order_code:    this.props.orderCode,
@@ -381,6 +381,7 @@ var FinalPane = React.createClass({
 
             if (res.body.status == 0) {
                 alert('承認待ちになりました。');
+                /*
                 window.info = {
                     purpose:       'APPROVAL',
                     order_code:    this.props.orderCode,
@@ -393,6 +394,7 @@ var FinalPane = React.createClass({
                 };
 
                 window.open('preview-order.html', '発注書 印刷プレビュー');
+                */
             } else {
                 alert(Messages.information.UPDATE_CONFLICT);
             }
@@ -584,7 +586,7 @@ var FinalPane = React.createClass({
                   クリア
                 </Button>
                 <ButtonForNextAction onFix={this.onFix}
-                                     onPrint={this.onPrint}
+                                     onSubmit={this.onSubmit}
                                      needSave={this.props.needSave}
                                      orderId={this.props.orderId}   // 不要
                                      orderCode={this.props.orderCode}

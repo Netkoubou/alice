@@ -49,6 +49,14 @@ var OrderInfos = React.createClass({
     PropTypes: { info: React.PropTypes.object.isRequired },
 
     render: function() {
+        var submission_name;
+        
+        if (this.props.info.purpose === 'FAX') {
+            submission_name = '発注日';
+        } else {
+            submission_name = '提出日';
+        }
+
         return (
             <div className="infos">
               <table className="left-infos">
@@ -83,9 +91,9 @@ var OrderInfos = React.createClass({
                     </td>
                   </tr>
                   <tr>
-                    <td className="info-name">発注日</td>
+                    <td className="info-name">{submission_name}</td>
                     <td className="info-data">
-                      {this.props.info.order_date}
+                      {this.props.info.submission_date}
                     </td>
                   </tr>
                   <tr>
@@ -100,7 +108,10 @@ var OrderInfos = React.createClass({
 });
 
 var OrderProducts = React.createClass({
-    propTypes: { products: React.PropTypes.array.isRequired },
+    propTypes: {
+        purpose:  React.PropTypes.string.isRequired,
+        products: React.PropTypes.array.isRequired
+    },
 
     composeProduct: function(product, index) {
         var price_string = product.price.toLocaleString('ja-JP', {
@@ -109,7 +120,14 @@ var OrderProducts = React.createClass({
         });
 
         var quantity_string = product.quantity.toLocaleString();
-        var subtotal        = Math.round(product.price * product.quantity);
+        var subtotal;
+
+        if (this.props.purpose === 'FAX') {
+            subtotal = Math.round(product.price * product.quantity);
+        } else {
+            subtotal = product.billing_amount;
+        }
+
         var subtotal_string = subtotal.toLocaleString();
 
         var name  = product.name;
@@ -131,7 +149,15 @@ var OrderProducts = React.createClass({
     render: function() {
         var total    = 0.0;
         var products = this.props.products.map(function(p, i) {
-            total += Math.round(p.price * p.quantity);
+            var subtotal;
+
+            if (this.props.purpose === 'FAX') {
+                subtotal = Math.round(p.price * p.quantity);
+            } else {
+                subtotal = p.billing_amount;
+            }
+
+            total += subtotal;
             return this.composeProduct(p, i);
         }.bind(this) );
 
@@ -184,16 +210,18 @@ var OrderSheet = React.createClass({
                 'URGENCY_ORDER'
             ]),
 
-            department:    React.PropTypes.string.isRequired,
-            trader:        React.PropTypes.string.isRequired,
-            drafting_date: React.PropTypes.string.isRequired,
-            order_date:    React.PropTypes.string.isRequired,
+            department:      React.PropTypes.string.isRequired,
+            trader:          React.PropTypes.string.isRequired,
+            drafting_date:   React.PropTypes.string.isRequired,
+            submission_date: React.PropTypes.string.isRequired,
 
             products:      React.PropTypes.arrayOf(React.PropTypes.shape({
                 name:     React.PropTypes.string.isRequired,
                 maker:    React.PropTypes.string.isRequired,
                 quantity: React.PropTypes.number.isRequired,
                 price:    React.PropTypes.number.isRequired,
+
+                billing_amount: React.PropTypes.number
             }) ).isRequired
         }).isRequired,
     },
@@ -222,7 +250,8 @@ var OrderSheet = React.createClass({
               </div>
               {stamp_row}
               <OrderInfos info={this.props.info} />
-              <OrderProducts products={this.props.info.products} />  
+              <OrderProducts purpose={this.props.info.purpose}
+                             products={this.props.info.products} />  
             </fieldset>
         );
     }

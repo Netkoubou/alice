@@ -607,13 +607,13 @@ var ListOrders = React.createClass({
         var department_tel  = order.department_tel;
 
         return {
-            purpose:       'FAX',
-            order_code:    order.order_code,
-            department:    department_name + ' (' + department_tel + ') ',
-            trader:        order.trader_name,
-            drafting_date: order.drafting_date,
-            order_date:    moment().format('YYYY/MM/DD'),
-            products:      order.products.map(function(p) {
+            purpose:         'FAX',
+            order_code:      order.order_code,
+            department:      department_name + ' (' + department_tel + ') ',
+            trader:          order.trader_name,
+            drafting_date:   order.drafting_date,
+            submission_date: moment().format('YYYY/MM/DD'),
+            products:        order.products.map(function(p) {
                 return {
                     name:     p.name,
                     maker:    p.maker,

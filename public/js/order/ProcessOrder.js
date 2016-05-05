@@ -338,24 +338,46 @@ var ProcessOrder = React.createClass({
         var department_name = order.department_name;
         var department_tel  = order.department_tel;
 
-        window.info = {
-            purpose:       'FAX',
+        var info = {
             order_code:    order.order_code,
-            department:    department_name + ' (' + department_tel + ')',
             trader:        order.trader_name,
             drafting_date: order.drafting_date,
-            order_date:    moment().format('YYYY/MM/DD'),
-            products:      order.products.map(function(p) {
+        };
+
+        if (this.decideOrderState() === 'COMPLETED') {
+            info.purpose         = 'APPROVAL',
+            info.department      =  department_name,
+            info.submission_date = this.state.completed_date;
+            info.products        = this.state.products.map(function(p) {
+                return {
+                    name:     p.name,
+                    maker:    p.maker,
+                    quantity: p.quantity,
+                    price:    parseFloat(p.state.match(this.regex_paid)[2]),
+
+                    billing_amount: p.billing_amount
+                };
+            }.bind(this) );
+
+            window.info = info;
+            window.open('preview-order.html', '発注書 印刷プレビュー');
+        } else {
+            info.purpose    = 'FAX';
+            info.department = department_name + ' (' + department_tel + ')';
+
+            info.submission_date = moment().format('YYYY/MM/DD'),
+            info.products        = order.products.map(function(p) {
                 return {
                     name:     p.name,
                     maker:    p.maker,
                     quantity: p.quantity,
                     price:    p.cur_price
                 };
-            })
-        };
+            });
 
-        window.open('preview-order.html', '発注書 印刷プレビュー');
+            window.info = info;
+            window.open('preview-order.html', '注文書 印刷プレビュー');
+        }
     },
 
     validateProducts: function() {
