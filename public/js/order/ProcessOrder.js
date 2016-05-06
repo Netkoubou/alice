@@ -29,7 +29,7 @@ var SelectProductState = React.createClass({
             <TableFrame.Select initialSelected={this.props.initialSelected}
                                onSelect={this.props.onSelect}>
               <TableFrame.Option value="ORDERED">
-                納品待
+                発注済
               </TableFrame.Option>
               <TableFrame.Option value="CANCELED">
                 キャンセル
@@ -39,9 +39,6 @@ var SelectProductState = React.createClass({
               </TableFrame.Option>
               <TableFrame.Option value="PARTIAL-DELIVERED">
                 分納
-              </TableFrame.Option>
-              <TableFrame.Option value="PAID">
-                請求確定
               </TableFrame.Option>
             </TableFrame.Select>
         );
@@ -171,7 +168,7 @@ var Buttons = React.createClass({
                         className="process-order-button"
                         onClick={this.props.toOrdered}
                         disabled={!this.props.is_unordered}>
-                  納品待へ
+                  発注済へ
                 </Button>
             );
             buttons.push(
@@ -256,12 +253,12 @@ var ProcessOrder = React.createClass({
     },
 
     /*
-     * 請求確定状態を示す文字列の正規表現。
-     * 請求確定日に加え、請求単価も記録する。
+     * 「納品済」状態を示す文字列の正規表現。
+     * 納品日に加え、請求単価も記録する。
      * dirty hack の極み。
      * 死にたい。
      */
-    regex_paid: /^(\d{4}\/\d{2}\/\d{2})\s+(\d+(\.\d+)?)$/,
+    regex_delivered: /^(\d{4}\/\d{2}\/\d{2})\s+(\d+(\.\d+)?)$/,
 
     toOrdered: function() {
         this.state.products.forEach(function(p) {
@@ -345,16 +342,17 @@ var ProcessOrder = React.createClass({
         };
 
         if (this.decideOrderState() === 'COMPLETED') {
+            var price = parseFloat(p.state.match(this.regex_delivered)[2]);
+
             info.purpose         = 'APPROVAL',
-            info.department      =  department_name,
+            info.department      = department_name,
             info.submission_date = this.state.completed_date;
             info.products        = this.state.products.map(function(p) {
                 return {
-                    name:     p.name,
-                    maker:    p.maker,
-                    quantity: p.quantity,
-                    price:    parseFloat(p.state.match(this.regex_paid)[2]),
-
+                    name:           p.name,
+                    maker:          p.maker,
+                    quantity:       p.quantity,
+                    price:          price,
                     billing_amount: p.billing_amount
                 };
             }.bind(this) );
@@ -413,13 +411,13 @@ var ProcessOrder = React.createClass({
             return p.state === 'CANCELED';
         }).length;
 
-        var num_of_paid = this.state.products.filter(function(p) {
-            return p.state.match(this.regex_paid);
+        var num_of_delivered = this.state.products.filter(function(p) {
+            return p.state.match(this.regex_delivered);
         }.bind(this) ).length;
 
         if (num_of_products == num_of_canceled) {
             order_state = 'NULLIFIED';
-        } else if (num_of_products == num_of_canceled + num_of_paid) {
+        } else if (num_of_products == num_of_canceled + num_of_delivered) {
             order_state = 'COMPLETED';
         }
 
@@ -480,9 +478,12 @@ var ProcessOrder = React.createClass({
         }
     },
 
-    onChangePaidPrice: function(index, paid_date) {
+    onChangePaidPrice: function(index, delivered_date) {
         return function(paid_price) {
-            this.state.products[index].state = paid_date + ' ' + paid_price;
+            var product = this.state.products[index];
+
+            product.state = delivered_date + ' ' + paid_price;
+
             this.setState({
                 products:  this.state.products,   
                 need_save: true
@@ -492,11 +493,10 @@ var ProcessOrder = React.createClass({
 
     onChangeBillingAmount: function(index) {
         return function(billing_amount) {
-            var product   = this.state.products[index];
-            // var cur_price = billing_amount / product.quantity;
+            var product = this.state.products[index];
 
-            // product.cur_price      = cur_price;
             product.billing_amount = billing_amount;
+
             this.setState({
                 products:  this.state.products,
                 need_save: true
@@ -541,21 +541,13 @@ var ProcessOrder = React.createClass({
                 /*
                  * こちらが納品済にする方。
                  * ただ、実際に状態を変更するのはこの switch 文を抜けた直後。
-                 * ここでは、new_state を DELIVERED に変更するだけにとどめる。
+                 * ここでは、new_state を納品済に変更するだけにとどめる。
                  * 通常の納品済と同じ手続きを踏むため、以下で break していな
                  * いことに注意。
                  */
                 current.quantity = n;
-                new_state        = 'DELIVERED';
-                // thru
+                // FALL THRU
             case 'DELIVERED':
-                var subtotal = current.cur_price * current.quantity;
-                current.billing_amount = Math.round(subtotal);
-
-                break;
-            case 'PAID':
-                var date = moment().format('YYYY/MM/DD');
-
                 /*
                  * 日付の後の 0 は、請求単価。
                  * この時点では請求単価は入力されていないため、
@@ -569,7 +561,11 @@ var ProcessOrder = React.createClass({
                  * 後に数値として記録することにした。
                  * ダメの極み。
                  */
-                new_state = date + ' ' + current.cur_price;
+                var date     = moment().format('YYYY/MM/DD');
+                var subtotal = current.cur_price * current.quantity;
+
+                new_state              = date + ' ' + current.cur_price;
+                current.billing_amount = Math.round(subtotal);
 
                 break;
             default: 
@@ -598,13 +594,13 @@ var ProcessOrder = React.createClass({
         }.bind(this);
     },
 
-    onChangePaidDate: function(index) {
+    onChangeDeliveredDate: function(index) {
         return function(date) {
-            var product = this.state.products[index];
-            var is_paid = product.state.match(this.regex_paid);
+            var product      = this.state.products[index];
+            var is_delivered = product.state.match(this.regex_delivered);
 
-            if (is_paid) {
-                var paid_price = is_paid[2].toLocaleString('ja-JP', {
+            if (is_delivered) {
+                var paid_price = is_delivered[2].toLocaleString('ja-JP', {
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2
                 });
@@ -733,13 +729,13 @@ var ProcessOrder = React.createClass({
         var state_view          = Util.toProductStateName(product.state);
         var paid_price          =  0;
         var paid_price_view     = "0";
-        var paid_date           = null;
-        var paid_date_view      = null;
-        var is_paid             = product.state.match(this.regex_paid);
+        var delivered_date      = null;
+        var delivered_date_view = null;
+        var is_delivered        = product.state.match(this.regex_delivered);
 
-        if (is_paid) {
-            paid_date       = paid_date_view = is_paid[1];
-            paid_price      = parseFloat(is_paid[2]);
+        if (is_delivered) {
+            delivered_date  = delivered_date_view = is_delivered[1];
+            paid_price      = parseFloat(is_delivered[2]);
             paid_price_view = paid_price.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
@@ -749,8 +745,8 @@ var ProcessOrder = React.createClass({
         if (permission === 'PROCESS' && product.state != 'UNORDERED') {
             var initial_selected = product.state;
 
-            if (is_paid) {
-                initial_selected  = 'PAID';
+            if (is_delivered) {
+                initial_selected = 'DELIVERED';
 
                 var paid_price_string = paid_price.toLocaleString('ja-JP', {
                     maximumFractionDigits: 2,
@@ -762,24 +758,16 @@ var ProcessOrder = React.createClass({
                       key={Math.random()}
                       type='real'
                       placeholder={paid_price_string}
-                      onChange={this.onChangePaidPrice(index, paid_date)}
+                      onChange={this.onChangePaidPrice(index, delivered_date)}
                       ref={"paid_price" + index.toString()} />
                 );
 
-                paid_date_view = (
+                delivered_date_view = (
                     <TableFrame.DatePicker 
-                      selected={moment(paid_date, 'YYYY/MM/DD')}
-                      onChange={this.onChangePaidDate(index)} />
+                      selected={moment(delivered_date, 'YYYY/MM/DD')}
+                      onChange={this.onChangeDeliveredDate(index)} />
                 );
-            }
-                
-            state_view = (
-                <SelectProductState
-                  initialSelected={initial_selected}
-                  onSelect={this.onChangeProductState(index)} />
-            );
 
-            if (product.state === 'DELIVERED' || is_paid) {
                 billing_amount_view = (
                     <TableFrame.Input
                       key={Math.random()}
@@ -789,6 +777,12 @@ var ProcessOrder = React.createClass({
                       ref={"billing_amount" + index.toString()} />
                 );
             }
+                
+            state_view = (
+                <SelectProductState
+                  initialSelected={initial_selected}
+                  onSelect={this.onChangeProductState(index)} />
+            );
         }
 
         return [
@@ -812,8 +806,8 @@ var ProcessOrder = React.createClass({
                 view:  billing_amount_view
             },
             {
-                value: paid_date,
-                view:  paid_date_view
+                value: delivered_date,
+                view:  delivered_date_view
             },
             {
                 value: product.state,

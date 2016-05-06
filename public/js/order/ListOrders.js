@@ -127,7 +127,6 @@ var ListOrders = React.createClass({
             is_approved:   can_process_order,
             is_ordered:    false,
             is_delivered:  false,
-            is_paid:       false,
             is_nullified:  false,
             is_completed:  false,
             orders:        []
@@ -204,20 +203,6 @@ var ListOrders = React.createClass({
             is_selected = false;
 
             products.forEach(function(p) {
-                if (p.state === 'DELIVERED') {
-                    is_selected = true;
-                }
-            });
-
-            if (is_selected) {
-                return true;
-            }
-        }
-
-        if (this.state.is_paid) {
-            is_selected = false;
-
-            products.forEach(function(p) {
                 if (p.state.match(/^\d{4}\/\d{2}\/\d{2} /) ) {
                     is_selected = true;
                 }
@@ -237,11 +222,10 @@ var ListOrders = React.createClass({
         var ad = this.state.is_approved;
         var o  = this.state.is_ordered;
         var d  = this.state.is_delivered;
-        var p  = this.state.is_paid;
         var n  = this.state.is_nullified;
         var c  = this.state.is_completed;
 
-        if (!(r || ag || ad || o || d || p || n || c) ) {
+        if (!(r || ag || ad || o || d || n || c) ) {
             return true;
         }
 
@@ -252,18 +236,15 @@ var ListOrders = React.createClass({
         var a = this.state.is_approved;
         var o = this.state.is_ordered;
         var d = this.state.is_delivered;
-        var p = this.state.is_paid;
 
 
         /*
-         * 納品待、納品済み及び請求確定は、必要に迫られて後から付け足した
-         * 状態。
+         * 発注済及び納品済は、必要に迫られて後から付け足した状態。
          * DB を変更することはできないので、承認済みの発注の中から、
          * 
          *   - 物品が未だ (一つも) 発注されていない == 承認済
-         *   - 納品待 (状態) の物品がある: 納品待に引っかかる
+         *   - 発注済 (状態) の物品がある: 発注済に引っかかる
          *   - 納品済 (状態) の物品がある: 納品済に引っかかる
-         *   - 請求確定 (状態) の物品がある: 請求確定に引っかかる
          *         
          * という感じにクライアント側で選別する。
          * 面倒臭い ...
@@ -274,7 +255,7 @@ var ListOrders = React.createClass({
             state: {
                 is_requesting: this.state.is_requesting,
                 is_approving:  this.state.is_approving,
-                is_approved:   a || o || d || p,
+                is_approved:   a || o || d,
                 is_nullified:  this.state.is_nullified,
                 is_completed:  this.state.is_completed
             }
@@ -306,7 +287,6 @@ var ListOrders = React.createClass({
             is_approved:   false,
             is_ordered:    false,
             is_delivered:  false,
-            is_paid:       false,
             is_nullified:  false,
             is_completed:  false
         });
@@ -319,7 +299,6 @@ var ListOrders = React.createClass({
             is_approved:   this.refs.approved.getChecked(),
             is_ordered:    this.refs.ordered.getChecked(),
             is_delivered:  this.refs.delivered.getChecked(),
-            is_paid:       this.refs.paid.getChecked(),
             is_nullified:  this.refs.nullified.getChecked(),
             is_completed:  this.refs.completed.getChecked()
         });
@@ -522,7 +501,7 @@ var ListOrders = React.createClass({
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"
-                       label="納品待"
+                       label="発注済"
                        checked={this.state.is_ordered}
                        onChange={this.onChangeCheckbox}
                        ref="ordered" />
@@ -533,13 +512,6 @@ var ListOrders = React.createClass({
                        checked={this.state.is_delivered}
                        onChange={this.onChangeCheckbox}
                        ref="delivered" />
-              </div>
-              <div className="list-orders-checkbox">
-                <Input type="checkbox"
-                       label="請求確定"
-                       checked={this.state.is_paid}
-                       onChange={this.onChangeCheckbox}
-                       ref="paid" />
               </div>
               <div className="list-orders-checkbox-short">
                 <Input type="checkbox"
