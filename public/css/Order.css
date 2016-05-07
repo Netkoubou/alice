@@ -178,16 +178,16 @@
   height: calc(100% - 56px);
 }
 
-#list-orders-orders col:nth-child(1)  { width:  52px; }
+#list-orders-orders col:nth-child(1)  { width:  56px; }
 #list-orders-orders col:nth-child(2)  { width: 130px; }
 #list-orders-orders col:nth-child(3)  { width:  14%; }
 #list-orders-orders col:nth-child(4)  { width:  80px; }
-#list-orders-orders col:nth-child(5)  { width:  14%; }
+#list-orders-orders col:nth-child(5)  { width:  20%; }
 #list-orders-orders col:nth-child(6)  { width:  12%; }
 #list-orders-orders col:nth-child(7)  { width:  80px; }
 #list-orders-orders col:nth-child(8)  { width:  80px; }
 #list-orders-orders col:nth-child(9)  { width:  68px; }
-#list-orders-orders col:nth-child(10) { width: calc(50% - 505px); }
+#list-orders-orders col:nth-child(10) { width: calc(44% - 509px); }
 #list-orders-orders col:nth-child(11) { width:  15px; }
 #list-orders-orders td:nth-child(1) { text-align: center; }
 #list-orders-orders td:nth-child(2) { text-align: center; }
@@ -220,7 +220,11 @@
 }
 
 .list-orders-remark:hover { text-decoration: underline; }
-.list-orders-turned-back  { color: #ff0000; }
+
+.list-orders-turned-back,
+.list-orders-mixed-product-state {
+  color: #ff0000;
+}
 
 #list-orders-print-all {
   position: absolute;

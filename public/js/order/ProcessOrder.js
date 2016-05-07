@@ -337,28 +337,56 @@ var ProcessOrder = React.createClass({
 
         var info = {
             order_code:    order.order_code,
+            order_type:    order.order_type,
             trader:        order.trader_name,
             drafting_date: order.drafting_date,
         };
 
-        if (this.decideOrderState() === 'COMPLETED') {
-            var price = parseFloat(p.state.match(this.regex_delivered)[2]);
 
+        /*
+         * 納品済の物品が一つでもあれば、ハンコリレーの紙 (発注書) を印刷する。
+         * そうでなければ、FAX 用の紙。
+         */
+        var delivered_products = this.state.products.filter(function(p) {
+            return p.state.match(this.regex_delivered);
+        }.bind(this) );
+
+        if (delivered_products.length > 0) {
+            info.submission_date = this.state.completed_date; 
+
+            if (info.submission_date === '') {
+                info.submission_date = moment().format('YYYY/MM/DD');
+            }
+                
             info.purpose         = 'APPROVAL',
             info.department      = department_name,
-            info.submission_date = this.state.completed_date;
             info.products        = this.state.products.map(function(p) {
+                var matched = p.state.match(this.regex_delivered);
+                var price;
+                var billing_amount;
+                var delivered_date = null;
+
+                if (matched) {
+                    price          = parseFloat(matched[2]);
+                    billing_amount = p.billing_amount;
+                    delivered_date = matched[1];
+                } else {
+                    price          = p.cur_price;
+                    billing_amount = p.cur_price * p.quantity;
+                }
+
                 return {
                     name:           p.name,
                     maker:          p.maker,
                     quantity:       p.quantity,
                     price:          price,
-                    billing_amount: p.billing_amount
+                    billing_amount: billing_amount,
+                    delivered_date: delivered_date
                 };
             }.bind(this) );
 
             window.info = info;
-            window.open('preview-order.html', '発注書 印刷プレビュー');
+            window.open('preview-order.html');
         } else {
             info.purpose    = 'FAX';
             info.department = department_name + ' (' + department_tel + ')';
@@ -374,7 +402,7 @@ var ProcessOrder = React.createClass({
             });
 
             window.info = info;
-            window.open('preview-order.html', '注文書 印刷プレビュー');
+            window.open('preview-order.html');
         }
     },
 
@@ -690,15 +718,15 @@ var ProcessOrder = React.createClass({
 
     makeTableFrameTitle: function() {
         return [
-            { name: '品名',        type: 'string' },
-            { name: '製造元',      type: 'string' },
-            { name: '単価 (定価)', type: 'number' },
-            { name: '数量',        type: 'number' },
-            { name: '発注小計',    type: 'number' },
-            { name: '請求単価',    type: 'number' },
-            { name: '請求額',      type: 'number' },
-            { name: '請求確定日',  type: 'string' },
-            { name: '状態',        type: 'string' }
+            { name: '品名',        type: 'void' },
+            { name: '製造元',      type: 'void' },
+            { name: '単価 (定価)', type: 'void' },
+            { name: '数量',        type: 'void' },
+            { name: '発注小計',    type: 'void' },
+            { name: '請求単価',    type: 'void' },
+            { name: '請求額',      type: 'void' },
+            { name: '納品日',      type: 'void' },
+            { name: '状態',        type: 'void' }
         ];
     },
 
@@ -755,7 +783,6 @@ var ProcessOrder = React.createClass({
 
                 paid_price_view = (
                     <TableFrame.Input
-                      key={Math.random()}
                       type='real'
                       placeholder={paid_price_string}
                       onChange={this.onChangePaidPrice(index, delivered_date)}
@@ -770,7 +797,6 @@ var ProcessOrder = React.createClass({
 
                 billing_amount_view = (
                     <TableFrame.Input
-                      key={Math.random()}
                       type='int'
                       placeholder={billing_amount_view}
                       onChange={this.onChangeBillingAmount(index)}

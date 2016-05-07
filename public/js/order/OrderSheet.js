@@ -129,6 +129,11 @@ var OrderProducts = React.createClass({
         }
 
         var subtotal_string = subtotal.toLocaleString();
+        var delivered_date  = '';
+
+        if (product.delivered_date) {
+            delivered_date = product.delivered_date.substr(2);
+        }
 
         var name  = product.name;
         var maker = product.maker;
@@ -141,7 +146,7 @@ var OrderProducts = React.createClass({
               <td className="products-data-number">{price_string}</td>
               <td className="products-data-number">{quantity_string}</td>
               <td className="products-data-number">{subtotal_string}</td>
-              <td></td>
+              <td>{delivered_date}</td>
             </tr>  
         );
     },
@@ -185,7 +190,7 @@ var OrderProducts = React.createClass({
                   <td className="products-header">単価</td>
                   <td className="products-header">数量</td>
                   <td className="products-header">小計</td>
-                  <td className="products-header">済み</td>
+                  <td className="products-header">納品日</td>
                 </tr>
               </thead>
               <tbody>
@@ -208,7 +213,7 @@ var OrderSheet = React.createClass({
             order_type:    React.PropTypes.oneOf([
                 'ORDINARY_ORDER',
                 'URGENCY_ORDER'
-            ]),
+            ]).isRequired,
 
             department:      React.PropTypes.string.isRequired,
             trader:          React.PropTypes.string.isRequired,
@@ -221,7 +226,8 @@ var OrderSheet = React.createClass({
                 quantity: React.PropTypes.number.isRequired,
                 price:    React.PropTypes.number.isRequired,
 
-                billing_amount: React.PropTypes.number
+                billing_amount: React.PropTypes.number,
+                delivered_date: React.PropTypes.string
             }) ).isRequired
         }).isRequired,
     },
@@ -231,11 +237,11 @@ var OrderSheet = React.createClass({
         var stamp_row = null;
         var ordered   = null;
 
-        if (this.props.info.purpose === 'APPROVAL') {
-            if (this.props.info.order_type === 'URGENCY_ORDER') {
-                ordered = <p id="ordered">発注済</p>;
-            }
+        if (this.props.info.order_type === 'URGENCY_ORDER') {
+            ordered = <p className="ordered">発注済</p>;
+        }
 
+        if (this.props.info.purpose === 'APPROVAL') {
             title    += '発注依頼書';
             stamp_row = <StampRow />;
         } else {

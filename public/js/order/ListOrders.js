@@ -362,11 +362,11 @@ var ListOrders = React.createClass({
             var order_remark     = this.decideOrderRemark(order, index)
             var order_state;
             
-
-            /*
-             * 備考が記された発注を目立たせるよう状態名を赤に
-             */
             if (order.order_state === 'REQUESTING' && order_remark != '') {
+                /*
+                 * 差し戻された発注 (備考に何かしら記入される) を目立たせる
+                 * よう状態名を赤にする。
+                 */
                 order_state = (
                     <span className="list-orders-turned-back">
                       {Util.toOrderStateName(order.order_state)}
@@ -376,7 +376,30 @@ var ListOrders = React.createClass({
                 if (order.products[0].state === 'UNORDERED') {
                     order_state = Util.toOrderStateName(order.order_state);
                 } else {
-                    order_state = '発注済';
+                    /*
+                     * 発注済と納品済の物品が混在した発注は、注意を引くために
+                     * 状態名を赤にする。
+                     */
+                    var num_of_ordered   = 0;
+                    var num_of_delivered = 0;
+
+                    order.products.forEach(function(p) {
+                        if (p.state === 'ORDERED') {
+                            num_of_ordered++;
+                        } else if (p.state.match(/^\d{4}\/\d{2}\/\d{2} /) ) {
+                            num_of_delivered++;
+                        }
+                    });
+
+                    if (num_of_ordered > 0 && num_of_delivered > 0) {
+                        order_state = (
+                            <span className="list-orders-mixed-product-state">
+                              発注済
+                            </span>
+                        );
+                    } else {
+                        order_state = '発注済';
+                    }
                 }
             } else {
                 order_state = Util.toOrderStateName(order.order_state);
@@ -581,6 +604,7 @@ var ListOrders = React.createClass({
         return {
             purpose:         'FAX',
             order_code:      order.order_code,
+            order_type:      order.order_type,
             department:      department_name + ' (' + department_tel + ') ',
             trader:          order.trader_name,
             drafting_date:   order.drafting_date,
@@ -600,6 +624,7 @@ var ListOrders = React.createClass({
         var orders = [];
 
         this.state.orders.forEach(function(order) {
+            /*
             var a = order.order_state          === 'APPROVED';
             var o = order.order_type           === 'ORDINARY_ORDER';
             var n = order.trader_communication === 'none';
@@ -607,6 +632,12 @@ var ListOrders = React.createClass({
             var u = order.products[0].state    === 'UNORDERED';
 
             if (a && o && !(n && z) && u) {
+            */
+
+            var is_approved  = order.order_state       === 'APPROVED';
+            var is_unordered = order.products[0].state === 'UNORDERED';
+
+            if (is_approved && is_unordered) {
                 this.toOrdered(order);
                 orders.push(this.toSheetInfo(order) );
             }
@@ -614,7 +645,7 @@ var ListOrders = React.createClass({
 
         if (orders.length > 0) {
             window.orders = orders;
-            window.open('preview-all-orders.html', '発注書 全印刷プレビュー');
+            window.open('preview-all-orders.html');
             this.onSearch();
         } else {
             alert('印刷対象の発注はありません。');

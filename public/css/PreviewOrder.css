@@ -15,7 +15,7 @@ fieldset {
   margin-bottom: 24px;
 }
 
-#ordered {
+.ordered {
   font-size: 32px;
   position:  absolute;
   right:     40px;
@@ -94,12 +94,15 @@ fieldset {
 }
 
 .products tr td:nth-child(1) { width:  3%; }
-.products tr td:nth-child(2) { width: 40%; }
+.products tr td:nth-child(2) { width: 33%; }
 .products tr td:nth-child(3) { width: 20%; }
 .products tr td:nth-child(4) { width: 12%; }
 .products tr td:nth-child(5) { width:  8%; }
 .products tr td:nth-child(6) { width: 12%; }
-.products tr td:nth-child(7) { width:  5%; }
+.products tr td:nth-child(7) {
+  width:      12%;
+  text-align: center;
+}
 
 .products-header       { text-align: center; }
 .products-data-number  { text-align: right; }
