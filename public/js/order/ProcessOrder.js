@@ -595,6 +595,18 @@ var ProcessOrder = React.createClass({
                 new_state              = date + ' ' + current.cur_price;
                 current.billing_amount = Math.round(subtotal);
 
+
+                /*
+                 * 納品済にした時点で、請求単価を入力するための input 要素に
+                 * フォーカスを当てるようにしたいのだが、この時点では未だ
+                 * その要素は作成されていない (作成されるのは、この後の
+                 * setState が呼ばれた後)。
+                 * そのため、この時点ではフォーカスを当てるための ref を指定
+                 * しておくに留め、実際にフォーカスを当てる操作を
+                 * componentDidUpdate に任せることにする。
+                 */
+                this.focus = 'paid_price' + index.toString();
+
                 break;
             default: 
                 current.cur_price      = original.cur_price;
@@ -786,7 +798,7 @@ var ProcessOrder = React.createClass({
                       type='real'
                       placeholder={paid_price_string}
                       onChange={this.onChangePaidPrice(index, delivered_date)}
-                      ref={"paid_price" + index.toString()} />
+                      ref={'paid_price' + index.toString()} />
                 );
 
                 delivered_date_view = (
@@ -870,6 +882,13 @@ var ProcessOrder = React.createClass({
         });
     },
 
+    componentDidUpdate: function() {
+        if (this.focus != null) {
+            ReactDOM.findDOMNode(this.refs[this.focus]).select();
+            this.focus = null;
+        }
+    },
+
     render: function() {
         var permission  = this.decidePermission();
         var table_title = this.makeTableFrameTitle();
@@ -921,8 +940,7 @@ var ProcessOrder = React.createClass({
                          disabled={permission === 'REFER_ONLY'}
                          onChange={this.onChangeRemark} />
               </fieldset>
-              <TableFrame key={Math.random()}
-                          id="process-order-products"
+              <TableFrame id="process-order-products"
                           title={table_title}
                           data={table_data} />
               <OrderTotals order_total={order_total}
