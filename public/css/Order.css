@@ -175,7 +175,7 @@
 
 #list-orders-orders {
   width:  calc(100% - 32px);
-  height: calc(100% - 56px);
+  height: calc(100% - 96px);
 }
 
 #list-orders-orders col:nth-child(1)  { width:  56px; }
