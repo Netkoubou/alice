@@ -542,7 +542,6 @@ var ProcessOrder = React.createClass({
     onChangeProductState: function(index) {
         return function(e) {
             var current   = this.state.products[index];
-            var original  = this.props.order.products[index];
             var new_state = e.target.value;
 
             switch (new_state) {
@@ -616,8 +615,18 @@ var ProcessOrder = React.createClass({
 
                 break;
             default: 
-                current.cur_price      = original.cur_price;
-                current.billing_amount = original.billing_amount;
+                current.billing_amount = 0;
+
+                if (index < this.props.order.products.length) {
+                    /*
+                     * 分納で分割された側は props の中にはない。
+                     * その場合 cur_price と billing_amount はそのまま。
+                     * 分納で納品済みになる側は props の中にあるため、
+                     * cur_price を元に戻す。
+                     */
+                    var original = this.props.order.products[index];
+                    current.cur_price = original.cur_price;
+                }
 
                 break;
             }
