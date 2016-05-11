@@ -344,11 +344,18 @@ var ProcessOrder = React.createClass({
 
 
         /*
-         * 納品済の物品が一つでもあれば、ハンコリレーの紙 (発注書) を印刷する。
+         * 納品済若しくはキャンセルの物品が一つでもあれば、ハンコリレーの
+         * 紙 (発注書) を印刷する。
          * そうでなければ、FAX 用の紙。
          */
         var delivered_products = this.state.products.filter(function(p) {
-            return p.state.match(this.regex_delivered);
+            if (p.state === 'CANCELED') {
+                return true;
+            } else if (p.state.match(this.regex_delivered) ) {
+                return true;
+            } else {
+                return false;
+            }
         }.bind(this) );
 
         if (delivered_products.length > 0) {
@@ -370,6 +377,8 @@ var ProcessOrder = React.createClass({
                     price          = parseFloat(matched[2]);
                     billing_amount = p.billing_amount;
                     delivered_date = matched[1];
+                } else if (p.state === 'CANCELED') {
+                    price = billing_amount = 0;
                 } else {
                     price          = p.cur_price;
                     billing_amount = p.cur_price * p.quantity;
@@ -381,6 +390,7 @@ var ProcessOrder = React.createClass({
                     quantity:       p.quantity,
                     price:          price,
                     billing_amount: billing_amount,
+                    state:          p.state,
                     delivered_date: delivered_date
                 };
             }.bind(this) );
@@ -411,16 +421,13 @@ var ProcessOrder = React.createClass({
             var p = this.state.products[i];
 
             if (p.state === 'DELIVERED') {
-                var e;
-                var ba = p.billing_amount;
-
-
                 /*
-                 * ba != ba は NaN 検知するための条件判定。
+                 * p.billing_amount != p.billing_amount は NaN 検知する
+                 * ための条件判定。
                  * 詳しくは edit-order/FinalPane.js 内のコメント参照。
                  */
-                if (ba < 0 || ba != ba) {
-                    alert('請求額には 0 より大きな値を指定して下さい。');
+                if (p.billing_amount != p.billing_amount) {
+                    alert('請求額には数値を指定して下さい。');
                     var e = this.refs['billing_amount' + i.toString()];
                     ReactDOM.findDOMNode(e).select();
                     return false;

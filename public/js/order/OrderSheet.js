@@ -135,8 +135,14 @@ var OrderProducts = React.createClass({
             delivered_date = product.delivered_date.substr(2);
         }
 
-        var name  = product.name;
         var maker = product.maker;
+        var name;
+        
+        if (product.state === 'CANCELED') {
+            name = <del>product.name</del>;
+        } else {
+            name = product.name;
+        }
 
         return (
             <tr key={index}>
@@ -227,6 +233,7 @@ var OrderSheet = React.createClass({
                 price:    React.PropTypes.number.isRequired,
 
                 billing_amount: React.PropTypes.number,
+                state:          React.PropTypes.string,
                 delivered_date: React.PropTypes.string
             }) ).isRequired
         }).isRequired,

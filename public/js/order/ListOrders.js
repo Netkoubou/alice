@@ -639,7 +639,10 @@ var ListOrders = React.createClass({
 
             if (is_approved && is_unordered) {
                 this.toOrdered(order);
-                orders.push(this.toSheetInfo(order) );
+
+                if (order.order_type != 'URGENCY_ORDER') {
+                    orders.push(this.toSheetInfo(order) );
+                }
             }
         }.bind(this) );
 
