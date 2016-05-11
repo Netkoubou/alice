@@ -136,12 +136,10 @@ var OrderProducts = React.createClass({
         }
 
         var maker = product.maker;
-        var name;
+        var name  = product.name;
         
         if (product.state === 'CANCELED') {
-            name = <del>product.name</del>;
-        } else {
-            name = product.name;
+            name = <del>{product.name}</del>;
         }
 
         return (
