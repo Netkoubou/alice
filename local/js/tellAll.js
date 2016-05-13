@@ -18,8 +18,9 @@ module.exports = function(collection_name) {
             db.collection(collection_name).find({
                 is_alive: true
             }).toArray(function(err, documents) {
+                db.close();
+
                 if (err != null) {
-                    db.close();
                     res.json({ status: 255 });
                     log_warn.warn(err);
     

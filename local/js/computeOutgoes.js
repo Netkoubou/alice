@@ -104,6 +104,7 @@ module.exports = function(req, res) {
             finished.push(true);
 
             if (finished.length == outgoes.length) {
+                db.close();
                 res.json({ status: 0, outgoes: outgoes });
                 already_sent = true;
             }

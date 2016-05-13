@@ -86,6 +86,7 @@ module.exports = function(req, res) {
         db.collection('products').find(sel).toArray(function(err, products) {
             if (err == null && products != null) {
                 if (products.length == 0) {
+                    db.close();
                     res.json({ status: 0, candidates: [] });
                 } else {
                     products.forEach(function(p) {

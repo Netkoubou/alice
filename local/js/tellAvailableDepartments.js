@@ -103,8 +103,9 @@ module.exports = function(req, res) {
             db.collection('departments').find({
                 is_alive: true
             }).toArray(function(err, departments) {
+                db.close();
+
                 if (err != null) {
-                    db.close();
                     res.json({ status: 255 });
                     log_warn.warn(err);
 

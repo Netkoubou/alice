@@ -308,6 +308,7 @@ module.exports = function(req, res) {
         db.collection('orders').find(sel).toArray(function(err, orders) {
             if (err == null) {
                 if (orders.length == 0) {
+                    db.close();
                     res.json({ status: 0, orders: [] });
                 } else {
                     construct_response(orders, db, res);

@@ -9,7 +9,7 @@ var log_crit = log4js.getLogger('critical');
 
 module.exports = function(req, res) {
     if (req.session.user == null) {
-        req.json({ status: 255 });
+        res.json({ status: 255 });
         log_warn.warn('[updateItem] invalid session.');
         return;
     }
