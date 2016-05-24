@@ -109,8 +109,10 @@ var OrderInfos = React.createClass({
 
 var OrderProducts = React.createClass({
     propTypes: {
-        purpose:  React.PropTypes.string.isRequired,
-        products: React.PropTypes.array.isRequired
+        purpose:       React.PropTypes.string.isRequired,
+        products:      React.PropTypes.array.isRequired,
+        startOfNumber: React.PropTypes.number.isRequired,
+        total:         React.PropTypes.number
     },
 
     composeProduct: function(product, index) {
@@ -144,7 +146,9 @@ var OrderProducts = React.createClass({
 
         return (
             <tr key={index}>
-              <td className="products-data-number">{index + 1}</td>
+              <td className="products-data-number">
+                {this.props.startOfNumber + index}
+              </td>
               <td className="products-data-string">{name}</td>
               <td className="products-data-string">{maker}</td>
               <td className="products-data-number">{price_string}</td>
@@ -156,33 +160,25 @@ var OrderProducts = React.createClass({
     },
 
     render: function() {
-        var total    = 0.0;
         var products = this.props.products.map(function(p, i) {
-            var subtotal;
-
-            if (this.props.purpose === 'FAX') {
-                subtotal = Math.round(p.price * p.quantity);
-            } else {
-                subtotal = p.billing_amount;
-            }
-
-            total += subtotal;
             return this.composeProduct(p, i);
         }.bind(this) );
 
-        products.push(
-            <tr key={Math.random()}>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td className="products-data-number">合計</td>
-              <td className="products-data-number">
-                {Math.round(total).toLocaleString()}
-              </td>
-              <td></td>
-            </tr>
-        );
+        if (this.props.total != null) {
+            products.push(
+                <tr key={Math.random()}>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="products-data-number">合計</td>
+                  <td className="products-data-number">
+                    {Math.round(this.props.total).toLocaleString()}
+                  </td>
+                  <td></td>
+                </tr>
+            );
+        }
 
         return (
             <table className="products">
@@ -201,6 +197,57 @@ var OrderProducts = React.createClass({
                 {products}
               </tbody>
             </table>
+        );
+    }
+});
+
+var NUMBER_OF_PRODUCTS_PER_PAGE = 12;
+
+var SuborderSheet = React.createClass({
+    propTypes: {
+        info:          React.PropTypes.object.isRequired,
+        page:          React.PropTypes.number.isRequired,
+        numberOfPages: React.PropTypes.number.isRequired,
+        total:         React.PropTypes.number.isRequired
+    },
+
+    render: function() {
+        var title     = '神奈川歯科大学 附属病院 ';
+        var stamp_row = null;
+        var ordered   = null;
+
+        if (this.props.info.order_type === 'URGENCY_ORDER') {
+            ordered = <p className="ordered">発注済</p>;
+        }
+
+        if (this.props.info.purpose === 'APPROVAL') {
+            title    += '発注依頼書';
+            stamp_row = <StampRow />;
+        } else {
+            title += '注文書';
+        }
+
+        var N               = NUMBER_OF_PRODUCTS_PER_PAGE;
+        var page            = this.props.page;
+        var number_of_pages = this.props.numberOfPages;
+        var total           = this.props.total;
+
+        return(
+            <fieldset>
+              <div>
+                <p className="title">{title}</p>
+                {ordered}
+              </div>
+              {stamp_row}
+              <OrderInfos info={this.props.info} />
+              <OrderProducts purpose={this.props.info.purpose}
+                             products={this.props.info.products}
+                             startOfNumber={(page - 1) * N + 1}
+                             total={page == number_of_pages? total: null} />
+              <div className="page">
+                {'-' + page + '/' + number_of_pages + '-'}
+              </div>
+            </fieldset>
         );
     }
 });
@@ -234,36 +281,58 @@ var OrderSheet = React.createClass({
                 state:          React.PropTypes.string,
                 delivered_date: React.PropTypes.string
             }) ).isRequired
-        }).isRequired,
+        }).isRequired
     },
 
     render: function() {
-        var title     = '神奈川歯科大学 附属病院 ';
-        var stamp_row = null;
-        var ordered   = null;
+        var sheets          = [];
+        var N               = NUMBER_OF_PRODUCTS_PER_PAGE;
+        var number_of_pages = Math.ceil(this.props.info.products.length / N);
+        var total           = 0;
+        var products;
 
-        if (this.props.info.order_type === 'URGENCY_ORDER') {
-            ordered = <p className="ordered">発注済</p>;
-        }
+        this.props.info.products.forEach(function(p, i) {
+            if (i % N == 0) {
+                products = [];
+            }
 
-        if (this.props.info.purpose === 'APPROVAL') {
-            title    += '発注依頼書';
-            stamp_row = <StampRow />;
-        } else {
-            title += '注文書';
-        }
+            products.push(p);
 
-        return(
-            <fieldset>
-              <div>
-                <p id="title">{title}</p>
-                {ordered}
-              </div>
-              {stamp_row}
-              <OrderInfos info={this.props.info} />
-              <OrderProducts purpose={this.props.info.purpose}
-                             products={this.props.info.products} />  
-            </fieldset>
+            if (this.props.info.purpose === 'FAX') {
+                total += Math.round(p.price * p.quantity)
+            } else {
+                total += p.billing_amount;
+            }
+
+            if (i % N == N - 1 || i == this.props.info.products.length - 1) {
+                var info = {
+                    purpose:         this.props.info.purpose,
+                    order_code:      this.props.info.order_code,
+                    order_type:      this.props.info.order_type,
+                    department:      this.props.info.department,
+                    trader:          this.props.info.trader,
+                    drafting_date:   this.props.info.drafting_date,
+                    submission_date: this.props.submission_date,
+                    products:        products.map(function(p) { return p; })
+                };
+
+                var page = Math.floor(i / N + 1);
+
+                sheets.push(
+                    <SuborderSheet key={page}
+                                   info={info}
+                                   page={page}
+                                   numberOfPages={number_of_pages}
+                                   total={total} />
+                );
+            }
+
+        }.bind(this) );
+
+        return (
+            <div className="preview-suborders">
+              {sheets}
+            </div>
         );
     }
 });

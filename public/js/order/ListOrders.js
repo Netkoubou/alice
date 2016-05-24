@@ -84,6 +84,86 @@ var OrderCode = React.createClass({
     }
 });
 
+var FilterTextInputs = React.createClass({
+    propTypes: {
+        id:                 React.PropTypes.string.isRequired,
+        valueOfDepartment:  React.PropTypes.string.isRequired,
+        onChangeDepartment: React.PropTypes.func.isRequired,
+        valueOfTrader:      React.PropTypes.string.isRequired,
+        onChangeTrader:     React.PropTypes.func.isRequired,
+        departments:        React.PropTypes.array.isRequired,
+        traders:            React.PropTypes.array.isRequired
+    },
+
+    render: function() {
+        var departments = this.props.departments.map(function(d, i) {
+            return <option value={d} key={i} />;
+        });
+
+        var traders = this.props.traders.map(function(t, i) {
+            return <option value={t} key={i} />;
+        });
+
+        var department = (
+            <div className="list-orders-filter">
+              <input className="list-orders-filter-input"
+                     type="text"
+                     autoComplete="on"
+                     onChange={this.props.onChangeDepartment}
+                     value={this.props.valueOfDepartment}
+                     list="departments" />
+              <datalist id="departments">
+                {departments}
+              </datalist>
+            </div>
+        );
+
+        var trader = (
+            <div className="list-orders-filter">
+              <input className="list-orders-filter-input"
+                     type="text"
+                     autoComplete="on"
+                     onChange={this.props.onChangeTrader}
+                     value={this.props.valueOfTrader}
+                     list="traders" />
+              <datalist id="traders">
+                {traders}
+              </datalist>
+            </div>
+        );
+
+        return (
+            <div id={this.props.id}>
+              <table>
+                <colgroup>
+                  <col /><col /><col /><col /><col /><col />
+                  <col /><col /><col /><col /><col />
+                </colgroup>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      {department}
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      {trader}
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+        );
+    }
+});
+
 
 /*
  * 以下、本コンポーネントの main
@@ -129,7 +209,10 @@ var ListOrders = React.createClass({
             is_delivered:  false,
             is_nullified:  false,
             is_completed:  false,
-            orders:        []
+            orders:        [],
+
+            department_filter_text: '',
+            trader_filter_text:     ''
         };
     },
 
@@ -357,7 +440,21 @@ var ListOrders = React.createClass({
     },
 
     composeTableFrameData: function() {
-        return this.state.orders.map(function(order, index) {
+        var orders = this.state.orders;
+
+        if (this.state.department_filter_text != '') {
+            orders = orders.filter(function(o) {
+                return o.department_name === this.state.department_filter_text;
+            }.bind(this) );
+        }
+
+        if (this.state.trader_filter_text != '') {
+            orders = orders.filter(function(o) {
+                return o.trader_name === this.state.trader_filter_text;
+            }.bind(this) );
+        }
+
+        return orders.map(function(order, index) {
             var order_type_view  = this.decideOrderTypeView(order);
             var order_remark     = this.decideOrderRemark(order, index)
             var order_state;
@@ -624,16 +721,6 @@ var ListOrders = React.createClass({
         var orders = [];
 
         this.state.orders.forEach(function(order) {
-            /*
-            var a = order.order_state          === 'APPROVED';
-            var o = order.order_type           === 'ORDINARY_ORDER';
-            var n = order.trader_communication === 'none';
-            var z = order.products[0].cur_price == 0;
-            var u = order.products[0].state    === 'UNORDERED';
-
-            if (a && o && !(n && z) && u) {
-            */
-
             var is_approved  = order.order_state       === 'APPROVED';
             var is_unordered = order.products[0].state === 'UNORDERED';
 
@@ -653,6 +740,20 @@ var ListOrders = React.createClass({
         } else {
             alert('印刷対象の発注はありません。');
         }
+    },
+
+    uniq: function(a) {
+        return a.filter(function(e, i) {
+            return a.indexOf(e) == i;
+        });
+    },
+
+    onChangeDepartmentFilterText: function(e) {
+        this.setState({ department_filter_text: e.target.value });
+    },
+
+    onChangeTraderFilterText: function(e) {
+        this.setState({ trader_filter_text: e.target.value });
     },
 
     render: function() {
@@ -680,11 +781,30 @@ var ListOrders = React.createClass({
             );
         }
 
+        var departments = [];
+        var traders     = [];
+
+        this.state.orders.forEach(function(o) {
+            departments.push(o.department_name);
+            traders.push(o.trader_name);
+        });
+
+        departments = this.uniq(departments);
+        traders     = this.uniq(traders);
+
         return (
             <div id="list-orders" ref="listOrders">
               {this.generateSearchPain()}
               <fieldset id="list-orders-table-frame">
                 <legend>発注一覧</legend>
+                <FilterTextInputs
+                  id="list-orders-filter-text-inputs"
+                  valueOfDepartment={this.state.department_filter_text}
+                  onChangeDepartment={this.onChangeDepartmentFilterText}
+                  valueOfTrader={this.state.trader_filter_text}
+                  onChangeTrader={this.onChangeTraderFilterText}
+                  departments={departments}
+                  traders={traders} />
                 <TableFrame id="list-orders-orders"
                             title={title}
                             data={data}

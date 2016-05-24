@@ -168,9 +168,30 @@
 
 .list-orders-button { margin-left: 4px; }
 
+#list-orders-filter-text-inputs {
+  width:       calc(100% - 48px);
+  margin-left: 32px;
+}
+
+#list-orders-filter-text-inputs col:nth-child(1)  { width:  56px; }
+#list-orders-filter-text-inputs col:nth-child(2)  { width: 130px; }
+#list-orders-filter-text-inputs col:nth-child(3)  { width:  14%; }
+#list-orders-filter-text-inputs col:nth-child(4)  { width:  80px; }
+#list-orders-filter-text-inputs col:nth-child(5)  { width: calc(68% - 498px); }
+#list-orders-filter-text-inputs col:nth-child(6)  { width:  10%; }
+#list-orders-filter-text-inputs col:nth-child(7)  { width:  80px; }
+#list-orders-filter-text-inputs col:nth-child(8)  { width:  80px; }
+#list-orders-filter-text-inputs col:nth-child(9)  { width:  56px; }
+#list-orders-filter-text-inputs col:nth-child(10) { width:  10%;  }
+#list-orders-filter-text-inputs col:nth-child(11) { width:  14px; }
+
+.list-orders-filter, .list-orders-filter-input {
+  width: 100%;
+}
+
 #list-orders-table-frame {
   margin-top: 24px;
-  height:     calc(100% - 176px);
+  height:     calc(100% - 208px);
 }
 
 #list-orders-orders {
