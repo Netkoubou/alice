@@ -201,7 +201,7 @@ var OrderProducts = React.createClass({
     }
 });
 
-var NUMBER_OF_PRODUCTS_PER_PAGE = 12;
+var NUMBER_OF_PRODUCTS_PER_PAGE = 10;
 
 var SuborderSheet = React.createClass({
     propTypes: {
