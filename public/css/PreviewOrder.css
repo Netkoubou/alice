@@ -85,6 +85,15 @@ fieldset {
 .info-name { width: 128px; }
 .info-data { width: 208px; }
 
+.remark {
+  clear:         both;
+  width:         calc(100% - 66px);
+  height:        74px;
+  margin-left:   32px;
+  margin-bottom: 18px;
+  border:         1px solid #000000;
+}
+
 .products {
   clear:          both;
   border-top:     1px solid #000000;

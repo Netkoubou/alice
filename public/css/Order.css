@@ -18,6 +18,11 @@
 }
 
 
+#search-pane {
+  padding-top: 1px;
+  height:    128px;
+}
+
 .search-pane-row    { margin:       8px 0 8px 32px; }
 .search-pane-menu   { margin-right: 8px; }
 
@@ -27,7 +32,10 @@
 }
 
 
-#candidate-pane { height: calc(100% - 368px); }
+#candidate-pane {
+  clear:  both;
+  height: calc(100% - 208px);
+}
 
 #candidate-pane-candidates {
   height: 100%;
@@ -191,7 +199,7 @@
 
 #list-orders-table-frame {
   margin-top: 24px;
-  height:     calc(100% - 208px);
+  height:     calc(100% - 200px);
 }
 
 #list-orders-orders {

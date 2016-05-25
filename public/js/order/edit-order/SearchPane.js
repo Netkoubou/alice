@@ -48,7 +48,7 @@ var SelectDepartment = React.createClass({
 
     render: function() {
         var options     = this.props.options;
-        var placeholder = '選択して下さい';
+        var placeholder = '発注元 部門診療科';
         var code        = this.props.value.code;
 
 
@@ -403,53 +403,47 @@ var SearchPane = React.createClass({
 
     render: function() {
         return (
-            <div>
-              <fieldset className="edit-order-pane">
-                <legend>発注元 部門診療科</legend>
-                <div className="search-pane-row">
+            <div id="search-pane" className="edit-order-pane">
+              <div className="search-pane-row">
+                <span className="search-pane-menu">
                   <SelectDepartment orderCode={this.props.orderCode}
                                     finalTrader={this.props.finalTrader}
                                     onSelect={this.onSelectDepartment}
                                     value={this.state.department}
                                     options={this.state.departments} />
-                </div>
-              </fieldset>
-              <fieldset className="edit-order-pane">
-                <legend>検索</legend>
-                <div className="search-pane-row">
-                  <span className="search-pane-menu">
-                    <Select placeholder="品目"
-                            value={this.state.category_code}
-                            onSelect={this.onSelectCategory}
-                            options={this.state.categories} />
-                  </span>
-                  <span className="search-pane-menu">
-                    <SelectTrader finalTrader={this.props.finalTrader}
-                                  value={this.state.trader_code}
-                                  onSelect={this.onSelectTrader}
-                                  options={this.state.traders} />
-                  </span>
-                </div>
-                <div className="search-pane-row">
-                  <Input type="text"
-                         bsSize="small"
-                         placeholder="検索テキスト"
-                         value={this.state.search_text}
-                         onChange={this.onChangeSearchText} />
-                </div>
-                <Button onClick={this.onSearch}
-                        bsStyle="primary"
-                        bsSize="large"
-                        className="search-pane-button">
-                  検索
-                </Button>
-                <Button onClick={this.onClear}
-                        bsStyle="primary"
-                        bsSize="large"
-                        className="search-pane-button">
-                  クリア
-                </Button>
-              </fieldset>
+                </span>
+                <span className="search-pane-menu">
+                  <Select placeholder="品目"
+                          value={this.state.category_code}
+                          onSelect={this.onSelectCategory}
+                          options={this.state.categories} />
+                </span>
+                <span className="search-pane-menu">
+                  <SelectTrader finalTrader={this.props.finalTrader}
+                                value={this.state.trader_code}
+                                onSelect={this.onSelectTrader}
+                                options={this.state.traders} />
+                </span>
+              </div>
+              <div className="search-pane-row">
+                <Input type="text"
+                       bsSize="small"
+                       placeholder="検索テキスト"
+                       value={this.state.search_text}
+                       onChange={this.onChangeSearchText} />
+              </div>
+              <Button onClick={this.onSearch}
+                      bsStyle="primary"
+                      bsSize="large"
+                      className="search-pane-button">
+                検索
+              </Button>
+              <Button onClick={this.onClear}
+                      bsStyle="primary"
+                      bsSize="large"
+                      className="search-pane-button">
+                クリア
+              </Button>
             </div>
         );
     }

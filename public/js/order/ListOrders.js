@@ -702,6 +702,7 @@ var ListOrders = React.createClass({
             purpose:         'FAX',
             order_code:      order.order_code,
             order_type:      order.order_type,
+            order_remark:    order.order_remark,
             department:      department_name + ' (' + department_tel + ') ',
             trader:          order.trader_name,
             drafting_date:   order.drafting_date,

@@ -338,6 +338,7 @@ var ProcessOrder = React.createClass({
         var info = {
             order_code:    order.order_code,
             order_type:    order.order_type,
+            order_remark:  this.state.order_remark,
             trader:        order.trader_name,
             drafting_date: order.drafting_date,
         };
@@ -365,9 +366,9 @@ var ProcessOrder = React.createClass({
                 info.submission_date = moment().format('YYYY/MM/DD');
             }
                 
-            info.purpose         = 'APPROVAL',
-            info.department      = department_name,
-            info.products        = this.state.products.map(function(p) {
+            info.purpose    = 'APPROVAL',
+            info.department = department_name,
+            info.products   = this.state.products.map(function(p) {
                 var matched = p.state.match(this.regex_delivered);
                 var price;
                 var billing_amount;
