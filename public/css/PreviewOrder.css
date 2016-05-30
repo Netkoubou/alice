@@ -88,7 +88,7 @@ fieldset {
 .remark {
   clear:         both;
   width:         calc(100% - 66px);
-  height:        74px;
+  height:        48px;
   margin-left:   32px;
   margin-bottom: 18px;
   border:         1px solid #000000;
@@ -107,7 +107,6 @@ fieldset {
 .products td {
   border-bottom: 1px solid #000000;
   border-right:  1px solid #000000;
-  padding-bottom: 24px;
 }
 
 .products tr td:nth-child(1) { width:  3%; }
