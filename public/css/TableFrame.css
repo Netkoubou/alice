@@ -62,3 +62,21 @@
 }
 
 .table-frame select { border: none; }
+
+.table-frame-datepicker {
+  width:      96px;
+  height:     16px;
+  margin-top:  4px;
+  margin-left: 4px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.table-frame-datepicker-inner {
+  color:      #1976d2;
+  height:      22px;
+  margin-top:  -8px;
+  margin-left: -2px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}

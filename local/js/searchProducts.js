@@ -38,6 +38,8 @@ module.exports = function(req, res) {
         }
 
         db.collection('products').find(sel).toArray(function(err, products) {
+            db.close();
+
             if (err == null && products != null) {
                 if (products.length > 999) {
                     res.json({ status: 1 });
@@ -52,7 +54,6 @@ module.exports = function(req, res) {
                     res.json({ status: 0, products: products });
                 }
             } else {
-                db.close();
                 res.json({ status: 255 });
 
                 if (err != null) {

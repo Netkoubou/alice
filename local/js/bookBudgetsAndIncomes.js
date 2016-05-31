@@ -17,6 +17,7 @@ module.exports = function(req, res) {
     util.query(function(db) {
         function upsertBudgetAndIncomes(index) {
             if (index >= req.body.budgets_and_incomes.length) {
+                db.close();
                 res.json({ status: 0 });
                 return;
             }

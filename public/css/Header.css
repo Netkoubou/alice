@@ -1,34 +1,33 @@
 #header {
   display:       flex;
   align-items:   center;
-  padding:       8px 8px 0 8px;
+  padding:       8px;
   margin-bottom: 1px;
   background:    #2196f3;
 }
 
 #header-logo {
-  width:  69px;
-  height: 69px;
+  width:  40px;
+  height: 40px;
 }
 
 #header-systitle { margin: 0 8px 0 8px; }
 
 #header-sysname {
-  font-size: 128%;
+  font-size: 108%;
   color:     #ffffff;
 }
 
 #header-subsysname {
   color:       #ffffff;
   font-family: sans-serif;
-  font-size:   96%;
+  font-size:   64%;
 }
 
 #header-petname {
   font-family: 'Niconne', cursive;
-  font-size:   512%;
+  font-size:   280%;
   color:       #ffffff;
-  margin-top:  -16px;
   margin-left:  24px;
 }
 
@@ -42,7 +41,7 @@
 #header-help {
   position: absolute;
   right:     4px;
-  bottom:   68px;
+  bottom:   32px;
 }
 
 #header-help a { color: white; }

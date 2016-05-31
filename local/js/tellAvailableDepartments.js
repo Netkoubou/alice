@@ -34,7 +34,7 @@ function retrieve_departments(req, res, db) {
                       '"' + req.session.user.account + '" belongs ' +
                       'invalid department: ' + department_code + '".';
 
-                log_info.info(err);
+                log_info.info(msg);
             } else {
                 db.close();
                 res.json({ status: 255 });
@@ -72,6 +72,12 @@ function retrieve_departments(req, res, db) {
             department_counter++;
 
             if (department_counter == departments.length) {
+                res.json({
+                    status: 0,
+                    departments: response
+                });
+
+                is_already_sent = true;
                 db.close();
             }
 
@@ -97,8 +103,9 @@ module.exports = function(req, res) {
             db.collection('departments').find({
                 is_alive: true
             }).toArray(function(err, departments) {
+                db.close();
+
                 if (err != null) {
-                    db.close();
                     res.json({ status: 255 });
                     log_warn.warn(err);
 

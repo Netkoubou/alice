@@ -25,7 +25,7 @@ module.exports = {
         case 'CANCELED':  return 'キャンセル';
         }
 
-        return '納品済';  // DELIVERED
+        return '納品済';    // 日付が入っているため、switch に引っかからない
     },
 
     toCostStateName: function(state) {

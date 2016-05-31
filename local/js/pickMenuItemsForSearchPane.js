@@ -190,7 +190,9 @@ function retrieve_step_by_step(user, order_type, db, res) {
                 res.json({ status: 255 });
                 is_already_sent = true;
 
-                log_warn.warn(err);
+                if (err != null) {
+                    log_warn.warn(err);
+                }
 
                 var msg = '[pickMenuItemsForSearchPane] ' +
                           'failed to access "products" collection.';

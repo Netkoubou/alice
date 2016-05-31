@@ -167,6 +167,7 @@ module.exports = function(req, res) {
 
             if (err == null) {
                 if (costs.length == 0) {
+                    db.close();
                     res.json({ status: 0, costs: [] });
                 } else {
                     construct_response(costs, db, res);

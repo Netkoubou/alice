@@ -1,6 +1,6 @@
 {
   "name": "alice",
-  "version": "1.2.0",
+  "version": "1.2.1-RC24",
   "description": "Supply Processing Distribution System",
   "main": "public/js/index.jsx",
   "repository": {

@@ -3,7 +3,6 @@ var React      = require('react');
 var ReactDOM   = require('react-dom');
 var Input      = require('react-bootstrap').Input;
 var Button     = require('react-bootstrap').Button;
-var DatePicker = require('react-datepicker');
 var XHR        = require('superagent');
 var moment     = require('moment');
 var TableFrame = require('../components/TableFrame');
@@ -18,6 +17,14 @@ var SelectProductState = React.createClass({
     },
 
     render: function() {
+        /*
+        * 請求確定した場合、物品の状態として請求確定した日付が入る。
+        * 本来なら、物品の状態と請求確定日は別項目にすべきなのだが、請求確定日
+        * なる情報が必要だと判明したのが、システム運用後。
+        * しょうがないので、苦肉の策として状態に日付 (yyyy/mm/dd) が入っていた
+        * ら、それは請求確定の状態であり、その日付を請求確定日とすることにした。
+        * もうダメダメ ...
+        */
         return (
             <TableFrame.Select initialSelected={this.props.initialSelected}
                                onSelect={this.props.onSelect}>
@@ -245,6 +252,14 @@ var ProcessOrder = React.createClass({
         };
     },
 
+    /*
+     * 「納品済」状態を示す文字列の正規表現。
+     * 納品日に加え、請求単価も記録する。
+     * dirty hack の極み。
+     * 死にたい。
+     */
+    regex_delivered: /^(\d{4}\/\d{2}\/\d{2})\s+(\d+(\.\d+)?)$/,
+
     toOrdered: function() {
         this.state.products.forEach(function(p) {
             p.state = 'ORDERED';
@@ -320,24 +335,86 @@ var ProcessOrder = React.createClass({
         var department_name = order.department_name;
         var department_tel  = order.department_tel;
 
-        window.info = {
-            purpose:       'FAX',
+        var info = {
             order_code:    order.order_code,
-            department:    department_name + ' (' + department_tel + ')',
+            order_type:    order.order_type,
+            order_remark:  this.state.order_remark,
             trader:        order.trader_name,
             drafting_date: order.drafting_date,
-            order_date:    moment().format('YYYY/MM/DD'),
-            products:      order.products.map(function(p) {
+        };
+
+
+        /*
+         * 納品済若しくはキャンセルの物品が一つでもあれば、ハンコリレーの
+         * 紙 (発注書) を印刷する。
+         * そうでなければ、FAX 用の紙。
+         */
+        var delivered_products = this.state.products.filter(function(p) {
+            if (p.state === 'CANCELED') {
+                return true;
+            } else if (p.state.match(this.regex_delivered) ) {
+                return true;
+            } else {
+                return false;
+            }
+        }.bind(this) );
+
+        if (delivered_products.length > 0) {
+            info.submission_date = this.state.completed_date; 
+
+            if (info.submission_date === '') {
+                info.submission_date = moment().format('YYYY/MM/DD');
+            }
+                
+            info.purpose    = 'APPROVAL',
+            info.department = department_name,
+            info.products   = this.state.products.map(function(p) {
+                var matched = p.state.match(this.regex_delivered);
+                var price;
+                var billing_amount;
+                var delivered_date = null;
+
+                if (matched) {
+                    price          = parseFloat(matched[2]);
+                    billing_amount = p.billing_amount;
+                    delivered_date = matched[1];
+                } else if (p.state === 'CANCELED') {
+                    price = billing_amount = 0;
+                } else {
+                    price          = p.cur_price;
+                    billing_amount = p.cur_price * p.quantity;
+                }
+
+                return {
+                    name:           p.name,
+                    maker:          p.maker,
+                    quantity:       p.quantity,
+                    price:          price,
+                    billing_amount: billing_amount,
+                    state:          p.state,
+                    delivered_date: delivered_date
+                };
+            }.bind(this) );
+
+            window.info = info;
+            window.open('preview-order.html');
+        } else {
+            info.purpose    = 'FAX';
+            info.department = department_name + ' (' + department_tel + ')';
+
+            info.submission_date = moment().format('YYYY/MM/DD'),
+            info.products        = order.products.map(function(p) {
                 return {
                     name:     p.name,
                     maker:    p.maker,
                     quantity: p.quantity,
                     price:    p.cur_price
                 };
-            })
-        };
+            });
 
-        window.open('preview-order.html', '発注書 印刷プレビュー');
+            window.info = info;
+            window.open('preview-order.html');
+        }
     },
 
     validateProducts: function() {
@@ -345,16 +422,13 @@ var ProcessOrder = React.createClass({
             var p = this.state.products[i];
 
             if (p.state === 'DELIVERED') {
-                var e;
-                var ba = p.billing_amount;
-
-
                 /*
-                 * ba != ba は NaN 検知するための条件判定。
+                 * p.billing_amount != p.billing_amount は NaN 検知する
+                 * ための条件判定。
                  * 詳しくは edit-order/FinalPane.js 内のコメント参照。
                  */
-                if (ba < 0 || ba != ba) {
-                    alert('請求額には 0 より大きな値を指定して下さい。');
+                if (p.billing_amount != p.billing_amount) {
+                    alert('請求額には数値を指定して下さい。');
                     var e = this.refs['billing_amount' + i.toString()];
                     ReactDOM.findDOMNode(e).select();
                     return false;
@@ -374,8 +448,8 @@ var ProcessOrder = React.createClass({
         }).length;
 
         var num_of_delivered = this.state.products.filter(function(p) {
-            return p.state === 'DELIVERED';
-        }).length;
+            return p.state.match(this.regex_delivered);
+        }.bind(this) ).length;
 
         if (num_of_products == num_of_canceled) {
             order_state = 'NULLIFIED';
@@ -440,13 +514,25 @@ var ProcessOrder = React.createClass({
         }
     },
 
+    onChangePaidPrice: function(index, delivered_date) {
+        return function(paid_price) {
+            var product = this.state.products[index];
+
+            product.state = delivered_date + ' ' + paid_price;
+
+            this.setState({
+                products:  this.state.products,   
+                need_save: true
+            });
+        }.bind(this);
+    },
+
     onChangeBillingAmount: function(index) {
         return function(billing_amount) {
-            var product   = this.state.products[index];
-            // var cur_price = billing_amount / product.quantity;
+            var product = this.state.products[index];
 
-            // product.cur_price      = cur_price;
             product.billing_amount = billing_amount;
+
             this.setState({
                 products:  this.state.products,
                 need_save: true
@@ -457,7 +543,6 @@ var ProcessOrder = React.createClass({
     onChangeProductState: function(index) {
         return function(e) {
             var current   = this.state.products[index];
-            var original  = this.props.order.products[index];
             var new_state = e.target.value;
 
             switch (new_state) {
@@ -491,21 +576,58 @@ var ProcessOrder = React.createClass({
                 /*
                  * こちらが納品済にする方。
                  * ただ、実際に状態を変更するのはこの switch 文を抜けた直後。
-                 * ここでは、new_state を DELIVERED に変更するだけにとどめる。
+                 * ここでは、new_state を納品済に変更するだけにとどめる。
                  * 通常の納品済と同じ手続きを踏むため、以下で break していな
                  * いことに注意。
                  */
                 current.quantity = n;
-                new_state        = 'DELIVERED';
-                // thru
+                // FALL THRU
             case 'DELIVERED':
+                /*
+                 * 日付の後の 0 は、請求単価。
+                 * この時点では請求単価は入力されていないため、
+                 * 取り敢えず 0 を入力している。
+                 *
+                 * 何故これほど愚かしいことをしているのかと言うと、
+                 * システムの運用後、請求単価なる値を各発注の物品毎に記録
+                 * する必要があることが発覚したため。
+                 * しかし、それを記録するフィールドがないため、苦肉の策
+                 * (最近こんなんばっか) として、請求確定状態を示す日付けの
+                 * 後に数値として記録することにした。
+                 * ダメの極み。
+                 */
+                var date     = moment().format('YYYY/MM/DD');
                 var subtotal = current.cur_price * current.quantity;
+
+                new_state              = date + ' ' + current.cur_price;
                 current.billing_amount = Math.round(subtotal);
+
+
+                /*
+                 * 納品済にした時点で、請求単価を入力するための input 要素に
+                 * フォーカスを当てるようにしたいのだが、この時点では未だ
+                 * その要素は作成されていない (作成されるのは、この後の
+                 * setState が呼ばれた後)。
+                 * そのため、この時点ではフォーカスを当てるための ref を指定
+                 * しておくに留め、実際にフォーカスを当てる操作を
+                 * componentDidUpdate に任せることにする。
+                 */
+                this.focus = 'paid_price' + index.toString();
 
                 break;
             default: 
-                current.cur_price      = original.cur_price;
-                current.billing_amount = original.billing_amount;
+                current.billing_amount = 0;
+
+                if (index < this.props.order.products.length) {
+                    /*
+                     * 分納で分割された側は props の中にはない。
+                     * その場合 cur_price と billing_amount はそのまま。
+                     * 分納で納品済みになる側は props の中にあるため、
+                     * cur_price を元に戻す。
+                     */
+                    var original = this.props.order.products[index];
+                    current.cur_price = original.cur_price;
+                }
 
                 break;
             }
@@ -526,6 +648,27 @@ var ProcessOrder = React.createClass({
                 completed_date: completed_date,
                 need_save:      true
             });
+        }.bind(this);
+    },
+
+    onChangeDeliveredDate: function(index) {
+        return function(date) {
+            var product      = this.state.products[index];
+            var is_delivered = product.state.match(this.regex_delivered);
+
+            if (is_delivered) {
+                var paid_price = is_delivered[2].toLocaleString('ja-JP', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                });
+
+                product.state = date.format('YYYY/MM/DD') + ' ' + paid_price;
+
+                this.setState({
+                    products:  this.state.products,
+                    need_save: true
+                });
+            }
         }.bind(this);
     },
 
@@ -604,15 +747,15 @@ var ProcessOrder = React.createClass({
 
     makeTableFrameTitle: function() {
         return [
-            { name: '品名',     type: 'string' },
-            { name: '製造元',   type: 'string' },
-            { name: '最安単価', type: 'number' },
-            { name: '現在単価', type: 'number' },
-            { name: '最高単価', type: 'number' },
-            { name: '数量',     type: 'number' },
-            { name: '発注小計', type: 'number' },
-            { name: '請求額',   type: 'number' },
-            { name: '状態',     type: 'string' }
+            { name: '品名',        type: 'void' },
+            { name: '製造元',      type: 'void' },
+            { name: '単価 (定価)', type: 'void' },
+            { name: '数量',        type: 'void' },
+            { name: '発注小計',    type: 'void' },
+            { name: '請求単価',    type: 'void' },
+            { name: '請求額',      type: 'void' },
+            { name: '納品日',      type: 'void' },
+            { name: '状態',        type: 'void' }
         ];
     },
 
@@ -641,45 +784,85 @@ var ProcessOrder = React.createClass({
 
         var billing_amount_view = product.billing_amount.toLocaleString();
         var state_view          = Util.toProductStateName(product.state);
+        var paid_price          =  0;
+        var paid_price_view     = "0";
+        var delivered_date      = null;
+        var delivered_date_view = null;
+        var is_delivered        = product.state.match(this.regex_delivered);
+
+        if (is_delivered) {
+            delivered_date  = delivered_date_view = is_delivered[1];
+            paid_price      = parseFloat(is_delivered[2]);
+            paid_price_view = paid_price.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
+        }
 
         if (permission === 'PROCESS' && product.state != 'UNORDERED') {
+            var initial_selected = product.state;
+
+            if (is_delivered) {
+                initial_selected = 'DELIVERED';
+
+                var paid_price_string = paid_price.toLocaleString('ja-JP', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                });
+
+                paid_price_view = (
+                    <TableFrame.Input
+                      type='real'
+                      placeholder={paid_price_string}
+                      onChange={this.onChangePaidPrice(index, delivered_date)}
+                      ref={'paid_price' + index.toString()} />
+                );
+
+                delivered_date_view = (
+                    <TableFrame.DatePicker 
+                      selected={moment(delivered_date, 'YYYY/MM/DD')}
+                      onChange={this.onChangeDeliveredDate(index)} />
+                );
+
+                billing_amount_view = (
+                    <TableFrame.Input
+                      type='int'
+                      placeholder={billing_amount_view}
+                      onChange={this.onChangeBillingAmount(index)}
+                      ref={"billing_amount" + index.toString()} />
+                );
+            }
+                
             state_view = (
                 <SelectProductState
-                  initialSelected={product.state}
+                  initialSelected={initial_selected}
                   onSelect={this.onChangeProductState(index)} />
             );
-
-            // if (this.props.order.products[index].state === 'ORDERED') {
-                if (product.state === 'DELIVERED') {
-                    billing_amount_view = (
-                        <TableFrame.Input
-                          key={Math.random()}
-                          type='int'
-                          placeholder={billing_amount_view}
-                          onChange={this.onChangeBillingAmount(index)}
-                          ref={"billing_amount" + index.toString()} />
-                    );
-                }
-            // }
         }
 
         return [
-            { value: product.name,      view: product.name     },
-            { value: product.maker,     view: product.maker    },
-            { value: product.min_price, view: min_price_view },
+            { value: product.name,  view: product.name     },
+            { value: product.maker, view: product.maker    },
             {
                 value: product.cur_price,
                 view:  cur_price_view
             },
-            { value: product.max_price, view: max_price_view },
             {
                 value: product.quantity, 
                 view:  product.quantity.toLocaleString()
             },
             { value: subtotal, view: subtotal_view },
             {
+                value: paid_price,
+                view:  paid_price_view
+            },
+            {
                 value: product.billing_amount,
                 view:  billing_amount_view
+            },
+            {
+                value: delivered_date,
+                view:  delivered_date_view
             },
             {
                 value: product.state,
@@ -716,6 +899,13 @@ var ProcessOrder = React.createClass({
         });
     },
 
+    componentDidUpdate: function() {
+        if (this.focus != null) {
+            ReactDOM.findDOMNode(this.refs[this.focus]).select();
+            this.focus = null;
+        }
+    },
+
     render: function() {
         var permission  = this.decidePermission();
         var table_title = this.makeTableFrameTitle();
@@ -735,27 +925,18 @@ var ProcessOrder = React.createClass({
             return this.composeTableFrameDataRow(permission, product, index);
         }.bind(this) );
 
-        var weekdays       = [ '日', '月', '火', '水', '木', '金', '土' ];
         var completed_date = this.state.completed_date;
 
         if (this.decideOrderState() === 'COMPLETED') {
-            var selected_date  = moment();
+            var selected_date = moment();
 
             if (completed_date != '') {
                 selected_date = moment(completed_date, 'YYYY/MM/DD');
             }
 
             completed_date = (
-                <div id="process-order-completed-date-picker">
-                  <div id="process-order-completed-date-picker-inner">
-                    <DatePicker dateFormat="YYYY/MM/DD"
-                                dateFormatCalendar="YYYY/MM/DD"
-                                selected={selected_date}
-                                weekdays={weekdays}
-                                weekStart="0"
-                                onChange={this.onChangeCompletedDate} />
-                  </div>
-                </div>
+                <TableFrame.DatePicker selected={selected_date}
+                                       onChange={this.onChangeCompletedDate} />
             );
         } else if (completed_date === '') {
             completed_date = '未完了です';
@@ -776,8 +957,7 @@ var ProcessOrder = React.createClass({
                          disabled={permission === 'REFER_ONLY'}
                          onChange={this.onChangeRemark} />
               </fieldset>
-              <TableFrame key={Math.random()}
-                          id="process-order-products"
+              <TableFrame id="process-order-products"
                           title={table_title}
                           data={table_data} />
               <OrderTotals order_total={order_total}
