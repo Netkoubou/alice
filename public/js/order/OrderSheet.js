@@ -239,7 +239,7 @@ var SuborderSheet = React.createClass({
         var total           = this.props.total;
 
         return(
-            <fieldset>
+            <div className="sheet">
               <div>
                 <p className="title">{title}</p>
                 {ordered}
@@ -254,7 +254,7 @@ var SuborderSheet = React.createClass({
               <div className="page">
                 {'-' + page + '/' + number_of_pages + '-'}
               </div>
-            </fieldset>
+            </div>
         );
     }
 });

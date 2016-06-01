@@ -185,7 +185,7 @@
 #list-orders-filter-text-inputs col:nth-child(2)  { width: 130px; }
 #list-orders-filter-text-inputs col:nth-child(3)  { width:  14%; }
 #list-orders-filter-text-inputs col:nth-child(4)  { width:  80px; }
-#list-orders-filter-text-inputs col:nth-child(5)  { width: calc(68% - 498px); }
+#list-orders-filter-text-inputs col:nth-child(5)  { width: calc(66% - 496px); }
 #list-orders-filter-text-inputs col:nth-child(6)  { width:  10%; }
 #list-orders-filter-text-inputs col:nth-child(7)  { width:  80px; }
 #list-orders-filter-text-inputs col:nth-child(8)  { width:  80px; }
@@ -211,7 +211,7 @@
 #list-orders-orders col:nth-child(2)  { width: 130px; }
 #list-orders-orders col:nth-child(3)  { width:  14%; }
 #list-orders-orders col:nth-child(4)  { width:  80px; }
-#list-orders-orders col:nth-child(5)  { width: calc(68% - 498px); }
+#list-orders-orders col:nth-child(5)  { width: calc(66% - 496px); }
 #list-orders-orders col:nth-child(6)  { width:  10%; }
 #list-orders-orders col:nth-child(7)  { width:  80px; }
 #list-orders-orders col:nth-child(8)  { width:  80px; }
