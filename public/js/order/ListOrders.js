@@ -97,13 +97,14 @@ var FilterTextInputs = React.createClass({
 
     render: function() {
         var departments = this.props.departments.map(function(d, i) {
-            return <option value={d} key={i} />;
+            return <option value={d} key={i + 1}>{d}</option>;
         });
 
         var traders = this.props.traders.map(function(t, i) {
-            return <option value={t} key={i} />;
+            return <option value={t} key={i + 1}>{t}</option>;
         });
 
+        /*
         var department = (
             <div className="list-orders-filter">
               <input className="list-orders-filter-input"
@@ -117,7 +118,25 @@ var FilterTextInputs = React.createClass({
               </datalist>
             </div>
         );
+        */
 
+        departments.unshift(
+            <option value="" key={0}>
+              --指定しない--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </option>
+        );
+
+        var department = (
+            <div className="list-orders-filter">
+              <select className="list-orders-filter-select"
+                      value={this.props.valueOfDepartment}
+                      onChange={this.props.onChangeDepartment}>
+                {departments}
+              </select>
+            </div>
+        );
+
+        /*
         var trader = (
             <div className="list-orders-filter">
               <input className="list-orders-filter-input"
@@ -129,6 +148,23 @@ var FilterTextInputs = React.createClass({
               <datalist id="traders">
                 {traders}
               </datalist>
+            </div>
+        );
+        */
+
+        traders.unshift(
+            <option value="" key={0}>
+              --指定しない--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </option>
+        ) ;
+
+        var trader = (
+            <div className="list-orders-filter">
+              <select className="list-orders-filter-select"
+                      value={this.props.valueOfTrader}
+                      onChange={this.props.onChangeTrader}>
+                {traders}
+              </select>
             </div>
         );
 
