@@ -197,9 +197,8 @@ var Buttons = React.createClass({
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
-                        onClick={this.props.onFix}
-                        disabled={!this.props.need_save}>
-                  完了日変更
+                        onClick={this.props.onPrint}>
+                  印刷
                 </Button>
             );
             buttons.push(
@@ -207,8 +206,18 @@ var Buttons = React.createClass({
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
+                        onClick={this.props.onFix}
+                        disabled={!this.props.need_save}>
+                  完了日変更
+                </Button>
+            );
+            buttons.push(
+                <Button key="9"
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="process-order-button"
                         onClick={this.props.onRevertToApproved}>
-                  承認済へ戻す
+                  納品済へ戻す
                 </Button>
             );
             break;
@@ -245,7 +254,9 @@ var ProcessOrder = React.createClass({
         });
 
         return {
+            order_state:    this.props.order.order_state,
             order_remark:   this.props.order.order_remark,
+            order_version:  this.props.order.order_version,
             completed_date: this.props.order.completed_date,
             products:       products,
             need_save:      false
@@ -278,13 +289,13 @@ var ProcessOrder = React.createClass({
         });
     },
 
-    changeOrderState: function(order_state) {
+    changeOrderState: function(order_state, next) {
         XHR.post('changeOrderState').send({
             order_id:      this.props.order.order_id,   // 不要
             order_code:    this.props.order.order_code,
             order_state:   order_state,
             order_remark:  this.state.order_remark,
-            order_version: this.props.order.order_version
+            order_version: this.state.order_version
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.PROCESS_ORDER_CHANGE_ORDER_STATE);
@@ -302,31 +313,38 @@ var ProcessOrder = React.createClass({
                 alert(Messages.information.UPDATE_CONFLICT);
             }
 
-            this.props.goBack();
+            if (next === 'back') {
+                this.props.goBack();
+            } else {
+                this.setState({
+                    order_state:   order_state,
+                    order_version: this.state.order_version + 1
+                });
+            }
         }.bind(this) );
     },
 
     onApprove: function() {
         if (confirm('この発注を承認します。よろしいですか?') ) {
-            this.changeOrderState('APPROVED');
+            this.changeOrderState('APPROVED', 'back');
         }
     },
 
     onDeny: function() {
         if (confirm('この発注を差し戻します。よろしいですか?') ) {
-            this.changeOrderState('REQUESTING');
+            this.changeOrderState('REQUESTING', 'back');
         }
     },
 
     onRevertToRequesting: function() {
         if (confirm('この発注を「依頼中」に戻します。よろしいですか?') ) {
-            this.changeOrderState('REQUESTING');
+            this.changeOrderState('REQUESTING', 'back');
         }
     },
 
     onRevertToApproved: function() {
-        if (confirm('この発注を「承認済」に戻します。よろしいですか?') ) {
-            this.changeOrderState('APPROVED');
+        if (confirm('この発注を「納品済」に戻します。よろしいですか?') ) {
+            this.changeOrderState('APPROVED', 'here');
         }
     },
 
@@ -417,30 +435,8 @@ var ProcessOrder = React.createClass({
         }
     },
 
-    validateProducts: function() {
-        for (var i = 0; i < this.state.products.length; i++) {
-            var p = this.state.products[i];
-
-            if (p.state === 'DELIVERED') {
-                /*
-                 * p.billing_amount != p.billing_amount は NaN 検知する
-                 * ための条件判定。
-                 * 詳しくは edit-order/FinalPane.js 内のコメント参照。
-                 */
-                if (p.billing_amount != p.billing_amount) {
-                    alert('請求額には数値を指定して下さい。');
-                    var e = this.refs['billing_amount' + i.toString()];
-                    ReactDOM.findDOMNode(e).select();
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    },
-
     decideOrderState: function() {
-        var order_state     = this.props.order.order_state;
+        var order_state     = this.state.order_state;
         var num_of_products = this.state.products.length;
 
         var num_of_canceled = this.state.products.filter(function(p) {
@@ -466,7 +462,7 @@ var ProcessOrder = React.createClass({
             order_code:      this.props.order.order_code,
             order_state:     this.decideOrderState(),
             order_remark:    this.state.order_remark,
-            order_version:   this.props.order.order_version,
+            order_version:   this.state.order_version,
             department_code: this.props.order.department_code,
             trader_code:     this.props.order.trader_code,
 
@@ -485,10 +481,6 @@ var ProcessOrder = React.createClass({
     },
 
     onFix: function() {
-        if (!this.validateProducts() ) {
-            return;
-        }
-
         if (confirm('この発注を確定します。よろしいですか?') ) {
             var data = this.makePostDataOfOrder();
 
@@ -656,13 +648,15 @@ var ProcessOrder = React.createClass({
             var product      = this.state.products[index];
             var is_delivered = product.state.match(this.regex_delivered);
 
-            if (is_delivered) {
+            // if (is_delivered && date != null) {
+            if (date.match(/^\d{4}\/\d{2}\/\d{2}$/) ) {
                 var paid_price = is_delivered[2].toLocaleString('ja-JP', {
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2
                 });
 
-                product.state = date.format('YYYY/MM/DD') + ' ' + paid_price;
+                // product.state = date.format('YYYY/MM/DD') + ' ' + paid_price;
+                product.state = date + ' ' + paid_price;
 
                 this.setState({
                     products:  this.state.products,
@@ -717,7 +711,7 @@ var ProcessOrder = React.createClass({
         }.bind(this) );
 
         var permission  = 'REFER_ONLY';
-        var order_state = this.props.order.order_state;
+        var order_state = this.state.order_state;
 
 
         /*
@@ -818,9 +812,18 @@ var ProcessOrder = React.createClass({
                       ref={'paid_price' + index.toString()} />
                 );
 
+                /*
                 delivered_date_view = (
                     <TableFrame.DatePicker 
                       selected={moment(delivered_date, 'YYYY/MM/DD')}
+                      onChange={this.onChangeDeliveredDate(index)} />
+                );
+                */
+                
+                delivered_date_view = (
+                    <TableFrame.Input
+                      type='date'
+                      placeholder={delivered_date}
                       onChange={this.onChangeDeliveredDate(index)} />
                 );
 
@@ -918,7 +921,7 @@ var ProcessOrder = React.createClass({
                 order_total += product.cur_price * product.quantity;
             }
 
-            if (product.state === 'DELIVERED') {
+            if (product.state.match(this.regex_delivered) ) {
                 billing_total += product.billing_amount;
             }
 

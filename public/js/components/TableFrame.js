@@ -14,6 +14,7 @@
 var React      = require('react');
 var ReactDOM   = require('react-dom');
 var DatePicker = require('react-datepicker');
+var moment     = require('moment');
 
 
 /*
@@ -302,7 +303,8 @@ TableFrame.Input = React.createClass({
         type:        React.PropTypes.oneOf([
             'string',
             'int',
-            'real'
+            'real',
+            'date'
         ]).isRequired
     },
 
@@ -317,9 +319,6 @@ TableFrame.Input = React.createClass({
         var value;
 
         switch (this.props.type) {
-        case 'string':
-            value = e.target.value;
-            break;
         case 'int':
             if (e.target.value.match(/^-?(\d+)?$/) ) {
                 value = e.target.value;
@@ -328,12 +327,16 @@ TableFrame.Input = React.createClass({
             }
 
             break;
-        default:
+        case 'real':
             if (e.target.value.match(/^-?(\d+\.?\d*)?$/) ) {
                 value = e.target.value;
             } else {
                 value = '0.00';
             }
+
+            break;
+        default:
+            value = e.target.value;
         }
                 
         this.setState({ value: value });
@@ -350,6 +353,7 @@ TableFrame.Input = React.createClass({
 
             value = parseInt(value.replace(/,/g, '') );
             this.setState({ value: value.toLocaleString() });
+
             break;
         case 'real':
             if (value === '' || value === '-') {
@@ -361,6 +365,14 @@ TableFrame.Input = React.createClass({
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             })});
+
+            break;
+        case 'date':
+            if (!value.match(/^\d{4}\/\d{2}\/\d{2}$/) ) {
+                value = moment().format('YYYY/MM/DD');
+                this.setState({ value: value });
+            }
+
             break;
         }
 

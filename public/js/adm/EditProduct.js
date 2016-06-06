@@ -74,6 +74,7 @@ var Prices = React.createClass({
 var Buttons = React.createClass({
     propTypes: {
         onClear:        React.PropTypes.func.isRequired,
+        onCopy:         React.PropTypes.func.isRequired,
         goBack:         React.PropTypes.func.isRequired,
         targetAction:   React.PropTypes.func.isRequired,
         isRegistration: React.PropTypes.bool.isRequired
@@ -82,6 +83,7 @@ var Buttons = React.createClass({
     render: function() {
         var target_action_name;
         var target_action_func;
+        var copy_button = null;
 
         if (this.props.isRegistration) {
             target_action_name = '登録';
@@ -89,10 +91,20 @@ var Buttons = React.createClass({
         } else {
             target_action_name = '更新';
             target_action_func = this.props.targetAction('update');
+
+            copy_button = (
+              <Button className="edit-product-button"
+                      bsSize="large"
+                      bsStyle="primary"
+                      onClick={this.props.onCopy}>
+                コピーして新規
+              </Button>
+            );
         }
 
         return (
             <div id="edit-product-buttons">
+              {copy_button}
               <Button className="edit-product-button"
                       bsSize="large"
                       bsStyle="primary"
@@ -197,8 +209,9 @@ var EditProduct = React.createClass({
         }
 
         return {
-            post:       post,
-            is_checked: is_checked
+            post:            post,
+            is_checked:      is_checked,
+            is_registration: this.props.target == null
         };
     },
 
@@ -325,6 +338,8 @@ var EditProduct = React.createClass({
         });
     },
 
+    onCopy: function() { this.setState({ is_registration: true }); },
+
     composeTableFrameData: function() {
         return this.props.departments.map(function(department, index) {
             return [
@@ -400,7 +415,7 @@ var EditProduct = React.createClass({
                 <Prices minPrice={this.state.post.min_price}
                         curPrice={this.state.post.cur_price}
                         maxPrice={this.state.post.max_price}
-                        isRegistration={this.props.target == null}
+                        isRegistration={this.state.is_registration}
                         onChange={this.onChangePrice} />
               </div>
               <div id="edit-product-right">
@@ -413,9 +428,10 @@ var EditProduct = React.createClass({
                 <TableFrame id="edit-product-departments"
                             title={title} data={data} />
                 <Buttons onClear={this.onClear}
+                         onCopy={this.onCopy}
                          goBack={this.props.goBack}
                          targetAction={this.onRegisterOrUpdate}
-                         isRegistration={this.props.target == null} />
+                         isRegistration={this.state.is_registration} />
               </div>
             </div>
         );
