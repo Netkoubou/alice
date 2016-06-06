@@ -217,7 +217,7 @@ var Buttons = React.createClass({
                         bsStyle="primary"
                         className="process-order-button"
                         onClick={this.props.onRevertToApproved}>
-                  発注済へ戻す
+                  納品済へ戻す
                 </Button>
             );
             break;
@@ -343,7 +343,7 @@ var ProcessOrder = React.createClass({
     },
 
     onRevertToApproved: function() {
-        if (confirm('この発注を「発注済」に戻します。よろしいですか?') ) {
+        if (confirm('この発注を「納品済」に戻します。よろしいですか?') ) {
             this.changeOrderState('APPROVED', 'here');
         }
     },
