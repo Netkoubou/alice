@@ -8,6 +8,7 @@ var Messages   = require('../lib/Messages');
 var Util       = require('../lib/Util');
 var TableFrame = require('../components/TableFrame');
 var Select     = require('../components/Select');
+var SelectAC   = require('../components/SelectAC');
 var Notice     = require('../components/Notice');
 
 var Prices = React.createClass({
@@ -16,8 +17,7 @@ var Prices = React.createClass({
         curPrice:       React.PropTypes.number.isRequired,
         maxPrice:       React.PropTypes.number.isRequired,
         isRegistration: React.PropTypes.bool.isRequired,
-        onChange:       React.PropTypes.func.isRequired
-    },
+        onChange:       React.PropTypes.func.isRequired },
 
     render: function() {
         var min_price = this.props.minPrice.toLocaleString('ja-JP', {
@@ -398,11 +398,11 @@ var EditProduct = React.createClass({
                           options={this.props.categories} />
                 </div>
                 <div className="edit-product-select">
-                  <Select key="販売元"
-                          placeholder="販売元"
-                          value={this.state.post.trader_code}
-                          onSelect={this.onSelect('trader_code')}
-                          options={this.props.traders} />
+                  <SelectAC key="販売元"
+                            placeholder="販売元"
+                            value={this.state.post.trader_code}
+                            onSelect={this.onSelect('trader_code')}
+                            options={this.props.traders} />
                 </div>
                 <div id="edit-product-note">
                   <Input type="text"

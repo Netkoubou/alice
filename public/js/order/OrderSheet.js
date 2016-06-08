@@ -149,8 +149,8 @@ var OrderProducts = React.createClass({
               <td className="products-data-number">
                 {this.props.startOfNumber + index}
               </td>
-              <td className="products-data-string">{name}</td>
-              <td className="products-data-string">{maker}</td>
+              <td className="products-data-name">{name}</td>
+              <td className="products-data-maker">{maker}</td>
               <td className="products-data-number">{price_string}</td>
               <td className="products-data-number">{quantity_string}</td>
               <td className="products-data-number">{subtotal_string}</td>

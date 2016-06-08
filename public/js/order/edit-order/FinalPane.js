@@ -258,7 +258,7 @@ var FinalPane = React.createClass({
                 throw 'server_registerOrder';
             }
 
-            alert('登録しました。');
+            alert('起案番号 "' + res.body.order_code + '" で登録しました。');
             this.getFlux().actions.setOrderCodeAndVersion({
                 id:      res.body.order_id, // 不要 (MySQL の場合のみ必要)
                 code:    res.body.order_code,
