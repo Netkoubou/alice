@@ -120,9 +120,24 @@
   text-align: center;
 }
 
-.products-header       { text-align: center; }
-.products-data-number  { text-align: right; }
-.products-data-string  { text-align: left;  }
+.products-header      { text-align: center; }
+
+.products-data-number {
+  padding-right: 4px;
+  text-align:    right;
+}
+
+.products-data-maker  {
+  font-size: 16px;
+  padding:    6px;
+  text-align: left;
+}
+
+.products-data-name  {
+  font-size:  16px;
+  padding:     6px;
+  text-align: left;
+}
 
 button {
   float:            right;
