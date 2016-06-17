@@ -106,6 +106,7 @@ var Buttons = React.createClass({
 
         goBack:               React.PropTypes.func.isRequired,
         toOrdered:            React.PropTypes.func.isRequired,
+        toDelivered:          React.PropTypes.func.isRequired,
         onApprove:            React.PropTypes.func.isRequired,
         onDeny:               React.PropTypes.func.isRequired,
         onRevertToRequesting: React.PropTypes.func.isRequired,
@@ -161,18 +162,30 @@ var Buttons = React.createClass({
             );
             break;
         case 'PROCESS':
+            if (this.props.is_unordered) {
+                buttons.push(
+                    <Button key="4"
+                            bsSize="large"
+                            bsStyle="primary"
+                            className="process-order-button"
+                            onClick={this.props.toOrdered}>
+                      発注済へ
+                    </Button>
+                );
+            } else {
+                buttons.push(
+                    <Button key="5"
+                            bsSize="large"
+                            bsStyle="primary"
+                            className="process-order-button"
+                            onClick={this.props.toDelivered}>
+                      全て納品済みに
+                    </Button>
+                );
+            }
+
             buttons.push(
-                <Button key="4"
-                        bsSize="large"
-                        bsStyle="primary"
-                        className="process-order-button"
-                        onClick={this.props.toOrdered}
-                        disabled={!this.props.is_unordered}>
-                  発注済へ
-                </Button>
-            );
-            buttons.push(
-                <Button key="5"
+                <Button key="6"
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
@@ -181,7 +194,7 @@ var Buttons = React.createClass({
                 </Button>
             );
             buttons.push(
-                <Button key="6"
+                <Button key="7"
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
@@ -193,7 +206,7 @@ var Buttons = React.createClass({
             break;
         case 'BACK_TO_APPROVED':
             buttons.push(
-                <Button key="7"
+                <Button key="8"
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
@@ -202,7 +215,7 @@ var Buttons = React.createClass({
                 </Button>
             );
             buttons.push(
-                <Button key="8"
+                <Button key="9"
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
@@ -212,7 +225,7 @@ var Buttons = React.createClass({
                 </Button>
             );
             buttons.push(
-                <Button key="9"
+                <Button key="10"
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
@@ -274,6 +287,23 @@ var ProcessOrder = React.createClass({
     toOrdered: function() {
         this.state.products.forEach(function(p) {
             p.state = 'ORDERED';
+        });
+
+        this.setState({
+            products:  this.state.products,
+            need_save: true
+        });
+    },
+
+    toDelivered: function() {
+        this.state.products.forEach(function(p) {
+            if (p.state === 'ORDERED') {
+                var date     = moment().format('YYYY/MM/DD');
+                var subtotal = p.cur_price * p.quantity;
+
+                p.state          = date + ' ' + p.cur_price;
+                p.billing_amount = Math.round(subtotal);
+            }
         });
 
         this.setState({
@@ -576,9 +606,9 @@ var ProcessOrder = React.createClass({
                 // FALL THRU
             case 'DELIVERED':
                 /*
-                 * 日付の後の 0 は、請求単価。
+                 * 日付の後に請求単価が入っていることに注意。
                  * この時点では請求単価は入力されていないため、
-                 * 取り敢えず 0 を入力している。
+                 * 取り敢えず単価 (定価) を入力している。
                  *
                  * 何故これほど愚かしいことをしているのかと言うと、
                  * システムの運用後、請求単価なる値を各発注の物品毎に記録
@@ -974,6 +1004,7 @@ var ProcessOrder = React.createClass({
                        permission={permission}
                        goBack={this.props.goBack}
                        toOrdered={this.toOrdered}
+                       toDelivered={this.toDelivered}
                        onApprove={this.onApprove}
                        onDeny={this.onDeny}
                        onRevertToRequesting={this.onRevertToRequesting}
