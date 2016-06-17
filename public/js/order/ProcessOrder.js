@@ -741,6 +741,7 @@ var ProcessOrder = React.createClass({
 
     makeTableFrameTitle: function() {
         return [
+            { name: 'No.',         type: 'void' },
             { name: '品名',        type: 'void' },
             { name: '製造元',      type: 'void' },
             { name: '単価 (定価)', type: 'void' },
@@ -844,8 +845,9 @@ var ProcessOrder = React.createClass({
         }
 
         return [
-            { value: product.name,  view: product.name     },
-            { value: product.maker, view: product.maker    },
+            { value: index + 1,     view: index + 1     },
+            { value: product.name,  view: product.name  },
+            { value: product.maker, view: product.maker },
             {
                 value: product.cur_price,
                 view:  cur_price_view
