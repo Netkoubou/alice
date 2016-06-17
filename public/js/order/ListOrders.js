@@ -244,6 +244,7 @@ var ListOrders = React.createClass({
             is_ordered:    false,
             is_delivered:  false,
             is_nullified:  false,
+            is_vacant:     false,
             is_completed:  false,
             orders:        [],
 
@@ -376,6 +377,7 @@ var ListOrders = React.createClass({
                 is_approving:  this.state.is_approving,
                 is_approved:   a || o || d,
                 is_nullified:  this.state.is_nullified,
+                is_vacant:     this.state.is_vacant,
                 is_completed:  this.state.is_completed
             }
         }).end(function(err, res) {
@@ -419,6 +421,7 @@ var ListOrders = React.createClass({
             is_ordered:    this.refs.ordered.getChecked(),
             is_delivered:  this.refs.delivered.getChecked(),
             is_nullified:  this.refs.nullified.getChecked(),
+            is_vacant:     this.refs.vacant.getChecked(),
             is_completed:  this.refs.completed.getChecked()
         });
     },
@@ -562,6 +565,28 @@ var ListOrders = React.createClass({
 
             order_total = Math.round(order_total);
 
+            var order_code;
+            var product_name;
+            var trader_name;
+
+            if (order.is_alive) {
+                order_code = (
+                    <OrderCode isExpensive={is_expensive}
+                               user={this.props.user}
+                               order={order}
+                               goBack={this.backToHere}
+                               onSelect={this.onSelect(index)} />
+                );
+
+                product_name = order.products[0].name;
+                trader_name  = order.trader_name;
+            } else {
+                order_code   = order.order_code;
+                product_name = '';
+                trader_name  = '';
+                order_state  = '欠番';
+            }
+
             return [
                 {   // 起案日
                     value: order.drafting_date,
@@ -569,11 +594,7 @@ var ListOrders = React.createClass({
                 },
                 {   // 起案番号
                     value: order.order_code,
-                    view:  <OrderCode isExpensive={is_expensive}
-                                      user={this.props.user}
-                                      order={order}
-                                      goBack={this.backToHere}
-                                      onSelect={this.onSelect(index)} />
+                    view:  order_code
                 },
                 {   // 発注元 部門診療科
                     value: order.department_name,
@@ -585,12 +606,12 @@ var ListOrders = React.createClass({
                 },
                 {
                     // 品名
-                    value: order.products[0].name,
-                    view:  order.products[0].name
+                    value: product_name,
+                    view:  product_name
                 },
                 {   // 発注先 販売元
-                    value: order.trader_name,
-                    view:  order.trader_name
+                    value: trader_name,
+                    view:  trader_name
                 },
                 {   // 発注総計
                     value: order_total,
@@ -675,6 +696,13 @@ var ListOrders = React.createClass({
                        checked={this.state.is_nullified}
                        onChange={this.onChangeCheckbox}
                        ref="nullified" />
+              </div>
+              <div className="list-orders-checkbox-short">
+                <Input type="checkbox"
+                       label="欠番"
+                       checked={this.state.is_vacant}
+                       onChange={this.onChangeCheckbox}
+                       ref="vacant" />
               </div>
               <div className="list-orders-checkbox">
                 <Input type="checkbox"

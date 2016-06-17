@@ -15,7 +15,6 @@ var log_crit = log4js.getLogger('critical');
  */
 function generateSelector(user, args) {
     var sel = { '$and': [
-        { is_alive: true },
         {
             drafting_date: {
                 '$gte': args.start_date,
@@ -50,8 +49,14 @@ function generateSelector(user, args) {
         state_sel.push({ order_state: 'COMPLETED' });
     }
 
-    if (state_sel.length > 0) {
+    if (state_sel.length == 0 && args.state.is_vacant) {
+        sel['$and'].push({ is_alive: false });
+    } else if (state_sel.length > 0) {
         sel['$and'].push({ '$or': state_sel });
+
+        if (!args.state.is_vacant) {
+            sel['$and'].push({ is_alive: true });
+        }
     }
 
     var pdo = user.privileged.draft_ordinarily;
@@ -288,7 +293,8 @@ function construct_response(orders, db, res) {
             last_modified_date:    order.last_modified_date,
             last_modifier_code:    order.last_modifier_code,
             last_modifier_account: '',  // これから埋める
-            completed_date:        order.completed_date
+            completed_date:        order.completed_date,
+            is_alive:              order.is_alive
         };
             
         lookup('drafter_account', order, index);
