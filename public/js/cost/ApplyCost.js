@@ -37,16 +37,43 @@ var RemoveItem = React.createClass({
 });
 
 var ApplyCost = React.createClass({
-    propTypes: { userName: React.PropTypes.string.isRequired },
+    propTypes: {
+        userName: React.PropTypes.string.isRequired,
+        cost:     React.PropTypes.object,
+        goBack:   React.PropTypes.func
+    },
 
     getInitialState: function() {
+        var department    = { code: '', name: '' };
+        var account_title = { code: '', name: '' };
+        var remark        = '';
+        var breakdowns    = [];
+
+        if (this.props.cost != undefined) {
+            department = {
+                code: this.props.cost.department_code,
+                name: this.props.cost.department_name
+            };
+
+            account_title = {
+                code: this.props.cost.account_title_code,
+                name: this.props.cost.account_title_name
+            };
+
+            remark = this.props.cost.cost_remark;
+
+            breakdowns = this.props.cost.breakdowns.map(function(b) {
+                return b;
+            });
+        }
+
         return {
             departments:    [],
             account_titles: [],
-            department:     { code: '', name: '' },
-            account_title:  { code: '', name: '' },
-            remark:         '',
-            breakdowns:     [],
+            department:     department,
+            account_title:  account_title,
+            remark:         remark,
+            breakdowns:     breakdowns,
             key_sfx:        0
         };
     },
@@ -146,29 +173,17 @@ var ApplyCost = React.createClass({
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.APPLY_COST_BOOK_COST);
-                throw 'ajax_applyCost';
+                throw 'ajax_bookCost';
             }
 
             if (res.body.status != 0) {
                 alert(Messages.server.APPLY_COST_BOOK_COST);
-                throw 'server_applyCost';
+                throw 'server_bookCost';
             }
 
             alert('申請しました。')
 
-            window.info = {
-                user:          this.props.userName,
-                cost_code:     res.body.cost_code,
-                drafting_date: moment().format('YYYY/MM/DD'),
-                department:    this.state.department.name,
-                account_title: this.state.account_title.name,
-                breakdowns:    this.state.breakdowns
-            };
-
-            window.open(
-                'preview-cost-application.html',
-                '経費精算申請書 印刷プレビュー'
-            );
+            this.print(res.body.cost_code);
 
             var department = { code: '', name: '' };
 
@@ -185,6 +200,79 @@ var ApplyCost = React.createClass({
         }.bind(this) );
     },
 
+    onUpdate() {
+        for (var i = 0; i < this.state.breakdowns.length; i++) {
+            var row = this.state.breakdowns[i];
+            var e;
+
+            if (row.article === '') {
+                alert('品名を入力して下さい。');
+                e = this.refs["article" + i.toString()];
+                ReactDOM.findDOMNode(e).focus();
+                return;
+            }
+
+            if (row.quantity < 0) {
+                alert('数量には 0 以上の値を指定して下さい。');
+                e = this.refs["quantity" + i.toString()];
+                ReactDOM.findDOMNode(e).select();
+                return;
+            }
+
+            if (row.price < 0) {
+                alert('単価には 0 以上の値を指定して下さい。');
+                e = this.refs["price" + i.toString()];
+                ReactDOM.findDOMNode(e).select();
+                return;
+            }
+        }
+
+        XHR.post('updateCost').send({
+            cost_code:          this.props.cost.cost_code,
+            account_title_code: this.state.account_title.code,
+            cost_remark:        this.state.remark,
+            breakdowns:         this.state.breakdowns
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.APPLY_COST_UPDATE_COST);
+                throw 'ajax_updateCost';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.APPLY_COST_UPDATE_COST);
+                throw 'server_updateCost';
+            }
+
+            alert('更新しました。');
+        }.bind(this) );
+    },
+
+    print: function(cost_code) {
+        var drafting_date;
+
+        if (this.props.cost == null) {
+            drafting_date = moment().format('YYYY/MM/DD'); 
+        } else {
+            drafting_date = this.props.cost.drafting_date;
+        }
+
+        window.info = {
+            drafter:       this.props.userName,
+            cost_code:     cost_code,
+            drafting_date: drafting_date,
+            department:    this.state.department.name,
+            account_title: this.state.account_title.name,
+            breakdowns:    this.state.breakdowns
+        };
+
+        window.open(
+            'preview-cost-application.html',
+            '経費精算申請書 印刷プレビュー'
+        );
+    },
+
+    onPrint: function() { this.print(this.props.cost.cost_code); },
+
     componentDidMount: function() {
         XHR.get('pickMenuItemsToApplyCost').set({
             'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
@@ -200,15 +288,31 @@ var ApplyCost = React.createClass({
                 throw 'server_pickMenuItemsToApplyCost';
             }
 
-            if (res.body.departments.length == 1) {
-                this.state.department = {
-                    code: res.body.departments[0].code,
-                    name: res.body.departments[0].name
+            var departments;
+
+
+            /*
+             * 申請後の経費精算の編集で、部門診療科を変更させないための処理。
+             * 申請すると、部門診療科の略号が入った起案番号が付与されるのだが、
+             * その後で部門診療科を変更してしまうと、起案番号の略号と異なっ
+             * てしまう。
+             * 以下はそれを防止するためのコード。
+             */
+            if (this.state.department.code == '') {
+                if (res.body.departments.length == 1) {
+                    this.state.department = {
+                        code: res.body.departments[0].code,
+                        name: res.body.departments[0].name
+                    }
                 }
+
+                departments = res.body.departments;
+            } else {
+                departments = [ this.state.department ];
             }
 
             this.setState({
-                departments:    res.body.departments,
+                departments:    departments,
                 account_titles: res.body.account_titles,
                 department:     this.state.department
             });
@@ -314,6 +418,51 @@ var ApplyCost = React.createClass({
             { value: '', view: '' },
         ]);
 
+        var go_back_button = null;
+
+        if (this.props.goBack != undefined) {
+            go_back_button = (
+                <Button onClick={this.props.goBack}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="apply-cost-button">
+                  戻る
+                </Button>
+            )
+        }
+
+        var print_button = null
+        var register_or_update_button;
+
+        if (this.props.cost == undefined) {
+            register_or_update_button = (
+                <Button onClick={this.onRegister}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="apply-cost-button">
+                  登録
+                </Button>
+            );
+        } else {
+            print_button = (
+                <Button onClick={this.onPrint}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="apply-cost-button">
+                  印刷
+                </Button>
+            );
+
+            register_or_update_button = (
+                <Button onClick={this.onUpdate}
+                        bsSize="large"
+                        bsStyle="primary"
+                        className="apply-cost-button">
+                  更新
+                </Button>
+            );
+        }
+
         return (
             <div id="apply-cost">
               <div id="apply-cost-selects"> 
@@ -342,18 +491,15 @@ var ApplyCost = React.createClass({
                 <Notice title="合計">{total.toLocaleString()}</Notice>
               </div>
               <div id="apply-cost-buttons">
+                {print_button}
+                {go_back_button}
                 <Button onClick={this.onClear}
                         bsSize="large"
                         bsStyle="primary"
                         className="apply-cost-button">
                   クリア
                 </Button>
-                <Button onClick={this.onRegister}
-                        bsSize="large"
-                        bsStyle="primary"
-                        className="apply-cost-button">
-                  登録
-                </Button>
+                {register_or_update_button}
               </div>
             </div>
         );

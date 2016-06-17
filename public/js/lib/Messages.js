@@ -78,6 +78,12 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
+        APPLY_COST_UPDATE_COST:
+            'AJAX error: updateCost in ApplyCost.js\n\n' +
+            'ネットワークの問題で経費精算の更新に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
         APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:
             'AJAX error: bookCost in ApplyCost.js\n\n' +
             'ネットワークの問題でメニュー項目の獲得に失敗しました。\n' +
@@ -276,6 +282,11 @@ module.exports = {
         APPLY_COST_BOOK_COST:
             'Server error: bookCost in ApplyCost.js\n\n' +
             '経費精算の申請でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        APPLY_COST_UPDATE_COST:
+            'Server error: updateCost in ApplyCost.js\n\n' +
+            '経費精算の更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:

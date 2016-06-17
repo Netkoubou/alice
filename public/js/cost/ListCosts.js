@@ -6,6 +6,7 @@ var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Popover        = require('react-bootstrap').Popover;
 var XHR            = require('superagent');
 var moment         = require('moment');
+var ApplyCost      = require('./ApplyCost');
 var ProcessCost    = require('./ProcessCost');
 var TableFrame     = require('../components/TableFrame');
 var CalendarMarker = require('../components/CalendarMarker');
@@ -42,11 +43,19 @@ var CostCode = React.createClass({
     },
 
     onClick: function() {
-        this.props.onSelect(
-            <ProcessCost user={this.props.user}
-                         cost={this.props.cost}
-                         goBack={this.props.goBack} />
-        );
+        if (this.props.cost.cost_state == 'APPROVING') {
+            this.props.onSelect(
+                <ApplyCost userName={this.props.user.name}
+                           cost={this.props.cost}
+                           goBack={this.props.goBack} />
+            );
+        } else {
+            this.props.onSelect(
+                <ProcessCost user={this.props.user}
+                             cost={this.props.cost}
+                             goBack={this.props.goBack} />
+            );
+        }
     },
 
     render: function() {

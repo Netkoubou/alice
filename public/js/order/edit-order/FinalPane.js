@@ -549,7 +549,7 @@ var FinalPane = React.createClass({
 
 
         /*
-         * 発注一覧から飛んで来た場合、発注一覧へ返れるようにする。
+         * 発注一覧から飛んで来た場合、発注一覧へ帰れるようにする。
          */
         var go_back_button = null;
 
