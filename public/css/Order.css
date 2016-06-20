@@ -167,6 +167,17 @@
   width: 60px;
 }
 
+#list-orders-additional-conditions {
+  float: left;
+  margin-top:   8px;
+  margin-left: 32px;
+}
+
+#list-orders-order-code {
+  font-size: small;
+  width:     152px;
+}
+
 #list-orders-buttons {
   clear:    both;
   position: absolute;

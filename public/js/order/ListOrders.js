@@ -246,6 +246,9 @@ var ListOrders = React.createClass({
             is_nullified:  false,
             is_vacant:     false,
             is_completed:  false,
+            order_code:    '',
+            traner_code:   '',
+
             orders:        [],
 
             department_filter_text: '',
@@ -379,7 +382,8 @@ var ListOrders = React.createClass({
                 is_nullified:  this.state.is_nullified,
                 is_vacant:     this.state.is_vacant,
                 is_completed:  this.state.is_completed
-            }
+            },
+            order_code: this.state.order_code
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.LIST_ORDERS_SEARCH_ORDERS);
@@ -409,7 +413,8 @@ var ListOrders = React.createClass({
             is_ordered:    false,
             is_delivered:  false,
             is_nullified:  false,
-            is_completed:  false
+            is_completed:  false,
+            order_code:    ''
         });
     },
 
@@ -424,6 +429,10 @@ var ListOrders = React.createClass({
             is_vacant:     this.refs.vacant.getChecked(),
             is_completed:  this.refs.completed.getChecked()
         });
+    },
+
+    onChangeOrderCode: function(e) {
+        this.setState({order_code: e.target.value});
     },
 
     makeTableFrameTitle: function() {
@@ -710,6 +719,14 @@ var ListOrders = React.createClass({
                        checked={this.state.is_completed}
                        onChange={this.onChangeCheckbox}
                        ref="completed" />
+              </div>
+              <div id="list-orders-additional-conditions">
+                <Input type="text"
+                       id="list-orders-order-code"
+                       onChange={this.onChangeOrderCode}
+                       placeholder="起案番号"
+                       value={this.state.order_code}
+                       ref="order_code" />
               </div>
               <div id="list-orders-buttons">
                 <Button bsStyle="primary"

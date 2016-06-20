@@ -49,6 +49,10 @@ function generateSelector(user, args) {
         state_sel.push({ order_state: 'COMPLETED' });
     }
 
+    if (args.order_code != '') {
+        sel['$and'].push({ order_code: new RegExp(args.order_code) });
+    }
+
     if (state_sel.length == 0 && args.state.is_vacant) {
         sel['$and'].push({ is_alive: false });
     } else if (state_sel.length > 0) {
