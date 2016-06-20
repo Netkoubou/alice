@@ -16,6 +16,7 @@ var EditOrder      = require('./EditOrder');
 var ProcessOrder   = require('./ProcessOrder');
 var TableFrame     = require('../components/TableFrame');
 var CalendarMarker = require('../components/CalendarMarker');
+var Select         = require('../components/Select');
 var Messages       = require('../lib/Messages');
 var Util           = require('../lib/Util');
 
@@ -247,9 +248,10 @@ var ListOrders = React.createClass({
             is_vacant:     false,
             is_completed:  false,
             order_code:    '',
-            traner_code:   '',
+            trader_code:   '',
 
             orders:        [],
+            traders:       [],
 
             department_filter_text: '',
             trader_filter_text:     ''
@@ -383,7 +385,8 @@ var ListOrders = React.createClass({
                 is_vacant:     this.state.is_vacant,
                 is_completed:  this.state.is_completed
             },
-            order_code: this.state.order_code
+            order_code:  this.state.order_code,
+            trader_code: this.state.trader_code
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.LIST_ORDERS_SEARCH_ORDERS);
@@ -414,7 +417,8 @@ var ListOrders = React.createClass({
             is_delivered:  false,
             is_nullified:  false,
             is_completed:  false,
-            order_code:    ''
+            order_code:    '',
+            trader_code:   ''
         });
     },
 
@@ -433,6 +437,10 @@ var ListOrders = React.createClass({
 
     onChangeOrderCode: function(e) {
         this.setState({order_code: e.target.value});
+    },
+
+    onSelectTrader: function(trader) {
+        this.setState({trader_code: trader.code}); 
     },
 
     makeTableFrameTitle: function() {
@@ -576,7 +584,6 @@ var ListOrders = React.createClass({
 
             var order_code;
             var product_name;
-            var trader_name;
 
             if (order.is_alive) {
                 order_code = (
@@ -588,11 +595,9 @@ var ListOrders = React.createClass({
                 );
 
                 product_name = order.products[0].name;
-                trader_name  = order.trader_name;
             } else {
                 order_code   = order.order_code;
                 product_name = '';
-                trader_name  = '';
                 order_state  = '欠番';
             }
 
@@ -619,8 +624,8 @@ var ListOrders = React.createClass({
                     view:  product_name
                 },
                 {   // 発注先 販売元
-                    value: trader_name,
-                    view:  trader_name
+                    value: order.trader_name,
+                    view:  order.trader_name
                 },
                 {   // 発注総計
                     value: order_total,
@@ -727,6 +732,10 @@ var ListOrders = React.createClass({
                        placeholder="起案番号"
                        value={this.state.order_code}
                        ref="order_code" />
+                <Select placeholder="発注先 販売元"
+                        onSelect={this.onSelectTrader}
+                        value={this.state.trader_code}
+                        options={this.state.traders} />
               </div>
               <div id="list-orders-buttons">
                 <Button bsStyle="primary"
@@ -836,6 +845,33 @@ var ListOrders = React.createClass({
 
     onChangeTraderFilterText: function(e) {
         this.setState({ trader_filter_text: e.target.value });
+    },
+
+    componentDidMount: function() {
+        XHR.get('/tellAllTraders').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
+            if (err != null) {
+                alert(Messages.ajax.LIST_ORDERS_TELL_ALL_TRADERS);
+                throw 'ajax_tellAllTraders';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.LIST_ORDERS_TELL_ALL_TRADERS);
+                throw 'server_tellAllTraders';
+            }
+
+            var traders = res.body.traders.map(function(t) {
+                return {
+                    code: t.code,
+                    name: t.name
+                };
+            });
+
+            traders.unshift({ code: '', name: '-- 指定しない --' });
+
+            this.setState({ traders: traders });
+        }.bind(this) );
     },
 
     render: function() {

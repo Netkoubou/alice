@@ -168,14 +168,16 @@
 }
 
 #list-orders-additional-conditions {
-  float: left;
+  float:       left;
+  display:     flex;
   margin-top:   8px;
   margin-left: 32px;
 }
 
 #list-orders-order-code {
-  font-size: small;
-  width:     152px;
+  font-size:  small;
+  width:      152px;
+  margin-right: 8px;
 }
 
 #list-orders-buttons {

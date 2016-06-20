@@ -321,7 +321,7 @@ var OrderSheet = React.createClass({
                     department:      this.props.info.department,
                     trader:          this.props.info.trader,
                     drafting_date:   this.props.info.drafting_date,
-                    submission_date: this.props.submission_date,
+                    submission_date: this.props.info.submission_date,
                     products:        products.map(function(p) { return p; })
                 };
 

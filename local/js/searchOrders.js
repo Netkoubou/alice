@@ -53,6 +53,10 @@ function generateSelector(user, args) {
         sel['$and'].push({ order_code: new RegExp(args.order_code) });
     }
 
+    if (args.trader_code != '') {
+        sel['$and'].push({ trader_code: args.trader_code });
+    }
+
     if (state_sel.length == 0 && args.state.is_vacant) {
         sel['$and'].push({ is_alive: false });
     } else if (state_sel.length > 0) {

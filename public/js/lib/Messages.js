@@ -163,6 +163,24 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
+        MANAGE_OTHERS_TELL_ALL_DEPARTMENTS:
+            'AJAX error: tellAllDepartments in ManageOthers.js\n\n' +
+            'ネットワークの問題で全部門診療科の取得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        MANAGE_OTHERS_TELL_ALL_CATEGORIES:
+            'AJAX error: tellAllCategories in ManageOthers.js\n\n' +
+            'ネットワークの問題で全品目の取得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        MANAGE_OTHERS_TELL_ALL_TRADERS:
+            'AJAX error: tellAllTraders in ManageOthers.js\n\n' +
+            'ネットワークの問題で全販売元の取得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
         MANAGE_OTHERS_REGISTER_ITEM:
             'AJAX error: registerItem in ManageOthers.js\n\n' +
             'ネットワークの問題でその他の項目の登録に失敗しました。\n' +
@@ -214,6 +232,12 @@ module.exports = {
         LIST_ORDERS_UPDATE_ORDER:
             'AJAX error: updateOrder in ListOrders.js\n\n' +
             'ネットワークの問題で発注の更新に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        LIST_ORDERS_TELL_ALL_TRADERS:
+            'AJAX error: tellAllTraders in ListOrders.js\n\n' +
+            'ネットワークの問題で全販売元の取得に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
     },
@@ -350,6 +374,21 @@ module.exports = {
             '物品の削除でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
+        MANAGE_OTHERS_TELL_ALL_DEPARTMENTS:
+            'Server error: tellAllDepartments in ManageOthers.js\n\n' +
+            '全部門診療科の取得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        MANAGE_OTHERS_TELL_ALL_CATEGORIES:
+            'Server error: tellAllCategories in ManageOthers.js\n\n' +
+            '全品目の取得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        MANAGE_OTHERS_TELL_ALL_TRADERS:
+            'Server error: tellAllTraders in ManageOthers.js\n\n' +
+            '全販売元の取得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
         MANAGE_OTHERS_REGISTER_ITEM:
             'Server error: registerItem in ManageOthers.js\n\n' +
             'その他の項目の登録でサーバにエラーが発生しました。\n' +
@@ -393,6 +432,11 @@ module.exports = {
         LIST_ORDERS_UPDATE_ORDER:
             'Server error: updateOrder in ListOrders.js\n\n' +
             '発注の更新でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        LIST_ORDERS_TELL_ALL_TRADERS:
+            'Server error: tellAllTraders in ListOrders.js\n\n' +
+            '全販売元の取得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
     },
 
