@@ -111,176 +111,12 @@ function generateSelector(user, args) {
 }
 
 
-/*
- * 引っこ抜いた発注から、クライアントへ返す情報を生成する。
- * DB に登録されている発注は、検索のためのユニークな ID を保持している
- * (例えば物品コード) ものの、その名前を含んでいない。
- * そのため、それらをいちいち DB に問い合わせて補填していく必要がある。
- * これも難しいことはしていないのだが、非同期 I/O であるが故のコールバックの
- * 嵐によってひどく煩雑に見える。
- */
-function construct_response(orders, db, res) {
-    var response        = [];
-    var order_count     = 0;
-    var products_count  = [];
-    var is_already_sent = false;
+function construct_response(orders, info, res) {
+    var response = orders.map(function(order) {
+        var department = info.departments[order.department_code];
+        var trader     = info.traders[order.trader_code];
 
-    function retrieve_product(order_index, product_index, product_code) {
-        var id     = new ObjectID(product_code);
-        var cursor = db.collection('products').find({ _id: id }).limit(1);
-
-        cursor.next(function(err, product) {
-            if (is_already_sent) {
-                return;
-            }
-
-            if (err == null && product != null) {
-                var p = response[order_index].products[product_index];
-
-                p.name      = product.name;
-                p.maker     = product.maker;
-                p.min_price = product.min_price;
-                p.cur_price = product.cur_price;
-                p.max_price = product.max_price;
-
-                products_count[order_index]++;
-
-                var is_finished = false;
-
-                if (order_count >= orders.length) {
-                    is_finished = true;
-
-                    products_count.forEach(function(c, i) {
-                        if (c == null || c < orders[i].products.length) {
-                            is_finished = false;
-                        }
-                    });
-                }
-
-                if (is_finished) {
-                    res.json({ status: 0, orders: response });
-                    is_already_sent = true;
-                    db.close();
-                }
-            } else {
-                db.close();
-                res.json({ status: 255 });
-                is_already_sent = true;
-
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                var msg = '[searchOrders] ' +
-                          'failed to find product: "' + product_code + '".';
-
-                log_warn.warn(msg);
-            }
-        });
-    }
-
-    function lookup(target, order, index) {
-        var id, cursor, next_action;
-        var err_msg = '[searchOrders] ';
-
-        switch (target) {
-        case 'drafter_account':
-            cursor = db.collection('users').find({
-                account: order.drafter_account
-            }).limit(1);
-
-            next_action = function(user) {
-                response[index].drafter_account = user.account;
-                lookup('last_modifier_account', order, index);
-            };
-
-            err_msg += 'failed to find user: "' + order.drafter_account + '".';
-            break;
-        case 'last_modifier_account':
-            id     = new ObjectID(order.last_modifier_code);
-            cursor = db.collection('users').find({ _id: id }).limit(1);
-
-            next_action = function(user) {
-                response[index].last_modifier_account = user.account;
-                lookup('department_name', order, index);
-            };
-
-            err_msg += 'failed to find user: "' + id + '".';
-            break;
-        case 'department_name':
-            id     = new ObjectID(order.department_code);
-            cursor = db.collection('departments').find({ _id: id }).limit(1);
-
-            next_action = function(department) {
-                response[index].department_name = department.name;
-                response[index].department_tel  = department.tel;
-                lookup('trader_name', order, index);
-            };
-
-            err_msg += 'failed to find department: "' + id + '".';
-            break;
-        default:
-            id     = new ObjectID(order.trader_code);
-            cursor = db.collection('traders').find({ _id: id }).limit(1);
-
-            next_action = function(trader) {
-                response[index].trader_name          = trader.name;
-                response[index].trader_communication = trader.communication;
-
-                order_count++;
-                products_count[index] = 0;
-
-                order.products.forEach(function(p, i) {
-                    if (is_already_sent) {
-                        return;
-                    }
-
-                    response[index].products[i] = {
-                        code:           p.code,
-                        name:           '', // これから埋める
-                        maker:          '', // これから埋める    
-                        min_price:      0,  // これから埋める
-                        cur_price:      0,  // これから埋める
-                        max_price:      0,  // これから埋める
-                        quantity:       p.quantity,
-                        state:          p.state,
-                        billing_amount: p.billing_amount
-                    };
-
-                    retrieve_product(index, i, p.code);
-                });
-            }
-
-            err_msg += 'failed to find trader: "' + order.trader_code + '".';
-        }
-
-        cursor.next(function(err, document) {
-            if (is_already_sent) {
-                return;
-            }
-
-            if (err == null && document != null) {
-                next_action(document);
-            } else {
-                db.close();
-                res.json({ status: 255 });
-                is_already_sent = true;
-
-                if (err != null) {
-                    log_warn.warn(err);
-                }
-
-                log_warn.warn(err_msg);
-            }
-        });
-    }
-
-    orders.forEach(function(order, index) {
-        if (is_already_sent) {
-            return;
-        }
-
-        response[index] = {
+        return {
             order_id:             0,    // 不要
             order_code:           order.order_code,
             order_type:           order.order_type,
@@ -288,24 +124,122 @@ function construct_response(orders, db, res) {
             order_remark:         order.order_remark,
             order_version:        order.order_version,
             drafting_date:        order.drafting_date,
-            drafter_account:      '',   // これから埋める
+            drafter_account:      order.drafter_account,
             department_code:      order.department_code,
-            department_name:      '',   // これから埋める
-            department_tel:       '',   // これから埋める
-            trader_code:          order.trader_code,
-            trader_name:          '',   // これから埋める
-            trader_communication: '',   // これから埋める
 
-            products: [],
+            department_name:      department.name,
+            department_tel:       department.tel,
+
+            trader_code:          order.trader_code,
+
+            trader_name:          trader.name,
+            trader_communication: trader.communication,
+
+            products: order.products.map(function(p) {
+                var product = info.products[p.code];
+
+                return {
+                    code:           p.code,
+
+                    name:           product.name,
+                    maker:          product.maker,
+                    min_price:      product.min_price,
+                    cur_price:      product.cur_price,
+                    max_price:      product.max_price,
+
+                    quantity:       p.quantity,
+                    state:          p.state,
+                    billing_amount: p.billing_amount
+
+                };
+            }),
 
             last_modified_date:    order.last_modified_date,
             last_modifier_code:    order.last_modifier_code,
-            last_modifier_account: '',  // これから埋める
+            last_modifier_account: '',  // どうせ使わないので、このまま
             completed_date:        order.completed_date,
             is_alive:              order.is_alive
         };
-            
-        lookup('drafter_account', order, index);
+    });
+
+    res.json({ status: 0, orders: response });
+}
+
+
+/*
+ * 引っこ抜いた発注から、クライアントへ返す情報を生成するための情報を収集する。
+ * DB に登録されている発注は、検索のためのユニークな ID を保持している
+ * (例えば物品コード) ものの、その名前を含んでいない。
+ * そのため、それらをいちいち DB に問い合わせて補填していく必要がある。
+ * これも難しいことはしていないのだが、非同期 I/O であるが故のコールバックの
+ * 嵐によってひどく煩雑に見える。
+ */
+function collect_info(orders, db, res) {
+    var info = {
+        departments: {},
+        traders:     {},
+        products:    {}
+    };
+
+    db.collection('departments').find().toArray(function(err, docs) {
+        if (err) {
+            db.close();
+            res.json({ status: 255 });
+
+            var msg = '[searchOrders] ' +
+                      'failed to access "departments" collection.';
+
+            log_warn.warn(msg);
+        } else {
+            docs.forEach(function(d) {
+                info.departments[d._id.toString()] = {
+                    name: d.name,
+                    tel:  d.tel
+                };
+            });
+
+            db.collection('traders').find().toArray(function(err, docs) {
+                if (err) {
+                    db.close();
+                    res.json({ status: 255 });
+
+                    var msg = '[searchOrders] ' +
+                              'failed to access "traders" collection.';
+
+                    log_warn.warn(msg);
+                } else {
+                    docs.forEach(function(t) {
+                        info.traders[t._id.toString()] = {
+                            name:          t.name,
+                            communication: t.communication
+                        };
+                    });
+                }
+
+                db.collection('products').find().toArray(function(err, docs) {
+                    db.close();
+
+                    if (err) {
+                        res.json({ status: 255 });
+                        var msg = '[searchOrders] ' +
+                                  'failed to access "products" collection.';
+                        log_warn.warn(msg);
+                    } else {
+                        docs.forEach(function(p) {
+                            info.products[p._id.toString()] = {
+                                name:      p.name,
+                                maker:     p.maker,
+                                min_price: p.min_price,
+                                cur_price: p.cur_price,
+                                max_price: p.max_price,
+                            };
+                        });
+
+                        construct_response(orders, info, res);
+                    }
+                });
+            });
+        }
     });
 }
 
@@ -325,7 +259,7 @@ module.exports = function(req, res) {
                     db.close();
                     res.json({ status: 0, orders: [] });
                 } else {
-                    construct_response(orders, db, res);
+                    collect_info(orders, db, res);
                 }
             } else {
                 db.close();
