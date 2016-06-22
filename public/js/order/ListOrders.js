@@ -828,10 +828,11 @@ var ListOrders = React.createClass({
         if (orders.length > 0) {
             window.orders = orders;
             window.open('preview-all-orders.html');
-            this.onSearch();
         } else {
             alert('印刷対象の発注はありません。');
         }
+
+        this.onSearch();
     },
 
     uniq: function(a) {
