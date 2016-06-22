@@ -416,6 +416,7 @@ var ListOrders = React.createClass({
             is_ordered:    false,
             is_delivered:  false,
             is_nullified:  false,
+            is_vacant:     false,
             is_completed:  false,
             order_code:    '',
             trader_code:   ''
