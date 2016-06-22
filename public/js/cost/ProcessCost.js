@@ -142,7 +142,7 @@ var ProcessCost = React.createClass({
         /*
          * 院務部のアカウント inmu は、全部門診療科の経費申請を参照できるが、
          * 変更はできない特殊なユーザ。
-         * 手っ取り早く実現するため、inmu に pririleged.approve を与え、
+         * 手っ取り早く実現するため、inmu に privileged.approve を与え、
          * 全部門診療科の経費申請の一覧を取得できるようにする。
          * ただ、そのままだと経費申請を承認 / 却下できてしまうため、
          * 
