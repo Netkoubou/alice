@@ -726,6 +726,7 @@ var ListOrders = React.createClass({
                        onChange={this.onChangeCheckbox}
                        ref="completed" />
               </div>
+              <div id="list-orders-search-lower-row">
               <div id="list-orders-additional-conditions">
                 <Input type="text"
                        id="list-orders-order-code"
@@ -751,6 +752,7 @@ var ListOrders = React.createClass({
                         onClick={this.onClickSearchButton}>
                   検索
                 </Button>
+              </div>
               </div>
             </fieldset>
         );

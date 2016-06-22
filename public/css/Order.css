@@ -148,8 +148,6 @@
   margin-left: 16px;
 }
 
-#list-orders-search { height: 128px; }
-
 #list-orders-calendar-marker {
   float:       left;
   width:       256px;
@@ -166,6 +164,8 @@
   float: left;
   width: 60px;
 }
+
+#list-orders-search-lower-row { clear: both; }
 
 #list-orders-additional-conditions {
   float:       left;
@@ -194,6 +194,8 @@
   margin-left: 32px;
 }
 
+#list-orders-filter-text-inputs table { width: 100%; }
+
 #list-orders-filter-text-inputs col:nth-child(1)  { width:  56px; }
 #list-orders-filter-text-inputs col:nth-child(2)  { width: 130px; }
 #list-orders-filter-text-inputs col:nth-child(3)  { width:  14%; }
@@ -212,7 +214,7 @@
 
 #list-orders-table-frame {
   margin-top: 24px;
-  height:     calc(100% - 200px);
+  height:     calc(100% - 216px);
 }
 
 #list-orders-orders {
