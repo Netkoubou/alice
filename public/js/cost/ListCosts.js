@@ -90,7 +90,11 @@ var ListCosts = React.createClass({
             is_approving: can_approve,
             is_approved:  false,
             is_rejected:  false,
-            costs:        []
+            costs:        [],
+
+            selected: 0     // goBack で戻って来た時に、選択された発注が一覧の
+                            // 一番上に来るようスクロールするため、選択された
+                            // 発注の index を覚えておくための変数
         };
     },
 
@@ -101,7 +105,14 @@ var ListCosts = React.createClass({
         });
     },
 
-    onSelect: function(next_ope) { this.setState({ next_ope: next_ope }); },
+    onSelect: function(index) {
+        return function(next_ope) {
+            this.setState({
+                next_ope: next_ope,
+                selected: index
+            });
+        }.bind(this);
+    },
 
     backToHere: function() {
         this.setState({ next_ope: null });
@@ -191,7 +202,7 @@ var ListCosts = React.createClass({
                     view:  <CostCode user={this.props.user}
                                      cost={cost}
                                      goBack={this.backToHere}
-                                     onSelect={this.onSelect} />
+                                     onSelect={this.onSelect(index)} />
                 },
                 {
                     value: cost.drafting_date,
@@ -279,7 +290,8 @@ var ListCosts = React.createClass({
                 <legend>経費精算申請一覧</legend>
                 <TableFrame id="list-costs-costs"
                             title={title}
-                            data={data} />
+                            data={data}
+                            scrollTopIndex={this.state.selected} />
               </fieldset>
             </div>
         );
