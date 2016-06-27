@@ -12,7 +12,8 @@ function generateSelector(user, args) {
         drafting_date: {
             '$gte': args.start_date,
             '$lte': args.end_date
-        }
+        },
+        breakdowns: { $not: { $size: 0 } }
     }]};
 
     var state_sel = [];
