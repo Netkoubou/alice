@@ -189,7 +189,8 @@ var Buttons = React.createClass({
                         bsSize="large"
                         bsStyle="primary"
                         className="process-order-button"
-                        onClick={this.props.onPrint}>
+                        onClick={this.props.onPrint}
+                        disabled={this.props.need_save}>
                   印刷
                 </Button>
             );
@@ -527,11 +528,10 @@ var ProcessOrder = React.createClass({
 
                 if (res.body.status == 0) {
                     alert('確定しました。');
+                    this.setState({ need_save: false });
                 } else {
                     alert(Messages.information.UPDATE_CONFLICT);
                 }
-
-                this.props.goBack();
             }.bind(this) );
         }
     },
