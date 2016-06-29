@@ -171,6 +171,14 @@ var StoreForEditOrder = Fluxxor.createStore({
             this.candidates = payload.candidates;
         }
 
+        this.candidates.sort(function(a, b) {
+            if (a.product_name > b.product_name) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
         this.emit('change');
     },
 
