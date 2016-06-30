@@ -315,21 +315,39 @@ TableFrame.Input = React.createClass({
         };
     },
 
+    toHalfDigit: function(s) {
+        return s.replace(/０/g, "0")
+                .replace(/１/g, "1")
+                .replace(/２/g, "2")
+                .replace(/３/g, "3")
+                .replace(/４/g, "4")
+                .replace(/５/g, "5")
+                .replace(/６/g, "6")
+                .replace(/７/g, "7")
+                .replace(/８/g, "8")
+                .replace(/９/g, "9")
+                .replace(/．/g, ".");
+    },
+
     onChange: function(e) {
-        var value;
+        var translated, value;
 
         switch (this.props.type) {
         case 'int':
-            if (e.target.value.match(/^-?(\d+)?$/) ) {
-                value = e.target.value;
+            translated = this.toHalfDigit(e.target.value);
+
+            if (translated.match(/^-?(\d+)?$/) ) {
+                value = translated;
             } else {
                 value = '0';
             }
 
             break;
         case 'real':
-            if (e.target.value.match(/^-?(\d+\.?\d*)?$/) ) {
-                value = e.target.value;
+            translated = this.toHalfDigit(e.target.value);
+
+            if (translated.match(/^-?(\d+\.?\d*)?$/) ) {
+                value = translated;
             } else {
                 value = '0.00';
             }
