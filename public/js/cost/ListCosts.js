@@ -43,7 +43,11 @@ var CostCode = React.createClass({
     },
 
     onClick: function() {
-        if (this.props.cost.cost_state == 'APPROVING') {
+        var cost_state = this.props.cost.cost_state;
+        var operator   = this.props.user.account;
+        var drafter    = this.props.cost.drafter_account;
+
+        if (operator === drafter && cost_state === 'APPROVING') {
             this.props.onSelect(
                 <ApplyCost userName={this.props.user.name}
                            cost={this.props.cost}
