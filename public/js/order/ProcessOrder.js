@@ -297,9 +297,17 @@ var ProcessOrder = React.createClass({
     },
 
     toDelivered: function() {
+        var date = prompt('納品日はいつですか? (空白だと本日)');
+
+        if (date === '') {
+            date = moment().format('YYYY/MM/DD');
+        } else if (!date.match(/^\d{4}\/\d{2}\/\d{2}$/) ) {
+            alert('YYYY/MM/DD 形式で入力して下さい。');
+            return;
+        }
+
         this.state.products.forEach(function(p) {
             if (p.state === 'ORDERED') {
-                var date     = moment().format('YYYY/MM/DD');
                 var subtotal = p.cur_price * p.quantity;
 
                 p.state          = date + ' ' + p.cur_price;
