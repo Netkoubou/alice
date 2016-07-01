@@ -49,7 +49,7 @@ function compute_data() {
 var DrawIncomeAndOutgoGraph = React.createClass({
     componentDidMount: function() {
         var W = 1024;
-        var H = 32 * window.opener.info.outgoes.length;
+        var H = 32 * window.opener.info.outgoes.length + 64;
 
         var X_LABEL_SPACE =  30;
         var Y_LABEL_SPACE = 256;

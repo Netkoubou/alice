@@ -95,6 +95,10 @@ var ManageProducts = React.createClass({
             } else if (res.body.status == 1) {
                 alert('件数が多過ぎます。検索条件でもっと絞って下さい。');
             } else {
+                res.body.products.sort(function(a, b) {
+                    return a.name > b.name? 1: -1;
+                });
+
                 this.setState({ products: res.body.products });
             }
         }.bind(this) );
