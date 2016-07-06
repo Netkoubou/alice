@@ -32,6 +32,7 @@
   margin-bottom: 10px;
 }
 
+.table-frame tbody tr:hover { background: #cccccc; }
 .table-frame tbody td:first-child { padding-left: 0; }
 
 .table-frame tbody td {

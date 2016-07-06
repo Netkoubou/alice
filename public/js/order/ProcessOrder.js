@@ -297,9 +297,10 @@ var ProcessOrder = React.createClass({
     },
 
     toDelivered: function() {
+        var date = moment().format('YYYY/MM/DD');
+
         this.state.products.forEach(function(p) {
             if (p.state === 'ORDERED') {
-                var date     = moment().format('YYYY/MM/DD');
                 var subtotal = p.cur_price * p.quantity;
 
                 p.state          = date + ' ' + p.cur_price;
