@@ -90,6 +90,12 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
+        APPLY_COST_TELL_ALL_TRADERS:
+            'AJAX error: tellAllTraders in ApplyCost.js\n\n' +
+            'ネットワークの問題で全販売元の獲得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
         LIST_COSTS_LOOKUP_COSTS:
             'AJAX error: lookupCosts in ListCosts.js\n\n' +
             'ネットワークの問題で経費精算の検索に失敗しました。\n' +
@@ -316,6 +322,11 @@ module.exports = {
         APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST:
             'Server error: pickMenuItemsToApplyCost in ApplyCost.js\n\n' +
             'メニュー項目の獲得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        APPLY_COST_TELL_ALL_TRADERS:
+            'Server error: tellAllTraders in ApplyCost.js\n\n' +
+            '全販売元の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         LIST_COSTS_LOOKUP_COSTS:

@@ -63,12 +63,25 @@ var ApplyCost = React.createClass({
             remark = this.props.cost.cost_remark;
 
             breakdowns = this.props.cost.breakdowns.map(function(b) {
-                return b;
+                var match = b.article.match(/^(([^:]+):)?(.*)$/);
+
+                var trader  = match[2] || '';
+                var article = match[3] || '';
+
+                return {
+                    date:     b.date,
+                    trader:   trader,
+                    article:  article,
+                    quantity: b.quantity,
+                    price:    b.price,
+                    note:     b.note
+                };
             });
         }
 
         return {
             departments:    [],
+            traders:        [],
             account_titles: [],
             department:     department,
             account_title:  account_title,
@@ -89,6 +102,7 @@ var ApplyCost = React.createClass({
     onAdd: function() {
         this.state.breakdowns.push({
             date:     moment().format('YYYY/MM/DD'),
+            trader:   '',
             article:  '',
             quantity: 1,
             price:    0,
@@ -169,7 +183,7 @@ var ApplyCost = React.createClass({
             department_code:    this.state.department.code,
             account_title_code: this.state.account_title.code,
             cost_remark:        this.state.remark,
-            breakdowns:         this.state.breakdowns
+            breakdowns:         this.composeBreakdowns()
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.APPLY_COST_BOOK_COST);
@@ -198,6 +212,26 @@ var ApplyCost = React.createClass({
                 breakdowns:     []
             });
         }.bind(this) );
+    },
+
+    composeBreakdowns: function() {
+        return this.state.breakdowns.map(function(b) {
+            var article;
+
+            if (b.trader === '') {
+                article = b.article;
+            } else {
+                article = b.trader + ':' + b.article;
+            }
+
+            return {
+                article:  article,
+                date:     b.date,
+                quantity: b.quantity,
+                price:    b.price,
+                note:     b.note
+            };
+        });
     },
 
     onUpdate() {
@@ -231,7 +265,7 @@ var ApplyCost = React.createClass({
             cost_code:          this.props.cost.cost_code,
             account_title_code: this.state.account_title.code,
             cost_remark:        this.state.remark,
-            breakdowns:         this.state.breakdowns
+            breakdowns:         this.composeBreakdowns()
         }).end(function(err, res) {
             if (err) {
                 alert(Messages.ajax.APPLY_COST_UPDATE_COST);
@@ -262,7 +296,7 @@ var ApplyCost = React.createClass({
             drafting_date: drafting_date,
             department:    this.state.department.name,
             account_title: this.state.account_title.name,
-            breakdowns:    this.state.breakdowns
+            breakdowns:    this.composeBreakdowns()
         };
 
         window.open(
@@ -278,6 +312,7 @@ var ApplyCost = React.createClass({
             'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
         }).end(function(err, res) {
             var errmsg_index = 'APPLY_COST_PICK_MENU_ITEMS_TO_APPLY_COST';
+
             if (err) {
                 alert(Messages.ajax[errmsg_index]);
                 throw 'ajax_pickMenuItemsToApplyCost';
@@ -311,11 +346,39 @@ var ApplyCost = React.createClass({
                 departments = [ this.state.department ];
             }
 
-            this.setState({
-                departments:    departments,
-                account_titles: res.body.account_titles,
-                department:     this.state.department
-            });
+            var account_titles = res.body.account_titles;
+            
+
+            /*
+             * 品名に販売元の名称を選択形式で入力できるようにするため、
+             * 販売元名の一覧を作成する。
+             */
+            XHR.get('tellAllTraders').set({
+                'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+            }).end(function(err, res) {
+                var errmsg_index = 'APPLY_COST_TELL_ALL_TRADERS';
+
+                if (err) {
+                    alert(Messages.ajax[errmsg_index]);
+                    throw 'ajax_tellAllTraders';
+                }
+
+                if (res.body.status != 0) {
+                    alert(Messages.server[errmsg_index]);
+                    throw 'server_pickMenuItemsToApplyCost';
+                }
+
+                var traders = res.body.traders.map(function(t) {
+                    return t.name;
+                });
+
+                this.setState({
+                    departments:    departments,
+                    traders:        traders,  
+                    account_titles: account_titles,
+                    department:     this.state.department
+                });
+            }.bind(this) );
         }.bind(this) );
     },
 
@@ -323,6 +386,7 @@ var ApplyCost = React.createClass({
         return [
             { name: '+/-',         type: 'void' },
             { name: '購入日',      type: 'void' },
+            { name: '業者',        type: 'void' },
             { name: '品名',        type: 'void' },
             { name: '数量',        type: 'void' },
             { name: '単価',        type: 'void' },
@@ -350,6 +414,16 @@ var ApplyCost = React.createClass({
                          weekdays={weekdays}
                          weekStart='0'
                          onChange={this.onChangeDate(index)} />
+            },
+            {
+                value: breakdown.trader,
+                view:  <TableFrame.Input
+                         type="string"
+                         placeholder={breakdown.trader}
+                         key={'trader' + key_sfx}
+                         ref={'trader' + index.toString()}
+                         options={this.state.traders}
+                         onChange={this.onChange(index, 'trader')} />
             },
             {
                 value: breakdown.article,
@@ -410,6 +484,7 @@ var ApplyCost = React.createClass({
 
         data.push([
             { value: '', view: <AddItem onClick={this.onAdd} /> },
+            { value: '', view: '' },
             { value: '', view: '' },
             { value: '', view: '' },
             { value: '', view: '' },
