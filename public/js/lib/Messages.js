@@ -108,6 +108,12 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
+        PROCESS_COST_UPDATE_COST:
+            'AJAX error: updateCost in ProcessCost.js\n\n' +
+            'ネットワークの問題で経費精算の更新に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
         MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
             'AJAX error: tellAvailableDepartments in ManageUsers.js\n\n' +
             'ネットワークの問題で部門診療科情報の獲得に失敗しました。\n' +
@@ -337,6 +343,11 @@ module.exports = {
         PROCESS_COST_FIX_COST:
             'Server error: fixCost in ProcessCost.js\n\n' +
             '経費精算の承認 / 却下でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        PROCESS_COST_UPDATE_COST:
+            'Server error: updateCost in ProcessCost.js\n\n' +
+            '経費精算の更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
