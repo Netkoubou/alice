@@ -87,10 +87,11 @@
 
 .remark {
   clear:         both;
-  width:         calc(100% - 66px);
-  height:        48px;
+  width:         calc(100% - 80px);
+  height:        64px;
   margin-left:   32px;
   margin-bottom: 18px;
+  padding:       4px 8px 4px 8px;
   border:         1px solid #000000;
 }
 
