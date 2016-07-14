@@ -54,6 +54,9 @@ var ProcessCost = React.createClass({
         return {
             reason:     '',
             remark:     this.props.cost.cost_remark,
+            breakdowns: this.props.cost.breakdowns.map(function(b) {
+                return b;
+            }),
             fixed_date: moment()
         }
     },
@@ -78,13 +81,41 @@ var ProcessCost = React.createClass({
                 throw 'server_fixCost';
             }
 
-            alert('更新しました');
+            alert('更新しました。');
             this.props.goBack();
         }.bind(this) );
     },
 
     onApprove: function() { this.onFix('APPROVED'); },
     onReject:  function() { this.onFix('REJECTED'); },
+
+    onUpdate: function() {
+        XHR.post('updateCost').send({
+            cost_code:          this.props.cost.cost_code,
+            account_title_code: this.props.cost.account_title_code,
+            cost_remark:        this.state.remark,
+            breakdowns:         this.state.breakdowns
+        }).end(function(err, res) {
+            if (err) {
+                alert(Messages.ajax.PROCESS_COST_UPDATE_COST);
+                throw 'ajax_updateCost';
+            }
+
+            if (res.body.status > 0) {
+                alert(Messages.server.PROCESS_COST_UPDATE_COST);
+                throw 'server_updateCost';
+            }
+
+            alert('更新しました。');
+        });
+    },
+
+    onChangeNote: function(index) {
+        return function(value) {
+            this.state.breakdowns[index].note = value;
+            this.setState({ breakdowns: this.state.breakdowns });
+        }.bind(this);
+    },
 
     onChangeRemark: function(e) {
         this.setState({ remark: e.target.value });
@@ -101,8 +132,21 @@ var ProcessCost = React.createClass({
         ];
     },
 
-    composeTableFrameDataRow: function(breakdown) {
-        var subtotal = breakdown.quantity * breakdown.price;
+    composeTableFrameDataRow: function(breakdown, index) {
+        var subtotal   = breakdown.quantity * breakdown.price;
+        var permission = this.decidePermission();
+        var account    = this.props.user.account;
+        var note;
+
+        if (permission === 'REFER_ONLY' && account === 'inmu') {
+            note = (
+                <TableFrame.Input placeholder={breakdown.note}
+                                  onChange={this.onChangeNote(index)}
+                                  type="string" />
+            );
+        } else {
+            note = breakdown.note;
+        }
 
         return [
             {
@@ -126,7 +170,7 @@ var ProcessCost = React.createClass({
                 value: subtotal
             },
             {
-                view:  breakdown.note,
+                view:  note,
                 value: breakdown.note
             }
         ];
@@ -217,7 +261,7 @@ var ProcessCost = React.createClass({
                         onClick={this.onReject}>
                   却下
                 </Button>
-            ]
+            ];
 
             var reason_options = reasons.map(function(r, i) {
                 return { code: r, name: r };
@@ -238,10 +282,27 @@ var ProcessCost = React.createClass({
                          bsSize="small"
                          placeholder="備考・連絡"
                          value={this.state.remark}
-                         disabled={permission === 'REFER_ONLY'}
                          onChange={this.onChangeRemark} />
                 </div>
             );
+        } else if (this.props.user.account === 'inmu') {
+            legend  = 'コメント編集';
+            buttons = [
+                <Button key="3"
+                        bsStyle="primary"
+                        bsSize="large"
+                        className="process-cost-button"
+                        onClick={this.onUpdate}>
+                  コメント更新
+                </Button>,
+            ];
+
+            remark  = <Input id="process-cost-disabled-remark"
+                             type="text"
+                             bsSize="small"
+                             placeholder="備考・連絡"
+                             value={this.state.remark}
+                             onChange={this.onChangeRemark} />
         } else {
             legend  = '参照';
             buttons = null;
@@ -250,14 +311,14 @@ var ProcessCost = React.createClass({
                              bsSize="small"
                              placeholder="備考・連絡"
                              value={this.state.remark}
-                             disabled={true} />;
+                             disabled={true} />
         }
 
         var total       = 0;
         var table_title = this.makeTableFrameTitle();
-        var table_data  = this.props.cost.breakdowns.map(function(b) {
+        var table_data  = this.state.breakdowns.map(function(b, i) {
             total += b.quantity * b.price;
-            return this.composeTableFrameDataRow(b);
+            return this.composeTableFrameDataRow(b, i);
         }.bind(this) );
 
         var fixed_date;

@@ -214,7 +214,6 @@ var SuborderSheet = React.createClass({
     render: function() {
         var title     = '神奈川歯科大学 附属病院 ';
         var stamp_row = null;
-        var remark    = null;
         var ordered   = null;
 
         if (this.props.info.order_type === 'URGENCY_ORDER') {
@@ -226,12 +225,14 @@ var SuborderSheet = React.createClass({
             stamp_row = <StampRow />;
         } else {
             title += '注文書';
-            remark = (
-              <div className="remark">
-                {this.props.info.order_remark}
-              </div>
-            );
         }
+
+        var remark = (
+            <div className="remark">
+              &lt;備考欄&gt;&nbsp;&nbsp;&nbsp;
+              {this.props.info.order_remark}
+            </div>
+        );
 
         var N               = NUMBER_OF_PRODUCTS_PER_PAGE;
         var page            = this.props.page;

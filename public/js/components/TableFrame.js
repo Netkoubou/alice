@@ -305,7 +305,8 @@ TableFrame.Input = React.createClass({
             'int',
             'real',
             'date'
-        ]).isRequired
+        ]).isRequired,
+        options: React.PropTypes.arrayOf(React.PropTypes.string)
     },
 
     getInitialState: function() {
@@ -416,15 +417,37 @@ TableFrame.Input = React.createClass({
             class_name += 'table-frame-input-string';
         }
 
+        var datalist     = null;
+        var autocomplete = null;
+        var list         = null;
+
+        if (this.props.options) {
+            datalist = this.props.options.map(function(o, i) {
+                return (
+                    <option value={o} key={i} />
+                );
+            });
+
+            list         = Math.random().toString();
+            autocomplete = 'on';
+        }
+
         return (
-            <input ref={this.state.ref_name}
-                   value={this.state.value}
-                   className={class_name}
-                   maxLength={this.props.maxLength}
-                   disabled={this.props.disabled}
-                   onChange={this.onChange}
-                   onClick={this.onClick}
-                   onBlur={this.onBlur} />
+            <div>
+              <input ref={this.state.ref_name}
+                     value={this.state.value}
+                     className={class_name}
+                     maxLength={this.props.maxLength}
+                     disabled={this.props.disabled}
+                     onChange={this.onChange}
+                     onClick={this.onClick}
+                     onBlur={this.onBlur}
+                     autoComplete={autocomplete}
+                     list={list} />
+              <datalist id={list}>
+                {datalist}
+              </datalist>
+            </div>
         );
     }
 });
