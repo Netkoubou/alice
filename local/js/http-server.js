@@ -13,6 +13,8 @@ var pickMenuItemsToManageProducts = require('./pickMenuItemsToManageProducts');
 var tellAvailableDepartments      = require('./tellAvailableDepartments');
 var tellAll                       = require('./tellAll');
 var getFooterMessage              = require('./getFooterMessage');
+var generateCSVs                  = require('./generateCSVs');
+var downloadCSVs                  = require('./downloadCSVs');
 
 var authenticateUser         = require('./authenticateUser');
 var searchCandidates         = require('./searchCandidates');
@@ -128,6 +130,8 @@ $.get('/tellAllDepartments',            tellAll('departments') );
 $.get('/tellAllCategories',             tellAll('categories') );
 $.get('/tellAllTraders',                tellAll('traders') );
 $.get('/getFooterMessage',              getFooterMessage);
+$.get('/generateCSVs',                  generateCSVs);
+$.get('/csvs.tgz',                      downloadCSVs);
 
 $.post('/pickMenuItemsForSearchPane', pickMenuItemsForSearchPane);
 $.post('/authenticateUser',           authenticateUser);

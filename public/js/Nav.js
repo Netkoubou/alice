@@ -8,6 +8,7 @@
  */
 'use strict';
 var React = require('react');
+var XHR   = require('superagent');
 
 
 /*
@@ -104,6 +105,28 @@ var Nav = React.createClass({
             this.props.onSelect(action);
             this.props.hideNav();
         }.bind(this);
+    },
+
+    generateCSVs: function() {
+        XHR.get('/generateCSVs').set({
+            'If-Modified-Since': 'Thu, 01 Jan 1970 00:00:00 GMT'
+        }).end(function(err, res) {
+            if (err != null) {
+                alert(Messages.ajax.NAV_GENERATE_CSVS);
+                throw 'ajax_generateCSVs';
+            }
+
+            if (res.body.status != 0) {
+                alert(Messages.server.NAV_GENERATE_CSVS);
+                throw 'server_generateCSVs';
+            }
+
+            alert('生成しました。');
+        }.bind(this) );
+    },
+
+    downloadCSVs: function() {
+        location.href="/csvs.tgz";
     },
 
     render: function() {
@@ -297,6 +320,20 @@ var Nav = React.createClass({
             );
         }
 
+        var csv_menus = null;
+
+        if (this.props.user.privileged.approve) {
+            csv_menus = [
+                <NavItem key="4"
+                         name="CSV 生成"
+                         onClick={this.generateCSVs}
+                         isSelected={false} />,
+                <NavItem key="5"
+                         name="CSV ダウンロード"
+                         onClick={this.downloadCSVs}
+                         isSelected={false} />,
+            ];
+        }
 
         /*
          * 以下、レンダリングする内容。
@@ -318,6 +355,7 @@ var Nav = React.createClass({
               <NavItem name="パスワード変更"
                        onClick={this.onSelect('CHANGE_PASSWORD')}
                        isSelected={selected === 'CHANGE_PASSWORD'} />
+              {csv_menus}
               <NavItem name="ログアウト"
                        onClick={this.props.logout}
                        isSelected={selected === 'LOGOUT'}
