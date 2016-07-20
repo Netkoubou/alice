@@ -26,15 +26,16 @@
 
 #apply-cost-breakdowns col:nth-child(1) { width: 24px; }
 #apply-cost-breakdowns col:nth-child(2) { width: 96px; }
-#apply-cost-breakdowns col:nth-child(3) { width: calc(65% - 344px); }
-#apply-cost-breakdowns col:nth-child(4) { width: 64px; }
-#apply-cost-breakdowns col:nth-child(5) { width: 80px; }
+#apply-cost-breakdowns col:nth-child(3) { width: 20%; }
+#apply-cost-breakdowns col:nth-child(4) { width: calc(55% - 344px); }
+#apply-cost-breakdowns col:nth-child(5) { width: 64px; }
 #apply-cost-breakdowns col:nth-child(6) { width: 80px; }
-#apply-cost-breakdowns col:nth-child(7) { width: 35%; }
+#apply-cost-breakdowns col:nth-child(7) { width: 80px; }
+#apply-cost-breakdowns col:nth-child(8) { width: 25%; }
 #apply-cost-breakdowns td:nth-child(1) { text-align: center; }
-#apply-cost-breakdowns td:nth-child(4) { text-align: right; }
 #apply-cost-breakdowns td:nth-child(5) { text-align: right; }
 #apply-cost-breakdowns td:nth-child(6) { text-align: right; }
+#apply-cost-breakdowns td:nth-child(7) { text-align: right; }
 
 .apply-cost-add-item {
   color:  #1976d2;

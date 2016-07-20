@@ -529,7 +529,10 @@ var ProcessOrder = React.createClass({
 
                 if (res.body.status == 0) {
                     alert('確定しました。');
-                    this.setState({ need_save: false });
+                    this.setState({
+                        need_save: false,
+                        order_version: this.state.order_version + 1
+                    });
                 } else {
                     alert(Messages.information.UPDATE_CONFLICT);
                 }

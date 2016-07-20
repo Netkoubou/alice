@@ -90,6 +90,12 @@ module.exports = {
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
+        APPLY_COST_TELL_ALL_TRADERS:
+            'AJAX error: tellAllTraders in ApplyCost.js\n\n' +
+            'ネットワークの問題で全販売元の獲得に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
         LIST_COSTS_LOOKUP_COSTS:
             'AJAX error: lookupCosts in ListCosts.js\n\n' +
             'ネットワークの問題で経費精算の検索に失敗しました。\n' +
@@ -99,6 +105,12 @@ module.exports = {
         PROCESS_COST_FIX_COST:
             'AJAX error: fixCost in ProcessCost.js\n\n' +
             'ネットワークの問題で経費精算の承認 / 却下に失敗しました。\n' +
+            'ネットワークの接続を確認して下さい。\n' +
+            '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
+
+        PROCESS_COST_UPDATE_COST:
+            'AJAX error: updateCost in ProcessCost.js\n\n' +
+            'ネットワークの問題で経費精算の更新に失敗しました。\n' +
             'ネットワークの接続を確認して下さい。\n' +
             '問題が解決しない場合はネットワーク管理者に問い合わせて下さい。',
 
@@ -318,6 +330,11 @@ module.exports = {
             'メニュー項目の獲得でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
+        APPLY_COST_TELL_ALL_TRADERS:
+            'Server error: tellAllTraders in ApplyCost.js\n\n' +
+            '全販売元の獲得でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
         LIST_COSTS_LOOKUP_COSTS:
             'Server error: lookupCosts in ListCosts.js\n\n' +
             '経費精算の検索でサーバにエラーが発生しました。\n' +
@@ -326,6 +343,11 @@ module.exports = {
         PROCESS_COST_FIX_COST:
             'Server error: fixCost in ProcessCost.js\n\n' +
             '経費精算の承認 / 却下でサーバにエラーが発生しました。\n' +
+            'サーバ管理者に問い合わせて下さい。',
+
+        PROCESS_COST_UPDATE_COST:
+            'Server error: updateCost in ProcessCost.js\n\n' +
+            '経費精算の更新でサーバにエラーが発生しました。\n' +
             'サーバ管理者に問い合わせて下さい。',
 
         MANAGE_USERS_TELL_AVAILABLE_DEPARTMENTS:
