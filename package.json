@@ -1,6 +1,6 @@
 {
   "name": "alice",
-  "version": "1.4.0-beta2",
+  "version": "1.4.0-beta3",
   "description": "Supply Processing Distribution System",
   "main": "public/js/index.jsx",
   "repository": {
@@ -11,7 +11,7 @@
     "build": "browserify --debug public/js/index.jsx > public/js/index.js; browserify --debug public/js/order/PreviewOrder.jsx > public/js/order/PreviewOrder.js; browserify --debug public/js/order/PreviewAllOrders.jsx > public/js/order/PreviewAllOrders.js; browserify --debug public/js/budget/DrawIncomeAndOutgoGraph.jsx > public/js/budget/DrawIncomeAndOutgoGraph.js; browserify --debug public/js/cost/PreviewCostApplication.jsx > public/js/cost/PreviewCostApplication.js",
     "build-dist": "NODE_ENV=production browserify public/js/index.jsx | uglifyjs -m > public/js/index.js; NODE_ENV=production browserify public/js/order/PreviewOrder.jsx | uglifyjs -m > public/js/order/PreviewOrder.js; NODE_ENV=production browserify public/js/order/PreviewAllOrders.jsx | uglifyjs -m > public/js/order/PreviewAllOrders.js; NODE_ENV=production browserify public/js/budget/DrawIncomeAndOutgoGraph.jsx | uglifyjs -m > public/js/budget/DrawIncomeAndOutgoGraph.js; NODE_ENV=production browserify public/js/cost/PreviewCostApplication.jsx | uglifyjs -m > public/js/cost/PreviewCostApplication.js",
     "http-server": "node local/js/http-server.js",
-    "gencsv": "cd local/data/; rm -Rf dump; mongodump -d alice; for pfx in categories departments traders products users account_titles orders costs; do bsondump dump/alice/$pfx.bson > dump/alice/$pfx.json; done; node ../utils/alice2csv.js; iconv -f UTF8 -t CP932 -c -o dump/alice/users-sjis.csv dump/alice/users.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/products-sjis.csv dump/alice/products.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/orders-sjis.csv dump/alice/orders.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/costs-sjis.csv dump/alice/costs.csv; cd dump/alice; tar cvfzp ../../csvs.tgz *-sjis.csv",
+    "gencsv": "cd local/data/; rm -Rf dump; mongodump -d alice; for pfx in categories departments traders products users account_titles orders costs budgets_and_incomes; do bsondump dump/alice/$pfx.bson > dump/alice/$pfx.json; done; node ../utils/alice2csv.js; iconv -f UTF8 -t CP932 -c -o dump/alice/users-sjis.csv dump/alice/users.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/products-sjis.csv dump/alice/products.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/orders-sjis.csv dump/alice/orders.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/costs-sjis.csv dump/alice/costs.csv; iconv -f UTF8 -t CP932 -c -o dump/alice/budgets_and_incomes-sjis.csv dump/alice/budgets_and_incomes.csv; cd dump/alice; tar cvfzp ../../csvs.tgz *-sjis.csv",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "browserify": {

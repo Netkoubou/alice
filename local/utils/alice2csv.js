@@ -27,7 +27,14 @@ function write_file(path, data) {
     });
 }
 
-const targets = ['products', 'users',      'orders',      'costs'];
+const targets = [
+    'products',
+    'users',
+    'orders',
+    'costs',
+    'budgets_and_incomes'
+];
+
 const sources = [
     'products',
     'categories',
@@ -227,6 +234,14 @@ function user2csv(json, db) {
     return line.join(',') + '\n';
 }
 
+function budget_and_incomes2csv(json, db) {
+    return [
+        json.year,
+        db.departments[json.department_code].name,
+        json.budget,
+    ].concat(json.incomes).join(',') + '\n';
+}
+
 function title_row(target) {
     switch (target) {
     case 'products':
@@ -291,8 +306,25 @@ function title_row(target) {
                '小計,'        +
                '購入日,'      +
                '摘要 / 備考\n';
+    case 'budgets_and_incomes':
+        return '年度,'       +
+               '部門診療科,' +
+               '予算額,'     +
+                '4 月,'      +
+                '5 月,'      +
+                '6 月,'      +
+                '7 月,'      +
+                '8 月,'      +
+                '9 月,'      +
+               '10 月,'      +
+               '11 月,'      +
+               '12 月,'      +
+                '1 月,'      +
+                '2 月,'      +
+                '3 月\n';
     }
 }
+
 function convert(txt, rule) {
     txt.split(/\n|\r\n|\r/).forEach(line => {
         if (!line.match(/^\s*$/) ) {
@@ -323,6 +355,9 @@ function gen_csv(db) {
                     break;
                 case 'costs':
                     data += cost2csv(json, db);
+                    break;
+                case 'budgets_and_incomes':
+                    data += budget_and_incomes2csv(json, db);
                     break;
                 }
             });
