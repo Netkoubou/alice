@@ -56,10 +56,10 @@ function cost2csv(json, db) {
         json.drafter_account,
         '',
         db.departments[json.department_code].name,
-        db.account_titles[json.account_title_code].name,
         '',
         state[json.cost_state],
-        json.fixed_date
+        json.fixed_date,
+        '',
     ].join(',') + ',';
 
     let lines = [];
@@ -67,6 +67,7 @@ function cost2csv(json, db) {
     json.breakdowns.forEach(b => {
         let sfx = [
             b.article,
+            db.account_titles[json.account_title_code].name,
             '',
             b.price,
             b.quantity,
@@ -91,7 +92,7 @@ function order2csv(json, db) {
         'URGENCY_ORDER':  '緊急発注'
     };
 
-    const product_state = {
+    const product_states = {
         'UNORDERED': '未発注',
         'ORDERED':   '発注済',
         'CANCELED':  'キャンセル',
@@ -128,26 +129,41 @@ function order2csv(json, db) {
         json.drafter_account,
         order_type[json.order_type],
         db.departments[json.department_code].name,
-        '', // ココに品目が入るが、現時点では不明なのでとりあえず空にしておく
         db.traders[json.trader_code].name,
         order_state(),
-        json.completed_date
+        json.completed_date,
+        json.order_remark
     ];
 
     let lines = [];
 
     json.products.forEach(p => {
-        pfx_json[5] = db.categories[db.products[p.code].category_code].name;
+        let delivered_date = '';
+        let price          = '';
+        let product_state;
+
+        const m = p.state.match(/^(\d{4}\/\d{2}\/\d{2})\s+(\d+(\.\d+)?)$/);
+
+        if (m) {
+            delivered_date = m[1];
+            price          = m[2];
+            product_state  = '納品済み';
+        } else {
+            product_state  = product_states[p.state];
+        }
 
         const pfx = pfx_json.join(',') + ',';
         const sfx = [
             db.products[p.code].name,
+            db.categories[db.products[p.code].category_code].name,
             db.products[p.code].maker,
             db.products[p.code].price,
             p.quantity,
             db.products[p.code].price * p.quantity,
+            delivered_date,
+            price,
             p.billing_amount,
-            product_state[p.state]
+            product_state
         ].join(',');
 
         lines.push(pfx + sfx + '\n');
@@ -278,15 +294,18 @@ function title_row(target) {
                '起案者,'   +
                '発注区分,' +
                '発注元,'   +
-               '品目,'     +
                '販売元,'   +
                '状態,'     +
                '完了日,'   +
+               '備考,'     +
                '品名,'     +
+               '品目,'     +
                '製造元,'   +
                '単価,'     +
                '数量,'     +
                '小計,'     +
+               '納品日,'   +
+               '請求単価,' +
                '請求額,'   +
                '状態\n';
     case 'costs':
@@ -295,11 +314,12 @@ function title_row(target) {
                '起案者,'      +
                ','            +
                '申請元,'      +
-               '勘定科目,'    +
                ','            +
                '状態,'        +
                '承認日,'      +
-               '品目,'        +
+               ','            +
+               '品名,'        +
+               '勘定科目,'    +
                ','            +
                '単価,'        +
                '数量,'        +
