@@ -309,8 +309,9 @@ var ProcessOrder = React.createClass({
         });
 
         this.setState({
-            products:  this.state.products,
-            need_save: true
+            products:       this.state.products,
+            completed_date: date,
+            need_save:      true
         });
     },
 
