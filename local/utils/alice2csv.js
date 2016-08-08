@@ -223,7 +223,7 @@ function user2csv(json, db) {
     ];
 
     json.departments.forEach(d => {
-        line.push(db.departments[d.code['$oid'] ]);
+        line.push(db.departments[d.code['$oid'] ].name);
         line.push(d.administrate?        'Yes': 'No');
         line.push(d.draft_ordinary?      'Yes': 'No');
         line.push(d.draft_urgently?      'Yes': 'No');
