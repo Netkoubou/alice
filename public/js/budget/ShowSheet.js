@@ -1,7 +1,5 @@
 'use strict';
 var React          = require('react');
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Popover        = require('react-bootstrap').Popover;
 var XHR            = require('superagent');
 var moment         = require('moment');
 var Select         = require('../components/Select');
@@ -29,23 +27,20 @@ var Cell = React.createClass({
             minimumFractionDigits: 2
         });
 
-        var popover = <Popover id={this.props.id}>
-                        <div>執行率: {exec_ratio_string    + ' %'}</div>
-                        <div>経費率: {expense_ratio_string + ' %'}</div>
-                      </Popover>;
-                      
         return (
-            <div ref="showSheetCell">
+            <div>
               <div className="show-sheet-income">
                 {this.props.income.toLocaleString()}
               </div>
-              <OverlayTrigger contaner={this.refs.showSheetCell}
-                              placement="top"
-                              overlay={popover}>
-                <div className="show-sheet-outgo">
-                  {this.props.outgo.toLocaleString()}
-                </div>
-              </OverlayTrigger>
+              <div className="show-sheet-outgo">
+                {this.props.outgo.toLocaleString()}
+              </div>
+              <div className="show-sheet-exec-ratio">
+                {exec_ratio_string + ' %'}
+              </div>
+              <div className="show-sheet-expense-ratio">
+                {expense_ratio_string + ' %'}
+              </div>
             </div>
         );
     }
@@ -174,7 +169,7 @@ var ShowSheet = React.createClass({
                     outgoes:             res1.body.outgoes
                 };
 
-                window.open('income-and-outgo-graph.html', '収支グラフ');
+                window.open('income-and-outgo-graph.html', '支出グラフ');
             }.bind(this) );
         }.bind(this) );
     },
@@ -298,12 +293,25 @@ var ShowSheet = React.createClass({
         }
 
         return (
-            <div id="show-sheet" ref="showSheet">
+            <div id="show-sheet">
               <div id="show-sheet-select">
                 <Select placeholder="年度を選択して下さい"
                         onSelect={this.onSelectYear}
                         value={this.state.year.toString()}
                         options={select_options} />
+                <span id="show-sheet-legend-label">各月凡例: </span>
+                <span className="show-sheet-income show-sheet-legend">
+                  収入 (円)
+                </span>
+                <span className="show-sheet-outgo show-sheet-legend">
+                  支出 (円)
+                </span>
+                <span className="show-sheet-exec-ratio show-sheet-legend">
+                  執行率 (%)
+                </span>
+                <span className="show-sheet-expense-ratio show-sheet-legend">
+                  経費率 (%)
+                </span>
               </div>
               <TableFrame id="show-sheet-table"
                           title={this.makeTableTitle()}

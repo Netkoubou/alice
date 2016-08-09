@@ -40,8 +40,16 @@
   margin-bottom: 32px;
 }
 
+#show-sheet-legend-label {
+  margin-left:  64px;
+  margin-right:  8px;
+}
+
 .show-sheet-income { color: blue; }
 .show-sheet-outgo  { color: red; }
+.show-sheet-exec-ratio    { color: green; }
+.show-sheet-expense-ratio { color: grey;  }
+.show-sheet-legend { margin-right: 16px; }
 
 #show-sheet-table {
   width:  100%;
