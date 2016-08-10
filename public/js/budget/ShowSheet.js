@@ -46,21 +46,31 @@ var Cell = React.createClass({
     }
 });
 
-var ExpenseRatio = React.createClass({
+var Totals = React.createClass({
     propTypes: {
-        sums: React.PropTypes.arrayOf(React.PropTypes.shape({
+        budgetTotal: React.PropTypes.number.isRequired,
+        sums:        React.PropTypes.arrayOf(React.PropTypes.shape({
             income: React.PropTypes.number.isRequired,
             outgo:  React.PropTypes.number.isRequired
         }) )
     },
 
     render: function() {
-        var sum_of_incomes = 0;
-        var sum_of_outgoes = 0;
+        var sum_of_incomes   = 0;
+        var sum_of_outgoes   = 0;
 
-        var cols = []
         var tds  = this.props.sums.map(function(s) {
-            var ratio = (s.outgo / s.income * 100).toLocaleString('ja-JP', {
+            var income_string = s.income.toLocaleString();
+            var outgo_string  = s.outgo.toLocaleString();
+
+            var exec_ratio        = s.outgo / this.props.budgetTotal * 100;
+            var exec_ratio_string = exec_ratio.toLocaleString('ja-JP', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
+
+            var expense_ratio        = s.outgo / s.income * 100;
+            var expense_ratio_string = expense_ratio.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
@@ -68,41 +78,79 @@ var ExpenseRatio = React.createClass({
             sum_of_incomes += s.income;
             sum_of_outgoes += s.outgo;
 
-            cols.push(<col key={Math.random()}></col>);
             return (
-                <td className="show-sheet-expense-ratios-td"
-                    key={Math.random()}>
-                  {ratio + ' %'}
+                <td className="show-sheet-totals-td" key={Math.random()}>
+                  <div className="show-sheet-income">
+                    {income_string}
+                  </div>
+                  <div className="show-sheet-outgo">
+                    {outgo_string}
+                  </div>
+                  <div className="show-sheet-exec-ratio">
+                    {exec_ratio_string + ' %'}
+                  </div>
+                  <div className="show-sheet-expense-ratio">
+                    {expense_ratio_string + ' %'}
+                  </div>
                 </td>
             );
-        });
+        }.bind(this) );
 
-        var total_ratio        = sum_of_outgoes / sum_of_incomes * 100;
-        var total_ratio_string = total_ratio.toLocaleString('ja-JP', {
+        var income_string = sum_of_incomes.toLocaleString();
+        var outgo_string  = sum_of_outgoes.toLocaleString();
+
+        var exec_ratio        = sum_of_outgoes / this.props.budgetTotal * 100;
+        var exec_ratio_string = exec_ratio.toLocaleString('ja-JP', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 2
         });
 
-        cols.unshift(<col key={Math.random()}></col>);
+        var expense_ratio        = sum_of_outgoes / sum_of_incomes * 100;
+        var expense_ratio_string = expense_ratio.toLocaleString('ja-JP', {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+
         tds.unshift(
-            <td className="show-sheet-expense-ratios-td" key={Math.random()}>
-              経費率
+            <td className="show-sheet-totals-td" key={Math.random()}>
+              {this.props.budgetTotal.toLocaleString()}
             </td>
         );
 
-        cols.push(<col key={Math.random()}></col>);
-        tds.push(
-            <td id="show-sheet-expense-ratios-td-tail" key={Math.random()}>
-              {total_ratio_string + " %"}
+        tds.unshift(
+            <td className="show-sheet-totals-td" key={Math.random()}>
+              計
             </td>
         );
-        cols.push(<col key={Math.random()}></col>);
-        tds.push( <td key={Math.random()}> </td>);
+
+        tds.push(
+            <td className="show-sheet-totals-td" key={Math.random()}>
+              <div className="show-sheet-income">
+                {income_string}
+              </div>
+              <div className="show-sheet-outgo">
+                {outgo_string}
+              </div>
+              <div className="show-sheet-exec-ratio">
+                {exec_ratio_string + ' %'}
+              </div>
+              <div className="show-sheet-expense-ratio">
+                {expense_ratio_string + ' %'}
+              </div>
+            </td>
+        );
+
+        tds.push(
+            <td className="show-sheet-totals-td" key={Math.random()}>
+              {(this.props.budgetTotal - sum_of_outgoes).toLocaleString()}
+            </td>
+        );
 
         return (
-            <table id="show-sheet-expense-ratios">
+            <table id="show-sheet-totals">
               <colgroup>
-                {cols}
+                <col/><col/><col/><col/><col/><col/><col/><col/>
+                <col/><col/><col/><col/><col/><col/><col/><col/>
               </colgroup>
               <tbody>
                 <tr>{tds}</tr>
@@ -169,7 +217,7 @@ var ShowSheet = React.createClass({
                     outgoes:             res1.body.outgoes
                 };
 
-                window.open('income-and-outgo-graph.html', '支出グラフ');
+                window.open('income-and-outgo-graph.html', '執行率グラフ');
             }.bind(this) );
         }.bind(this) );
     },
@@ -226,7 +274,9 @@ var ShowSheet = React.createClass({
             });
         }
 
-        var sums = this.initSums(); // 各月の収支の合計
+        var budget_total = 0;               // 各部門診療科の予算の合計
+        var sums         = this.initSums(); // 各月の収支の合計
+
         var data = this.state.budgets_and_incomes.map(function(bai, row_idx) {
             var row            = [];
             var sum_of_incomes = 0;
@@ -236,6 +286,8 @@ var ShowSheet = React.createClass({
                 value: bai.department_name,
                 view:  bai.department_name
             });
+
+            budget_total += bai.budget;
             
             row.push({
                 value: bai.budget,
@@ -286,10 +338,10 @@ var ShowSheet = React.createClass({
             return row;
         }.bind(this) );
 
-        var expense_ratio = null;
+        var totals = null;
 
         if (this.props.user.privileged.administrate) {
-            expense_ratio = <ExpenseRatio sums={sums} />;
+            totals = <Totals budgetTotal={budget_total} sums={sums} />;
         }
 
         return (
@@ -316,7 +368,7 @@ var ShowSheet = React.createClass({
               <TableFrame id="show-sheet-table"
                           title={this.makeTableTitle()}
                           data={data} />
-              {expense_ratio}
+              {totals}
             </div>
         );
     }
