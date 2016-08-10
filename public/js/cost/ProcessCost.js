@@ -117,6 +117,13 @@ var ProcessCost = React.createClass({
         }.bind(this);
     },
 
+    onChangeDate: function(index) {
+        return function(date) {
+            this.state.breakdowns[index].date = date.format('YYYY/MM/DD');
+            this.setState({ breakdowns: this.state.breakdowns });
+        }.bind(this);
+    },
+
     onChangeRemark: function(e) {
         this.setState({ remark: e.target.value });
     },
@@ -136,21 +143,29 @@ var ProcessCost = React.createClass({
         var subtotal   = breakdown.quantity * breakdown.price;
         var permission = this.decidePermission();
         var account    = this.props.user.account;
+        var date;
         var note;
 
         if (permission === 'REFER_ONLY' && account === 'inmu') {
+            date = (
+                <TableFrame.DatePicker
+                  selected={moment(breakdown.date, 'YYYY/MM/DD')}
+                  onChange={this.onChangeDate(index)} />
+            );
+
             note = (
                 <TableFrame.Input placeholder={breakdown.note}
                                   onChange={this.onChangeNote(index)}
                                   type="string" />
             );
         } else {
+            date = breakdown.date;
             note = breakdown.note;
         }
 
         return [
             {
-                view:  breakdown.date,
+                view:  date,
                 value: breakdown.date
             },
             {
@@ -286,14 +301,14 @@ var ProcessCost = React.createClass({
                 </div>
             );
         } else if (this.props.user.account === 'inmu') {
-            legend  = 'コメント編集';
+            legend  = '購入日 / コメント編集';
             buttons = [
                 <Button key="3"
                         bsStyle="primary"
                         bsSize="large"
                         className="process-cost-button"
                         onClick={this.onUpdate}>
-                  コメント更新
+                  更新
                 </Button>,
             ];
 
