@@ -14,7 +14,9 @@ module.exports = function(req, res) {
         return;
     }
 
-    if (!req.session.user.privileged.approve) {
+    var privileged = req.session.user.privileged;
+
+    if (!privileged.approve && !privileged.process_order) {
         res.sendStatus(403);
         log_warn.warn('[registerItem] forbidden.');
         return;

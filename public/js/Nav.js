@@ -253,7 +253,7 @@ var Nav = React.createClass({
         /*
          * 予算と収支メニュー
          */
-        if (this.props.user.privileged.administrate) {
+        if (privileged.administrate) {
             budget.push(<NavItemTitle key="0" name="予算と収支" />);
             budget.push(
                 <NavItem key="1"
@@ -276,10 +276,11 @@ var Nav = React.createClass({
             );
         }
 
+
         /*
          * システム管理メニュー
          */
-        if (this.props.user.privileged.administrate) {
+        if (privileged.administrate) {
             admin = (
                 <div>
                   <NavItemTitle name="システム管理" />
@@ -322,7 +323,7 @@ var Nav = React.createClass({
 
         var csv_menus = null;
 
-        if (this.props.user.privileged.approve) {
+        if (privileged.approve || privileged.process_order) {
             csv_menus = [
                 <NavItem key="4"
                          name="CSV 生成"
@@ -334,6 +335,7 @@ var Nav = React.createClass({
                          isSelected={false} />,
             ];
         }
+
 
         /*
          * 以下、レンダリングする内容。
