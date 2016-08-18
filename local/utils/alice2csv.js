@@ -58,8 +58,7 @@ function cost2csv(json, db) {
         db.departments[json.department_code].name,
         '',
         state[json.cost_state],
-        json.fixed_date,
-        '',
+        json.fixed_date
     ].join(',') + ',';
 
     let lines = [];
@@ -73,6 +72,9 @@ function cost2csv(json, db) {
             b.quantity,
             b.price * b.quantity,
             b.date,
+            '',
+            '',
+            '',
             b.note
         ];
 
@@ -131,8 +133,7 @@ function order2csv(json, db) {
         db.departments[json.department_code].name,
         db.traders[json.trader_code].name,
         order_state(),
-        json.completed_date,
-        json.order_remark
+        json.completed_date
     ];
 
     let lines = [];
@@ -163,7 +164,8 @@ function order2csv(json, db) {
             delivered_date,
             price,
             p.billing_amount,
-            product_state
+            product_state,
+            json.order_remark
         ].join(',');
 
         lines.push(pfx + sfx + '\n');
@@ -297,7 +299,6 @@ function title_row(target) {
                '販売元,'   +
                '状態,'     +
                '完了日,'   +
-               '備考,'     +
                '品名,'     +
                '品目,'     +
                '製造元,'   +
@@ -307,7 +308,8 @@ function title_row(target) {
                '納品日,'   +
                '請求単価,' +
                '請求額,'   +
-               '状態\n';
+               '状態,'     +
+               '備考\n';
     case 'costs':
         return '起案番号,'    +
                '起案日,'      +
@@ -317,7 +319,6 @@ function title_row(target) {
                ','            +
                '状態,'        +
                '承認日,'      +
-               ','            +
                '品名,'        +
                '勘定科目,'    +
                ','            +
@@ -325,6 +326,9 @@ function title_row(target) {
                '数量,'        +
                '小計,'        +
                '購入日,'      +
+               ','            +
+               ','            +
+               ','            +
                '摘要 / 備考\n';
     case 'budgets_and_incomes':
         return '年度,'       +
