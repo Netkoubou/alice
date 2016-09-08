@@ -102,6 +102,10 @@ function order2csv(json, db) {
     };
 
     function order_state() {
+        if (!json.is_alive) {
+            return '欠番';
+        }
+
         switch (json.order_state) {
         case 'REQUESTING':
             return '依頼中';
@@ -150,7 +154,7 @@ function order2csv(json, db) {
             price          = m[2];
             product_state  = '納品済み';
         } else {
-            product_state  = product_states[p.state];
+            product_state = product_states[p.state];
         }
 
         const pfx = pfx_json.join(',') + ',';
