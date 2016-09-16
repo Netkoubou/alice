@@ -137,7 +137,7 @@ function order2csv(json, db) {
         db.departments[json.department_code].name,
         db.traders[json.trader_code].name,
         order_state(),
-        json.completed_date
+        ''
     ];
 
     let lines = [];
@@ -302,7 +302,7 @@ function title_row(target) {
                '発注元,'     +
                '販売元,'     +
                '発注の状態,' +
-               '完了日,'     +
+               ','           +
                '品名,'       +
                '品目,'       +
                '製造元,'     +
