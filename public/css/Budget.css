@@ -40,40 +40,53 @@
   margin-bottom: 32px;
 }
 
-.show-sheet-income { color: blue; }
-.show-sheet-outgo  { color: red; }
+#show-sheet-legend-label {
+  margin-left:  64px;
+  margin-right:  8px;
+}
+
+.show-sheet-income {
+  font-size: 96%;
+  color:     blue;
+}
+.show-sheet-outgo  {
+  font-size: 96%;
+  color:     red;
+}
+
+.show-sheet-exec-ratio    { color: green; }
+.show-sheet-expense-ratio { color: grey;  }
+.show-sheet-legend { margin-right: 16px; }
 
 #show-sheet-table {
   width:  100%;
-  height: calc(100% - 144px);
+  height: calc(100% - 160px);
 }
 
 #show-sheet-table col:nth-child(1)   { width: calc(100% - 1248px); }
 #show-sheet-table col:nth-child(2)   { width: 96px; }
 #show-sheet-table col:nth-child(n+3) { width: 80px; }
-#show-sheet-table col:nth-child(15) { width: 96px; }
-#show-sheet-table col:nth-child(16) { width: 96px; }
-#show-sheet-table td:nth-child(n+2) { text-align: right; }
+#show-sheet-table col:nth-child(15)  { width: 96px; }
+#show-sheet-table col:nth-child(16)  { width: 96px; }
+#show-sheet-table td:nth-child(n+2)  { text-align: right; }
 
-#show-sheet-expense-ratios {
-  width: 100%;
+#show-sheet-totals {
+  width: calc(100% - 16px);
   margin-top:  32px;
   margin-left: 32px;
 }
 
-#show-sheet-expense-ratios col:nth-child(1)   { width: calc(100% - 1232px); }
-#show-sheet-expense-ratios col:nth-child(n+2) { width: 80px; }
-#show-sheet-expense-ratios col:nth-child(14)  { width: 96px; }
-#show-sheet-expense-ratios col:nth-child(15)  { width: 112px; }
-#show-sheet-expense-ratios td:nth-child(n+2) { text-align: right; }
+#show-sheet-totals col:nth-child(1)   { width: calc(100% - 1248px); }
+#show-sheet-totals col:nth-child(2)   { width: 96px; }
+#show-sheet-totals col:nth-child(n+3) { width: 80px; }
+#show-sheet-totals col:nth-child(15)  { width: 96px; }
+#show-sheet-totals col:nth-child(16)  { width: 96px; }
+#show-sheet-totals td:nth-child(n+2)  { text-align: right; }
 
-.show-sheet-expense-ratios-td {
+.show-sheet-totals-td {
   border-right:  1px solid #888888;
   border-top:    1px solid #888888;
   border-bottom: 1px solid #888888;
-}
-
-#show-sheet-expense-ratios-td-tail {
-  border-top:    1px solid #888888;
-  border-bottom: 1px solid #888888;
+  padding-left:  4px;
+  padding-right: 4px;
 }
