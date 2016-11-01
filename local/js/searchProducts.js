@@ -34,7 +34,15 @@ module.exports = function(req, res) {
         }
 
         if (req.body.search_text != '') {
-            sel.name = new RegExp(req.body.search_text);
+            try {
+                sel.name = new RegExp(req.body.search_text);
+            } catch (e) {
+                res.json({
+                    status: 2,
+                    reason: e.message
+                });
+                return;
+            }
         }
 
         db.collection('products').find(sel).toArray(function(err, products) {

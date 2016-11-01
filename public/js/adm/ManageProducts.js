@@ -89,11 +89,13 @@ var ManageProducts = React.createClass({
                 throw 'ajax_searchProducts';
             }
 
-            if (res.body.status > 1) {
+            if (res.body.status > 2) {
                 alert(Messages.server.MANAGE_PRODUCTS_SEARCH_PRODUCTS);
                 throw 'server_searchProducts';
             } else if (res.body.status == 1) {
                 alert('件数が多過ぎます。検索条件でもっと絞って下さい。');
+            } else if (res.body.status == 2) {
+                alert('正規表現に誤りがあります: ' + res.body.reason);
             } else {
                 res.body.products.sort(function(a, b) {
                     return a.name > b.name? 1: -1;

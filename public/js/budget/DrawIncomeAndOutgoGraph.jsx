@@ -144,7 +144,7 @@ var DrawIncomeAndOutgoGraph = React.createClass({
     render: function() {
         return (
             <div id="graph">
-              <h1>{window.opener.info.year} 年度</h1>
+              <h1>{window.opener.info.year} 年度執行率グラフ</h1>
               <div ref="graph">
               </div>
             </div>
