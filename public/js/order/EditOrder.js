@@ -440,16 +440,25 @@ var actions = {
                 throw 'ajax_searchCandidates';
             }
 
-            if (res.body.status != 0) {
+            var candidates;
+
+            if (res.body.status == 2) {
+                var reason = res.body.reason;
+                alert('検索テキストの正規表現に誤りがあります: ' + reason);
+
+                candidates = [];
+            } else if (res.body.status != 0) {
                 alert(Messages.server.EDIT_ORDER_SEARCH_CANDIDATES);
                 throw 'server_searchCandidates';
+            } else {
+                candidates = res.body.candidates;
             }
 
             this.dispatch(
                 messages.UPDATE_CANDIDATES,
                 {
                     department: payload.department,
-                    candidates: res.body.candidates
+                    candidates: candidates
                 }
             );
         }.bind(this) );

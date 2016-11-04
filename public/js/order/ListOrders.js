@@ -393,14 +393,20 @@ var ListOrders = React.createClass({
                 throw 'ajax_searchOrders';
             }
 
-            if (res.body.status != 0) {
+            var orders;
+
+            if (res.body.status == 2) {
+                var reason = res.body.reason;
+                alert('起案番号の正規表現に誤りがあります: ' + reason);
+                orders = [];
+            } else if (res.body.status != 0) {
                 alert(Messages.server.LIST_ORDERS_SEARCH_ORDERS);
                 throw 'server_searchOrders';
-            }
+            } else {
+                orders = res.body.orders;
+            }                
 
-            var orders = res.body.orders.filter(this.filterProducts);
-
-            orders.sort(function(a, b) {
+            orders.filter(this.filterProducts).sort(function(a, b) {
                 return a.order_code < b.order_code ? -1: 1;
             });
 

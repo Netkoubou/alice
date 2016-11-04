@@ -12,6 +12,11 @@ var log_crit = log4js.getLogger('critical');
  * 'orders' コレクションから、当該ユーザが参照できる発注を引っこ抜くための
  * セレクタを作る。
  * 別に難しいことはないのだが、やたらと煩雑。
+ *
+ * (発注番号の検索用の) 正規表現の生成に失敗した場合、セレクタの生成に失敗
+ * したとして、その理由である文字列を返す。
+ * それ以外はセレクタの生成に失敗することはないため、セレクタ (オブジェクト)
+ * を返す。
  */
 function generateSelector(user, args) {
     var sel = { '$and': [
@@ -50,7 +55,18 @@ function generateSelector(user, args) {
     }
 
     if (args.order_code != '') {
-        sel['$and'].push({ order_code: new RegExp(args.order_code) });
+        var order_code;
+
+        /*
+         * ここで発注番号検索用の正規表現を生成
+         */
+        try {
+            order_code = new RegExp(args.order_code);
+        } catch (e) {
+            return e.message;
+        }
+
+        sel['$and'].push({ order_code: order_code });
     }
 
     if (args.trader_code != '') {
@@ -252,6 +268,14 @@ module.exports = function(req, res) {
 
     util.query(function(db) {
         var sel = generateSelector(req.session.user, req.body);
+
+        if (typeof sel == 'string') {
+            res.json({
+                status: 2,
+                reason: sel
+            });
+            return;
+        }
 
         db.collection('orders').find(sel).toArray(function(err, orders) {
             if (err == null) {
