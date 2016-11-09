@@ -245,13 +245,6 @@ var ApplyCost = React.createClass({
                 ReactDOM.findDOMNode(e).select();
                 return;
             }
-
-            if (row.price < 0) {
-                alert('単価には 0 以上の値を指定して下さい。');
-                e = this.refs["price" + i.toString()];
-                ReactDOM.findDOMNode(e).select();
-                return;
-            }
         }
 
         XHR.post('updateCost').send({
