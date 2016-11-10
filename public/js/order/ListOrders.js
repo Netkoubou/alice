@@ -403,12 +403,11 @@ var ListOrders = React.createClass({
                 alert(Messages.server.LIST_ORDERS_SEARCH_ORDERS);
                 throw 'server_searchOrders';
             } else {
-                orders = res.body.orders;
-            }                
-
-            orders.filter(this.filterProducts).sort(function(a, b) {
-                return a.order_code < b.order_code ? -1: 1;
-            });
+                orders = res.body.orders.filter(this.filterProducts);
+                orders.sort(function(a, b) {
+                    return a.order_code < b.order_code ? -1: 1;
+                });
+            }
 
             this.setState({ orders: orders });
         }.bind(this) )
