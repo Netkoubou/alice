@@ -180,6 +180,12 @@ var FinalPane = React.createClass({
         goBack:   React.PropTypes.func
     },
 
+    getInitialState: function() {
+        return {
+            is_issuing: false,  // registerOrder 二重発行抑止フラグ
+        };
+    },
+
 
     /*
      * クリアボタンがクリックされたら
@@ -235,6 +241,12 @@ var FinalPane = React.createClass({
      * 発注を新規登録
      */
     registerOrder: function() {
+        if (this.state.is_issuing) {
+            return;
+        }
+
+        this.state.is_issuing = true;
+
         XHR.post('registerOrder').send({
             order_type:      this.props.orderType,
             order_remark:    this.props.orderRemark,
@@ -259,6 +271,9 @@ var FinalPane = React.createClass({
             }
 
             alert('起案番号 "' + res.body.order_code + '" で登録しました。');
+
+            this.state.is_issuing = false;
+
             this.getFlux().actions.setOrderCodeAndVersion({
                 id:      res.body.order_id, // 不要 (MySQL の場合のみ必要)
                 code:    res.body.order_code,
