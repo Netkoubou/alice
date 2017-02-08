@@ -14,6 +14,13 @@ module.exports = function(req, res) {
         return;
     }
 
+    function end_of_feb(year) {
+        var mar_1st = moment(year.toString() + '/03/01', 'YYYY/MM/DD');
+        var feb_end = mar_1st.subtract(1, 'days');
+
+        return feb_end.format('YYYY/MM/DD');
+    }
+
 
     /*
      * 各月の検索範囲を、馬鹿正直に配列で持っておく。
@@ -61,7 +68,7 @@ module.exports = function(req, res) {
         ],
         [
             (req.body.year + 1).toString() + '/02/01',
-            (req.body.year + 1).toString() + '/02/29'
+            end_of_feb(req.body.year + 1)
         ],
         [
             (req.body.year + 1).toString() + '/03/01',

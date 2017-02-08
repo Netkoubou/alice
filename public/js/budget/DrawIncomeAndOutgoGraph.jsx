@@ -61,7 +61,7 @@ var DrawIncomeAndOutgoGraph = React.createClass({
 
         var svg = d3.select(this.refs.graph)
                     .append('svg')
-                    .attr({ width: W, height: H });
+                    .attr({ width: W * 2, height: H });
 
         var xscale = d3.scale.linear()
                         .domain([0, 100])
