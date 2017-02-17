@@ -6,6 +6,7 @@ var moment     = require('moment');
 var Select     = require('../components/Select');
 var TableFrame = require('../components/TableFrame');
 var Messages   = require('../lib/Messages');
+var configure  = require('../../../common/configure.js');      
 
 var InputAmount = React.createClass({
     getInitialState: function() {
@@ -86,18 +87,10 @@ var InputAmount = React.createClass({
     },
 
     render: function() {
-        var select_options = [];
-        var now            = moment();
-        var this_year      = (now.month() < 3)? now.year() - 1: now.year();
-
-        for (var year = 2016; year <= this_year; year++) {
-            var year_string = year.toString();
-
-            select_options.push({
-                code: year_string,
-                name: year_string + ' 年度'
-            });
-        }
+        var select_options = [{
+            code: configure.YEAR.toString(),
+            name: configure.YEAR.toString() + ' 年度'
+        }];
 
         var title = [
             { name: '部門診療科', type: 'string' },

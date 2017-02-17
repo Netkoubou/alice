@@ -1,10 +1,11 @@
 'use strict';
-var React          = require('react');
-var XHR            = require('superagent');
-var moment         = require('moment');
-var Select         = require('../components/Select');
-var TableFrame     = require('../components/TableFrame');
-var Messages       = require('../lib/Messages');
+var React      = require('react');
+var XHR        = require('superagent');
+var moment     = require('moment');
+var Select     = require('../components/Select');
+var TableFrame = require('../components/TableFrame');
+var Messages   = require('../lib/Messages');
+var configure  = require('../../../common/configure.js');
 
 var Cell = React.createClass({
     propTypes: {
@@ -261,18 +262,10 @@ var ShowSheet = React.createClass({
     },
 
     render: function() {
-        var select_options = [];
-        var now            = moment();
-        var this_year      = (now.month() < 3)? now.year() - 1: now.year();
-
-        for (var year = 2016; year <= this_year; year++) {
-            var year_string = year.toString();
-
-            select_options.push({
-                code: year_string,
-                name: year_string + ' 年度'
-            });
-        }
+        var select_options = [{
+            code: configure.YEAR.toString(),
+            name: configure.YEAR.toString() + ' 年度'
+        }];
 
         var budget_total = 0;               // 各部門診療科の予算の合計
         var sums         = this.initSums(); // 各月の収支の合計

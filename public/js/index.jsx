@@ -1,14 +1,15 @@
 'use strict';
-var React    = require('react');
-var ReactDOM = require('react-dom');
-var Input    = require('react-bootstrap').Input;
-var Button   = require('react-bootstrap').Button;
-var XHR      = require('superagent');
-var Header   = require('./Header');
-var Nav      = require('./Nav');
-var Ope      = require('./Ope');
-var Footer   = require('./Footer');
-var Messages = require('./lib/Messages');
+var React     = require('react');
+var ReactDOM  = require('react-dom');
+var Input     = require('react-bootstrap').Input;
+var Button    = require('react-bootstrap').Button;
+var XHR       = require('superagent');
+var Header    = require('./Header');
+var Nav       = require('./Nav');
+var Ope       = require('./Ope');
+var Footer    = require('./Footer');
+var Messages  = require('./lib/Messages');
+var configure = require('../../common/configure.js');
 
 var Page = React.createClass({
     /*
@@ -109,6 +110,9 @@ var Page = React.createClass({
                         </span>
                       </div>
                       <div id="header-petname">Perry</div>
+                      <div id="header-year">
+                        ({configure.YEAR.toString() + ' 年度版'})
+                      </div>
                     </div>
                     <fieldset id="login">
                       <Input type="text" 

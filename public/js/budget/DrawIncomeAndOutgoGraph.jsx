@@ -121,7 +121,13 @@ var DrawIncomeAndOutgoGraph = React.createClass({
                     minimumFractionDigits: 2
                 });
 
-                return (i % 12 + 4) + ' 月: ' + percent + ' %';
+                var month = i % 12 + 4;
+
+                if (month > 12) {
+                    month -= 12;
+                }
+
+                return month + ' 月: ' + percent + ' %';
             });
 
         var now   = moment();
