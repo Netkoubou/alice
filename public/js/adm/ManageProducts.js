@@ -234,7 +234,12 @@ var ManageProducts = React.createClass({
                 { value: category_name, view: category_name },
                 { value: p.maker,       view: p.maker },
                 { value: trader_name,   view: trader_name },
-                { value: p.cur_price,   view: p.cur_price },
+                {
+                    value: p.cur_price,
+                    view:  p.cur_price.toLocaleString('ja-JP', {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2
+                })},
                 {
                     value: '',
                     view:  this.decideProductNote(p, i)
