@@ -60,8 +60,8 @@ var CalendarMarker = React.createClass({
                 moment().subtract(1, 'week').startOf('week'),
                 moment().subtract(1, 'week').endOf('week')
             ],
-            '過去 30 日間': [
-                moment().subtract(29, 'days'),
+            '過去 31 日間': [
+                moment().subtract(30, 'days'),
                 moment()
             ],
             '今月': [
