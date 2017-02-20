@@ -191,17 +191,24 @@
 #process-cost-breakdowns td:nth-child(4) { text-align: right }
 #process-cost-breakdowns td:nth-child(5) { text-align: right }
 
+#process-cost-total-quantity {
+  position: absolute;
+  width:    128px;
+  left:      48px;
+  bottom:     4px;
+}
+
 #process-cost-total {
   position: absolute;
   width:    192px;
-  left:      48px;
+  left:     184px;
   bottom:     4px;
 }
 
 #process-cost-fixed-date {
   position: absolute;
   width:    128px;
-  left:     248px;
+  left:     384px;
   bottom:     4px;
 }
 

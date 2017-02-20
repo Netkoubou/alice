@@ -76,13 +76,17 @@ var OrderNotices = React.createClass({
 
 var OrderTotals = React.createClass({
     propTypes: {
-        order_total:   React.PropTypes.number.isRequired,
-        billing_total: React.PropTypes.number.isRequired
+        order_total:    React.PropTypes.number.isRequired,
+        billing_total:  React.PropTypes.number.isRequired,
+        total_quantity: React.PropTypes.number.isRequired
     },
 
     render: function() {
         return (
             <div id="process-order-totals">
+              <Notice className="process-order-total" title="発注総数">
+                {this.props.total_quantity.toLocaleString()}
+              </Notice>
               <Notice className="process-order-total" title="発注総計">
                 {Math.round(this.props.order_total).toLocaleString()}
               </Notice>
@@ -950,10 +954,13 @@ var ProcessOrder = React.createClass({
         var permission  = this.decidePermission();
         var table_title = this.makeTableFrameTitle();
 
-        var order_total   = 0.0;
-        var billing_total = 0.0;
+        var order_total    = 0.0;
+        var billing_total  = 0.0;
+        var total_quantity = 0;
 
         var table_data = this.state.products.map(function(product, index) {
+            total_quantity += product.quantity;
+
             if (product.state != 'CANCELED') {
                 order_total += product.cur_price * product.quantity;
             }
@@ -964,6 +971,31 @@ var ProcessOrder = React.createClass({
 
             return this.composeTableFrameDataRow(permission, product, index);
         }.bind(this) );
+
+        table_data.push([
+            { value: '', view: '' },
+            { value: '', view: '' },
+            { value: '', view: '' },
+            { value: '', view: '' },
+            {
+                value: total_quantity,
+                view:  total_quantity.toLocaleString()
+            },
+            {
+                value: order_total,
+                view:  order_total.toLocaleString('ja-JP', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                })
+            },
+            { value: '', view: '' },
+            {
+                value: billing_total,
+                view:  billing_total.toLocaleString()
+            },
+            { value: '', view: '' },
+            { value: '', view: '' }
+        ]);
 
         var completed_date = this.state.completed_date;
 
@@ -1001,7 +1033,8 @@ var ProcessOrder = React.createClass({
                           title={table_title}
                           data={table_data} />
               <OrderTotals order_total={order_total}
-                           billing_total={billing_total} />
+                           billing_total={billing_total}
+                           total_quantity={total_quantity}/>
               <Notice id="process-order-completed-date" title="完了日">
                 {completed_date}
               </Notice>

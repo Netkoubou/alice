@@ -52,7 +52,8 @@ var CostInfos = React.createClass({
 
 var Breakdowns = React.createClass({
     render: function() {
-        var total = 0.0;
+        var total_quantity = 0;
+        var total          = 0.0;
 
         var breakdowns = window.opener.info.breakdowns.map(function(b, i) {
             var subtotal        = b.price * b.quantity;
@@ -60,14 +61,15 @@ var Breakdowns = React.createClass({
             var quantity_string = b.quantity.toLocaleString();
             var subtotal_string = subtotal.toLocaleString();
 
-            total += subtotal;
+            total_quantity += b.quantity;
+            total          += subtotal;
 
             return (
                 <tr key={i}>
                   <td className="breakdowns-data-number">{i + 1}</td>
                   <td className="breakdowns-data-string">{b.date}</td>
                   <td className="breakdowns-data-string">{b.article}</td>
-                  <td className="breakdowns-data-string">{quantity_string}</td>
+                  <td className="breakdowns-data-number">{quantity_string}</td>
                   <td className="breakdowns-data-number">{price_string}</td>
                   <td className="breakdowns-data-number">{subtotal_string}</td>
                   <td className="breakdowns-data-string">{b.note}</td>
@@ -79,9 +81,11 @@ var Breakdowns = React.createClass({
             <tr key={breakdowns.length}>
               <td></td>
               <td></td>
-              <td></td>
-              <td></td>
               <td className="breakdowns-data-number">合計</td>
+              <td className="breakdowns-data-number">
+                {total_quantity.toLocaleString()}
+              </td>
+              <td></td>
               <td className="breakdowns-data-number">
                 {total.toLocaleString()}
               </td>

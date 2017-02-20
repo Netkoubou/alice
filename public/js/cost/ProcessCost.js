@@ -329,10 +329,13 @@ var ProcessCost = React.createClass({
                              disabled={true} />
         }
 
-        var total       = 0;
+        var total_quantity = 0;
+        var total          = 0;
+
         var table_title = this.makeTableFrameTitle();
         var table_data  = this.state.breakdowns.map(function(b, i) {
-            total += b.quantity * b.price;
+            total_quantity += b.quantity;
+            total          += b.quantity * b.price;
             return this.composeTableFrameDataRow(b, i);
         }.bind(this) );
 
@@ -362,6 +365,9 @@ var ProcessCost = React.createClass({
               <TableFrame id="process-cost-breakdowns"
                           title={table_title}
                           data={table_data} />
+              <Notice id="process-cost-total-quantity" title="総数">
+                {total_quantity.toLocaleString()}
+              </Notice>
               <Notice id="process-cost-total" title="合計">
                 {total.toLocaleString()}
               </Notice>
