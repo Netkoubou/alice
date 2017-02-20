@@ -22,7 +22,7 @@
 }
 
 .footer-ordinary { color: #ffffff; }
-.footer-urgency  { color: #ff0000; }
+.footer-urgency  { color: #ffffff; }
 
 @keyframes flow {
   from { right: -2048px; }
