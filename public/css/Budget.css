@@ -49,6 +49,17 @@
   font-size: 96%;
   color:     blue;
 }
+
+.show-sheet-orders {
+  font-size: 96%;
+  color:     purple;
+}
+
+.show-sheet-costs {
+  font-size: 96%;
+  color:     black;
+}
+
 .show-sheet-outgo  {
   font-size: 96%;
   color:     red;
@@ -60,7 +71,7 @@
 
 #show-sheet-table {
   width:  100%;
-  height: calc(100% - 160px);
+  height: calc(100% - 196px);
 }
 
 #show-sheet-table col:nth-child(1)   { width: calc(100% - 1248px); }

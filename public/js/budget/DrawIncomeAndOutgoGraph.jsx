@@ -29,7 +29,8 @@ function compute_data() {
     window.opener.info.outgoes.forEach(function(o, department_idx) {
         var x = 0;
 
-        o.outgoes.forEach(function(amount, month_idx) {
+        o.outgoes.forEach(function(outgo, month_idx) {
+            var amount  = outgo.orders + outgo.costs;
             var percent = amount / budgets[department_idx] * 100;
 
             data.push({

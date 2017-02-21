@@ -12,17 +12,20 @@ var Cell = React.createClass({
         id:       React.PropTypes.string.isRequired,
         budget:   React.PropTypes.number.isRequired,
         income:   React.PropTypes.number.isRequired,
-        outgo:    React.PropTypes.number.isRequired
+        orders:   React.PropTypes.number.isRequired,
+        costs:    React.PropTypes.number.isRequired
     },
 
     render: function() {
-        var exec_ratio        = this.props.outgo / this.props.budget * 100;
+        var outgo = this.props.orders + this.props.costs;
+
+        var exec_ratio        = outgo / this.props.budget * 100;
         var exec_ratio_string = exec_ratio.toLocaleString('ja-JP', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 2
         });
 
-        var expense_ratio        = this.props.outgo / this.props.income * 100;
+        var expense_ratio        = outgo / this.props.income * 100;
         var expense_ratio_string = expense_ratio.toLocaleString('ja-JP', {
             maximumFractionDigits: 2,
             minimumFractionDigits: 2
@@ -33,8 +36,14 @@ var Cell = React.createClass({
               <div className="show-sheet-income">
                 {this.props.income.toLocaleString()}
               </div>
+              <div className="show-sheet-orders">
+                {this.props.orders.toLocaleString()}
+              </div>
+              <div className="show-sheet-costs">
+                {this.props.costs.toLocaleString()}
+              </div>
               <div className="show-sheet-outgo">
-                {this.props.outgo.toLocaleString()}
+                {outgo.toLocaleString()}
               </div>
               <div className="show-sheet-exec-ratio">
                 {exec_ratio_string + ' %'}
@@ -52,37 +61,50 @@ var Totals = React.createClass({
         budgetTotal: React.PropTypes.number.isRequired,
         sums:        React.PropTypes.arrayOf(React.PropTypes.shape({
             income: React.PropTypes.number.isRequired,
-            outgo:  React.PropTypes.number.isRequired
+            orders: React.PropTypes.number.isRequired,
+            costs:  React.PropTypes.number.isRequired
         }) )
     },
 
     render: function() {
-        var sum_of_incomes   = 0;
-        var sum_of_outgoes   = 0;
+        var sum_of_incomes = 0;
+        var sum_of_orders  = 0;
+        var sum_of_costs   = 0;
 
         var tds  = this.props.sums.map(function(s) {
-            var income_string = s.income.toLocaleString();
-            var outgo_string  = s.outgo.toLocaleString();
+            var outgo = s.orders + s.costs;
 
-            var exec_ratio        = s.outgo / this.props.budgetTotal * 100;
+            var income_string = s.income.toLocaleString();
+            var orders_string = s.orders.toLocaleString();
+            var costs_string  = s.costs.toLocaleString();
+            var outgo_string  = outgo.toLocaleString();
+
+            var exec_ratio        = outgo / this.props.budgetTotal * 100;
             var exec_ratio_string = exec_ratio.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 
-            var expense_ratio        = s.outgo / s.income * 100;
+            var expense_ratio        = outgo / s.income * 100;
             var expense_ratio_string = expense_ratio.toLocaleString('ja-JP', {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2
             });
 
             sum_of_incomes += s.income;
-            sum_of_outgoes += s.outgo;
+            sum_of_orders  += s.orders;
+            sum_of_costs   += s.costs;
 
             return (
                 <td className="show-sheet-totals-td" key={Math.random()}>
                   <div className="show-sheet-income">
                     {income_string}
+                  </div>
+                  <div className="show-sheet-orders">
+                    {orders_string}
+                  </div>
+                  <div className="show-sheet-costs">
+                    {costs_string}
                   </div>
                   <div className="show-sheet-outgo">
                     {outgo_string}
@@ -97,7 +119,11 @@ var Totals = React.createClass({
             );
         }.bind(this) );
 
+        var sum_of_outgoes = sum_of_orders + sum_of_costs;
+
         var income_string = sum_of_incomes.toLocaleString();
+        var orders_string = sum_of_orders.toLocaleString();
+        var costs_string  = sum_of_costs.toLocaleString(); 
         var outgo_string  = sum_of_outgoes.toLocaleString();
 
         var exec_ratio        = sum_of_outgoes / this.props.budgetTotal * 100;
@@ -128,6 +154,12 @@ var Totals = React.createClass({
             <td className="show-sheet-totals-td" key={Math.random()}>
               <div className="show-sheet-income">
                 {income_string}
+              </div>
+              <div className="show-sheet-orders">
+                {orders_string}
+              </div>
+              <div className="show-sheet-costs">
+                {costs_string}
               </div>
               <div className="show-sheet-outgo">
                 {outgo_string}
@@ -250,18 +282,18 @@ var ShowSheet = React.createClass({
 
     initSums: function() {
         return [
-            { income: 0, outgo: 0 }, //  4 月
-            { income: 0, outgo: 0 }, //  5 月
-            { income: 0, outgo: 0 }, //  6 月
-            { income: 0, outgo: 0 }, //  7 月
-            { income: 0, outgo: 0 }, //  8 月
-            { income: 0, outgo: 0 }, //  9 月
-            { income: 0, outgo: 0 }, // 10 月
-            { income: 0, outgo: 0 }, // 11 月
-            { income: 0, outgo: 0 }, // 12 月
-            { income: 0, outgo: 0 }, //  1 月
-            { income: 0, outgo: 0 }, //  2 月
-            { income: 0, outgo: 0 }, //  3 月
+            { income: 0, orders: 0, costs: 0 }, //  4 月
+            { income: 0, orders: 0, costs: 0 }, //  5 月
+            { income: 0, orders: 0, costs: 0 }, //  6 月
+            { income: 0, orders: 0, costs: 0 }, //  7 月
+            { income: 0, orders: 0, costs: 0 }, //  8 月
+            { income: 0, orders: 0, costs: 0 }, //  9 月
+            { income: 0, orders: 0, costs: 0 }, // 10 月
+            { income: 0, orders: 0, costs: 0 }, // 11 月
+            { income: 0, orders: 0, costs: 0 }, // 12 月
+            { income: 0, orders: 0, costs: 0 }, //  1 月
+            { income: 0, orders: 0, costs: 0 }, //  2 月
+            { income: 0, orders: 0, costs: 0 }, //  3 月
         ];
     },
 
@@ -277,7 +309,8 @@ var ShowSheet = React.createClass({
         var data = this.state.budgets_and_incomes.map(function(bai, row_idx) {
             var row            = [];
             var sum_of_incomes = 0;
-            var sum_of_outgoes = 0;;
+            var sum_of_orders  = 0;
+            var sum_of_costs   = 0;
 
             row.push({
                 value: bai.department_name,
@@ -308,13 +341,16 @@ var ShowSheet = React.createClass({
                     view:  <Cell id={row_idx.toString() + '-' + i.toString()}
                                  budget={bai.budget}
                                  income={bai.incomes[i]}
-                                 outgo={outgo} />
+                                 orders={outgo.orders}
+                                 costs={outgo.costs} />
                 });
 
                 sum_of_incomes += bai.incomes[i];
                 sums[i].income += bai.incomes[i];
-                sum_of_outgoes += outgo;
-                sums[i].outgo  += outgo;
+                sum_of_orders  += outgo.orders;
+                sum_of_costs   += outgo.costs;
+                sums[i].orders += outgo.orders;
+                sums[i].costs  += outgo.costs;
             }
 
             row.push({
@@ -322,10 +358,11 @@ var ShowSheet = React.createClass({
                 view:  <Cell id={row_idx.toString() + '-sum'}
                              budget={bai.budget}
                              income={sum_of_incomes}
-                             outgo={sum_of_outgoes} />
+                             orders={sum_of_orders}
+                             costs={sum_of_costs} />
             });
 
-            var remains = bai.budget - sum_of_outgoes;
+            var remains = bai.budget - sum_of_orders - sum_of_costs;
 
             row.push({
                 value: remains,
@@ -354,8 +391,14 @@ var ShowSheet = React.createClass({
                 <span className="show-sheet-income show-sheet-legend">
                   収入 (円)
                 </span>
+                <span className="show-sheet-orders show-sheet-legend">
+                  発注 (円)
+                </span>
+                <span className="show-sheet-costs show-sheet-legend">
+                  経費 (円)
+                </span>
                 <span className="show-sheet-outgo show-sheet-legend">
-                  支出 (円)
+                  支出 (発注 + 経費) (円)
                 </span>
                 <span className="show-sheet-exec-ratio show-sheet-legend">
                   執行率 (%)
