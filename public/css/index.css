@@ -62,3 +62,6 @@
   padding-top: 128px;
   text-align:  right;
 }
+
+.cursor-default { cursor: auto; }
+.cursor-loading { cursor: wait; }

@@ -168,13 +168,16 @@ var ShowSheet = React.createClass({
         return {
             year:                '',
             budgets_and_incomes: [],
-            outgoes:             []
+            outgoes:             [],
+            is_loading:          false
         };
     },
 
     onSelectYear: function(e) {
         var year = parseInt(e.code);
         var errmsg_idx;
+
+        this.setState({ is_loading: true });
 
         XHR.post('/collectBudgetsAndIncomes').send({
             year: year
@@ -209,7 +212,8 @@ var ShowSheet = React.createClass({
                 this.setState({
                     year:                year,
                     budgets_and_incomes: res0.body.budgets_and_incomes,
-                    outgoes:             res1.body.outgoes
+                    outgoes:             res1.body.outgoes,
+                    is_loading:          false
                 });
 
                 window.info = {
@@ -337,8 +341,10 @@ var ShowSheet = React.createClass({
             totals = <Totals budgetTotal={budget_total} sums={sums} />;
         }
 
+        var cursor = this.state.is_loading? "cursor-loading": "cursor-default";
+
         return (
-            <div id="show-sheet">
+            <div id="show-sheet" className={cursor}>
               <div id="show-sheet-select">
                 <Select placeholder="年度を選択して下さい"
                         onSelect={this.onSelectYear}
