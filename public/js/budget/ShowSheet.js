@@ -329,11 +329,12 @@ var ShowSheet = React.createClass({
             });
 
             for (var i = 0; i < 12; i++) {
-                var outgo = (outgoes.length == 1)? outgoes[0].outgoes[i]: 0;
-
-                if (outgo === undefined) {
-                    console.log("i = " + i.toString() );
-                    console.log(outgoes[0]);
+                var outgo;
+                
+                if (outgoes.length == 1) {
+                    outgo = outgoes[0].outgoes[i];
+                } else {
+                    outgo = { orders: 0, costs: 0 };
                 }
 
                 row.push({
