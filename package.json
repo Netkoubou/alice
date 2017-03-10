@@ -1,6 +1,6 @@
 {
   "name": "alice",
-  "version": "1.7.0-Bata8",
+  "version": "1.7.0",
   "description": "Supply Processing Distribution System",
   "main": "public/js/index.jsx",
   "repository": {
