@@ -87,7 +87,9 @@ module.exports = function(req, res) {
              */
             var start = moment(month[0], 'YYYY/MM/DD').valueOf();
             var end   = moment(month[1], 'YYYY/MM/DD').valueOf();
-            var sum   = 0;
+
+            var order_sum = 0;
+            var cost_sum  = 0;
             
             orders.forEach(function(o) {
                 o.products.forEach(function(p) {
@@ -106,7 +108,7 @@ module.exports = function(req, res) {
                         var date = moment(matched[1], 'YYYY/MM/DD').valueOf();
     
                         if (start <= date && date <= end) {
-                            sum += p.billing_amount;
+                            order_sum += p.billing_amount;
                         }
                     }
                 });
@@ -117,12 +119,15 @@ module.exports = function(req, res) {
                     var date = moment(b.date, 'YYYY/MM/DD').valueOf();
     
                     if (start <= date && date <= end) {
-                        sum += b.price * b.quantity;
+                        cost_sum += b.price * b.quantity;
                     }
                 });
             });
 
-            row.outgoes.push(sum);
+            row.outgoes.push({
+                orders: order_sum,
+                costs:  cost_sum
+            });
         });
     }
 

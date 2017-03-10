@@ -120,11 +120,16 @@
 
 .final-pane-finalist-name:hover { text-decoration: underline; }
 
-#final-pane-total {
-  width:    128px; 
+#final-pane-totals {
   margin:   8px 0 8px 32px;
   position: absolute;
   bottom:   4px;
+}
+
+.final-pane-total {
+  float:        left;
+  width:        120px;
+  margin-right: 8px;
 }
 
 #final-pane-buttons {
@@ -347,7 +352,7 @@
 #process-order-completed-date {
   position: absolute;
   width:    128px;
-  left:     320px;
+  left:     456px;
   bottom:     4px;
 }
 

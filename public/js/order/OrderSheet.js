@@ -160,7 +160,9 @@ var OrderProducts = React.createClass({
     },
 
     render: function() {
+        var total_quantity = 0;
         var products = this.props.products.map(function(p, i) {
+            total_quantity += p.quantity;
             return this.composeProduct(p, i);
         }.bind(this) );
 
@@ -170,8 +172,10 @@ var OrderProducts = React.createClass({
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td></td>
                   <td className="products-data-number">合計</td>
+                  <td className="products-data-number">
+                    {total_quantity.toLocaleString()}
+                  </td>
                   <td className="products-data-number">
                     {Math.round(this.props.total).toLocaleString()}
                   </td>

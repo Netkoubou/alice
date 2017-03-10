@@ -555,10 +555,13 @@ var FinalPane = React.createClass({
     },
 
     render: function() {
-        var total = 0;
-        var title = this.makeTableFrameTitle();
+        var total_amount   = 0;
+        var total_quantity = 0;
+        var title          = this.makeTableFrameTitle();
+
         var data  = this.props.finalists.map(function(f, i) {
-            total += f.price * f.quantity;
+            total_amount   += f.price * f.quantity;
+            total_quantity += f.quantity;
             return this.makeTableFrameDataRow(f, i);
         }.bind(this) );
 
@@ -587,10 +590,17 @@ var FinalPane = React.createClass({
                           title={title}
                           data={data}
                           scrollTopIndex={data.length} />
-              <div id="final-pane-total">
-                <Notice title="発注総計">
-                  {Math.round(total).toLocaleString()}
-                </Notice>
+              <div id="final-pane-totals">
+                <div className="final-pane-total">
+                  <Notice title="発注総数">
+                    {total_quantity.toLocaleString()}
+                  </Notice>
+                </div>
+                <div className="final-pane-total">
+                  <Notice title="発注総計">
+                    {Math.round(total_amount).toLocaleString()}
+                  </Notice>
+                </div>
               </div>
               <div id="final-pane-buttons">
                 {go_back_button}
