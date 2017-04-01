@@ -1,5 +1,6 @@
 'use strict';
-var React = require('react');
+var React     = require('react');
+var configure = require('../../common/configure.js');
 
 var Header = React.createClass({
     propTypes: {
@@ -41,6 +42,9 @@ var Header = React.createClass({
               </span>
             </div>
             <div id="header-petname">Perry</div>
+            <div id="header-year">
+              ({configure.YEAR.toString() + ' 年度版'})
+            </div>
             <div id="header-right-end">
               <div id="header-help">
                 <a href="help/manual.html" target="_blank">ヘルプ</a>

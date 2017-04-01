@@ -31,6 +31,12 @@
   margin-left:  24px;
 }
 
+#header-year {
+  color:       #ffffff;
+  font-size:   160%;
+  margin-left:   8px;
+}
+
 #header-right-end {
   flex-grow:       1;
   align-self:      flex-end;

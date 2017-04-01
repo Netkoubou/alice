@@ -1,8 +1,9 @@
 'use strict';
-var mongodb  = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
-var moment   = require('moment');
-var log4js   = require('log4js');
+var mongodb   = require('mongodb').MongoClient;
+var ObjectID  = require('mongodb').ObjectID;
+var moment    = require('moment');
+var log4js    = require('log4js');
+var configure = require('../../common/configure.js');
 
 var log_info = log4js.getLogger('info');
 var log_warn = log4js.getLogger('warning');
@@ -126,21 +127,7 @@ module.exports = {
         }
 
         this.query(function(db) {
-            var now = moment();
-            var fiscal_year;
-
-
-            /*
-             * now.month() は 0 == 1 月であることに注意!
-             */
-            if (now.month() < 3) {
-                // 今が 1 〜 3 月なら未だ前の年の年度
-                fiscal_year = (now.year() - 1).toString();
-            } else {
-                // 4 月以降なら今の年の年度
-                fiscal_year = now.year().toString();
-            }
-
+            var fiscal_year = configure.YEAR.toString();
             var sel = {
                 drafting_date: { '$lte': fiscal_year + '/03/31' },
                 department_code: department_code
