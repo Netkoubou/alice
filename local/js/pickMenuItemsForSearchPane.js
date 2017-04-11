@@ -169,6 +169,8 @@ function retrieve_step_by_step(user, order_type, db, res) {
             return { department_codes: new ObjectID(d.code) };
         });
 
+        user_department_codes.push({ is_common_item: true });
+
         db.collection('products').find({
             is_alive: true,
             '$or':    user_department_codes
