@@ -4,7 +4,7 @@ var ObjectID = require('mongodb').ObjectID;
 var util     = require('../js/util');
 
 function usage() {
-    console.log('usage: joinprd new-abbr orig-abbr');
+    console.log('usage: joinprd.js new-abbr orig-abbr');
 }
 
 if (process.argv.length != 4) {
@@ -66,9 +66,20 @@ util.query(function(db) {
                 }
 
                 var targets = ps.filter(function(p) {
-                    return p.department_codes.some(function(c) {
-                        return c.toString() === orig_dep_id.toString();
+                    var is_target  = false;
+                    var is_already = false;
+
+                    p.department_codes.forEach(function(c) {
+                        if (c.toString() === new_dep_id.toString() ) {
+                            is_already = true;
+                        }
+
+                        if (c.toString() === orig_dep_id.toString() ) {
+                            is_target = true;
+                        }
                     });
+
+                    return !is_already && is_target;
                 });
 
                 if (targets.length == 0) {
