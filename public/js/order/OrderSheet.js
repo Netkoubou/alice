@@ -112,7 +112,8 @@ var OrderProducts = React.createClass({
         purpose:       React.PropTypes.string.isRequired,
         products:      React.PropTypes.array.isRequired,
         startOfNumber: React.PropTypes.number.isRequired,
-        total:         React.PropTypes.number
+        total:         React.PropTypes.number,
+        totalQuantity: React.PropTypes.number
     },
 
     composeProduct: function(product, index) {
@@ -160,9 +161,7 @@ var OrderProducts = React.createClass({
     },
 
     render: function() {
-        var total_quantity = 0;
         var products = this.props.products.map(function(p, i) {
-            total_quantity += p.quantity;
             return this.composeProduct(p, i);
         }.bind(this) );
 
@@ -174,7 +173,7 @@ var OrderProducts = React.createClass({
                   <td></td>
                   <td className="products-data-number">合計</td>
                   <td className="products-data-number">
-                    {total_quantity.toLocaleString()}
+                    {this.props.totalQuantity.toLocaleString()}
                   </td>
                   <td className="products-data-number">
                     {Math.round(this.props.total).toLocaleString()}
@@ -212,7 +211,8 @@ var SuborderSheet = React.createClass({
         info:          React.PropTypes.object.isRequired,
         page:          React.PropTypes.number.isRequired,
         numberOfPages: React.PropTypes.number.isRequired,
-        total:         React.PropTypes.number.isRequired
+        total:         React.PropTypes.number.isRequired,
+        totalQuantity: React.PropTypes.number.isRequired
     },
 
     render: function() {
@@ -255,7 +255,8 @@ var SuborderSheet = React.createClass({
               <OrderProducts purpose={this.props.info.purpose}
                              products={this.props.info.products}
                              startOfNumber={(page - 1) * N + 1}
-                             total={page == number_of_pages? total: null} />
+                             total={page == number_of_pages? total: null}
+                             totalQuantity={this.props.totalQuantity} />
               <div className="page">
                 {'-' + page + '/' + number_of_pages + '-'}
               </div>
@@ -302,6 +303,7 @@ var OrderSheet = React.createClass({
         var N               = NUMBER_OF_PRODUCTS_PER_PAGE;
         var number_of_pages = Math.ceil(this.props.info.products.length / N);
         var total           = 0;
+        var total_quantity  = 0;
         var products;
 
         this.props.info.products.forEach(function(p, i) {
@@ -316,6 +318,8 @@ var OrderSheet = React.createClass({
             } else {
                 total += p.billing_amount;
             }
+
+            total_quantity += p.quantity;
 
             if (i % N == N - 1 || i == this.props.info.products.length - 1) {
                 var info = {
@@ -337,7 +341,8 @@ var OrderSheet = React.createClass({
                                    info={info}
                                    page={page}
                                    numberOfPages={number_of_pages}
-                                   total={total} />
+                                   total={total}
+                                   totalQuantity={total_quantity} />
                 );
             }
 
