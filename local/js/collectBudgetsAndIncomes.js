@@ -201,22 +201,33 @@ module.exports = function(req, res) {
                 var now       = moment();
                 var this_year = (now.month() < 3)? now.year() - 1: now.year();
 
-                if (req.body.year < this_year) {
+
+                /*
+                 * 以下のコードは、年度跨ぎを考慮した時代の遺物。
+                 * 現在は年度毎にシステムを別途用意するになっているため、
+                 * 不要。
+                 * 年度跨ぎを考慮するように再度変更される可能性があるため、
+                 * (あっても対応するつもりはないが、万一を考えて) 一応
+                 * 残しておく。
+                 */
+                // if (req.body.year < this_year) {
                     /*
                      * 去年度以前のデータを要求されている場合、
                      * それらは fix されているものとして考え、
                      * budgets_and_incomes コレクションに取り込まれた部門
                      * 診療科だけを返す。
                      */
-                    fill_names();
-                } else {
+                    // fill_names();
+                // } else {
                     /*
                      * 今年度のデータを要求されている場合、
                      * 未だ budgets_and_incomes コレクションに取り込まれて
                      * いない (かもしれない) 部門診療科を補填する。
                      */
-                    fill_departments();
-                }
+                    // fill_departments();
+                // }
+
+                fill_departments();
             } else {
                 db.close();
                 res.json({ status: 255 });
