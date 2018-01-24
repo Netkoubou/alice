@@ -97,8 +97,8 @@ var OrderInfos = React.createClass({
                     </td>
                   </tr>
                   <tr>
-                    <td className="info-name">連絡先</td>
-                    <td className="info-data">TEL & FAX: 046-822-9640</td>
+                    <td className="info-name">連絡先 (TEL/FAX)</td>
+                    <td className="info-data">046-822-9640 / 046-845-3135</td>
                   </tr>
                 </tbody>
               </table>
